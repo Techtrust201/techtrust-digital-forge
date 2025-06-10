@@ -1,14 +1,34 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
 
 User-agent: *
 Allow: /
+
+# Optimisation pour les moteurs de recherche
+Sitemap: https://www.tech-trust.fr/sitemap.xml
+
+# Bloquer les pages d'administration et API
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /.next/
+
+# Autoriser spécifiquement les pages importantes
+Allow: /fr/
+Allow: /en/
+Allow: /fr/solutions/
+Allow: /en/solutions/
+Allow: /fr/blog/
+Allow: /en/blog/
+Allow: /fr/pricing/
+Allow: /en/pricing/
+Allow: /fr/contact/
+Allow: /en/contact/
+
+# Optimisation pour Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Optimisation pour Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
