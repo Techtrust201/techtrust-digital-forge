@@ -3,12 +3,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, Globe } from 'lucide-react';
+import { Menu, X, ChevronDown, Globe, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 const solutions = [
   { name: "Agence Web", href: "/solutions/agence-web", description: "Création de sites web professionnels, e-commerce et applications web" },
-  { name: "Growth Hacking", href: "/solutions/growth-hacking", description: "Stratégies de croissance et acquisition clients" },
+  { name: "Growth Hacking", href: "/solutions/growth-hacking", description: "Stratégies de croissance et acquisition clients via l'IA" },
   { name: "Solutions Sur Mesure", href: "/solutions/digitales-sur-mesure", description: "Développement logiciel personnalisé pour votre entreprise" },
   { name: "Community Management", href: "/solutions/community-management", description: "Gestion professionnelle de vos réseaux sociaux" },
   { name: "Consulting Digital", href: "/solutions/consulting-digital", description: "Conseil et stratégie pour votre transformation numérique" },
@@ -18,6 +24,7 @@ const NavbarPublic = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>('fr');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +54,11 @@ const NavbarPublic = () => {
     } else {
       setDropdownOpen(name);
     }
+  };
+
+  const changeLanguage = (language: 'fr' | 'en') => {
+    setCurrentLanguage(language);
+    // Ici, vous intégrerez plus tard la logique de changement de langue
   };
 
   return (
@@ -105,12 +117,16 @@ const NavbarPublic = () => {
               Blog
             </a>
             
+            <a href="/careers" className={`${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}>
+              Carrières
+            </a>
+            
             <a href="/help" className={`${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}>
               Aide
             </a>
           </div>
 
-          {/* Right side - Contact / Sign In */}
+          {/* Right side - Contact / Sign In / Language */}
           <div className="hidden lg:flex items-center space-x-4">
             <Button asChild variant="outline" className="border-2 border-gray-300 hover:border-custom-blue">
               <a href="/contact">
@@ -125,9 +141,26 @@ const NavbarPublic = () => {
             </Button>
 
             {/* Language switch */}
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <Globe className="w-5 h-5 text-gray-600" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center">
+                  <Globe className="w-5 h-5 text-gray-600" />
+                  <span className="ml-1 text-sm font-medium">{currentLanguage === 'fr' ? 'FR' : 'EN'}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={() => changeLanguage('fr')} className="flex items-center">
+                  <img src="/flags/fr.svg" alt="Français" className="w-5 h-5 mr-2" />
+                  <span>Français</span>
+                  {currentLanguage === 'fr' && <Check className="w-4 h-4 ml-auto" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeLanguage('en')} className="flex items-center">
+                  <img src="/flags/en.svg" alt="English" className="w-5 h-5 mr-2" />
+                  <span>English</span>
+                  {currentLanguage === 'en' && <Check className="w-4 h-4 ml-auto" />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Mobile menu button */}
@@ -206,6 +239,13 @@ const NavbarPublic = () => {
               </a>
               
               <a 
+                href="/careers"
+                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Carrières
+              </a>
+              
+              <a 
                 href="/help"
                 className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
@@ -225,9 +265,20 @@ const NavbarPublic = () => {
                   </a>
                 </Button>
 
-                <div className="flex justify-center pt-2">
-                  <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <Globe className="w-5 h-5 text-gray-600" />
+                <div className="flex justify-center gap-4 pt-2">
+                  <button 
+                    className={`p-2 rounded-full transition-colors flex items-center ${currentLanguage === 'fr' ? 'bg-gray-100' : ''}`}
+                    onClick={() => changeLanguage('fr')}
+                  >
+                    <img src="/flags/fr.svg" alt="Français" className="w-5 h-5" />
+                    <span className="ml-1 text-sm font-medium">FR</span>
+                  </button>
+                  <button 
+                    className={`p-2 rounded-full transition-colors flex items-center ${currentLanguage === 'en' ? 'bg-gray-100' : ''}`}
+                    onClick={() => changeLanguage('en')}
+                  >
+                    <img src="/flags/en.svg" alt="English" className="w-5 h-5" />
+                    <span className="ml-1 text-sm font-medium">EN</span>
                   </button>
                 </div>
               </div>

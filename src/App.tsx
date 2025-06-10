@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+
 import Index from "./pages/Index";
 import Solutions from "./pages/Solutions";
 import AgenceWeb from "./pages/solutions/AgenceWeb";
@@ -13,6 +13,7 @@ import SolutionsDigitales from "./pages/solutions/SolutionsDigitales";
 import CommunityManagement from "./pages/solutions/CommunityManagement";
 import ConsultingDigital from "./pages/solutions/ConsultingDigital";
 import Pricing from "./pages/Pricing";
+import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import Help from "./pages/Help";
@@ -28,6 +29,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -38,6 +40,7 @@ const App = () => (
           <Route path="/solutions/community-management" element={<CommunityManagement />} />
           <Route path="/solutions/consulting-digital" element={<ConsultingDigital />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/help" element={<Help />} />
