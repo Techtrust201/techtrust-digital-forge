@@ -16,7 +16,13 @@ const CTASection = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-4xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center max-w-4xl mx-auto"
+        >
           {/* Titre principal */}
           <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6">
             Prêt à <span className="text-yellow-300">Transformer</span>
@@ -31,7 +37,7 @@ const CTASection = () => {
 
           {/* Boutons d'action */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <Button asChild size="lg" className="bg-white text-custom-blue hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold shadow-lg group">
+            <Button asChild size="lg" className="bg-white text-custom-blue hover:bg-gray-100 px-8 py-6 rounded-xl font-semibold shadow-lg group">
               <a href="/contact">
                 <Calendar className="mr-2 w-5 h-5" />
                 Réserver un appel gratuit
@@ -39,7 +45,7 @@ const CTASection = () => {
               </a>
             </Button>
 
-            <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-4 rounded-xl font-semibold">
+            <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-6 rounded-xl font-semibold">
               <a href="/pricing">
                 Voir nos tarifs
               </a>
@@ -48,30 +54,54 @@ const CTASection = () => {
 
           {/* Informations de contact */}
           <div className="grid md:grid-cols-3 gap-8 text-white">
-            <div className="text-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-6"
+            >
               <Phone className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Appelez-nous</h3>
               <p className="text-gray-200">+33 X XX XX XX XX</p>
-            </div>
+            </motion.div>
 
-            <div className="text-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-6"
+            >
               <Mail className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Écrivez-nous</h3>
               <p className="text-gray-200">contact@tech-trust.fr</p>
-            </div>
+            </motion.div>
 
-            <div className="text-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-6"
+            >
               <Calendar className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Réponse garantie</h3>
               <p className="text-gray-200">Sous 24h ouvrées</p>
-            </div>
+            </motion.div>
           </div>
 
           {/* Garantie */}
-          <div className="mt-12 inline-block bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-white">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="mt-12 inline-block bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-white"
+          >
             ✨ Satisfaction garantie ou remboursé
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

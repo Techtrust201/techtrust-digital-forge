@@ -1,155 +1,193 @@
 
 import React from 'react';
-import { Mail, Phone, MapPin, Instagram, Linkedin, Youtube } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const services = [
-    { name: "Création Site Web", href: "/solutions/agence-web" },
-    { name: "Growth Hacking", href: "/solutions/growth-hacking" },
-    { name: "Solutions Sur Mesure", href: "/solutions/digitales-sur-mesure" },
-    { name: "Community Management", href: "/solutions/community-management" },
-  ];
-
-  const company = [
-    { name: "À propos", href: "/about" },
-    { name: "Blog", href: "/blog" },
-    { name: "Carrières", href: "/careers" },
-    { name: "Contact", href: "/contact" },
-  ];
-
-  const legal = [
-    { name: "Mentions légales", href: "/legal-mentions" },
-    { name: "Politique de confidentialité", href: "/privacy-policy" },
-    { name: "Conditions d'utilisation", href: "/terms" },
-  ];
-
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Logo et description */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-custom-blue to-custom-purple rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-xl">T</span>
-              </div>
-              <span className="text-xl font-bold">Techtrust</span>
-            </div>
-            <p className="text-gray-400 mb-6 leading-relaxed">
-              Agence digitale française spécialisée en création de sites web, growth hacking et solutions sur mesure.
+      {/* Main Footer */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Column 1 - About */}
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-white">Techtrust</h3>
+            <p className="text-gray-300 mb-6">
+              Agence digitale française spécialisée en création de sites web, growth hacking et solutions digitales sur mesure pour booster votre croissance.
             </p>
-            
-            {/* Contact Info */}
-            <div className="space-y-3">
-              <div className="flex items-center text-gray-400">
-                <Mail className="w-4 h-4 mr-3 text-custom-blue" />
-                <span>contact@tech-trust.fr</span>
-              </div>
-              <div className="flex items-center text-gray-400">
-                <Phone className="w-4 h-4 mr-3 text-custom-blue" />
-                <span>+33 X XX XX XX XX</span>
-              </div>
-              <div className="flex items-center text-gray-400">
-                <MapPin className="w-4 h-4 mr-3 text-custom-blue" />
-                <span>France</span>
-              </div>
+            <div className="flex space-x-4">
+              <a href="https://www.facebook.com/techtrustagency" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="https://www.instagram.com/techtrust_agency" aria-label="Instagram" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="https://twitter.com/techtrust_agency" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href="https://www.linkedin.com/company/techtrust-agency" aria-label="LinkedIn" className="text-gray-400 hover:text-white transition-colors">
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a href="https://www.youtube.com/channel/UCX_vW6ah0txEFeMAMr3Si7A" aria-label="YouTube" className="text-gray-400 hover:text-white transition-colors">
+                <Youtube className="w-5 h-5" />
+              </a>
             </div>
           </div>
 
-          {/* Services */}
+          {/* Column 2 - Services */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Nos Solutions</h3>
-            <ul className="space-y-2">
-              {services.map((service) => (
-                <li key={service.name}>
-                  <a 
-                    href={service.href}
-                    className="text-gray-400 hover:text-custom-blue transition-colors"
-                  >
-                    {service.name}
-                  </a>
-                </li>
-              ))}
+            <h3 className="text-lg font-semibold mb-6 text-white">Nos Solutions</h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="/solutions/agence-web" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Création Site Web
+                </a>
+              </li>
+              <li>
+                <a href="/solutions/growth-hacking" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Growth Hacking
+                </a>
+              </li>
+              <li>
+                <a href="/solutions/digitales-sur-mesure" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Développement Sur Mesure
+                </a>
+              </li>
+              <li>
+                <a href="/solutions/community-management" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Community Management
+                </a>
+              </li>
+              <li>
+                <a href="/solutions/consulting-digital" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Consulting Digital
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Entreprise */}
+          {/* Column 3 - Resources */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Entreprise</h3>
-            <ul className="space-y-2">
-              {company.map((item) => (
-                <li key={item.name}>
-                  <a 
-                    href={item.href}
-                    className="text-gray-400 hover:text-custom-blue transition-colors"
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))}
+            <h3 className="text-lg font-semibold mb-6 text-white">Ressources</h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="/blog" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Blog & Actualités
+                </a>
+              </li>
+              <li>
+                <a href="/help" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Centre d'aide
+                </a>
+              </li>
+              <li>
+                <a href="/pricing" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Tarifs & Plans
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Nous contacter
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-gray-400 hover:text-custom-blue transition-colors flex items-center">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Demander un devis
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Légal et Réseaux */}
+          {/* Column 4 - Contact */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Légal</h3>
-            <ul className="space-y-2 mb-6">
-              {legal.map((item) => (
-                <li key={item.name}>
-                  <a 
-                    href={item.href}
-                    className="text-gray-400 hover:text-custom-blue transition-colors"
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))}
+            <h3 className="text-lg font-semibold mb-6 text-white">Contact</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <Mail className="w-5 h-5 text-custom-blue mr-3 mt-1" />
+                <a href="mailto:contact@tech-trust.fr" className="text-gray-400 hover:text-white transition-colors">contact@tech-trust.fr</a>
+              </li>
+              <li className="flex items-start">
+                <Phone className="w-5 h-5 text-custom-blue mr-3 mt-1" />
+                <a href="tel:+33XXXXXXXXXX" className="text-gray-400 hover:text-white transition-colors">+33 X XX XX XX XX</a>
+              </li>
+              <li className="flex items-start">
+                <MapPin className="w-5 h-5 text-custom-blue mr-3 mt-1" />
+                <span className="text-gray-400">France</span>
+              </li>
             </ul>
 
-            {/* Réseaux sociaux */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3 text-gray-300">Suivez-nous</h4>
-              <div className="flex space-x-4">
-                <a 
-                  href="https://instagram.com/techtrust_agency" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-custom-purple transition-colors"
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a 
-                  href="https://linkedin.com/company/techtrust-agency" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-custom-blue transition-colors"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a 
-                  href="https://youtube.com/channel/UCX_vW6ah0txEFeMAMr3Si7A" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-red-500 transition-colors"
-                >
-                  <Youtube className="w-5 h-5" />
-                </a>
-              </div>
+            <div className="mt-6">
+              <a 
+                href="/contact" 
+                className="bg-custom-blue hover:bg-custom-blue/90 text-white px-6 py-3 rounded-lg inline-flex items-center transition-colors"
+              >
+                Contactez-nous
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Ligne de séparation */}
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        {/* SEO Footer Links */}
+        <div className="mt-16 pt-8 border-t border-gray-800">
+          <h4 className="text-lg font-semibold mb-4 text-white">Nos expertises</h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
+            <a href="/solutions/agence-web" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Création site internet</a>
+            <a href="/solutions/agence-web" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Site e-commerce</a>
+            <a href="/solutions/agence-web" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Site vitrine professionnel</a>
+            <a href="/solutions/agence-web" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Refonte site web</a>
+            <a href="/solutions/growth-hacking" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Growth hacking</a>
+            <a href="/solutions/growth-hacking" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Acquisition clients</a>
+            <a href="/solutions/growth-hacking" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Lead generation</a>
+            <a href="/solutions/growth-hacking" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Marketing automation</a>
+            <a href="/solutions/digitales-sur-mesure" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Logiciel sur mesure</a>
+            <a href="/solutions/digitales-sur-mesure" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Développement application</a>
+            <a href="/solutions/digitales-sur-mesure" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">CRM personnalisé</a>
+            <a href="/solutions/digitales-sur-mesure" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Intégration API</a>
+            <a href="/solutions/community-management" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Community management</a>
+            <a href="/solutions/community-management" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Gestion réseaux sociaux</a>
+            <a href="/solutions/community-management" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Création de contenu</a>
+            <a href="/solutions/consulting-digital" className="text-gray-400 hover:text-custom-blue text-sm transition-colors">Transformation digitale</a>
+          </div>
+        </div>
+
+        {/* Partner References */}
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <h4 className="text-lg font-semibold mb-4 text-white">Ils nous font confiance</h4>
+          <div className="flex flex-wrap items-center gap-8">
+            <span className="text-gray-400 text-sm">Palais des Festivals de Cannes</span>
+            <span className="text-gray-400 text-sm">Groupe Chopard</span>
+            <span className="text-gray-400 text-sm">Christina France</span>
+            <span className="text-gray-400 text-sm">Monaco Business</span>
+            <span className="text-gray-400 text-sm">Luxury Hotels Group</span>
+            <span className="text-gray-400 text-sm">French Tech Riviera</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Footer */}
+      <div className="bg-gray-950 py-6">
+        <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © {currentYear} Techtrust. Tous droits réservés.
-            </p>
-            <p className="text-gray-500 text-xs mt-2 md:mt-0">
-              Fait avec ❤️ en France
-            </p>
+            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+              &copy; {currentYear} Techtrust. Tous droits réservés.
+            </div>
+            <div className="flex space-x-6">
+              <a href="/legal-mentions" className="text-gray-400 hover:text-white text-sm transition-colors">Mentions légales</a>
+              <a href="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Politique de confidentialité</a>
+              <a href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">CGV</a>
+            </div>
           </div>
         </div>
       </div>
