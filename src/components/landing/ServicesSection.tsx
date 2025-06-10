@@ -5,7 +5,6 @@ import React from 'react';
 import { Globe, TrendingUp, Code, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import Link from 'next/link';
 
 const services = [
   {
@@ -100,10 +99,10 @@ const ServicesSection = () => {
                     asChild
                     className={`w-full bg-${service.color} hover:bg-${service.color}/90 text-white group/btn`}
                   >
-                    <Link href={service.link}>
+                    <a href={service.link}>
                       En savoir plus
                       <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </CardContent>
@@ -122,9 +121,9 @@ const ServicesSection = () => {
             variant="outline"
             className="border-2 border-custom-blue text-custom-blue hover:bg-custom-blue hover:text-white"
           >
-            <Link href="/contact">
+            <a href="/contact">
               Demander un devis gratuit
-            </Link>
+            </a>
           </Button>
         </div>
       </div>

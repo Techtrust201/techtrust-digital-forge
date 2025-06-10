@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const NavbarPublic = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,12 +22,12 @@ const NavbarPublic = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <a href="/" className="flex items-center">
               <div className="w-10 h-10 bg-gradient-to-r from-custom-blue to-custom-purple rounded-lg flex items-center justify-center mr-3">
                 <span className="text-white font-bold text-xl">T</span>
               </div>
               <span className="text-xl font-bold text-gray-900">Techtrust</span>
-            </Link>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -55,37 +54,37 @@ const NavbarPublic = () => {
                 >
                   <div className="py-1">
                     {services.map((service) => (
-                      <Link
+                      <a
                         key={service.name}
                         href={service.href}
                         className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-custom-blue"
                       >
                         <div className="font-medium">{service.name}</div>
                         <div className="text-xs text-gray-500">{service.description}</div>
-                      </Link>
+                      </a>
                     ))}
                   </div>
                 </div>
               </div>
 
-              <Link href="/pricing" className="text-gray-700 hover:text-custom-blue px-3 py-2 rounded-md text-sm font-medium">
+              <a href="/pricing" className="text-gray-700 hover:text-custom-blue px-3 py-2 rounded-md text-sm font-medium">
                 Tarifs
-              </Link>
-              <Link href="/blog" className="text-gray-700 hover:text-custom-blue px-3 py-2 rounded-md text-sm font-medium">
+              </a>
+              <a href="/blog" className="text-gray-700 hover:text-custom-blue px-3 py-2 rounded-md text-sm font-medium">
                 Blog
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-custom-blue px-3 py-2 rounded-md text-sm font-medium">
+              </a>
+              <a href="/contact" className="text-gray-700 hover:text-custom-blue px-3 py-2 rounded-md text-sm font-medium">
                 Contact
-              </Link>
+              </a>
             </div>
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:block">
             <Button asChild className="bg-gradient-to-r from-custom-blue to-custom-purple text-white">
-              <Link href="/contact">
+              <a href="/contact">
                 Démarrer mon projet
-              </Link>
+              </a>
             </Button>
           </div>
 
@@ -110,42 +109,42 @@ const NavbarPublic = () => {
                 Solutions
               </div>
               {services.map((service) => (
-                <Link
+                <a
                   key={service.name}
                   href={service.href}
                   className="block px-3 py-2 text-sm text-gray-700 hover:text-custom-blue hover:bg-gray-50"
                   onClick={() => setIsOpen(false)}
                 >
                   {service.name}
-                </Link>
+                </a>
               ))}
             </div>
-            <Link
+            <a
               href="/pricing"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-custom-blue hover:bg-gray-50"
               onClick={() => setIsOpen(false)}
             >
               Tarifs
-            </Link>
-            <Link
+            </a>
+            <a
               href="/blog"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-custom-blue hover:bg-gray-50"
               onClick={() => setIsOpen(false)}
             >
               Blog
-            </Link>
-            <Link
+            </a>
+            <a
               href="/contact"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-custom-blue hover:bg-gray-50"
               onClick={() => setIsOpen(false)}
             >
               Contact
-            </Link>
+            </a>
             <div className="px-3 py-2">
               <Button asChild className="w-full bg-gradient-to-r from-custom-blue to-custom-purple text-white">
-                <Link href="/contact" onClick={() => setIsOpen(false)}>
+                <a href="/contact" onClick={() => setIsOpen(false)}>
                   Démarrer mon projet
-                </Link>
+                </a>
               </Button>
             </div>
           </div>

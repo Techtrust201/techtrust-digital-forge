@@ -1,10 +1,10 @@
+
 "use client"
 
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Phone, Mail, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const CTASection = () => {
   return (
@@ -32,17 +32,17 @@ const CTASection = () => {
           {/* Boutons d'action */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <Button asChild size="lg" className="bg-white text-custom-blue hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold shadow-lg group">
-              <Link href="/contact">
+              <a href="/contact">
                 <Calendar className="mr-2 w-5 h-5" />
                 Réserver un appel gratuit
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </a>
             </Button>
 
             <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-4 rounded-xl font-semibold">
-              <Link href="/pricing">
+              <a href="/pricing">
                 Voir nos tarifs
-              </Link>
+              </a>
             </Button>
           </div>
 

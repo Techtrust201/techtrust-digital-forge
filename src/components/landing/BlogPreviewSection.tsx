@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react';
@@ -5,7 +6,6 @@ import { motion } from 'framer-motion';
 import { Calendar, ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import Link from 'next/link';
 
 const blogPosts = [
   {
@@ -95,13 +95,13 @@ const BlogPreviewSection = () => {
                   </div>
 
                   {/* CTA */}
-                  <Link 
+                  <a 
                     href={`/blog/${post.slug}`}
                     className="inline-flex items-center text-custom-blue font-medium group/link hover:text-custom-purple transition-colors"
                   >
                     Lire l'article
                     <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                  </Link>
+                  </a>
                 </CardContent>
               </Card>
             </article>
@@ -116,10 +116,10 @@ const BlogPreviewSection = () => {
             variant="outline"
             className="border-2 border-custom-green text-custom-green hover:bg-custom-green hover:text-white"
           >
-            <Link href="/blog">
+            <a href="/blog">
               Voir tous les articles
               <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
+            </a>
           </Button>
         </div>
       </div>

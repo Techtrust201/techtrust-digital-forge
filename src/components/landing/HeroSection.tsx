@@ -4,7 +4,6 @@
 import React from 'react';
 import { ArrowRight, Play, Sparkles, Zap, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const HeroSection = () => {
   return (
@@ -67,10 +66,10 @@ const HeroSection = () => {
                 size="lg" 
                 className="bg-gradient-to-r from-custom-blue to-custom-purple hover:from-custom-purple hover:to-custom-blue text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
-                <Link href="/contact">
+                <a href="/contact">
                   Démarrer mon projet
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                </a>
               </Button>
               
               <Button 

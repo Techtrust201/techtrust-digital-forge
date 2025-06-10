@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Mail, Phone, MapPin, Instagram, Linkedin, Youtube } from 'lucide-react';
-import Link from 'next/link';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -65,12 +64,12 @@ const Footer = () => {
             <ul className="space-y-2">
               {services.map((service) => (
                 <li key={service.name}>
-                  <Link 
+                  <a 
                     href={service.href}
                     className="text-gray-400 hover:text-custom-blue transition-colors"
                   >
                     {service.name}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -82,12 +81,12 @@ const Footer = () => {
             <ul className="space-y-2">
               {company.map((item) => (
                 <li key={item.name}>
-                  <Link 
+                  <a 
                     href={item.href}
                     className="text-gray-400 hover:text-custom-blue transition-colors"
                   >
                     {item.name}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -99,12 +98,12 @@ const Footer = () => {
             <ul className="space-y-2 mb-6">
               {legal.map((item) => (
                 <li key={item.name}>
-                  <Link 
+                  <a 
                     href={item.href}
                     className="text-gray-400 hover:text-custom-blue transition-colors"
                   >
                     {item.name}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
