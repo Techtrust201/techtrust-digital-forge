@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Globe, TrendingUp, Code, MessageSquare, Lightbulb, ArrowRight, Check } from 'lucide-react';
+import { Globe, TrendingUp, Code, Lightbulb, ArrowRight, Check, Bot, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -12,45 +12,45 @@ const services = [
     icon: Globe,
     title: "Création Site Web",
     subtitle: "Sites professionnels & E-commerce",
-    description: "Développement de sites web modernes, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe.",
-    features: ["Design responsive", "Optimisation SEO", "Hébergement sécurisé", "Maintenance incluse"],
-    color: "custom-blue",
+    description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe.",
+    features: ["Design responsive 2025", "Optimisation SEO avancée", "Hébergement sécurisé", "Maintenance incluse"],
+    color: "blue-600",
     link: "/solutions/agence-web"
   },
   {
     icon: TrendingUp,
-    title: "Growth Hacking",
-    subtitle: "Acquisition & Croissance",
-    description: "Stratégies de growth hacking pour multiplier vos leads et conversions. Prospection automatisée, email marketing et optimisation des tunnels de vente.",
-    features: ["Lead generation", "Email marketing", "Automation", "Analytics avancés"],
-    color: "custom-purple", 
+    title: "Growth Hacking IA",
+    subtitle: "🤖 Automatisation complète",
+    description: "Nos outils IA propriétaires automatisent votre prospection et acquisition clients. Remplacez un commercial + community manager par notre IA ultra-performante.",
+    features: ["🤖 IA de prospection", "📧 Email marketing automatisé", "📊 Analytics temps réel", "🎯 Lead generation IA"],
+    color: "purple-600", 
     link: "/solutions/growth-hacking"
   },
   {
     icon: Code,
     title: "Solutions Sur Mesure",
     subtitle: "Développement personnalisé",
-    description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité.",
+    description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité en 2025.",
     features: ["Audit métier", "Développement agile", "Formation équipe", "Support technique"],
-    color: "custom-green",
+    color: "green-600",
     link: "/solutions/digitales-sur-mesure"
   },
   {
-    icon: MessageSquare,
-    title: "Community Management",
-    subtitle: "Réseaux sociaux & Contenu",
-    description: "Gestion professionnelle de vos réseaux sociaux. Stratégie éditoriale, création de contenus engageants et suivi des performances.",
-    features: ["Stratégie sociale", "Création contenu", "Veille concurrentielle", "Reporting mensuel"],
-    color: "custom-pink",
+    icon: Users,
+    title: "Community Management Pro",
+    subtitle: "Équipe dédiée",
+    description: "Vous préférez déléguer à des professionnels ? Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.",
+    features: ["Community manager dédié", "Stratégie sur mesure", "Création contenu pro", "Reporting détaillé"],
+    color: "pink-600",
     link: "/solutions/community-management"
   },
   {
     icon: Lightbulb,
     title: "Consulting Digital",
     subtitle: "Stratégie & Transformation",
-    description: "Accompagnement stratégique pour votre transformation digitale. Audit, recommandations et feuille de route personnalisée.",
-    features: ["Audit digital", "Stratégie data", "Formation équipes", "Accompagnement projet"],
-    color: "custom-slate",
+    description: "Accompagnement stratégique pour votre transformation digitale 2025. Audit complet, recommandations et feuille de route personnalisée.",
+    features: ["Audit digital complet", "Stratégie data 2025", "Formation équipes", "Accompagnement projet"],
+    color: "indigo-600",
     link: "/solutions/consulting-digital"
   }
 ];
@@ -58,10 +58,6 @@ const services = [
 const ServicesSection = () => {
   return (
     <section className="py-24 bg-white relative overflow-hidden" id="services">
-      {/* Éléments décoratifs */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-custom-blue/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-custom-purple/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-
       <div className="container mx-auto px-4 relative z-10">
         {/* En-tête de section */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -70,9 +66,9 @@ const ServicesSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="inline-block bg-gradient-to-r from-custom-blue/20 to-custom-purple/20 text-custom-blue px-4 py-2 rounded-full text-sm font-medium mb-4"
+            className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-4"
           >
-            Notre Expertise
+            Notre Expertise 2025
           </motion.span>
 
           <motion.h2 
@@ -82,10 +78,10 @@ const ServicesSection = () => {
             viewport={{ once: true }}
             className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6"
           >
-            Nos <span className="text-custom-blue">Solutions Digitales</span>
+            Nos <span className="text-blue-600">Solutions Digitales</span>
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-green">
-              Sur Mesure
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-green-600">
+              IA & Professionnelles
             </span>
           </motion.h2>
 
@@ -96,9 +92,32 @@ const ServicesSection = () => {
             viewport={{ once: true }}
             className="text-lg text-gray-600"
           >
-            De la création de votre site web à l'acquisition de vos premiers clients, 
-            nous accompagnons votre croissance à chaque étape avec des solutions personnalisées.
+            <strong>Vous avez le choix :</strong> Utilisez nos outils IA en autonomie pour automatiser votre growth hacking, 
+            ou bénéficiez de l'expertise de nos professionnels pour un accompagnement sur mesure.
           </motion.p>
+        </div>
+
+        {/* Distinction claire IA vs Pro */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mb-16">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="text-center">
+              <Bot className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">🤖 Outils IA Automatisés</h3>
+              <p className="text-gray-600">
+                Parfait si vous voulez garder le contrôle et économiser. Nos IA remplacent un commercial + community manager.
+              </p>
+              <div className="mt-4 text-sm text-blue-700 font-medium">Dès 97€/mois</div>
+            </div>
+            
+            <div className="text-center">
+              <Users className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">👨‍💼 Équipe Professionnelle</h3>
+              <p className="text-gray-600">
+                Idéal si vous préférez déléguer à des experts. Notre équipe gère tout avec une stratégie personnalisée.
+              </p>
+              <div className="mt-4 text-sm text-purple-700 font-medium">Sur mesure</div>
+            </div>
+          </div>
         </div>
 
         {/* Grille de services */}
@@ -112,7 +131,6 @@ const ServicesSection = () => {
               viewport={{ once: true }}
             >
               <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white relative overflow-hidden h-full">
-                {/* Gradient de fond */}
                 <div className={`absolute inset-0 bg-gradient-to-br from-${service.color}/5 to-${service.color}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
                 
                 <CardContent className="p-8 relative z-10 h-full flex flex-col">
@@ -165,15 +183,15 @@ const ServicesSection = () => {
             viewport={{ once: true }}
           >
             <p className="text-gray-600 mb-6">
-              Besoin d'une solution personnalisée ? Parlons de votre projet !
+              Découvrez nos tarifs transparents pour 2025 !
             </p>
             <Button 
               asChild
               size="lg"
-              className="bg-gradient-to-r from-custom-blue to-custom-purple text-white hover:shadow-lg transition-all duration-300"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-300"
             >
-              <a href="/contact">
-                Demander un devis gratuit
+              <a href="/pricing">
+                Voir nos tarifs 2025
                 <ArrowRight className="ml-2 w-5 h-5" />
               </a>
             </Button>

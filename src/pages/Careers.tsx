@@ -1,11 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { 
-  Briefcase, 
   Code, 
   TrendingUp, 
   MessageSquare, 
@@ -13,114 +15,104 @@ import {
   Download, 
   ArrowRight, 
   Users,
-  CheckCircle
+  CheckCircle,
+  Upload,
+  X
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
-const jobOpenings = [
+const jobCategories = [
   {
     title: "Développeur Full Stack",
-    type: "CDI / Freelance",
-    location: "Remote / Sur site",
     icon: Code,
-    department: "tech",
-    description: "Nous recherchons un développeur Full Stack expérimenté pour rejoindre notre équipe technique. Vous participerez au développement de sites web et applications sur mesure pour nos clients.",
-    requirements: [
-      "3+ ans d'expérience en développement web",
-      "Maîtrise de React, TypeScript et Node.js",
-      "Expérience avec les bases de données SQL et NoSQL",
-      "Bonne connaissance des principes de sécurité web"
-    ]
+    color: "blue-600",
+    description: "Rejoignez notre équipe technique pour développer nos outils IA révolutionnaires",
+    requirements: "React, TypeScript, Node.js, IA/ML",
+    salary: "45K - 65K€",
+    type: "CDI / Freelance"
   },
   {
-    title: "Growth Hacker",
-    type: "CDI",
-    location: "Remote / Sur site",
+    title: "Growth Hacker IA",
     icon: TrendingUp,
-    department: "marketing",
-    description: "En tant que Growth Hacker chez Techtrust, vous concevrez et mettrez en œuvre des stratégies d'acquisition innovantes pour nos clients en utilisant notre suite d'outils IA.",
-    requirements: [
-      "Expérience prouvée en growth hacking et acquisition client",
-      "Maîtrise des outils d'automatisation marketing",
-      "Connaissance des principes d'analyse de données",
-      "Esprit créatif et orienté résultats"
-    ]
+    color: "purple-600", 
+    description: "Concevez des stratégies d'acquisition avec nos outils IA propriétaires",
+    requirements: "Growth hacking, automatisation, analytics",
+    salary: "40K - 60K€",
+    type: "CDI"
   },
   {
     title: "Community Manager",
-    type: "CDI / Stage",
-    location: "Remote",
     icon: MessageSquare,
-    department: "marketing",
-    description: "Rejoignez notre équipe pour gérer la présence en ligne de nos clients et créer du contenu engageant sur les réseaux sociaux avec l'aide de nos outils d'IA.",
-    requirements: [
-      "Expérience en gestion de communautés sur les principaux réseaux sociaux",
-      "Excellentes capacités rédactionnelles",
-      "Connaissance des outils d'analyse de performance sociale",
-      "Intérêt pour les nouvelles technologies et l'IA"
-    ]
+    color: "pink-600",
+    description: "Gérez les communautés de nos clients avec nos outils d'IA",
+    requirements: "Réseaux sociaux, création contenu, outils IA",
+    salary: "35K - 45K€", 
+    type: "CDI / Stage"
   },
   {
-    title: "Consultant Digital",
-    type: "CDI / Freelance",
-    location: "Sur site",
+    title: "Data Scientist IA",
     icon: LineChart,
-    department: "consulting",
-    description: "En tant que Consultant Digital, vous accompagnerez nos clients dans leur transformation numérique et les aiderez à optimiser leur stratégie digitale.",
-    requirements: [
-      "5+ ans d'expérience en consulting digital",
-      "Expertise en transformation numérique et gestion de projet",
-      "Excellentes compétences en communication",
-      "Connaissance approfondie des tendances et technologies digitales"
-    ]
+    color: "green-600",
+    description: "Développez nos algorithmes d'IA pour le growth hacking",
+    requirements: "Python, ML, TensorFlow, Analytics",
+    salary: "50K - 70K€",
+    type: "CDI"
   },
   {
-    title: "Chef de Projet Web",
-    type: "CDI",
-    location: "Sur site",
+    title: "UX/UI Designer",
     icon: Users,
-    department: "project",
-    description: "Nous recherchons un Chef de Projet Web pour coordonner nos projets de développement de sites web et applications, de la conception au déploiement.",
-    requirements: [
-      "3+ ans d'expérience en gestion de projets web",
-      "Bonne compréhension des aspects techniques du développement web",
-      "Excellentes compétences en communication et gestion d'équipe",
-      "Maîtrise des méthodologies agiles"
-    ]
+    color: "indigo-600",
+    description: "Concevez des interfaces utilisateur pour nos outils IA",
+    requirements: "Figma, Design System, UX Research",
+    salary: "40K - 55K€",
+    type: "CDI / Freelance"
+  },
+  {
+    title: "Chef de Projet Tech",
+    icon: Users,
+    color: "orange-600",
+    description: "Coordonnez le développement de nos solutions IA",
+    requirements: "Gestion projet, méthodologies agiles",
+    salary: "45K - 60K€",
+    type: "CDI"
   }
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Carrières chez Techtrust",
-  "description": "Rejoignez notre équipe d'experts ou devenez apporteur d'affaires. Découvrez les opportunités de collaboration avec Techtrust.",
-  "mainEntityOfPage": {
-    "@type": "JobPosting",
-    "title": "Opportunités d'emploi chez Techtrust",
-    "description": "Rejoignez l'équipe Techtrust et participez à la transformation digitale de nos clients.",
-    "hiringOrganization": {
-      "@type": "Organization",
-      "name": "Techtrust"
-    },
-    "jobLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "FR"
-      }
-    }
-  }
-};
-
 const Careers = () => {
+  const [selectedJob, setSelectedJob] = useState<typeof jobCategories[0] | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    motivation: '',
+    experience: ''
+  });
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Techtrust Recrute 2025 - Rejoignez l'Élite Tech IA",
+    "description": "🚀 Techtrust recrute les meilleurs talents tech 2025 ! Développeurs, Growth Hackers IA, Data Scientists. Rejoignez l'équipe qui révolutionne le digital avec l'IA.",
+    "url": "https://www.tech-trust.fr/careers"
+  };
+
+  const handleJobSelect = (job: typeof jobCategories[0]) => {
+    setSelectedJob(job);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Candidature:', { ...formData, job: selectedJob?.title });
+    // Logique de soumission
+  };
+
   return (
     <>
       <SEO
-        title="Carrières | Rejoindre Techtrust, Emplois Tech & Digital - Techtrust"
-        description="🔍 Rejoignez l'élite du digital ! Offres d'emploi dev, growth hacking, design, consulting. Devenez apporteur d'affaires et bénéficiez de commissions attractives."
-        keywords="carrières techtrust, emploi tech, recrutement digital, jobs développeur, apporteur affaires, commissions, freelance digital"
-        canonicalUrl="https://www.tech-trust.fr/careers"
+        title="Techtrust Recrute 2025 | Emplois Tech IA, Growth Hacking - Techtrust"
+        description="🔍 Rejoignez l'élite tech 2025 ! Techtrust recrute développeurs IA, growth hackers, data scientists. Salaires attractifs, projets innovants. Postulez maintenant !"
+        keywords="techtrust recrute 2025, emploi tech ia, recrutement growth hacking, jobs développeur ia, carrières data scientist, apporteur affaires"
+        canonicalUrl="https://www.tech-trust.fr/careers" 
         structuredData={structuredData}
       />
 
@@ -129,237 +121,235 @@ const Careers = () => {
         
         <main>
           {/* Hero Section */}
-          <section className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-purple-50 to-gray-50 overflow-hidden">
-            <div className="absolute inset-0">
-              <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-custom-blue/10 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-custom-purple/10 rounded-full blur-3xl"></div>
-            </div>
-
+          <section className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-50 to-gray-50 overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-                  Rejoignez <span className="text-custom-blue">L'Aventure</span> Techtrust
+                  <span className="text-blue-600">Techtrust</span> Recrute 2025
                 </h1>
-                <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-                  Faites partie de l'équipe qui révolutionne le digital. Plusieurs façons de collaborer avec nous, 
-                  choisissez celle qui vous correspond le mieux.
+                <p className="text-xl text-gray-600 mb-10">
+                  Rejoignez l'équipe qui révolutionne le digital avec l'IA ! 
+                  Nous recherchons les meilleurs talents tech pour développer les outils du futur.
                 </p>
-
-                <Tabs defaultValue="jobs" className="max-w-3xl mx-auto">
-                  <TabsList className="grid w-full grid-cols-2 mb-8">
-                    <TabsTrigger value="jobs" className="text-lg py-3">Offres d'Emploi</TabsTrigger>
-                    <TabsTrigger value="business" className="text-lg py-3">Devenir Apporteur d'Affaires</TabsTrigger>
-                  </TabsList>
                 
-                  <TabsContent value="jobs">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <a href="#job-listings" className="flex flex-col items-center justify-center p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                        <Briefcase className="w-12 h-12 text-custom-blue mb-4" />
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Rejoindre notre équipe</h3>
-                        <p className="text-gray-600 text-center">Consultez nos offres d'emploi et intégrez une équipe passionnée et innovante</p>
-                      </a>
-
-                      <a href="mailto:careers@tech-trust.fr" className="flex flex-col items-center justify-center p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                        <Code className="w-12 h-12 text-custom-purple mb-4" />
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Candidature spontanée</h3>
-                        <p className="text-gray-600 text-center">Vous ne trouvez pas le poste idéal ? Envoyez-nous votre CV, nous sommes toujours à la recherche de talents</p>
-                      </a>
-                    </div>
-                  </TabsContent>
-                
-                  <TabsContent value="business">
-                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-8">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Programme d'Apporteur d'Affaires</h3>
-                      <p className="text-gray-600 mb-6 text-center">
-                        Profitez de rémunérations attractives en apportant des projets à Techtrust. 
-                        Plus vous nous référez de clients, plus votre commission augmente !
-                      </p>
-
-                      <div className="overflow-x-auto mb-6">
-                        <table className="w-full border-collapse">
-                          <thead>
-                            <tr className="bg-custom-blue/10">
-                              <th className="border border-gray-200 px-4 py-3 text-left">Nombre de projets</th>
-                              <th className="border border-gray-200 px-4 py-3 text-left">Commission</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td className="border border-gray-200 px-4 py-3">1 projet</td>
-                              <td className="border border-gray-200 px-4 py-3 font-medium">5% Commission</td>
-                            </tr>
-                            <tr className="bg-gray-50">
-                              <td className="border border-gray-200 px-4 py-3">2 projets</td>
-                              <td className="border border-gray-200 px-4 py-3 font-medium">7.5% Commission</td>
-                            </tr>
-                            <tr>
-                              <td className="border border-gray-200 px-4 py-3">3 projets</td>
-                              <td className="border border-gray-200 px-4 py-3 font-medium">10% Commission</td>
-                            </tr>
-                            <tr className="bg-gray-50">
-                              <td className="border border-gray-200 px-4 py-3">4 projets</td>
-                              <td className="border border-gray-200 px-4 py-3 font-medium">12.5% Commission</td>
-                            </tr>
-                            <tr>
-                              <td className="border border-gray-200 px-4 py-3">5 projets et plus</td>
-                              <td className="border border-gray-200 px-4 py-3 font-medium">15% Commission</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-
-                      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                        <h4 className="font-semibold text-gray-900 mb-2">Conditions</h4>
-                        <p className="text-gray-600 text-sm">
-                          Remplissez et signez le modèle de contrat disponible ci-dessous pour devenir apporteur d'affaires. 
-                          La validation de l'apport est conditionnée par la signature d'un devis comportant une clause mentionnant 
-                          votre rôle dans la mise en relation.
-                        </p>
-                      </div>
-
-                      <div className="flex justify-center">
-                        <Button className="bg-custom-blue hover:bg-custom-blue/90 flex items-center gap-2">
-                          <Download className="w-4 h-4" />
-                          Télécharger le contrat
-                        </Button>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-blue-100">
+                    <h3 className="font-bold text-gray-900 mb-2">💼 Rejoindre notre équipe</h3>
+                    <p className="text-gray-600 text-sm">CDI, freelance, stages - Tous les profils tech sont les bienvenus</p>
+                  </div>
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-purple-100">
+                    <h3 className="font-bold text-gray-900 mb-2">🤝 Devenir apporteur d'affaires</h3>
+                    <p className="text-gray-600 text-sm">Commissions jusqu'à 15% - Programme très attractif</p>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
           
-          {/* Current Openings Section */}
-          <section id="job-listings" className="py-20 bg-white">
+          {/* Jobs Section */}
+          <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="max-w-6xl mx-auto">
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-4 text-center">
-                  Nos <span className="text-custom-blue">Offres</span> d'Emploi
+                  Nos <span className="text-blue-600">Métiers</span> Tech
                 </h2>
                 <p className="text-xl text-gray-600 mb-12 text-center max-w-3xl mx-auto">
-                  Explorez nos opportunités et trouvez le poste qui correspond à vos compétences et aspirations
+                  Cliquez sur le métier qui vous intéresse pour découvrir le poste et postuler directement
                 </p>
 
-                <div className="grid md:grid-cols-2 gap-8">
-                  {jobOpenings.map((job, index) => (
-                    <div key={index} className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all">
-                      <div className="p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="bg-custom-blue/10 rounded-xl p-3">
-                            <job.icon className="w-6 h-6 text-custom-blue" />
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {jobCategories.map((job, index) => (
+                    <Dialog key={index}>
+                      <DialogTrigger asChild>
+                        <div 
+                          className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all cursor-pointer group"
+                          onClick={() => handleJobSelect(job)}
+                        >
+                          <div className={`w-12 h-12 bg-${job.color}/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                            <job.icon className={`w-6 h-6 text-${job.color}`} />
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">{job.title}</h3>
-                            <div className="flex flex-wrap gap-3 mb-4">
-                              <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
-                                {job.type}
-                              </span>
-                              <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
-                                {job.location}
-                              </span>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">{job.title}</h3>
+                          <p className="text-gray-600 mb-4 text-sm">{job.description}</p>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Salaire:</span>
+                              <span className="font-medium">{job.salary}</span>
                             </div>
-                            <p className="text-gray-600 mb-4">{job.description}</p>
-                            
-                            <h4 className="font-medium text-gray-900 mb-2">Compétences requises:</h4>
-                            <ul className="space-y-1 mb-6">
-                              {job.requirements.map((req, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <CheckCircle className="w-4 h-4 text-custom-green mt-1 flex-shrink-0" />
-                                  <span className="text-sm text-gray-600">{req}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            
-                            <Button asChild className="bg-custom-blue hover:bg-custom-blue/90 w-full">
-                              <a href="/contact?job=application">
-                                Postuler <ArrowRight className="ml-2 w-4 h-4" />
-                              </a>
-                            </Button>
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Type:</span>
+                              <span className="font-medium">{job.type}</span>
+                            </div>
                           </div>
+                          <Button className={`w-full mt-4 bg-${job.color} hover:bg-${job.color}/90`}>
+                            Postuler <ArrowRight className="ml-2 w-4 h-4" />
+                          </Button>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      </DialogTrigger>
+                      
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-3">
+                            <job.icon className={`w-6 h-6 text-${job.color}`} />
+                            {job.title}
+                          </DialogTitle>
+                        </DialogHeader>
+                        
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Description du poste</h4>
+                            <p className="text-gray-600">{job.description}</p>
+                            <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <span className="text-gray-500">Salaire:</span>
+                                <span className="ml-2 font-medium">{job.salary}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-500">Type:</span>
+                                <span className="ml-2 font-medium">{job.type}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Compétences requises</h4>
+                            <p className="text-gray-600">{job.requirements}</p>
+                          </div>
 
-                <div className="mt-12 text-center">
-                  <p className="text-lg text-gray-600 mb-6">
-                    Vous ne trouvez pas le poste qui vous correspond ? 
-                    Envoyez-nous votre candidature spontanée !
-                  </p>
-                  <Button asChild size="lg" variant="outline">
-                    <a href="/contact?job=spontaneous">Candidature spontanée</a>
-                  </Button>
+                          <form onSubmit={handleSubmit} className="space-y-4">
+                            <h4 className="font-semibold text-gray-900">Postuler maintenant</h4>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor="name">Nom complet *</Label>
+                                <Input
+                                  id="name"
+                                  value={formData.name}
+                                  onChange={(e) => setFormData(prev => ({...prev, name: e.target.value}))}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="email">Email *</Label>
+                                <Input
+                                  id="email"
+                                  type="email"
+                                  value={formData.email}
+                                  onChange={(e) => setFormData(prev => ({...prev, email: e.target.value}))}
+                                  required
+                                />
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="phone">Téléphone</Label>
+                              <Input
+                                id="phone"
+                                value={formData.phone}
+                                onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="experience">Expérience pertinente *</Label>
+                              <Textarea
+                                id="experience"
+                                placeholder="Décrivez votre expérience en lien avec ce poste..."
+                                value={formData.experience}
+                                onChange={(e) => setFormData(prev => ({...prev, experience: e.target.value}))}
+                                required
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="motivation">Motivation *</Label>
+                              <Textarea
+                                id="motivation"
+                                placeholder="Pourquoi souhaitez-vous rejoindre Techtrust ?"
+                                value={formData.motivation}
+                                onChange={(e) => setFormData(prev => ({...prev, motivation: e.target.value}))}
+                                required
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label>CV (PDF) *</Label>
+                              <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                <p className="text-sm text-gray-600">Cliquez pour télécharger votre CV</p>
+                              </div>
+                            </div>
+                            
+                            <Button type="submit" className={`w-full bg-${job.color} hover:bg-${job.color}/90`}>
+                              Envoyer ma candidature
+                            </Button>
+                          </form>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  ))}
                 </div>
               </div>
             </div>
           </section>
 
-          {/* Why Join Us Section */}
-          <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100">
+          {/* Business Partner Section */}
+          <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6 text-center">
-                  Pourquoi <span className="text-custom-blue">Nous Rejoindre</span> ?
+              <div className="max-w-4xl mx-auto">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+                  💰 Programme <span className="text-purple-600">Apporteur d'Affaires</span>
                 </h2>
-                <p className="text-xl text-gray-600 mb-12 text-center max-w-3xl mx-auto">
-                  Techtrust est bien plus qu'une agence digitale, c'est un environnement où chacun peut s'épanouir et développer son plein potentiel
+                <p className="text-xl text-gray-600 mb-8 text-center">
+                  Profitez de rémunérations attractives en apportant des projets à Techtrust. 
+                  Plus vous nous référez de clients, plus votre commission augmente !
                 </p>
 
-                <div className="grid md:grid-cols-3 gap-8">
-                  {[
-                    {
-                      title: "Innovation",
-                      description: "Travaillez avec les technologies les plus récentes et participez à la création de solutions innovantes."
-                    },
-                    {
-                      title: "Flexibilité",
-                      description: "Nous favorisons l'équilibre vie professionnelle/vie personnelle avec des horaires flexibles et le télétravail."
-                    },
-                    {
-                      title: "Croissance",
-                      description: "Développez vos compétences grâce à des formations continues et des projets variés et stimulants."
-                    },
-                    {
-                      title: "Impact",
-                      description: "Participez à des projets qui ont un impact réel sur le succès de nos clients et la transformation digitale."
-                    },
-                    {
-                      title: "Collaboration",
-                      description: "Rejoignez une équipe passionnée et collaborative où chaque idée est valorisée."
-                    },
-                    {
-                      title: "Perspective",
-                      description: "Bénéficiez d'opportunités d'évolution de carrière dans une entreprise en pleine croissance."
-                    }
-                  ].map((benefit, index) => (
-                    <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                      <p className="text-gray-600">{benefit.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
+                <div className="bg-white rounded-2xl shadow-lg p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Rémunération par projet</h3>
+                  
+                  <div className="overflow-x-auto mb-6">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-blue-50">
+                          <th className="border border-gray-200 px-4 py-3 text-left font-semibold">Nombre de projets</th>
+                          <th className="border border-gray-200 px-4 py-3 text-left font-semibold">Commission</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          {projects: "1 projet", commission: "5% Commission"},
+                          {projects: "2 projets", commission: "7.5% Commission"},
+                          {projects: "3 projets", commission: "10% Commission"},
+                          {projects: "4 projets", commission: "12.5% Commission"},
+                          {projects: "5 projets et plus", commission: "15% Commission"}
+                        ].map((row, index) => (
+                          <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                            <td className="border border-gray-200 px-4 py-3">{row.projects}</td>
+                            <td className="border border-gray-200 px-4 py-3 font-medium text-purple-600">{row.commission}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-          {/* CTA Section */}
-          <section className="py-16 bg-custom-blue">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto text-center text-white">
-                <h2 className="text-3xl font-bold mb-6">Prêt à nous rejoindre ?</h2>
-                <p className="text-xl mb-8 text-blue-100">
-                  Que vous soyez à la recherche d'un nouveau défi professionnel ou que vous souhaitiez devenir apporteur d'affaires,
-                  nous serions ravis d'échanger avec vous !
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" className="bg-white text-custom-blue hover:bg-gray-100">
-                    <a href="/contact">Nous contacter</a>
-                  </Button>
-                  <Button size="lg" variant="outline" className="text-white border-white hover:bg-custom-blue/80">
-                    <a href="#job-listings">Voir les offres</a>
-                  </Button>
+                  <div className="bg-blue-50 p-6 rounded-lg mb-6">
+                    <h4 className="font-semibold text-gray-900 mb-3">📋 Conditions</h4>
+                    <ul className="space-y-2 text-gray-600 text-sm">
+                      <li>• Remplissez et signez le modèle de contrat disponible ci-dessous</li>
+                      <li>• Contactez-nous en cas de questions</li>
+                      <li>• La validation de l'apport est conditionnée par la signature d'un devis comportant une clause mentionnant votre rôle dans la mise en relation</li>
+                    </ul>
+                  </div>
+
+                  <div className="flex justify-center gap-4">
+                    <Button className="bg-purple-600 hover:bg-purple-600/90 flex items-center gap-2">
+                      <Download className="w-4 h-4" />
+                      Télécharger le contrat
+                    </Button>
+                    <Button variant="outline" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white">
+                      <a href="/contact">Nous contacter</a>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
