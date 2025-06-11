@@ -1,399 +1,649 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
-import { Check, Star, Zap, Users, Crown, X, Plus, ShoppingCart, Mail, Globe, Code, Lightbulb } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Check, Star, Zap, Users, Crown, X, Globe, Code, Lightbulb, Shield, Rocket, Diamond, Award } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
-interface ServicePackage {
+interface Package {
   id: string;
   name: string;
   price: string;
+  originalPrice?: string;
   setupFee?: string;
+  badge?: string;
+  badgeColor?: string;
   description: string;
   features: string[];
   notIncluded?: string[];
   popular?: boolean;
-  quantities?: { [key: string]: string | number };
+  tier: 'bronze' | 'silver' | 'gold' | 'diamond';
+  icon: React.ElementType;
 }
 
-interface SelectedPackage extends ServicePackage {
-  serviceTitle: string;
-  serviceCategory: string;
-  serviceColor: string;
+interface Service {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  packages: Package[];
 }
 
 const Pricing = () => {
+  const { t } = useTranslation();
   const [activeService, setActiveService] = useState<string>('website');
-  const [selectedPackages, setSelectedPackages] = useState<SelectedPackage[]>([]);
-  const [isCartVisible, setIsCartVisible] = useState(false);
+  const [selectedPackages, setSelectedPackages] = useState<{[serviceId: string]: string}>({});
   const [showContactForm, setShowContactForm] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    additionalInfo: '',
-    acceptsData: false
+    company: '',
+    message: '',
+    acceptsTerms: false,
+    acceptsMarketing: false
   });
 
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Tarifs Techtrust 2025",
-    "description": "Découvrez nos tarifs transparents 2025 pour nos outils IA de growth hacking automatisés et services digitaux professionnels",
-    "url": "https://www.tech-trust.fr/pricing"
+    "@type": "Service",
+    "name": "Solutions Digitales Techtrust 2025",
+    "description": "Agence web, growth hacking IA, community management et consulting digital. Solutions professionnelles pour PME et entreprises.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Techtrust",
+      "url": "https://www.tech-trust.fr"
+    },
+    "areaServed": "France",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Services Digitaux",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Création Site Web",
+            "description": "Sites web professionnels et e-commerce optimisés SEO"
+          }
+        }
+      ]
+    }
   };
 
-  const services = [
+  const services: Service[] = [
     {
       id: 'website',
       title: 'Création Site Web',
+      subtitle: 'Sites professionnels & E-commerce',
+      description: 'Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils.',
       icon: Globe,
-      color: '45C7FF',
+      color: '3B82F6',
       packages: [
         {
           id: 'website-starter',
           name: 'Starter',
-          price: '15€/month',
-          setupFee: '600€ setup',
-          description: 'Les fonctionnalités essentielles pour démarrer votre business',
-          features: ['Site web personnalisé', 'Nom de domaine personnalisé', 'Design responsive', 'Site web multilingue', 'Certificat SSL', 'Code QR'],
-          notIncluded: ['Rapports', 'Retouche site web', 'Optimisation SEO'],
-          quantities: {
-            'Nombre de pages': 2,
-            'Langues disponibles': 1,
-            'Retouche site web': 1,
-          }
+          price: '15€/mois',
+          setupFee: '599€ configuration',
+          badge: 'Économique',
+          badgeColor: 'bg-green-100 text-green-800',
+          description: 'Parfait pour les entrepreneurs et petites entreprises qui débutent',
+          tier: 'bronze',
+          icon: Shield,
+          features: [
+            'Site web responsive moderne',
+            'Nom de domaine .fr/.com inclus 1 an',
+            'Hébergement sécurisé France',
+            'Certificat SSL gratuit',
+            'Interface d\'administration simple',
+            'Sauvegarde automatique quotidienne',
+            'Support email prioritaire',
+            'Formation vidéo incluse',
+            'Optimisation mobile parfaite'
+          ],
+          notIncluded: [
+            'E-commerce avancé',
+            'Multilingue',
+            'SEO premium',
+            'Intégrations API',
+            'Analytics avancés'
+          ]
         },
         {
-          id: 'website-advanced',
-          name: 'Advanced',
-          price: '25€/month',
-          setupFee: '800€ setup',
-          description: 'Le plan le plus choisi par nos clients Techtrust',
-          features: ['Site web personnalisé', 'Nom de domaine personnalisé', 'Design responsive', 'Site web multilingue', 'Certificat SSL', 'Code QR', 'Rapports', 'Retouche site web'],
-          notIncluded: ['Optimisation SEO avancée'],
+          id: 'website-business',
+          name: 'Business',
+          price: '29€/mois',
+          originalPrice: '49€/mois',
+          setupFee: '899€ configuration',
+          badge: 'Le plus populaire',
+          badgeColor: 'bg-blue-100 text-blue-800',
+          description: 'Solution complète pour entreprises en croissance avec e-commerce',
+          tier: 'silver',
+          icon: Rocket,
           popular: true,
-          quantities: {
-            'Nombre de pages': 4,
-            'Langues disponibles': 2,
-            'Retouche site web': 2,
-          }
+          features: [
+            'Tout du plan Starter +',
+            'Boutique e-commerce complète',
+            'Paiement sécurisé Stripe/PayPal',
+            'Gestion stock automatisée',
+            'Site multilingue (3 langues)',
+            'SEO avancé + Google My Business',
+            'Blog professionnel intégré',
+            'Analytics détaillés',
+            'Formulaires de contact avancés',
+            'Chat support prioritaire',
+            '3 comptes utilisateurs',
+            'Formation personnalisée 2h'
+          ],
+          notIncluded: [
+            'Marketplace multi-vendeurs',
+            'API custom',
+            'White label'
+          ]
         },
         {
           id: 'website-premium',
           name: 'Premium',
-          price: '30€/month',
-          setupFee: '1000€ setup',
-          description: 'Le plan ultime pour développer votre business en ligne',
-          features: ['Site web personnalisé', 'Nom de domaine personnalisé', 'Design responsive', 'Site web multilingue', 'Certificat SSL', 'Code QR', 'Rapports', 'Retouche site web', 'Optimisation SEO'],
-          quantities: {
-            'Nombre de pages': 6,
-            'Langues disponibles': 2,
-            'Retouche site web': 3,
-          }
+          price: '59€/mois',
+          originalPrice: '99€/mois',
+          setupFee: '1499€ configuration',
+          badge: 'Solution complète',
+          badgeColor: 'bg-purple-100 text-purple-800',
+          description: 'Plateforme web enterprise avec fonctionnalités avancées',
+          tier: 'gold',
+          icon: Crown,
+          features: [
+            'Tout du plan Business +',
+            'Marketplace multi-vendeurs',
+            'Application mobile PWA',
+            'Intégrations ERP/CRM',
+            'API personnalisée',
+            'White label disponible',
+            'CDN mondial Cloudflare',
+            'Support 24/7 dédié',
+            'Utilisateurs illimités',
+            'Formation équipe complète',
+            'Consultant dédié',
+            'Garantie 99.9% uptime'
+          ]
+        },
+        {
+          id: 'website-enterprise',
+          name: 'Enterprise',
+          price: 'Sur devis',
+          badge: 'Sur mesure',
+          badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
+          description: 'Solutions enterprise sur mesure avec accompagnement VIP',
+          tier: 'diamond',
+          icon: Diamond,
+          features: [
+            'Architecture sur mesure',
+            'Développement spécifique',
+            'Sécurité renforcée',
+            'Compliance RGPD/ISO',
+            'Équipe dédiée',
+            'SLA personnalisé',
+            'Formation avancée',
+            'Maintenance préventive'
+          ]
         }
       ]
     },
     {
       id: 'growth-hacking',
       title: 'Growth Hacking IA',
+      subtitle: '🤖 Automatisation complète + Community IA',
+      description: 'Nos outils IA automatisent votre prospection, acquisition clients ET community management.',
       icon: Zap,
       color: '8B5CF6',
       packages: [
         {
-          id: 'growth-easy',
-          name: 'Easy',
-          price: '35€/month',
-          description: 'Couvre vos besoins publicitaires de base',
-          features: ['Profil Google Business', 'Boîte mail professionnelle', 'Rapports', 'Google Ads', 'Publication Google', 'Gestion des contacts'],
-          notIncluded: ['Outil campagne email', 'Outil campagne SMS', 'Outil génération de leads'],
-          quantities: {
-            'Publications réseaux sociaux': 1,
-            'Google Ads': 1,
-            'Publication Google': '—',
-          }
+          id: 'growth-starter',
+          name: 'Starter IA',
+          price: '39€/mois',
+          badge: 'Automatisation basic',
+          badgeColor: 'bg-green-100 text-green-800',
+          description: 'Automation marketing essentielle pour débuter',
+          tier: 'bronze',
+          icon: Shield,
+          features: [
+            'Prospection automatisée (500 leads/mois)',
+            'Email marketing IA (2000 emails/mois)',
+            'Chatbot site web intelligent',
+            'Gestion 2 réseaux sociaux',
+            'Analytics de base',
+            'Templates prêts à l\'emploi',
+            'Formation vidéo complète',
+            'Support email'
+          ],
+          notIncluded: [
+            'LinkedIn automation',
+            'SMS marketing',
+            'Intégrations CRM',
+            'A/B testing avancé'
+          ]
         },
         {
-          id: 'growth-medium',
-          name: 'Medium',
-          price: '45€/month',
-          description: 'Gérez les contacts et envoyez des campagnes marketing',
-          features: ['Profil Google Business', 'Boîte mail professionnelle', 'Rapports', 'Google Ads', 'Publication Google', 'Gestion des contacts', 'Outil campagne email', 'Outil campagne SMS'],
-          notIncluded: ['Outil génération de leads avancé'],
+          id: 'growth-pro',
+          name: 'Pro IA',
+          price: '89€/mois',
+          originalPrice: '149€/mois',
+          badge: 'Recommandé',
+          badgeColor: 'bg-blue-100 text-blue-800',
+          description: 'Suite complète d\'automatisation pour entreprises ambitieuses',
+          tier: 'silver',
+          icon: Rocket,
           popular: true,
-          quantities: {
-            'Publications réseaux sociaux': 2,
-            'Google Ads': 2,
-            'Publication Google': 1,
-          }
+          features: [
+            'Tout du plan Starter +',
+            'Prospection illimitée',
+            'LinkedIn automation premium',
+            'SMS marketing (5000 SMS/mois)',
+            'Gestion 5 réseaux sociaux',
+            'Community management IA',
+            'Sequences email avancées',
+            'Intégrations CRM (HubSpot, Salesforce)',
+            'A/B testing automatisé',
+            'Rapports détaillés',
+            'Support prioritaire'
+          ],
+          notIncluded: [
+            'White label',
+            'API accès',
+            'Multi-comptes'
+          ]
         },
         {
-          id: 'growth-high',
-          name: 'High',
-          price: '50€/month',
-          description: 'Faites de la publicité partout et recherchez des leads',
-          features: ['Profil Google Business', 'Boîte mail professionnelle', 'Rapports', 'Google Ads', 'Publication Google', 'Gestion des contacts', 'Outil campagne email', 'Outil campagne SMS', 'Outil génération de leads'],
-          quantities: {
-            'Publications réseaux sociaux': 3,
-            'Google Ads': 3,
-            'Publication Google': 1,
-          }
+          id: 'growth-enterprise',
+          name: 'Enterprise IA',
+          price: '199€/mois',
+          originalPrice: '299€/mois',
+          badge: 'Solution complète',
+          badgeColor: 'bg-purple-100 text-purple-800',
+          description: 'Plateforme enterprise avec IA avancée et équipe dédiée',
+          tier: 'gold',
+          icon: Crown,
+          features: [
+            'Tout du plan Pro +',
+            'Comptes multiples illimités',
+            'IA personnalisée secteur',
+            'API complète',
+            'White label disponible',
+            'Manager de compte dédié',
+            'Formation équipe sur site',
+            'Intégrations custom',
+            'Support 24/7',
+            'Garantie ROI',
+            'Consulting stratégique mensuel'
+          ]
         }
       ]
     },
     {
-      id: 'community-management',
+      id: 'community',
       title: 'Community Management Pro',
+      subtitle: 'Équipe dédiée experte',
+      description: 'Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.',
       icon: Users,
       color: 'EC4899',
       packages: [
         {
-          id: 'community-starter',
-          name: 'Starter',
-          price: '890€/month',
-          description: 'Gestion professionnelle de base',
-          features: ['Community manager dédié', 'Stratégie de contenu', 'Création graphique', 'Gestion 3 réseaux', 'Réponse commentaires', 'Reporting mensuel'],
-          notIncluded: ['Vidéos professionnelles', 'Campagnes publicitaires', 'Marketing d\'influence'],
-          quantities: {
-            'Réseaux sociaux gérés': 3,
-            'Publications par semaine': 10,
-            'Stories par semaine': 7,
-            'Réels/vidéos par mois': 2,
-          }
+          id: 'community-essential',
+          name: 'Essential',
+          price: '690€/mois',
+          badge: 'Gestion de base',
+          badgeColor: 'bg-green-100 text-green-800',
+          description: 'Community management professionnel pour petites entreprises',
+          tier: 'bronze',
+          icon: Shield,
+          features: [
+            'Community manager junior dédié',
+            'Gestion 3 réseaux sociaux',
+            '12 publications/mois',
+            '8 stories/mois',
+            'Réponse commentaires H+4',
+            'Rapport mensuel détaillé',
+            'Calendrier éditorial',
+            'Veille concurrentielle basic'
+          ],
+          notIncluded: [
+            'Vidéos professionnelles',
+            'Publicités payantes',
+            'Événements live',
+            'Influenceurs'
+          ]
         },
         {
-          id: 'community-business',
-          name: 'Business',
-          price: '1690€/month',
-          description: 'Solution complète avec stratégie avancée',
-          features: ['Équipe dédiée', 'Stratégie personnalisée', 'Création contenu premium', 'Gestion tous réseaux', 'Vidéos professionnelles', 'Campagnes publicitaires', 'Reporting hebdomadaire'],
-          notIncluded: ['Marketing d\'influence premium'],
+          id: 'community-growth',
+          name: 'Growth',
+          price: '1290€/mois',
+          originalPrice: '1690€/mois',
+          badge: 'Le plus demandé',
+          badgeColor: 'bg-blue-100 text-blue-800',
+          description: 'Stratégie complète avec création de contenu premium',
+          tier: 'silver',
+          icon: Rocket,
           popular: true,
-          quantities: {
-            'Réseaux sociaux gérés': 'Tous',
-            'Publications par semaine': 20,
-            'Stories par semaine': 15,
-            'Réels/vidéos par mois': 8,
-          }
+          features: [
+            'Community manager senior dédié',
+            'Gestion tous réseaux sociaux',
+            '25 publications/mois',
+            '20 stories/mois',
+            '4 réels/vidéos pro/mois',
+            'Campagnes publicitaires (500€ budget inclus)',
+            'Réponse temps réel H+1',
+            'Rapport hebdomadaire',
+            'Événements live mensuels',
+            'Partenariats micro-influenceurs',
+            'Photoshoot produits inclus'
+          ],
+          notIncluded: [
+            'Macro-influenceurs',
+            'Production vidéo studio',
+            'Événements physiques'
+          ]
         },
         {
           id: 'community-premium',
           name: 'Premium',
+          price: '2490€/mois',
+          badge: 'Solution VIP',
+          badgeColor: 'bg-purple-100 text-purple-800',
+          description: 'Service VIP avec équipe complète et influence marketing',
+          tier: 'gold',
+          icon: Crown,
+          features: [
+            'Équipe complète dédiée (3 personnes)',
+            'Stratégie influence premium',
+            'Contenu illimité',
+            'Production vidéo studio',
+            'Campagnes publicitaires (2000€ budget)',
+            'Partenariats macro-influenceurs',
+            'Événements physiques',
+            'Reporting temps réel',
+            'Manager de compte dédié',
+            'Consulting stratégique'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'solutions',
+      title: 'Solutions Sur Mesure',
+      subtitle: 'Développement personnalisé',
+      description: 'Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus.',
+      icon: Code,
+      color: '10B981',
+      packages: [
+        {
+          id: 'solutions-app',
+          name: 'Application Basic',
+          price: '12900€',
+          badge: 'Projet simple',
+          badgeColor: 'bg-green-100 text-green-800',
+          description: 'Application métier simple pour digitaliser vos processus',
+          tier: 'bronze',
+          icon: Shield,
+          features: [
+            'Application web responsive',
+            'Interface utilisateur moderne',
+            'Base de données sécurisée',
+            'Authentification multi-niveaux',
+            'Dashboard analytics',
+            'Exports PDF/Excel',
+            'Formation équipe 1 jour',
+            'Maintenance 6 mois incluse',
+            'Documentation complète'
+          ],
+          notIncluded: [
+            'Application mobile native',
+            'API externe',
+            'Intégrations ERP',
+            'Intelligence artificielle'
+          ]
+        },
+        {
+          id: 'solutions-erp',
+          name: 'ERP/CRM Custom',
+          price: '29900€',
+          originalPrice: '39900€',
+          badge: 'Solution métier',
+          badgeColor: 'bg-blue-100 text-blue-800',
+          description: 'Système de gestion complet adapté à votre métier',
+          tier: 'silver',
+          icon: Rocket,
+          popular: true,
+          features: [
+            'Tout du plan Application +',
+            'Modules métier personnalisés',
+            'CRM intégré complet',
+            'Gestion stocks/commandes',
+            'Facturation automatisée',
+            'Application mobile native',
+            'Intégrations comptables',
+            'Workflow automatisés',
+            'Formation équipe 3 jours',
+            'Maintenance 1 an incluse',
+            'Support prioritaire'
+          ],
+          notIncluded: [
+            'IA/Machine Learning',
+            'Intégrations marketplace',
+            'Support 24/7'
+          ]
+        },
+        {
+          id: 'solutions-enterprise',
+          name: 'Plateforme Enterprise',
           price: 'Sur devis',
-          description: 'Solution haut de gamme avec influence',
-          features: ['Équipe senior dédiée', 'Stratégie d\'influence', 'Contenu premium + vidéos', 'Gestion complète', 'Événements digitaux', 'Partenariats influenceurs', 'Reporting temps réel'],
-          quantities: {
-            'Réseaux sociaux gérés': 'Tous',
-            'Publications par semaine': 'Illimité',
-            'Stories par semaine': 'Illimité',
-            'Réels/vidéos par mois': 'Illimité',
-          }
+          badge: 'Architecture complexe',
+          badgeColor: 'bg-purple-100 text-purple-800',
+          description: 'Plateforme enterprise avec architecture scalable et IA',
+          tier: 'gold',
+          icon: Crown,
+          features: [
+            'Architecture microservices',
+            'Intelligence artificielle intégrée',
+            'Scalabilité illimitée',
+            'Sécurité enterprise',
+            'API complète',
+            'Intégrations illimitées',
+            'Équipe dédiée',
+            'Support 24/7',
+            'Formation avancée',
+            'Consulting continu',
+            'SLA personnalisé'
+          ]
         }
       ]
     },
     {
       id: 'consulting',
       title: 'Consulting Digital',
+      subtitle: 'Transformation & Innovation',
+      description: 'Accompagnement stratégique pour votre transformation digitale 2025.',
       icon: Lightbulb,
       color: 'F59E0B',
       packages: [
         {
           id: 'consulting-audit',
           name: 'Audit Digital',
-          price: '2500€',
+          price: '2990€',
+          badge: 'Diagnostic',
+          badgeColor: 'bg-green-100 text-green-800',
           description: 'Diagnostic complet de votre écosystème digital',
-          features: ['Audit technique complet', 'Analyse concurrentielle', 'Recommandations stratégiques', 'Roadmap 12 mois', 'Présentation exécutive', 'Suivi 1 mois'],
-          notIncluded: ['Mise en œuvre', 'Formation équipe', 'Support continu'],
-          quantities: {
-            'Durée d\'intervention': '2 semaines',
-            'Livrables': 'Rapport + Roadmap',
-            'Suivi inclus': '1 mois',
-          }
+          tier: 'bronze',
+          icon: Shield,
+          features: [
+            'Audit technique approfondi',
+            'Analyse concurrentielle',
+            'Recommandations prioritaires',
+            'Roadmap 12 mois',
+            'Présentation direction',
+            'Document stratégique',
+            'Suivi 30 jours inclus',
+            'Session Q&A équipe'
+          ],
+          notIncluded: [
+            'Mise en œuvre',
+            'Formation équipe',
+            'Support continu',
+            'Développement'
+          ]
         },
         {
           id: 'consulting-transformation',
           name: 'Transformation Guidée',
-          price: '8500€/mois',
-          description: 'Accompagnement transformation digitale complète',
-          features: ['Consultant senior dédié', 'Stratégie personnalisée', 'Formation équipes', 'Mise en œuvre guidée', 'Outils digitaux', 'Reporting mensuel', 'Support prioritaire'],
-          notIncluded: ['Développement logiciel'],
+          price: '9900€/mois',
+          badge: 'Accompagnement',
+          badgeColor: 'bg-blue-100 text-blue-800',
+          description: 'Accompagnement transformation digitale avec consultant senior',
+          tier: 'silver',
+          icon: Rocket,
           popular: true,
-          quantities: {
-            'Durée engagement': '6-12 mois',
-            'Consultant dédié': '1 senior',
-            'Formations incluses': '5 sessions',
-          }
+          features: [
+            'Consultant senior dédié',
+            'Stratégie personnalisée',
+            'Formation équipes complète',
+            'Mise en œuvre guidée',
+            'Outils digitaux inclus',
+            'Reporting mensuel',
+            'Support prioritaire',
+            'Workshops mensuels',
+            'Change management',
+            'KPIs et métriques'
+          ],
+          notIncluded: [
+            'Développement logiciel',
+            'Équipe technique',
+            'Matériel informatique'
+          ]
         },
         {
-          id: 'consulting-premium',
-          name: 'Premium VIP',
+          id: 'consulting-vip',
+          name: 'VIP Enterprise',
           price: 'Sur devis',
-          description: 'Projets d\'envergure exceptionnelle',
-          features: ['Équipe d\'experts dédiée', 'Innovation technologique', 'Projets complexes', 'Support 24/7', 'Déploiement global', 'Success manager', 'Garantie résultats'],
-          quantities: {
-            'Durée engagement': 'Sur mesure',
-            'Équipe dédiée': 'Complète',
-            'Support': '24/7',
-          }
-        }
-      ]
-    },
-    {
-      id: 'solutions-custom',
-      title: 'Solutions Sur Mesure',
-      icon: Code,
-      color: '10B981',
-      packages: [
-        {
-          id: 'solutions-app',
-          name: 'Application Simple',
-          price: '8900€',
-          description: 'Application métier basique',
-          features: ['Application web responsive', 'Interface d\'administration', 'Base de données', 'Authentification utilisateurs', 'Formation équipe', 'Documentation complète'],
-          notIncluded: ['Application mobile', 'Intégrations API', 'Support avancé'],
-          quantities: {
-            'Modules inclus': '5 max',
-            'Utilisateurs': '50 max',
-            'Formation': '1 session',
-          }
-        },
-        {
-          id: 'solutions-crm',
-          name: 'CRM/ERP Custom',
-          price: '24900€',
-          description: 'Système de gestion complet',
-          features: ['CRM/ERP sur mesure', 'Modules illimités', 'Application mobile', 'Intégrations API', 'Rapports avancés', 'Formation complète', 'Maintenance 1 an'],
-          notIncluded: ['Hébergement cloud premium'],
-          popular: true,
-          quantities: {
-            'Modules inclus': 'Illimités',
-            'Utilisateurs': '500 max',
-            'Formation': '3 sessions',
-          }
-        },
-        {
-          id: 'solutions-enterprise',
-          name: 'Plateforme Enterprise',
-          price: 'Sur devis',
-          description: 'Plateforme complexe d\'entreprise',
-          features: ['Architecture sur mesure', 'Scalabilité illimitée', 'Sécurité renforcée', 'Équipe dédiée', 'Support premium', 'Évolutions incluses', 'SLA garanti'],
-          quantities: {
-            'Modules inclus': 'Illimités',
-            'Utilisateurs': 'Illimités',
-            'Support': 'Dédié 24/7',
-          }
+          badge: 'Projets d\'envergure',
+          badgeColor: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
+          description: 'Projets d\'envergure exceptionnelle avec équipe dédiée',
+          tier: 'diamond',
+          icon: Diamond,
+          features: [
+            'Équipe d\'experts dédiée',
+            'Innovation technologique',
+            'Projets complexes',
+            'Support 24/7',
+            'Déploiement international',
+            'Success manager',
+            'Garantie résultats',
+            'Partenariat long terme',
+            'R&D incluse'
+          ]
         }
       ]
     }
-  ];
-
-  const serviceButtons = [
-    { id: 'website', title: 'Website creation', icon: Globe },
-    { id: 'growth-hacking', title: 'Growth hacking', icon: Zap },
-    { id: 'community-management', title: 'Community Management', icon: Users },
-    { id: 'consulting', title: 'Consulting Digital', icon: Lightbulb },
-    { id: 'solutions-custom', title: 'Software development', icon: Code }
   ];
 
   const currentService = services.find(s => s.id === activeService);
 
-  const addToCart = (servicePackage: ServicePackage, serviceTitle: string, serviceCategory: string, serviceColor: string) => {
-    const newPackage: SelectedPackage = {
-      ...servicePackage,
-      serviceTitle,
-      serviceCategory,
-      serviceColor
-    };
-    setSelectedPackages([...selectedPackages, newPackage]);
-    setIsCartVisible(true);
+  const handlePackageSelect = (serviceId: string, packageId: string) => {
+    setSelectedPackages(prev => ({
+      ...prev,
+      [serviceId]: prev[serviceId] === packageId ? '' : packageId
+    }));
   };
 
-  const removeFromCart = (packageId: string) => {
-    setSelectedPackages(selectedPackages.filter(pkg => pkg.id !== packageId));
-  };
-
-  const getTotalEstimate = () => {
-    let total = 0;
-    selectedPackages.forEach(pkg => {
-      const price = pkg.price.replace(/[^0-9]/g, '');
-      if (price) {
-        total += parseInt(price);
-      }
-    });
-    return total;
-  };
-
-  const handleSubmitProject = () => {
-    if (selectedPackages.length === 0) {
-      alert('Veuillez sélectionner au moins un service');
-      return;
+  const getTierIcon = (tier: string) => {
+    switch (tier) {
+      case 'bronze': return Shield;
+      case 'silver': return Rocket;
+      case 'gold': return Crown;
+      case 'diamond': return Diamond;
+      default: return Shield;
     }
-    setShowContactForm(true);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const getTierColor = (tier: string) => {
+    switch (tier) {
+      case 'bronze': return 'text-amber-600';
+      case 'silver': return 'text-gray-500';
+      case 'gold': return 'text-yellow-500';
+      case 'diamond': return 'text-purple-600';
+      default: return 'text-gray-500';
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.acceptsData) {
-      alert('Veuillez accepter la collecte des données');
-      return;
-    }
-    
-    console.log('Projet soumis:', { formData, selectedPackages });
-    alert('✅ Votre projet a été envoyé avec succès ! Nous vous recontacterons sous 24h.');
-    
-    setSelectedPackages([]);
+    console.log('Demande soumise:', { formData, selectedPackages });
+    alert('✅ Votre demande a été envoyée ! Nous vous recontacterons sous 2h.');
     setShowContactForm(false);
-    setIsCartVisible(false);
-    setFormData({ name: '', email: '', phone: '', additionalInfo: '', acceptsData: false });
   };
 
   return (
     <>
       <SEO
-        title="Tarifs 2025 | Solutions IA & Digitales dès 35€/mois - Techtrust"
-        description="💰 Tarifs transparents 2025 ! Outils IA growth hacking dès 35€/mois, sites web dès 15€/mois. Community management pro, consulting digital. Devis gratuit !"
-        keywords="tarifs techtrust 2025, prix outils ia growth hacking, community management professionnel, consulting digital, solutions sur mesure, tarif accessible"
+        title="Tarifs Techtrust 2025 | Solutions Digitales dès 15€/mois - Devis Gratuit"
+        description="💰 Découvrez nos tarifs 2025 : Sites web dès 15€/mois, Growth Hacking IA dès 39€/mois, Community Management Pro dès 690€/mois. Solutions sur mesure disponibles. Devis gratuit sous 2h !"
+        keywords="tarifs techtrust 2025, prix site web professionnel, growth hacking automatisé, community management expert, développement sur mesure, consulting digital, agence web france"
         canonicalUrl="https://www.tech-trust.fr/pricing"
         structuredData={structuredData}
       />
 
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-gray-50">
         <NavbarPublic />
         
-        <main>
-          {/* Hero Section */}
-          <section className="py-20 lg:py-32 bg-gradient-to-br from-blue-50 to-gray-50">
+        <main className="flex-1">
+          {/* Hero optimisé */}
+          <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-purple-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-4xl mx-auto">
-                <h1 className="text-4xl lg:text-6xl font-bold text-[#374151] mb-6">
-                  Techtrust <span className="text-[#45C7FF]">Pricing</span>
+                <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100">
+                  🎯 Tarifs 2025 Transparents - Devis Gratuit
+                </Badge>
+                
+                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+                  Solutions Digitales 
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Professionnelles</span>
                 </h1>
-                <p className="text-xl text-[#374151] mb-8">
-                  Chez Techtrust, nos tarifs sont complètement transparents : toutes les fonctionnalités sont listées ci-dessous et tous les plans vous donneront accès à notre application web. Depuis notre app, vous pourrez suivre les performances de votre site web et de vos réseaux sociaux, l'efficacité de nos solutions.
+                
+                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                  Des <strong>solutions accessibles à tous</strong> : sites web dès 15€/mois, growth hacking IA dès 39€/mois. 
+                  <br />✅ <strong>Sans engagement</strong> • ✅ <strong>Support français</strong> • ✅ <strong>Garantie satisfaction</strong>
                 </p>
-                <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                  <Check className="w-4 h-4" />
-                  Devis gratuit - Paiement flexible
+
+                <div className="flex flex-wrap justify-center gap-4 mb-8">
+                  <Badge variant="outline" className="bg-white">🏆 +2000 clients satisfaits</Badge>
+                  <Badge variant="outline" className="bg-white">⚡ Déploiement en 48h</Badge>
+                  <Badge variant="outline" className="bg-white">🇫🇷 Support français</Badge>
+                  <Badge variant="outline" className="bg-white">💎 Qualité premium</Badge>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* Service Selection */}
-          <section className="py-12 bg-white border-b">
+          {/* Navigation services améliorée */}
+          <section className="py-8 bg-white border-b sticky top-0 z-40 shadow-sm">
             <div className="container mx-auto px-4">
-              <div className="flex flex-wrap justify-center gap-4">
-                {serviceButtons.map((service) => {
+              <div className="flex flex-wrap justify-center gap-3">
+                {services.map((service) => {
                   const ServiceIcon = service.icon;
                   return (
                     <Button
                       key={service.id}
                       onClick={() => setActiveService(service.id)}
                       variant={activeService === service.id ? "default" : "outline"}
-                      className={`${activeService === service.id ? 'bg-[#45C7FF] hover:bg-[#45C7FF]/90 text-white' : 'border-2 border-[#45C7FF] text-[#45C7FF] hover:bg-[#45C7FF] hover:text-white'}`}
+                      className={`${
+                        activeService === service.id 
+                          ? `bg-[#${service.color}] hover:bg-[#${service.color}]/90 text-white shadow-lg` 
+                          : 'border-2 hover:border-[#45C7FF] hover:bg-blue-50'
+                      } transition-all duration-200`}
                       size="lg"
                     >
                       <ServiceIcon className="w-5 h-5 mr-2" />
@@ -405,138 +655,138 @@ const Pricing = () => {
             </div>
           </section>
 
-          {/* Service Details */}
+          {/* Service packages améliorés */}
           {currentService && (
-            <section className="py-20 bg-white">
+            <section className="py-16 bg-white">
               <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-[#374151] mb-4">
-                    Compare nos plans {currentService.title} et fais ton choix !
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                    {currentService.title} - Choisissez votre formule
                   </h2>
+                  <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                    {currentService.description}
+                  </p>
                 </div>
 
-                {/* Package Selection */}
-                <div className="grid md:grid-cols-3 gap-8 mb-12">
-                  {currentService.packages.map((pkg) => (
-                    <Card key={pkg.id} className={`relative ${pkg.popular ? `border-[#${currentService.color}] shadow-xl scale-105` : 'border-gray-200'} transition-all duration-300 h-full flex flex-col`}>
-                      {pkg.popular && (
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                          <div className={`bg-[#${currentService.color}] text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1`}>
-                            <Star className="w-4 h-4" />
-                            {pkg.name}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                  {currentService.packages.map((pkg) => {
+                    const TierIcon = getTierIcon(pkg.tier);
+                    const isSelected = selectedPackages[currentService.id] === pkg.id;
+                    
+                    return (
+                      <Card 
+                        key={pkg.id} 
+                        className={`relative transition-all duration-300 cursor-pointer ${
+                          pkg.popular ? 'ring-2 ring-blue-500 shadow-xl scale-105' : 'hover:shadow-lg'
+                        } ${isSelected ? 'ring-2 ring-green-500 bg-green-50' : ''}`}
+                        onClick={() => handlePackageSelect(currentService.id, pkg.id)}
+                      >
+                        {pkg.popular && (
+                          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                            <Badge className="bg-blue-500 text-white px-3 py-1 flex items-center gap-1">
+                              <Star className="w-3 h-3" />
+                              Le plus populaire
+                            </Badge>
                           </div>
-                        </div>
-                      )}
-                      
-                      <CardContent className="p-8 flex flex-col h-full">
-                        <div className="text-center mb-6">
-                          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                            <input
-                              type="radio"
-                              name={`${currentService.id}-package`}
-                              className="w-6 h-6"
-                              style={{ accentColor: `#${currentService.color}` }}
-                            />
+                        )}
+
+                        <CardHeader className="text-center p-6">
+                          <div className="flex items-center justify-center mb-4">
+                            <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-${currentService.color}/20 to-${currentService.color}/40 flex items-center justify-center`}>
+                              <TierIcon className={`w-6 h-6 ${getTierColor(pkg.tier)}`} />
+                            </div>
                           </div>
-                          <h4 className="text-xl font-bold text-[#374151] mb-2">{pkg.name}</h4>
-                          <div className="mb-2">
-                            <span className={`text-3xl font-bold text-[#${currentService.color}]`}>{pkg.price}</span>
+
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
+                          
+                          {pkg.badge && (
+                            <Badge className={`mb-3 ${pkg.badgeColor}`}>
+                              {pkg.badge}
+                            </Badge>
+                          )}
+
+                          <div className="mb-3">
+                            <div className="text-3xl font-bold text-gray-900">
+                              {pkg.price}
+                              {pkg.originalPrice && (
+                                <span className="text-lg line-through text-gray-400 ml-2">
+                                  {pkg.originalPrice}
+                                </span>
+                              )}
+                            </div>
                             {pkg.setupFee && (
                               <div className="text-sm text-gray-500 mt-1">{pkg.setupFee}</div>
                             )}
                           </div>
-                          <p className="text-[#374151] text-sm">{pkg.description}</p>
-                        </div>
 
-                        <div className="flex-1">
+                          <p className="text-gray-600 text-sm mb-4">{pkg.description}</p>
+                        </CardHeader>
+
+                        <CardContent className="px-6 pb-6">
+                          <div className="space-y-3 mb-6">
+                            {pkg.features.map((feature, idx) => (
+                              <div key={idx} className="flex items-start gap-2">
+                                <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                <span className="text-sm text-gray-700">{feature}</span>
+                              </div>
+                            ))}
+                            
+                            {pkg.notIncluded && pkg.notIncluded.map((feature, idx) => (
+                              <div key={idx} className="flex items-start gap-2 opacity-50">
+                                <X className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                <span className="text-sm text-gray-500">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+
                           <Button 
-                            onClick={() => addToCart(pkg, currentService.title, currentService.id, currentService.color)}
-                            className={`w-full mb-6 ${pkg.popular ? `bg-[#${currentService.color}] hover:bg-[#${currentService.color}]/90` : `border-2 border-[#${currentService.color}] text-[#${currentService.color}] hover:bg-[#${currentService.color}] hover:text-white bg-transparent`}`}
+                            className={`w-full ${
+                              isSelected 
+                                ? 'bg-green-500 hover:bg-green-600 text-white' 
+                                : pkg.popular 
+                                  ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                                  : 'border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50'
+                            }`}
                             size="lg"
                           >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Sélectionner ce plan
+                            {isSelected ? (
+                              <>
+                                <Check className="w-4 h-4 mr-2" />
+                                Sélectionné
+                              </>
+                            ) : (
+                              `Choisir ${pkg.name}`
+                            )}
                           </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
 
-                {/* Feature Comparison Table */}
-                <div className="bg-gray-50 rounded-xl p-8">
-                  <h3 className="text-xl font-bold text-[#374151] mb-6">
-                    Les contenus de l'abonnement mensuel
-                  </h3>
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-4 px-4 font-medium text-[#374151]"></th>
-                          {currentService.packages.map((pkg) => (
-                            <th key={pkg.id} className="text-center py-4 px-4">
-                              <div className={`text-lg font-bold text-[#${currentService.color}]`}>
-                                {pkg.name}
-                              </div>
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* Features rows */}
-                        {currentService.packages[0].features.map((feature, idx) => (
-                          <tr key={idx} className="border-b border-gray-200">
-                            <td className="py-4 px-4 font-medium text-[#374151]">{feature}</td>
-                            {currentService.packages.map((pkg) => (
-                              <td key={pkg.id} className="text-center py-4 px-4">
-                                {pkg.features.includes(feature) ? (
-                                  <Check className={`w-5 h-5 text-[#${currentService.color}] mx-auto`} />
-                                ) : (
-                                  <X className="w-5 h-5 text-gray-400 mx-auto" />
-                                )}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                        
-                        {/* Quantities rows */}
-                        {currentService.packages[0].quantities && Object.keys(currentService.packages[0].quantities).map((quantityKey) => (
-                          <tr key={quantityKey} className="border-b border-gray-200">
-                            <td className="py-4 px-4 font-medium text-[#374151]">{quantityKey}</td>
-                            {currentService.packages.map((pkg) => (
-                              <td key={pkg.id} className="text-center py-4 px-4 font-medium">
-                                {pkg.quantities?.[quantityKey] || '—'}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Additional Options */}
-                <div className="text-center mt-12">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-[#374151] mb-4">ou</h3>
-                    <p className="text-[#374151]">
-                      You can subscribe to<br />
-                      additional options if you wish to
+                {/* CTA Section */}
+                <div className="text-center">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 max-w-2xl mx-auto">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      Prêt à démarrer votre projet ?
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      Obtenez un devis personnalisé en moins de 2 heures
                     </p>
-                  </div>
-                  
-                  <div className="flex flex-wrap justify-center gap-4">
-                    {services.filter(s => s.id !== currentService.id).map((service) => (
-                      <Button
-                        key={service.id}
-                        onClick={() => setActiveService(service.id)}
-                        variant="outline"
-                        className="border-2 border-[#45C7FF] text-[#45C7FF] hover:bg-[#45C7FF] hover:text-white"
-                      >
-                        {service.title}
-                      </Button>
-                    ))}
+                    <Button 
+                      onClick={() => setShowContactForm(true)}
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                      disabled={Object.keys(selectedPackages).length === 0}
+                    >
+                      Obtenir mon devis gratuit
+                      <Rocket className="w-4 h-4 ml-2" />
+                    </Button>
+                    {Object.keys(selectedPackages).length === 0 && (
+                      <p className="text-sm text-gray-500 mt-2">
+                        Sélectionnez au moins une formule pour continuer
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -546,127 +796,141 @@ const Pricing = () => {
 
         <Footer />
 
-        {/* Panier flottant */}
-        {selectedPackages.length > 0 && (
-          <div className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${isCartVisible ? 'translate-x-0' : 'translate-x-full'}`}>
-            <Card className="w-80 shadow-xl border-[#45C7FF]">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-[#374151]">Mon projet ({selectedPackages.length})</h4>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setIsCartVisible(!isCartVisible)}
-                    >
-                      {isCartVisible ? '−' : '+'}
-                    </Button>
-                  </div>
-                </div>
-
-                {isCartVisible && (
-                  <>
-                    <div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
-                      {selectedPackages.map((pkg) => (
-                        <div key={pkg.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <div className="flex-1">
-                            <div className="font-medium text-sm">{pkg.serviceTitle}</div>
-                            <div className="text-xs text-gray-600">{pkg.name} - {pkg.price}</div>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeFromCart(pkg.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Button
-                      onClick={handleSubmitProject}
-                      className="w-full bg-[#45C7FF] hover:bg-[#45C7FF]/90 text-white"
-                      size="lg"
-                    >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Soumettre mon projet
-                    </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Modal de contact */}
+        {/* Modal de contact amélioré */}
         {showContactForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-lg">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-[#374151] mb-4">Finaliser votre projet</h3>
+            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Obtenez votre devis personnalisé
+                  </h3>
+                  <p className="text-gray-600">
+                    Réponse garantie sous 2h pendant les heures ouvrées
+                  </p>
+                </div>
                 
-                <form onSubmit={handleFormSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1">Nom complet *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#45C7FF] focus:border-transparent"
-                    />
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nom complet *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Jean Dupont"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email professionnel *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="jean@entreprise.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Téléphone *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="06 12 34 56 78"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Entreprise
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.company}
+                        onChange={(e) => setFormData({...formData, company: e.target.value})}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Nom de votre entreprise"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1">Email *</label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#45C7FF] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1">Téléphone *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#45C7FF] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1">Informations complémentaires</label>
-                    <textarea
-                      value={formData.additionalInfo}
-                      onChange={(e) => setFormData({...formData, additionalInfo: e.target.value})}
-                      rows={3}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#45C7FF] focus:border-transparent"
-                      placeholder="Délais souhaités, spécificités..."
-                    />
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <input
-                      type="checkbox"
-                      required
-                      id="acceptsData"
-                      checked={formData.acceptsData}
-                      onChange={(e) => setFormData({...formData, acceptsData: e.target.checked})}
-                      className="mt-1"
-                    />
-                    <label htmlFor="acceptsData" className="text-sm text-[#374151]">
-                      J'autorise Techtrust à collecter mes données afin de me répondre. *
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Décrivez votre projet
                     </label>
+                    <textarea
+                      value={formData.message}
+                      onChange={(e) => setFormData({...formData, message: e.target.value})}
+                      rows={4}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Délais souhaités, spécificités techniques, objectifs..."
+                    />
                   </div>
 
-                  <div className="flex gap-3 pt-4">
+                  {/* Résumé sélection */}
+                  {Object.keys(selectedPackages).length > 0 && (
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-2">
+                        Formules sélectionnées :
+                      </h4>
+                      {Object.entries(selectedPackages).map(([serviceId, packageId]) => {
+                        const service = services.find(s => s.id === serviceId);
+                        const pkg = service?.packages.find(p => p.id === packageId);
+                        return pkg ? (
+                          <div key={serviceId} className="text-sm text-gray-700">
+                            • {service?.title} - {pkg.name} ({pkg.price})
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        required
+                        id="acceptsTerms"
+                        checked={formData.acceptsTerms}
+                        onChange={(e) => setFormData({...formData, acceptsTerms: e.target.checked})}
+                        className="mt-1"
+                      />
+                      <label htmlFor="acceptsTerms" className="text-sm text-gray-700">
+                        J'accepte les <a href="/terms" className="text-blue-500 hover:underline">conditions d'utilisation</a> et autorise Techtrust à me recontacter. *
+                      </label>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        id="acceptsMarketing"
+                        checked={formData.acceptsMarketing}
+                        onChange={(e) => setFormData({...formData, acceptsMarketing: e.target.checked})}
+                        className="mt-1"
+                      />
+                      <label htmlFor="acceptsMarketing" className="text-sm text-gray-700">
+                        Je souhaite recevoir les actualités et offres spéciales de Techtrust
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
                     <Button
                       type="button"
                       variant="outline"
@@ -677,10 +941,10 @@ const Pricing = () => {
                     </Button>
                     <Button
                       type="submit"
-                      className="flex-1 bg-[#45C7FF] hover:bg-[#45C7FF]/90 text-white"
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
                     >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Envoyer
+                      Envoyer ma demande
+                      <Rocket className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 </form>

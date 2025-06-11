@@ -30,11 +30,56 @@ const resources = {
       // Pricing
       "pricing.title": "Tarifs 2025 Transparents",
       "pricing.subtitle": "Des solutions IA accessibles à tous",
+      "pricing.website.title": "Création Site Web",
+      "pricing.growth.title": "Growth Hacking IA",
+      "pricing.community.title": "Community Management Pro",
+      "pricing.solutions.title": "Solutions Sur Mesure",
+      "pricing.consulting.title": "Consulting Digital",
+      
+      // Dashboard
+      "dashboard.welcome": "Bienvenue sur votre dashboard",
+      "dashboard.projects": "Projets actifs",
+      "dashboard.performance": "Performances",
+      "dashboard.savings": "Économies",
+      "dashboard.quality": "Score qualité",
+      
+      // Auth
+      "auth.login": "Se connecter",
+      "auth.register": "S'inscrire",
+      "auth.email": "Email",
+      "auth.password": "Mot de passe",
+      "auth.name": "Nom complet",
+      "auth.forgot": "Mot de passe oublié ?",
       
       // Common
       "button.learn_more": "En savoir plus",
       "button.contact": "Nous contacter",
-      "button.get_quote": "Obtenir un devis"
+      "button.get_quote": "Obtenir un devis",
+      "button.start_project": "Démarrer mon projet",
+      "button.discover": "Découvrir",
+      "button.select": "Choisir ce plan",
+      "button.selected": "Sélectionné",
+      "button.logout": "Se déconnecter",
+      "button.dashboard": "Tableau de bord",
+      "button.manage": "Gérer",
+      
+      // Status
+      "status.active": "Actif",
+      "status.trial": "Essai",
+      "status.pending": "En attente",
+      "status.completed": "Terminé",
+      "status.running": "En cours",
+      
+      // Tiers
+      "tier.bronze": "Bronze",
+      "tier.silver": "Silver", 
+      "tier.gold": "Gold",
+      "tier.diamond": "Diamond",
+      
+      // Notifications
+      "notif.new_report": "Nouveau rapport disponible",
+      "notif.ai_update": "Mise à jour IA",
+      "notif.new_features": "Nouvelles fonctionnalités"
     }
   },
   en: {
@@ -64,11 +109,56 @@ const resources = {
       // Pricing
       "pricing.title": "Transparent 2025 Pricing",
       "pricing.subtitle": "AI solutions accessible to everyone",
+      "pricing.website.title": "Website Creation",
+      "pricing.growth.title": "AI Growth Hacking",
+      "pricing.community.title": "Pro Community Management",
+      "pricing.solutions.title": "Custom Solutions",
+      "pricing.consulting.title": "Digital Consulting",
+      
+      // Dashboard
+      "dashboard.welcome": "Welcome to your dashboard",
+      "dashboard.projects": "Active projects",
+      "dashboard.performance": "Performance",
+      "dashboard.savings": "Savings",
+      "dashboard.quality": "Quality score",
+      
+      // Auth
+      "auth.login": "Sign in",
+      "auth.register": "Sign up",
+      "auth.email": "Email",
+      "auth.password": "Password",
+      "auth.name": "Full name",
+      "auth.forgot": "Forgot password?",
       
       // Common
       "button.learn_more": "Learn more",
       "button.contact": "Contact us",
-      "button.get_quote": "Get a quote"
+      "button.get_quote": "Get a quote",
+      "button.start_project": "Start my project",
+      "button.discover": "Discover",
+      "button.select": "Choose this plan",
+      "button.selected": "Selected",
+      "button.logout": "Sign out",
+      "button.dashboard": "Dashboard",
+      "button.manage": "Manage",
+      
+      // Status
+      "status.active": "Active",
+      "status.trial": "Trial",
+      "status.pending": "Pending",
+      "status.completed": "Completed",
+      "status.running": "Running",
+      
+      // Tiers
+      "tier.bronze": "Bronze",
+      "tier.silver": "Silver",
+      "tier.gold": "Gold", 
+      "tier.diamond": "Diamond",
+      
+      // Notifications
+      "notif.new_report": "New report available",
+      "notif.ai_update": "AI update",
+      "notif.new_features": "New features"
     }
   }
 };
@@ -81,6 +171,11 @@ i18n
     fallbackLng: 'fr',
     interpolation: {
       escapeValue: false
+    },
+    debug: false,
+    detection: {
+      order: ['localStorage', 'cookie', 'navigator'],
+      caches: ['localStorage', 'cookie']
     }
   });
 

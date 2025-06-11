@@ -2,33 +2,36 @@
 User-agent: *
 Allow: /
 
-# Optimisation pour les moteurs de recherche
-Sitemap: https://www.tech-trust.fr/sitemap.xml
+# Pages importantes à crawler en priorité
+Allow: /pricing
+Allow: /solutions/
+Allow: /contact
+Allow: /blog/
 
-# Bloquer les pages d'administration et API
+# Empêcher l'indexation des pages privées
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /auth
 Disallow: /api/
-Disallow: /admin/
 Disallow: /_next/
 Disallow: /.next/
-
-# Autoriser spécifiquement les pages importantes
-Allow: /fr/
-Allow: /en/
-Allow: /fr/solutions/
-Allow: /en/solutions/
-Allow: /fr/blog/
-Allow: /en/blog/
-Allow: /fr/pricing/
-Allow: /en/pricing/
-Allow: /fr/contact/
-Allow: /en/contact/
+Disallow: /static/
 
 # Optimisation pour Googlebot
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
 
-# Optimisation pour Bingbot
+# Optimisation pour Bingbot  
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://www.tech-trust.fr/sitemap.xml
+
+# Optimisation SEO - Pages clés pour le ranking
+# 1. Page pricing - mots-clés : tarifs agence web, prix growth hacking
+# 2. Solutions - mots-clés : agence digitale, développement web
+# 3. Growth hacking - mots-clés : automatisation marketing, ia prospection
+# 4. Community management - mots-clés : gestion réseaux sociaux pro
