@@ -161,7 +161,7 @@ const ServicesSection = () => {
                   <div className="mt-auto">
                     <Button 
                       asChild
-                      className={`w-full bg-[#${service.color}] hover:bg-[#${service.color}]/90 text-white group/btn`}
+                      className="w-full bg-[#45C7FF] hover:bg-[#45C7FF]/90 text-white group/btn"
                     >
                       <a href={service.link}>
                         En savoir plus
@@ -189,7 +189,7 @@ const ServicesSection = () => {
             <Button 
               asChild
               size="lg"
-              className="bg-gradient-to-r from-[#45C7FF] to-purple-600 text-white hover:shadow-lg transition-all duration-300"
+              className="bg-[#45C7FF] hover:bg-[#45C7FF]/90 text-white hover:shadow-lg transition-all duration-300"
             >
               <a href="/pricing">
                 Voir nos solutions
