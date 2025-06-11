@@ -1,321 +1,321 @@
 
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Home, 
-  Users, 
-  BarChart3, 
-  Settings, 
-  FileText, 
-  HelpCircle, 
-  LogOut, 
-  Menu, 
-  X,
-  Bell,
-  ChevronDown,
-  Shield,
-  UserPlus,
-  Database,
-  Mail,
-  Zap,
-  CreditCard
-} from 'lucide-react';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  Menu,
+  X,
+  LayoutDashboard,
+  Users,
+  TrendingUp,
+  Edit,
+  Mail,
+  DollarSign,
+  Settings,
+  LogOut,
+  User,
+  Shield,
+  ChevronDown,
+  ChevronRight,
+  UserPlus,
+  UserX,
+  UserCheck,
+  BarChart3,
+  PieChart,
+  Activity,
+  FileText,
+  Plus,
+  MessageSquare,
+  CreditCard,
+  Receipt,
+  Cog,
+  Database,
+  Lock
+} from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { t } = useTranslation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('dashboard');
-
-  useEffect(() => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['users', 'analytics']);
+  const [currentUser] = useState(() => {
     const user = localStorage.getItem('techtrust_user');
-    if (user) {
-      setUserData(JSON.parse(user));
-    }
-  }, []);
+    return user ? JSON.parse(user) : null;
+  });
+
+  const toggleMenu = (menuId: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(menuId) 
+        ? prev.filter(id => id !== menuId)
+        : [...prev, menuId]
+    );
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('techtrust_user');
     window.location.href = '/auth';
   };
 
-  const navigationItems = [
+  const switchToClient = () => {
+    // Passer en mode client tout en gardant les privilèges admin
+    window.location.href = '/dashboard';
+  };
+
+  const menuItems = [
     {
       id: 'dashboard',
-      name: 'Dashboard Admin',
-      icon: Home,
+      label: 'Tableau de bord',
+      icon: LayoutDashboard,
       href: '/admin/dashboard'
     },
     {
       id: 'users',
-      name: 'Gestion Utilisateurs',
+      label: 'Gestion Utilisateurs',
       icon: Users,
-      href: '/admin/users',
-      submenu: [
-        { name: 'Tous les utilisateurs', href: '/admin/users/all' },
-        { name: 'Nouveaux comptes', href: '/admin/users/new' },
-        { name: 'Comptes suspendus', href: '/admin/users/suspended' },
-        { name: 'Créer un compte', href: '/admin/users/create' }
+      expandable: true,
+      children: [
+        { id: 'users-all', label: 'Tous les utilisateurs', icon: Users, href: '/admin/users/all' },
+        { id: 'users-new', label: 'Nouveaux comptes', icon: UserPlus, href: '/admin/users/new' },
+        { id: 'users-suspended', label: 'Comptes suspendus', icon: UserX, href: '/admin/users/suspended' },
+        { id: 'users-create', label: 'Créer un compte', icon: UserCheck, href: '/admin/users/create' }
       ]
     },
     {
       id: 'analytics',
-      name: 'Analytics Global',
-      icon: BarChart3,
-      href: '/admin/analytics',
-      submenu: [
-        { name: 'Vue d\'ensemble', href: '/admin/analytics/overview' },
-        { name: 'Revenus', href: '/admin/analytics/revenue' },
-        { name: 'Performance', href: '/admin/analytics/performance' },
-        { name: 'Utilisateurs', href: '/admin/analytics/users' }
+      label: 'Analytics Global',
+      icon: TrendingUp,
+      expandable: true,
+      children: [
+        { id: 'analytics-overview', label: 'Vue d\'ensemble', icon: BarChart3, href: '/admin/analytics/overview' },
+        { id: 'analytics-revenue', label: 'Revenus', icon: DollarSign, href: '/admin/analytics/revenue' },
+        { id: 'analytics-performance', label: 'Performance', icon: Activity, href: '/admin/analytics/performance' },
+        { id: 'analytics-users', label: 'Utilisateurs', icon: PieChart, href: '/admin/analytics/users' }
       ]
     },
     {
       id: 'blog',
-      name: 'Gestion Blog',
-      icon: FileText,
-      href: '/admin/blog',
-      submenu: [
-        { name: 'Articles', href: '/admin/blog/posts' },
-        { name: 'Créer un article', href: '/admin/blog/create' },
-        { name: 'Catégories', href: '/admin/blog/categories' },
-        { name: 'Commentaires', href: '/admin/blog/comments' }
+      label: 'Gestion Blog',
+      icon: Edit,
+      expandable: true,
+      children: [
+        { id: 'blog-posts', label: 'Tous les articles', icon: FileText, href: '/admin/blog/posts' },
+        { id: 'blog-create', label: 'Créer un article', icon: Plus, href: '/admin/blog/create' },
+        { id: 'blog-categories', label: 'Catégories', icon: Settings, href: '/admin/blog/categories' },
+        { id: 'blog-comments', label: 'Commentaires', icon: MessageSquare, href: '/admin/blog/comments' }
       ]
     },
     {
       id: 'campaigns',
-      name: 'Campagnes Marketing',
-      icon: Zap,
-      href: '/admin/campaigns',
-      submenu: [
-        { name: 'Email Marketing', href: '/admin/campaigns/email' },
-        { name: 'SMS Marketing', href: '/admin/campaigns/sms' },
-        { name: 'Automatisation', href: '/admin/campaigns/automation' }
+      label: 'Campagnes Marketing',
+      icon: Mail,
+      expandable: true,
+      children: [
+        { id: 'campaigns-email', label: 'Email Marketing', icon: Mail, href: '/admin/campaigns/email' },
+        { id: 'campaigns-sms', label: 'SMS Marketing', icon: MessageSquare, href: '/admin/campaigns/sms' },
+        { id: 'campaigns-automation', label: 'Automations', icon: Settings, href: '/admin/campaigns/automation' }
       ]
     },
     {
       id: 'billing',
-      name: 'Facturation',
-      icon: CreditCard,
-      href: '/admin/billing',
-      submenu: [
-        { name: 'Factures', href: '/admin/billing/invoices' },
-        { name: 'Paiements', href: '/admin/billing/payments' },
-        { name: 'Abonnements', href: '/admin/billing/subscriptions' }
+      label: 'Facturation',
+      icon: DollarSign,
+      expandable: true,
+      children: [
+        { id: 'billing-invoices', label: 'Factures', icon: Receipt, href: '/admin/billing/invoices' },
+        { id: 'billing-payments', label: 'Paiements', icon: CreditCard, href: '/admin/billing/payments' },
+        { id: 'billing-subscriptions', label: 'Abonnements', icon: Users, href: '/admin/billing/subscriptions' }
       ]
     },
     {
       id: 'system',
-      name: 'Système',
+      label: 'Système',
       icon: Settings,
-      href: '/admin/system',
-      submenu: [
-        { name: 'Configuration', href: '/admin/system/config' },
-        { name: 'Logs', href: '/admin/system/logs' },
-        { name: 'Sauvegrades', href: '/admin/system/backups' },
-        { name: 'Sécurité', href: '/admin/system/security' }
+      expandable: true,
+      children: [
+        { id: 'system-config', label: 'Configuration', icon: Cog, href: '/admin/system/config' },
+        { id: 'system-logs', label: 'Logs système', icon: FileText, href: '/admin/system/logs' },
+        { id: 'system-backups', label: 'Sauvegardes', icon: Database, href: '/admin/system/backups' },
+        { id: 'system-security', label: 'Sécurité', icon: Lock, href: '/admin/system/security' }
       ]
     }
   ];
 
+  const handleMenuClick = (item: any) => {
+    if (item.expandable) {
+      toggleMenu(item.id);
+    } else {
+      // Navigation vers la page correspondante
+      const currentPath = window.location.pathname;
+      if (item.href && currentPath !== item.href) {
+        // Pour l'instant, on reste sur la même page car toutes les routes pointent vers AdminDashboard
+        // Plus tard, vous pourrez implémenter la navigation réelle
+        console.log(`Navigation vers: ${item.href}`);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className={`${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
-        
-        {/* Header sidebar */}
-        <div className="flex items-center justify-between h-16 px-6 border-b bg-gradient-to-r from-red-500 to-orange-500">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-red-500" />
-            </div>
-            <span className="font-bold text-xl text-white">Admin</span>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden text-white hover:bg-white/20"
-          >
-            <X className="w-5 h-5" />
-          </Button>
-        </div>
-
-        {/* User info */}
-        {userData && (
-          <div className="p-6 border-b bg-red-50">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">{userData.name.charAt(0)}</span>
+      <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-80' : 'w-16'} flex flex-col`}>
+        {/* Header Sidebar */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            {sidebarOpen && (
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
+                <p className="text-sm text-gray-600">Gestion Techtrust</p>
               </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-gray-900 truncate">{userData.name}</h3>
-                <p className="text-sm text-gray-500 truncate">{userData.email}</p>
-              </div>
-            </div>
-            <Badge className="bg-red-100 text-red-800 border-red-200">
-              <Shield className="w-3 h-3 mr-1" />
-              Super Admin
-            </Badge>
-          </div>
-        )}
-
-        {/* Navigation */}
-        <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
-          {navigationItems.map((item) => {
-            const ItemIcon = item.icon;
-            return (
-              <div key={item.id}>
-                {item.submenu ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-between hover:bg-gray-100"
-                      >
-                        <div className="flex items-center gap-3">
-                          <ItemIcon className="w-5 h-5" />
-                          <span>{item.name}</span>
-                        </div>
-                        <ChevronDown className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      {item.submenu.map((subItem) => (
-                        <DropdownMenuItem key={subItem.href} asChild>
-                          <a href={subItem.href} className="cursor-pointer">
-                            {subItem.name}
-                          </a>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    asChild
-                    className={`w-full justify-start hover:bg-gray-100 ${
-                      activeTab === item.id ? 'bg-red-50 text-red-600' : ''
-                    }`}
-                  >
-                    <a href={item.href} onClick={() => setActiveTab(item.id)}>
-                      <ItemIcon className="w-5 h-5 mr-3" />
-                      {item.name}
-                    </a>
-                  </Button>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-
-        {/* Footer sidebar */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
-          <Button
-            variant="ghost"
-            asChild
-            className="w-full justify-start mb-2 hover:bg-blue-50 hover:text-blue-600"
-          >
-            <a href="/dashboard">
-              <Home className="w-5 h-5 mr-3" />
-              Retour client
-            </a>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            Se déconnecter
-          </Button>
-        </div>
-      </aside>
-
-      {/* Content */}
-      <div className="flex-1 lg:ml-0">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
-          <div className="flex items-center gap-4">
+            )}
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="hover:bg-gray-100"
             >
-              <Menu className="w-5 h-5" />
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
-            
-            <Badge className="bg-red-100 text-red-800">
-              Mode Administrateur
-            </Badge>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <Bell className="w-5 h-5" />
-                  <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
-                    5
+        {/* Menu Navigation */}
+        <div className="flex-1 overflow-y-auto py-4">
+          <nav className="space-y-1 px-2">
+            {menuItems.map((item) => {
+              const ItemIcon = item.icon;
+              const isExpanded = expandedMenus.includes(item.id);
+              
+              return (
+                <div key={item.id}>
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start hover:bg-blue-50 hover:text-blue-600 ${
+                      sidebarOpen ? 'px-3' : 'px-2'
+                    }`}
+                    onClick={() => handleMenuClick(item)}
+                  >
+                    <ItemIcon className={`${sidebarOpen ? 'w-5 h-5 mr-3' : 'w-5 h-5'}`} />
+                    {sidebarOpen && (
+                      <>
+                        <span className="flex-1 text-left">{item.label}</span>
+                        {item.expandable && (
+                          <div className="ml-2">
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Sous-menu */}
+                  {item.expandable && isExpanded && sidebarOpen && item.children && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {item.children.map((child) => {
+                        const ChildIcon = child.icon;
+                        return (
+                          <Button
+                            key={child.id}
+                            variant="ghost"
+                            className="w-full justify-start text-sm hover:bg-blue-50 hover:text-blue-600 px-3"
+                            onClick={() => handleMenuClick(child)}
+                          >
+                            <ChildIcon className="w-4 h-4 mr-3" />
+                            {child.label}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* User Info & Actions */}
+        <div className="border-t border-gray-200 p-4">
+          {sidebarOpen && (
+            <Card className="mb-3">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">{currentUser?.name?.charAt(0) || 'A'}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">{currentUser?.name || 'Admin'}</p>
+                    <p className="text-xs text-gray-600">{currentUser?.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Badge className="bg-red-100 text-red-800 text-xs">
+                    <Shield className="w-3 h-3 mr-1" />
+                    Super Admin
                   </Badge>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuItem className="p-4">
-                  <div>
-                    <h4 className="font-medium text-red-600">Alerte système</h4>
-                    <p className="text-sm text-gray-500">Serveur de backup saturé</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="p-4">
-                  <div>
-                    <h4 className="font-medium">Nouveau client premium</h4>
-                    <p className="text-sm text-gray-500">Marie Dubois - Gold</p>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
+          <div className="space-y-2">
             <Button
-              className="bg-green-500 hover:bg-green-600 text-white"
-              size="sm"
+              variant="outline"
+              className={`w-full ${sidebarOpen ? 'justify-start' : 'justify-center'} text-blue-600 hover:bg-blue-50`}
+              onClick={switchToClient}
             >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Nouveau client
+              <User className="w-4 h-4 mr-2" />
+              {sidebarOpen && 'Retour client'}
             </Button>
+            <Button
+              variant="ghost"
+              className={`w-full ${sidebarOpen ? 'justify-start' : 'justify-center'} text-red-600 hover:bg-red-50`}
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              {sidebarOpen && 'Déconnexion'}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold text-gray-900">Administration Techtrust</h1>
+              <Badge className="bg-red-100 text-red-800">
+                Mode Administrateur
+              </Badge>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-2" />
+                Paramètres
+              </Button>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">{currentUser?.name?.charAt(0) || 'A'}</span>
+                </div>
+                <span className="font-medium text-gray-900">{currentUser?.name || 'Admin'}</span>
+              </div>
+            </div>
           </div>
         </header>
 
-        {/* Main content */}
-        <main className="p-6">
+        {/* Page Content */}
+        <main className="flex-1 overflow-auto p-6">
           {children}
         </main>
       </div>
-
-      {/* Overlay pour mobile */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
     </div>
   );
 };
