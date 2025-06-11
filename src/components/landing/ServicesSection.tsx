@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Globe, TrendingUp, Code, Lightbulb, ArrowRight, Check, Bot, Users } from 'lucide-react';
+import { Globe, TrendingUp, Code, Lightbulb, ArrowRight, Check, Bot, Users, Zap, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -14,16 +14,16 @@ const services = [
     subtitle: "Sites professionnels & E-commerce",
     description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe.",
     features: ["Design responsive 2025", "Optimisation SEO avancée", "Hébergement sécurisé", "Maintenance incluse"],
-    color: "45C7FF",
+    color: "#45C7FF",
     link: "/solutions/agence-web"
   },
   {
-    icon: TrendingUp,
+    icon: Bot,
     title: "Growth Hacking IA",
-    subtitle: "🤖 Automatisation complète + Community IA",
+    subtitle: "Automatisation complète + Community IA",
     description: "Nos outils IA propriétaires automatisent votre prospection, acquisition clients ET community management. Remplacez un commercial + community manager par notre IA ultra-performante.",
-    features: ["🤖 IA de prospection automatisée", "📱 Community management IA", "📧 Email marketing intelligent", "🎯 Lead generation IA", "📊 Analytics temps réel"],
-    color: "8B5CF6", 
+    features: ["IA de prospection automatisée", "Community management IA", "Email marketing intelligent", "Lead generation IA", "Analytics temps réel"],
+    color: "#8B5CF6", 
     link: "/solutions/growth-hacking"
   },
   {
@@ -32,7 +32,7 @@ const services = [
     subtitle: "Développement personnalisé",
     description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité en 2025.",
     features: ["Audit métier complet", "Développement agile", "Formation équipe", "Support technique 24/7"],
-    color: "10B981",
+    color: "#10B981",
     link: "/solutions/digitales-sur-mesure"
   },
   {
@@ -41,7 +41,7 @@ const services = [
     subtitle: "Équipe dédiée experte",
     description: "Vous préférez déléguer à des professionnels ? Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée sur mesure.",
     features: ["Community manager dédié", "Stratégie sur mesure", "Création contenu professionnel", "Reporting détaillé mensuel"],
-    color: "EC4899",
+    color: "#EC4899",
     link: "/solutions/community-management"
   },
   {
@@ -50,7 +50,7 @@ const services = [
     subtitle: "Transformation & Innovation",
     description: "Accompagnement stratégique pour votre transformation digitale 2025. Digitalisation complète comme le Palais des Festivals de Cannes ! Projets d'envergure exceptionnelle.",
     features: ["Digitalisation complète", "Projets d'envergure", "Innovation technologique", "Accompagnement VIP"],
-    color: "F59E0B",
+    color: "#F59E0B",
     link: "/solutions/consulting-digital"
   }
 ];
@@ -102,7 +102,7 @@ const ServicesSection = () => {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="text-center">
               <Bot className="w-12 h-12 text-[#45C7FF] mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#374151] mb-2">🤖 Outils IA Automatisés</h3>
+              <h3 className="text-xl font-bold text-[#374151] mb-2">Outils IA Automatisés</h3>
               <p className="text-[#374151]">
                 Parfait si vous voulez garder le contrôle et économiser. Nos IA remplacent un commercial + community manager.
               </p>
@@ -111,7 +111,7 @@ const ServicesSection = () => {
             
             <div className="text-center">
               <Users className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#374151] mb-2">👨‍💼 Équipe Professionnelle</h3>
+              <h3 className="text-xl font-bold text-[#374151] mb-2">Équipe Professionnelle</h3>
               <p className="text-[#374151]">
                 Idéal si vous préférez déléguer à des experts. Notre équipe gère tout avec une stratégie personnalisée.
               </p>
@@ -132,25 +132,25 @@ const ServicesSection = () => {
               className="h-full"
             >
               <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white relative overflow-hidden h-full flex flex-col">
-                <div className={`absolute inset-0 bg-gradient-to-br from-[#${service.color}]/5 to-[#${service.color}]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ backgroundColor: `${service.color}10` }}></div>
                 
                 <CardContent className="p-8 relative z-10 flex flex-col h-full">
                   {/* Icône */}
-                  <div className={`w-16 h-16 bg-[#${service.color}]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
-                    <service.icon className={`w-8 h-8 text-[#${service.color}]`} />
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" style={{ backgroundColor: `${service.color}20` }}>
+                    <service.icon className="w-8 h-8" style={{ color: service.color }} />
                   </div>
 
                   {/* Contenu */}
                   <div className="flex-1 flex flex-col">
                     <h3 className="text-xl font-bold text-[#374151] mb-2">{service.title}</h3>
-                    <p className={`text-[#${service.color}] font-medium mb-4 text-sm`}>{service.subtitle}</p>
+                    <p className="font-medium mb-4 text-sm" style={{ color: service.color }}>{service.subtitle}</p>
                     <p className="text-[#374151] mb-6 leading-relaxed flex-1">{service.description}</p>
 
                     {/* Features */}
                     <ul className="space-y-3 mb-6">
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center text-sm text-[#374151]">
-                          <Check className={`w-4 h-4 text-[#${service.color}] mr-2 flex-shrink-0`} />
+                          <Check className="w-4 h-4 mr-2 flex-shrink-0" style={{ color: service.color }} />
                           {feature}
                         </li>
                       ))}
@@ -161,7 +161,8 @@ const ServicesSection = () => {
                   <div className="mt-auto">
                     <Button 
                       asChild
-                      className="w-full bg-[#45C7FF] hover:bg-[#45C7FF]/90 text-white group/btn"
+                      className="w-full text-white group/btn transition-all duration-300"
+                      style={{ backgroundColor: service.color }}
                     >
                       <a href={service.link}>
                         En savoir plus

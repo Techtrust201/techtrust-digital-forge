@@ -17,7 +17,7 @@ const Index = () => {
     <>
       <Helmet>
         <title>Techtrust - Agence Web & Growth Hacking | Solutions Digitales Sur Mesure</title>
-        <meta name="description" content="🚀 Agence digitale française #1 en création de sites web, growth hacking et développement de solutions digitales sur mesure. Community management, lead generation, logiciels personnalisés. Transformez votre business avec nos experts !" />
+        <meta name="description" content="Agence digitale française #1 en création de sites web, growth hacking et développement de solutions digitales sur mesure. Community management, lead generation, logiciels personnalisés. Transformez votre business avec nos experts !" />
         <meta name="keywords" content="agence web, agence digitale, growth hacking, solutions digitales sur mesure, création site web, développement web, community management, lead generation, prospection digitale, logiciel sur mesure, agence marketing digital, SEO, développement application web, e-commerce, startup growth, acquisition client, automatisation marketing, transformation digitale, agence web France, développeur web freelance" />
         
         {/* Open Graph / Facebook */}
