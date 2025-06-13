@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -15,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
-import { auth } from "@/lib/auth";
+import { signIn } from "@/lib/auth-client";
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,7 @@ export function SignInForm() {
   const onSubmit = async (data: SignInData) => {
     setIsLoading(true);
     try {
-      const result = await auth.signIn.email({
+      const result = await signIn.email({
         email: data.email,
         password: data.password,
       });
