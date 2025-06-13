@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to your Tech-Trust project
 
 ## Project info
 
@@ -8,11 +8,11 @@
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use Cursor**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c) and start prompting.
+Simply visit the [Project](https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made via github will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
@@ -62,9 +62,9 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c) and click on Share -> Publish.
+Simply open [site](https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+## Can I connect a custom domain to my setting project?
 
 Yes, you can!
 
