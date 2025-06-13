@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Phone, Mail, Calendar } from 'lucide-react';
+import { ArrowRight, Phone, Mail, Calendar, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const CTASection = () => {
@@ -97,9 +97,10 @@ const CTASection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
-            className="mt-12 inline-block bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-white"
+            className="mt-12 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-white"
           >
-            ✨ Satisfaction garantie ou remboursé
+            <Star className="w-5 h-5 text-yellow-300" />
+            Satisfaction garantie ou remboursé
           </motion.div>
         </motion.div>
       </div>

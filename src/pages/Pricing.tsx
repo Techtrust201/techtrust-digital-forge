@@ -1,198 +1,546 @@
 
-import React from 'react';
-import NavbarPublic from '@/components/NavbarPublic';
-import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Check, Star, Zap, Users, Crown } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Check, Star, Zap, Crown, Shield, Rocket, Diamond, X } from 'lucide-react';
+import SEO from '@/components/SEO';
 
 const Pricing = () => {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Tarifs Techtrust 2025",
-    "description": "Découvrez nos tarifs transparents 2025 pour nos outils IA de growth hacking automatisés et services digitaux professionnels",
-    "url": "https://www.tech-trust.fr/pricing"
-  };
+  const { t } = useTranslation();
+  const [selectedPackages, setSelectedPackages] = useState<{[key: string]: string}>({});
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
 
-  const plans = [
+  const websitePackages = [
     {
-      name: "Starter IA",
-      price: "97€",
-      period: "/mois",
-      description: "Parfait pour débuter avec nos outils IA",
-      icon: Zap,
+      id: 'starter',
+      name: 'Starter',
+      price: 899,
+      icon: Shield,
+      color: 'from-amber-500 to-orange-500',
       features: [
-        "Accès aux outils IA de prospection",
-        "Community management automatisé",
-        "Génération de contenu IA",
-        "Analytics de base",
-        "Support email",
-        "Formation vidéo incluse"
+        'Site vitrine 5 pages',
+        'Design responsive',
+        'Optimisation SEO de base',
+        'Formulaire de contact',
+        'Hébergement 1 an inclus',
+        'SSL gratuit',
+        'Support email'
       ],
-      popular: false,
-      color: "custom-green"
+      limitations: [
+        'Pas de blog intégré',
+        'Pas de e-commerce',
+        'Trafic limité à 10k/mois'
+      ]
     },
     {
-      name: "Business Pro",
-      price: "297€",
-      period: "/mois",
-      description: "Idéal pour les entreprises en croissance",
-      icon: Users,
-      features: [
-        "Tous les outils IA avancés",
-        "Automatisation complète growth hacking",
-        "CRM intelligent intégré",
-        "Rapports détaillés",
-        "Support prioritaire",
-        "Séances de coaching mensuel",
-        "API et intégrations"
-      ],
+      id: 'business',
+      name: 'Business',
+      price: 1599,
+      icon: Rocket,
+      color: 'from-blue-500 to-purple-500',
       popular: true,
-      color: "custom-blue"
+      features: [
+        'Site vitrine 10 pages',
+        'Blog intégré',
+        'Design premium personnalisé',
+        'SEO avancé',
+        'Formulaires avancés',
+        'Analytics intégrés',
+        'Hébergement 1 an inclus',
+        'Support prioritaire'
+      ],
+      limitations: [
+        'E-commerce basique uniquement',
+        'Trafic limité à 50k/mois'
+      ]
     },
     {
-      name: "Enterprise",
-      price: "Sur devis",
-      period: "",
-      description: "Solutions complètes + équipe dédiée",
+      id: 'premium',
+      name: 'Premium E-commerce',
+      price: 2999,
       icon: Crown,
+      color: 'from-purple-500 to-pink-500',
       features: [
-        "Tous les outils IA + équipe pro",
-        "Community manager dédié",
-        "Commercial dédié",
-        "Développement sur mesure",
-        "Support 24/7 prioritaire",
-        "Formation équipe complète",
-        "Accompagnement stratégique"
+        'Site e-commerce complet',
+        'Pages illimitées',
+        'Design sur mesure',
+        'SEO premium',
+        'Paiements sécurisés',
+        'Gestion stock',
+        'Multi-devises',
+        'Support 24/7',
+        'Formation incluse'
       ],
-      popular: false,
-      color: "custom-purple"
+      limitations: []
     }
   ];
 
-  return (
-    <>
-      <SEO
-        title="Tarifs 2025 | Outils IA Growth Hacking dès 97€/mois - Techtrust"
-        description="💰 Tarifs transparents 2025 ! Outils IA de growth hacking automatisés dès 97€/mois. Community management IA, prospection automatisée, solutions pro. Devis gratuit !"
-        keywords="tarifs techtrust 2025, prix outils ia growth hacking, community management automatisé, prospection ia, tarif abordable, solutions digitales"
-        canonicalUrl="https://www.tech-trust.fr/pricing"
-        structuredData={structuredData}
-      />
+  const growthPackages = [
+    {
+      id: 'easy',
+      name: 'Easy Growth',
+      price: 299,
+      icon: Zap,
+      color: 'from-green-500 to-teal-500',
+      features: [
+        '500 leads qualifiés/mois',
+        'Prospection automatisée',
+        '2 campagnes email/mois',
+        'Analytics de base',
+        'Support email'
+      ],
+      limitations: [
+        'Pas de SMS marketing',
+        'Intégrations limitées'
+      ]
+    },
+    {
+      id: 'medium',
+      name: 'Medium Growth',
+      price: 599,
+      icon: Star,
+      color: 'from-blue-500 to-indigo-500',
+      popular: true,
+      features: [
+        '2000 leads qualifiés/mois',
+        'IA de prospection avancée',
+        'Campagnes illimitées',
+        '500 SMS/mois',
+        'A/B testing',
+        'Analytics avancés',
+        'Support prioritaire'
+      ],
+      limitations: [
+        'Intégrations premium limitées'
+      ]
+    },
+    {
+      id: 'high',
+      name: 'High Performance',
+      price: 1299,
+      icon: Diamond,
+      color: 'from-purple-500 to-violet-500',
+      features: [
+        'Leads illimités',
+        'IA ultra-performante',
+        'Multi-canal (Email, SMS, LinkedIn)',
+        'Automatisations complexes',
+        'Attribution tracking',
+        'Support dédié',
+        'Consultant assigné'
+      ],
+      limitations: []
+    }
+  ];
 
-      <div className="flex min-h-screen flex-col">
-        <NavbarPublic />
+  const communityPackages = [
+    {
+      id: 'basic',
+      name: 'Community Basic',
+      price: 199,
+      icon: Shield,
+      color: 'from-pink-500 to-rose-500',
+      features: [
+        '2 réseaux sociaux',
+        '15 posts/mois',
+        'Visuels inclus',
+        'Planification automatique',
+        'Rapport mensuel'
+      ],
+      limitations: [
+        'Pas de stories',
+        'Community management limité'
+      ]
+    },
+    {
+      id: 'advanced',
+      name: 'Community Pro',
+      price: 399,
+      icon: Star,
+      color: 'from-indigo-500 to-purple-500',
+      popular: true,
+      features: [
+        '4 réseaux sociaux',
+        '30 posts/mois',
+        'Stories incluses',
+        'Community management',
+        'Campagnes publicitaires',
+        'Analytics détaillés'
+      ],
+      limitations: [
+        'Influence marketing limité'
+      ]
+    },
+    {
+      id: 'expert',
+      name: 'Community Expert',
+      price: 799,
+      icon: Crown,
+      color: 'from-violet-500 to-purple-500',
+      features: [
+        'Réseaux illimités',
+        'Posts illimités',
+        'Influence marketing',
+        'Campagnes premium',
+        'Stratégie personnalisée',
+        'Community manager dédié'
+      ],
+      limitations: []
+    }
+  ];
+
+  const consultingPackages = [
+    {
+      id: 'audit',
+      name: 'Audit Digital',
+      price: 499,
+      icon: Shield,
+      color: 'from-emerald-500 to-green-500',
+      features: [
+        'Audit complet 360°',
+        'Plan d\'action détaillé',
+        'Recommandations prioritaires',
+        'Présentation 2h',
+        'Suivi 1 mois'
+      ],
+      limitations: [
+        'Pas de mise en œuvre'
+      ]
+    },
+    {
+      id: 'strategy',
+      name: 'Stratégie Digital',
+      price: 999,
+      icon: Rocket,
+      color: 'from-blue-500 to-cyan-500',
+      popular: true,
+      features: [
+        'Stratégie sur mesure',
+        'Roadmap 12 mois',
+        'KPIs personnalisés',
+        'Formation équipe',
+        'Suivi trimestriel'
+      ],
+      limitations: [
+        'Mise en œuvre externe'
+      ]
+    },
+    {
+      id: 'accompagnement',
+      name: 'Accompagnement',
+      price: 1999,
+      icon: Diamond,
+      color: 'from-purple-500 to-indigo-500',
+      features: [
+        'Consultant dédié',
+        'Mise en œuvre complète',
+        'Formation continue',
+        'Support illimité',
+        'Résultats garantis'
+      ],
+      limitations: []
+    }
+  ];
+
+  const handlePackageSelect = (category: string, packageId: string) => {
+    setSelectedPackages(prev => ({
+      ...prev,
+      [category]: packageId
+    }));
+  };
+
+  const getTotalPrice = () => {
+    let total = 0;
+    let packageCount = 0;
+    
+    Object.entries(selectedPackages).forEach(([category, packageId]) => {
+      const packages = category === 'website' ? websitePackages :
+                     category === 'growth' ? growthPackages :
+                     category === 'community' ? communityPackages :
+                     consultingPackages;
+      
+      const selectedPackage = packages.find(p => p.id === packageId);
+      if (selectedPackage) {
+        total += selectedPackage.price;
+        packageCount++;
+      }
+    });
+
+    // Réductions pour packages multiples
+    let discount = 0;
+    if (packageCount >= 3) discount = 0.15; // -15%
+    else if (packageCount >= 2) discount = 0.10; // -10%
+
+    const finalPrice = total * (1 - discount);
+    return { total, finalPrice, discount: discount * 100, packageCount };
+  };
+
+  const renderPackageCard = (pkg: any, category: string) => {
+    const Icon = pkg.icon;
+    const isSelected = selectedPackages[category] === pkg.id;
+    
+    return (
+      <Card 
+        key={pkg.id} 
+        className={`relative cursor-pointer transition-all duration-300 hover:shadow-xl ${
+          isSelected ? 'ring-2 ring-blue-500 shadow-xl scale-105' : ''
+        } ${pkg.popular ? 'border-2 border-blue-500' : ''}`}
+        onClick={() => handlePackageSelect(category, pkg.id)}
+      >
+        {pkg.popular && (
+          <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1">
+            ⭐ Plus populaire
+          </Badge>
+        )}
         
-        <main>
-          {/* Hero Section */}
-          <section className="py-20 lg:py-32 bg-gradient-to-br from-blue-50 to-gray-50">
-            <div className="container mx-auto px-4">
-              <div className="text-center max-w-4xl mx-auto">
-                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-                  Tarifs <span className="text-custom-blue">2025</span> Transparents
-                </h1>
-                <p className="text-xl text-gray-600 mb-8">
-                  Des outils IA accessibles à tous pour automatiser votre growth hacking et community management. 
-                  Des prix clairs, sans surprise.
-                </p>
-                <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                  <Check className="w-4 h-4" />
-                  Essai gratuit 14 jours - Sans engagement
-                </div>
+        <CardHeader className="text-center pb-4">
+          <div className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${pkg.color} flex items-center justify-center mb-4`}>
+            <Icon className="w-8 h-8 text-white" />
+          </div>
+          <CardTitle className="text-2xl font-bold">{pkg.name}</CardTitle>
+          <div className="text-4xl font-bold text-blue-600">
+            {pkg.price}€
+            <span className="text-sm font-normal text-gray-500">/projet</span>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <h4 className="font-semibold text-green-600 flex items-center gap-2">
+              <Check className="w-4 h-4" />
+              Inclus :
+            </h4>
+            {pkg.features.map((feature: string, idx: number) => (
+              <div key={idx} className="flex items-start gap-2">
+                <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">{feature}</span>
               </div>
+            ))}
+          </div>
+          
+          {pkg.limitations.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-orange-600 flex items-center gap-2">
+                <X className="w-4 h-4" />
+                Limitations :
+              </h4>
+              {pkg.limitations.map((limitation: string, idx: number) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <X className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-gray-600">{limitation}</span>
+                </div>
+              ))}
             </div>
-          </section>
+          )}
+          
+          <Button 
+            className={`w-full ${isSelected ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
+          >
+            {isSelected ? '✓ Sélectionné' : 'Sélectionner'}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  };
 
-          {/* Pricing Section */}
-          <section className="py-20 bg-white">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Choisissez ce qui vous convient
-                </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Que vous souhaitiez nos outils IA en autonomie ou un accompagnement professionnel complet, 
-                  nous avons la solution qui correspond à vos besoins et votre budget.
-                </p>
-              </div>
+  const priceInfo = getTotalPrice();
 
-              <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                {plans.map((plan, index) => (
-                  <div key={index} className={`relative bg-white rounded-2xl border-2 p-8 ${plan.popular ? `border-${plan.color} shadow-xl scale-105` : 'border-gray-200 hover:border-gray-300'} transition-all duration-300`}>
-                    {plan.popular && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <div className={`bg-${plan.color} text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1`}>
-                          <Star className="w-4 h-4" />
-                          Plus populaire
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="text-center mb-8">
-                      <div className={`w-16 h-16 bg-${plan.color}/10 rounded-full flex items-center justify-center mx-auto mb-4`}>
-                        <plan.icon className={`w-8 h-8 text-${plan.color}`} />
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                      <div className="mb-2">
-                        <span className={`text-4xl font-bold text-${plan.color}`}>{plan.price}</span>
-                        {plan.period && <span className="text-gray-500">{plan.period}</span>}
-                      </div>
-                      <p className="text-gray-600">{plan.description}</p>
-                    </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <SEO 
+        title="Tarifs et Packages - Solutions Digitales Techtrust 2025"
+        description="Découvrez nos packages : Sites web (899€-2999€), Growth Hacking IA (299€-1299€), Community Management (199€-799€), Consulting Digital (499€-1999€). Réductions jusqu'à -15% sur packages multiples."
+        keywords="tarifs techtrust, prix site web, growth hacking prix, community management tarif, consulting digital prix, package digital, réduction techtrust"
+        canonicalUrl="https://www.tech-trust.fr/pricing"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "Solutions Digitales Techtrust",
+          "description": "Packages complets pour votre transformation digitale",
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Site Web Starter",
+              "price": "899",
+              "priceCurrency": "EUR"
+            },
+            {
+              "@type": "Offer", 
+              "name": "Growth Hacking IA",
+              "price": "299",
+              "priceCurrency": "EUR"
+            }
+          ]
+        }}
+      />
+      
+      <div className="container mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+            Nos Packages 2025 🚀
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Choisissez les solutions parfaites pour votre business. Réductions automatiques sur packages multiples !
+          </p>
+        </div>
 
-                    <ul className="space-y-4 mb-8">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start gap-3">
-                          <Check className={`w-5 h-5 text-${plan.color} flex-shrink-0 mt-0.5`} />
-                          <span className="text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+        {/* Sites Web */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
+            <Shield className="w-8 h-8 text-blue-500" />
+            Sites Web & E-commerce
+          </h2>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {websitePackages.map(pkg => renderPackageCard(pkg, 'website'))}
+          </div>
+        </section>
 
-                    <Button 
-                      className={`w-full ${plan.popular ? `bg-${plan.color} hover:bg-${plan.color}/90` : `border-2 border-${plan.color} text-${plan.color} hover:bg-${plan.color} hover:text-white`} ${!plan.popular ? 'bg-transparent' : ''}`}
-                      size="lg"
-                    >
-                      <a href="/contact">
-                        {plan.price === "Sur devis" ? "Demander un devis" : "Commencer maintenant"}
-                      </a>
-                    </Button>
-                  </div>
-                ))}
-              </div>
+        {/* Growth Hacking */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
+            <Zap className="w-8 h-8 text-green-500" />
+            Growth Hacking IA
+          </h2>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {growthPackages.map(pkg => renderPackageCard(pkg, 'growth'))}
+          </div>
+        </section>
 
-              <div className="text-center mt-16">
-                <div className="bg-gray-50 rounded-2xl p-8 max-w-4xl mx-auto">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    🤖 Pourquoi choisir nos outils IA en 2025 ?
+        {/* Community Management */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
+            <Star className="w-8 h-8 text-pink-500" />
+            Community Management
+          </h2>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {communityPackages.map(pkg => renderPackageCard(pkg, 'community'))}
+          </div>
+        </section>
+
+        {/* Consulting */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8 flex items-center justify-center gap-3">
+            <Diamond className="w-8 h-8 text-purple-500" />
+            Consulting Digital
+          </h2>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {consultingPackages.map(pkg => renderPackageCard(pkg, 'consulting'))}
+          </div>
+        </section>
+
+        {/* Récapitulatif */}
+        {Object.keys(selectedPackages).length > 0 && (
+          <Card className="sticky bottom-6 bg-white/95 backdrop-blur-lg border-2 border-blue-200 shadow-2xl">
+            <CardContent className="p-6">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-4 text-gray-900">
+                    🛒 Votre sélection ({priceInfo.packageCount} package{priceInfo.packageCount > 1 ? 's' : ''})
                   </h3>
-                  <div className="grid md:grid-cols-2 gap-6 text-left">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">✨ Automatisation totale</h4>
-                      <p className="text-gray-600">Nos outils IA remplacent un community manager et un commercial. Prospection, création de contenu, gestion des réseaux sociaux : tout est automatisé.</p>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">🎯 Ultra simple à utiliser</h4>
-                      <p className="text-gray-600">Interface intuitive, formation incluse. Vous gardez le contrôle total tout en économisant des milliers d'euros en salaires.</p>
-                    </div>
+                  <div className="space-y-2">
+                    {Object.entries(selectedPackages).map(([category, packageId]) => {
+                      const packages = category === 'website' ? websitePackages :
+                                     category === 'growth' ? growthPackages :
+                                     category === 'community' ? communityPackages :
+                                     consultingPackages;
+                      const pkg = packages.find(p => p.id === packageId);
+                      return pkg ? (
+                        <div key={category} className="flex items-center justify-between">
+                          <span className="text-gray-700">{pkg.name}</span>
+                          <span className="font-semibold">{pkg.price}€</span>
+                        </div>
+                      ) : null;
+                    })}
                   </div>
                 </div>
+                
+                <div className="text-center lg:text-right">
+                  {priceInfo.discount > 0 && (
+                    <div className="mb-2">
+                      <Badge className="bg-green-100 text-green-800 text-lg px-3 py-1">
+                        🎉 -{priceInfo.discount}% de réduction !
+                      </Badge>
+                    </div>
+                  )}
+                  <div className="text-3xl font-bold text-blue-600 mb-4">
+                    {priceInfo.finalPrice.toLocaleString()}€
+                    {priceInfo.discount > 0 && (
+                      <span className="text-lg text-gray-500 line-through ml-2">
+                        {priceInfo.total.toLocaleString()}€
+                      </span>
+                    )}
+                  </div>
+                  <Button 
+                    onClick={() => setShowQuoteForm(true)}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 text-lg"
+                  >
+                    Demander un devis gratuit
+                  </Button>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+        )}
 
-              <div className="text-center mt-12">
-                <p className="text-gray-600 mb-4">Une question sur nos tarifs ? Besoin d'une solution personnalisée ?</p>
-                <Button variant="outline" size="lg" className="border-2 border-custom-blue text-custom-blue hover:bg-custom-blue hover:text-white">
-                  <a href="/contact">Discutons de votre projet</a>
+        {/* CTA Final */}
+        <div className="text-center mt-16">
+          <h2 className="text-3xl font-bold mb-6">Prêt à booster votre business ? 🎯</h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Nos experts vous accompagnent dans votre transformation digitale
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3">
+              📞 Appel gratuit 15min
+            </Button>
+            <Button variant="outline" className="px-8 py-3">
+              💬 Chat en direct
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Devis */}
+      {showQuoteForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="max-w-md w-full">
+            <CardHeader>
+              <CardTitle>Demande de devis</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <input 
+                type="email" 
+                placeholder="Votre email professionnel"
+                className="w-full p-3 border rounded-lg"
+              />
+              <textarea 
+                placeholder="Parlez-nous de votre projet..."
+                className="w-full p-3 border rounded-lg h-24"
+              />
+              <div className="flex gap-2">
+                <Button 
+                  className="flex-1 bg-blue-500 hover:bg-blue-600"
+                  onClick={() => {
+                    alert('🎉 Devis envoyé ! Nous vous contacterons sous 24h.');
+                    setShowQuoteForm(false);
+                  }}
+                >
+                  Envoyer
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowQuoteForm(false)}
+                >
+                  Annuler
                 </Button>
               </div>
-            </div>
-          </section>
-        </main>
-
-        <Footer />
-      </div>
-    </>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
   );
 };
 
