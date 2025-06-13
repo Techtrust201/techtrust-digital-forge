@@ -1,6 +1,7 @@
 
+import React from "react";
 import { HomeIcon } from "lucide-react";
-import Index from "./pages/Index.tsx";
+import Index from "./pages/Index";
 
 export const navItems = [
   {
