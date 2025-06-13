@@ -9,9 +9,9 @@ export default function SignInPage() {
       <div className="max-w-md w-full space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl text-center">Connexion</CardTitle>
+            <CardTitle className="text-2xl text-center">Se connecter</CardTitle>
             <CardDescription className="text-center">
-              Connectez-vous à votre compte TechTrust
+              Accédez à votre compte TechTrust
             </CardDescription>
           </CardHeader>
           <CardContent>
