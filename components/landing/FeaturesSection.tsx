@@ -1,7 +1,7 @@
 
 "use client"
 
-import React from 'react';
+import { motion } from 'framer-motion'
 import { 
   Zap, 
   Shield, 
@@ -11,7 +11,7 @@ import {
   BarChart3,
   Users,
   Clock
-} from 'lucide-react';
+} from 'lucide-react'
 
 const features = [
   {
@@ -54,9 +54,9 @@ const features = [
     title: "Maintenance Continue",
     description: "Mises à jour régulières et maintenance proactive incluse"
   }
-];
+]
 
-const FeaturesSection = () => {
+export default function FeaturesSection() {
   return (
     <section className="py-24 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
       {/* Éléments décoratifs */}
@@ -65,7 +65,13 @@ const FeaturesSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* En-tête */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
             Pourquoi Choisir <span className="text-custom-blue">Techtrust</span> ?
           </h2>
@@ -73,12 +79,19 @@ const FeaturesSection = () => {
             Une approche unique qui combine expertise technique, créativité et résultats mesurables 
             pour faire grandir votre business.
           </p>
-        </div>
+        </motion.div>
 
         {/* Grille de fonctionnalités */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div key={feature.title} className="group text-center">
+            <motion.div
+              key={feature.title}
+              className="group text-center"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
               {/* Icône */}
               <div className="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
                 <feature.icon className="w-8 h-8 text-custom-blue group-hover:text-custom-purple transition-colors" />
@@ -87,12 +100,18 @@ const FeaturesSection = () => {
               {/* Contenu */}
               <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
               <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Section bonus */}
-        <div className="mt-20 bg-gradient-to-r from-custom-blue to-custom-purple rounded-3xl p-8 lg:p-12 text-white text-center">
+        <motion.div 
+          className="mt-20 bg-gradient-to-r from-custom-blue to-custom-purple rounded-3xl p-8 lg:p-12 text-white text-center"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
           <h3 className="text-2xl lg:text-3xl font-bold mb-4">
             🎯 Garantie Résultats
           </h3>
@@ -100,10 +119,8 @@ const FeaturesSection = () => {
             Si vous n'êtes pas 100% satisfait de nos services dans les 30 premiers jours, 
             nous vous remboursons intégralement. C'est notre engagement qualité !
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
-  );
-};
-
-export default FeaturesSection;
+  )
+}

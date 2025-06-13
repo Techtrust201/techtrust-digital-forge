@@ -1,10 +1,10 @@
 
 "use client"
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Star, Quote } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion'
+import { Star, Quote } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import Image from 'next/image'
 
 const testimonials = [
   {
@@ -28,9 +28,9 @@ const testimonials = [
     rating: 5,
     avatar: "/testimonials/sophie.jpg"
   }
-];
+]
 
-const TestimonialsSection = () => {
+export default function TestimonialsSection() {
   return (
     <section className="py-24 bg-gray-50 relative overflow-hidden">
       {/* Éléments décoratifs */}
@@ -39,14 +39,20 @@ const TestimonialsSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* En-tête */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
             Ce que disent nos <span className="text-custom-purple">Clients</span>
           </h2>
           <p className="text-lg text-gray-600">
             Découvrez pourquoi +200 entreprises nous font confiance pour leur transformation digitale.
           </p>
-        </div>
+        </motion.div>
 
         {/* Grille de témoignages */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -54,8 +60,9 @@ const TestimonialsSection = () => {
             <motion.div
               key={testimonial.name}
               initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
             >
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-white h-full">
                 <CardContent className="p-8 h-full flex flex-col">
@@ -96,7 +103,13 @@ const TestimonialsSection = () => {
         </div>
 
         {/* Note moyenne */}
-        <div className="text-center mt-16">
+        <motion.div 
+          className="text-center mt-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
           <div className="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 shadow-lg">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
@@ -106,10 +119,8 @@ const TestimonialsSection = () => {
             <span className="text-gray-700 font-medium">4.9/5</span>
             <span className="text-gray-500 text-sm">• +200 avis clients</span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
-  );
-};
-
-export default TestimonialsSection;
+  )
+}

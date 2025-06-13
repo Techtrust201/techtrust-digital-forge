@@ -1,50 +1,205 @@
 
+"use client"
+
 import React from 'react';
-import { Code, Zap, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Globe, TrendingUp, Code, Lightbulb, ArrowRight, Check, Bot, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 const services = [
   {
-    icon: Code,
-    title: "Création de Sites Web",
-    description: "Sites web modernes et responsives, e-commerce et applications sur mesure"
+    icon: Globe,
+    title: "Création Site Web",
+    subtitle: "Sites professionnels & E-commerce",
+    description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe.",
+    features: ["Design responsive 2025", "Optimisation SEO avancée", "Hébergement sécurisé", "Maintenance incluse"],
+    color: "blue-600",
+    link: "/solutions/agence-web"
   },
   {
-    icon: Zap,
-    title: "Growth Hacking",
-    description: "Stratégies de croissance digitale et acquisition de leads"
+    icon: TrendingUp,
+    title: "Growth Hacking IA",
+    subtitle: "🤖 Automatisation complète",
+    description: "Nos outils IA propriétaires automatisent votre prospection et acquisition clients. Remplacez un commercial + community manager par notre IA ultra-performante.",
+    features: ["🤖 IA de prospection", "📧 Email marketing automatisé", "📊 Analytics temps réel", "🎯 Lead generation IA"],
+    color: "purple-600", 
+    link: "/solutions/growth-hacking"
+  },
+  {
+    icon: Code,
+    title: "Solutions Sur Mesure",
+    subtitle: "Développement personnalisé",
+    description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité en 2025.",
+    features: ["Audit métier", "Développement agile", "Formation équipe", "Support technique"],
+    color: "green-600",
+    link: "/solutions/digitales-sur-mesure"
   },
   {
     icon: Users,
-    title: "Solutions Sur Mesure", 
-    description: "Développement de logiciels personnalisés et applications métier"
+    title: "Community Management Pro",
+    subtitle: "Équipe dédiée",
+    description: "Vous préférez déléguer à des professionnels ? Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.",
+    features: ["Community manager dédié", "Stratégie sur mesure", "Création contenu pro", "Reporting détaillé"],
+    color: "pink-600",
+    link: "/solutions/community-management"
+  },
+  {
+    icon: Lightbulb,
+    title: "Consulting Digital",
+    subtitle: "Stratégie & Transformation",
+    description: "Accompagnement stratégique pour votre transformation digitale 2025. Audit complet, recommandations et feuille de route personnalisée.",
+    features: ["Audit digital complet", "Stratégie data 2025", "Formation équipes", "Accompagnement projet"],
+    color: "indigo-600",
+    link: "/solutions/consulting-digital"
   }
 ];
 
-export default function ServicesSection() {
+const ServicesSection = () => {
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4">
+    <section className="py-24 bg-white relative overflow-hidden" id="services">
+      <div className="container mx-auto px-4 relative z-10">
+        {/* En-tête de section */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Nos <span className="text-blue-600">Services</span>
-          </h2>
-          <p className="text-lg text-gray-600">
-            Des solutions digitales complètes pour faire grandir votre business
-          </p>
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-4"
+          >
+            Notre Expertise 2025
+          </motion.span>
+
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6"
+          >
+            Nos <span className="text-blue-600">Solutions Digitales</span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-green-600">
+              IA & Professionnelles
+            </span>
+          </motion.h2>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-lg text-gray-600"
+          >
+            <strong>Vous avez le choix :</strong> Utilisez nos outils IA en autonomie pour automatiser votre growth hacking, 
+            ou bénéficiez de l'expertise de nos professionnels pour un accompagnement sur mesure.
+          </motion.p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <div key={service.title} className="text-center p-6 rounded-xl hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <service.icon className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-              <p className="text-gray-600">{service.description}</p>
+        {/* Distinction claire IA vs Pro */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mb-16">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="text-center">
+              <Bot className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">🤖 Outils IA Automatisés</h3>
+              <p className="text-gray-600">
+                Parfait si vous voulez garder le contrôle et économiser. Nos IA remplacent un commercial + community manager.
+              </p>
+              <div className="mt-4 text-sm text-blue-700 font-medium">Dès 97€/mois</div>
             </div>
+            
+            <div className="text-center">
+              <Users className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">👨‍💼 Équipe Professionnelle</h3>
+              <p className="text-gray-600">
+                Idéal si vous préférez déléguer à des experts. Notre équipe gère tout avec une stratégie personnalisée.
+              </p>
+              <div className="mt-4 text-sm text-purple-700 font-medium">Sur mesure</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Grille de services */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+          {services.map((service, index) => (
+            <motion.div 
+              key={service.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white relative overflow-hidden h-full">
+                <div className={`absolute inset-0 bg-gradient-to-br from-${service.color}/5 to-${service.color}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                <CardContent className="p-8 relative z-10 h-full flex flex-col">
+                  {/* Icône */}
+                  <div className={`w-16 h-16 bg-${service.color}/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <service.icon className={`w-8 h-8 text-${service.color}`} />
+                  </div>
+
+                  {/* Contenu */}
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+                    <p className={`text-${service.color} font-medium mb-4 text-sm`}>{service.subtitle}</p>
+                    <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
+
+                    {/* Features */}
+                    <ul className="space-y-3 mb-6">
+                      {service.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-center text-sm text-gray-600">
+                          <Check className={`w-4 h-4 text-${service.color} mr-2 flex-shrink-0`} />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* CTA */}
+                  <div>
+                    <Button 
+                      asChild
+                      className={`w-full bg-${service.color} hover:bg-${service.color}/90 text-white group/btn`}
+                    >
+                      <a href={service.link}>
+                        En savoir plus
+                        <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                      </a>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
+        </div>
+
+        {/* CTA global */}
+        <div className="text-center mt-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-gray-600 mb-6">
+              Découvrez nos tarifs transparents pour 2025 !
+            </p>
+            <Button 
+              asChild
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-300"
+            >
+              <a href="/pricing">
+                Voir nos tarifs 2025
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </a>
+            </Button>
+          </motion.div>
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default ServicesSection;

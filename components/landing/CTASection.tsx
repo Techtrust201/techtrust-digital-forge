@@ -1,12 +1,12 @@
 
 "use client"
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Phone, Mail, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion'
+import { ArrowRight, Phone, Mail, Calendar } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
-const CTASection = () => {
+export default function CTASection() {
   return (
     <section className="py-24 bg-gradient-to-br from-custom-blue via-custom-purple to-custom-green relative overflow-hidden">
       {/* Éléments décoratifs */}
@@ -17,11 +17,11 @@ const CTASection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
           className="text-center max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
         >
           {/* Titre principal */}
           <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6">
@@ -37,29 +37,48 @@ const CTASection = () => {
 
           {/* Boutons d'action */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <Button asChild size="lg" className="bg-white text-custom-blue hover:bg-gray-100 px-8 py-6 rounded-xl font-semibold shadow-lg group">
-              <a href="/contact">
-                <Calendar className="mr-2 w-5 h-5" />
-                Réserver un appel gratuit
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button 
+                asChild
+                size="lg"
+                className="bg-white text-custom-blue hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold shadow-lg group"
+              >
+                <Link href="/contact">
+                  <Calendar className="mr-2 w-5 h-5" />
+                  Réserver un appel gratuit
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+            </motion.div>
 
-            <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-6 rounded-xl font-semibold">
-              <a href="/pricing">
-                Voir nos tarifs
-              </a>
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button 
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-4 rounded-xl font-semibold"
+              >
+                <Link href="/pricing">
+                  Voir nos tarifs
+                </Link>
+              </Button>
+            </motion.div>
           </div>
 
           {/* Informations de contact */}
           <div className="grid md:grid-cols-3 gap-8 text-white">
             <motion.div 
+              className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-6"
             >
               <Phone className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Appelez-nous</h3>
@@ -67,11 +86,11 @@ const CTASection = () => {
             </motion.div>
 
             <motion.div 
+              className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ delay: 0.3 }}
               viewport={{ once: true }}
-              className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-6"
             >
               <Mail className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Écrivez-nous</h3>
@@ -79,11 +98,11 @@ const CTASection = () => {
             </motion.div>
 
             <motion.div 
+              className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ delay: 0.4 }}
               viewport={{ once: true }}
-              className="text-center bg-white/10 backdrop-blur-sm rounded-xl p-6"
             >
               <Calendar className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Réponse garantie</h3>
@@ -93,18 +112,16 @@ const CTASection = () => {
 
           {/* Garantie */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
             className="mt-12 inline-block bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-white"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            viewport={{ once: true }}
           >
             ✨ Satisfaction garantie ou remboursé
           </motion.div>
         </motion.div>
       </div>
     </section>
-  );
-};
-
-export default CTASection;
+  )
+}

@@ -1,11 +1,11 @@
 
 "use client"
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, ArrowRight, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion'
+import { Calendar, ArrowRight, Clock } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import Link from 'next/link'
 
 const blogPosts = [
   {
@@ -35,9 +35,9 @@ const blogPosts = [
     image: "/blog/custom-vs-saas.jpg",
     slug: "developpement-sur-mesure-vs-saas"
   }
-];
+]
 
-const BlogPreviewSection = () => {
+export default function BlogPreviewSection() {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Éléments décoratifs */}
@@ -45,20 +45,30 @@ const BlogPreviewSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* En-tête */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
             Derniers <span className="text-custom-green">Articles</span> du Blog
           </h2>
           <p className="text-lg text-gray-600">
             Conseils d'experts, guides pratiques et actualités du digital pour faire grandir votre business.
           </p>
-        </div>
+        </motion.div>
 
         {/* Grille d'articles */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {blogPosts.map((post, index) => (
-            <article
+            <motion.article
               key={post.slug}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
             >
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-white h-full overflow-hidden">
                 {/* Image */}
@@ -95,36 +105,40 @@ const BlogPreviewSection = () => {
                   </div>
 
                   {/* CTA */}
-                  <a 
+                  <Link 
                     href={`/blog/${post.slug}`}
                     className="inline-flex items-center text-custom-blue font-medium group/link hover:text-custom-purple transition-colors"
                   >
                     Lire l'article
                     <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                  </a>
+                  </Link>
                 </CardContent>
               </Card>
-            </article>
+            </motion.article>
           ))}
         </div>
 
         {/* CTA vers le blog */}
-        <div className="text-center">
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
           <Button 
             asChild
             size="lg"
             variant="outline"
             className="border-2 border-custom-green text-custom-green hover:bg-custom-green hover:text-white"
           >
-            <a href="/blog">
+            <Link href="/blog">
               Voir tous les articles
               <ArrowRight className="ml-2 w-4 h-4" />
-            </a>
+            </Link>
           </Button>
-        </div>
+        </motion.div>
       </div>
     </section>
-  );
-};
-
-export default BlogPreviewSection;
+  )
+}

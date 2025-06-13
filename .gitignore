@@ -22,14 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Next.js build output
-.next
-.next/**
-
-# Turbopack traces / cache
-trace
-.turbo
-
-# Env files (already ignorés?)
-# .env*
