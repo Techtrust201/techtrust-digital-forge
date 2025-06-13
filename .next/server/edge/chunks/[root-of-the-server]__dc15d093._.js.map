@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 23, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/middleware.ts"],"sourcesContent":["\nimport { betterAuth } from \"better-auth\"\nimport { NextRequest, NextResponse } from \"next/server\"\n\nconst auth = betterAuth({\n  secret: process.env.AUTH_SECRET!,\n  baseURL: process.env.NEXTAUTH_URL!,\n})\n\nexport default async function middleware(request: NextRequest) {\n  const session = await auth.api.getSession({\n    headers: request.headers,\n  })\n\n  if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {\n    return NextResponse.redirect(new URL('/auth/signin', request.url))\n  }\n\n  return NextResponse.next()\n}\n\nexport const config = {\n  matcher: ['/(dashboard)(.*)'],\n}\n"],"names":[],"mappings":";;;;AACA;AAAA;AACA;AAAA;;;AAEA,MAAM,OAAO,CAAA,GAAA,wKAAA,CAAA,aAAU,AAAD,EAAE;IACtB,QAAQ,QAAQ,GAAG,CAAC,WAAW;IAC/B,SAAS,QAAQ,GAAG,CAAC,YAAY;AACnC;AAEe,eAAe,WAAW,OAAoB;IAC3D,MAAM,UAAU,MAAM,KAAK,GAAG,CAAC,UAAU,CAAC;QACxC,SAAS,QAAQ,OAAO;IAC1B;IAEA,IAAI,CAAC,WAAW,QAAQ,OAAO,CAAC,QAAQ,CAAC,UAAU,CAAC,eAAe;QACjE,OAAO,6LAAA,CAAA,eAAY,CAAC,QAAQ,CAAC,IAAI,IAAI,gBAAgB,QAAQ,GAAG;IAClE;IAEA,OAAO,6LAAA,CAAA,eAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;QAAC;KAAmB;AAC/B"}}]
+}

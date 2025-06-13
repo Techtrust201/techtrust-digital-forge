@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///home/hugo/work/techtrust-digital-forge/src/locales/client.tsx"],"sourcesContent":["\n\"use client\";\n\nimport { ReactNode } from \"react\";\n\ninterface I18nProviderClientProps {\n  locale: string;\n  children: ReactNode;\n}\n\nexport function I18nProviderClient({ locale, children }: I18nProviderClientProps) {\n  // Provider d'internationalisation simplifié\n  return <div lang={locale}>{children}</div>;\n}\n"],"names":[],"mappings":";;;;AACA;;AASO,SAAS,mBAAmB,EAAE,MAAM,EAAE,QAAQ,EAA2B;IAC9E,4CAA4C;IAC5C,qBAAO,6LAAC;QAAI,MAAM;kBAAS;;;;;;AAC7B;KAHgB","debugId":null}},
+    {"offset": {"line": 36, "column": 0}, "map": {"version":3,"sources":["file:///home/hugo/work/techtrust-digital-forge/src/components/SessionProviderWrapper.tsx"],"sourcesContent":["\n\"use client\";\n\nimport { ReactNode } from \"react\";\n\ninterface SessionProviderWrapperProps {\n  children: ReactNode;\n}\n\nexport default function SessionProviderWrapper({ children }: SessionProviderWrapperProps) {\n  // Pour l'instant, on retourne juste les enfants\n  // L'authentification sera gérée par better-auth\n  return <>{children}</>;\n}\n"],"names":[],"mappings":";;;;AACA;;AAQe,SAAS,uBAAuB,EAAE,QAAQ,EAA+B;IACtF,gDAAgD;IAChD,gDAAgD;IAChD,qBAAO;kBAAG;;AACZ;KAJwB","debugId":null}}]
+}
