@@ -1,10 +1,11 @@
+
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: headers(),
   })
 
   return (
