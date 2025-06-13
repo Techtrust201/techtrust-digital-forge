@@ -1,6 +1,4 @@
 
-"use client"
-
 import React from 'react';
 import { Code, Zap, Users } from 'lucide-react';
 
