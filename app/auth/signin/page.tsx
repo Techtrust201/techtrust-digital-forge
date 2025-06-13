@@ -1,7 +1,12 @@
-
-import { SignInForm } from '@/components/shared/signin-form'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import Link from 'next/link'
+import { SignInForm } from "@/components/shared/signin-form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export default function SignInPage() {
   return (
@@ -18,8 +23,11 @@ export default function SignInPage() {
             <SignInForm />
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Pas encore de compte ?{' '}
-                <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                Pas encore de compte ?{" "}
+                <Link
+                  href="/auth/signup"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
                   Créer un compte
                 </Link>
               </p>
@@ -28,5 +36,5 @@ export default function SignInPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

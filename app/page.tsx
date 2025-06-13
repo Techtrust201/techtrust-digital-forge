@@ -1,14 +1,13 @@
-
-import { HeroSection } from '@/components/landing/HeroSection'
-import { ServicesSection } from '@/components/landing/ServicesSection'
-import { FeaturesSection } from '@/components/landing/FeaturesSection'
-import { PartnersSection } from '@/components/landing/PartnersSection'
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection'
-import { StatsSection } from '@/components/landing/StatsSection'
-import { CTASection } from '@/components/landing/CTASection'
-import { BlogPreviewSection } from '@/components/landing/BlogPreviewSection'
-import { NavbarPublic } from '@/components/layout/NavbarPublic'
-import { Footer } from '@/components/layout/Footer'
+import HeroSection from "@/components/landing/HeroSection";
+import ServicesSection from "@/components/landing/ServicesSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import PartnersSection from "@/components/landing/PartnersSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import StatsSection from "@/components/landing/StatsSection";
+import CTASection from "@/components/landing/CTASection";
+import BlogPreviewSection from "@/components/landing/BlogPreviewSection";
+import NavbarPublic from "@/components/NavbarPublic";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -30,5 +29,5 @@ export default function Home() {
 
       <Footer />
     </div>
-  )
+  );
 }
