@@ -10,8 +10,7 @@ import {
   Search, 
   BarChart3,
   Users,
-  Clock,
-  Target
+  Clock
 } from 'lucide-react';
 
 const features = [
@@ -60,15 +59,10 @@ const features = [
 const FeaturesSection = () => {
   return (
     <section className="py-24 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-      {/* Éléments décoratifs */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-custom-purple/5 rounded-full blur-3xl -translate-x-1/2"></div>
-      <div className="absolute top-1/4 right-0 w-80 h-80 bg-custom-blue/5 rounded-full blur-3xl translate-x-1/2"></div>
-
       <div className="container mx-auto px-4 relative z-10">
-        {/* En-tête */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Pourquoi Choisir <span className="text-custom-blue">Techtrust</span> ?
+            Pourquoi Choisir <span className="text-blue-600">Techtrust</span> ?
           </h2>
           <p className="text-lg text-gray-600">
             Une approche unique qui combine expertise technique, créativité et résultats mesurables 
@@ -76,34 +70,16 @@ const FeaturesSection = () => {
           </p>
         </div>
 
-        {/* Grille de fonctionnalités */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <div key={feature.title} className="group text-center">
-              {/* Icône */}
               <div className="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                <feature.icon className="w-8 h-8 text-custom-blue group-hover:text-custom-purple transition-colors" />
+                <feature.icon className="w-8 h-8 text-blue-600 group-hover:text-purple-600 transition-colors" />
               </div>
-
-              {/* Contenu */}
               <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
               <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
-        </div>
-
-        {/* Section bonus */}
-        <div className="mt-20 bg-gradient-to-r from-custom-blue to-custom-purple rounded-3xl p-8 lg:p-12 text-white text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Target className="w-8 h-8 text-yellow-300" />
-            <h3 className="text-2xl lg:text-3xl font-bold">
-              Garantie Résultats
-            </h3>
-          </div>
-          <p className="text-lg text-gray-100 max-w-2xl mx-auto">
-            Si vous n'êtes pas 100% satisfait de nos services dans les 30 premiers jours, 
-            nous vous remboursons intégralement. C'est notre engagement qualité !
-          </p>
         </div>
       </div>
     </section>
