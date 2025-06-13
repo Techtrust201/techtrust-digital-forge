@@ -1,14 +1,12 @@
 
-"use client";
+"use client"
 
-import { ReactNode } from "react";
+import React from 'react'
 
-interface SessionProviderWrapperProps {
-  children: ReactNode;
-}
-
-export default function SessionProviderWrapper({ children }: SessionProviderWrapperProps) {
-  // Pour l'instant, on retourne juste les enfants
-  // L'authentification sera gérée par better-auth
-  return <>{children}</>;
+export default function SessionProviderWrapper({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return <>{children}</>
 }
