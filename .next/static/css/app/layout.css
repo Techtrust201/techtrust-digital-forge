@@ -1133,6 +1133,9 @@ video {
 .min-h-svh {
   min-height: 100svh;
 }
+.min-h-\[120px\] {
+  min-height: 120px;
+}
 .w-0 {
   width: 0px;
 }

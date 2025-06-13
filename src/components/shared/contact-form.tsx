@@ -1,105 +1,117 @@
+"use client";
 
-'use client'
-
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { contactSchema, type ContactData } from '@/lib/validations'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { contactSchema, type ContactData } from "@/lib/validations";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 
 export function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ContactData>({
+  const form = useForm<ContactData>({
     resolver: zodResolver(contactSchema),
-  })
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+  });
 
   const onSubmit = async (data: ContactData) => {
-    setIsSubmitting(true)
-    setMessage('')
-
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/v1/contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("/api/v1/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      })
+      });
 
       if (response.ok) {
-        setMessage('Message envoyé avec succès!')
-        reset()
+        toast({
+          title: "Message envoyé !",
+          description: "Nous vous répondrons dans les plus brefs délais.",
+        });
+        form.reset();
       } else {
-        setMessage('Erreur lors de l\'envoi du message.')
+        throw new Error("Erreur lors de l'envoi");
       }
     } catch (error) {
-      setMessage('Erreur lors de l\'envoi du message.')
-      console.error('Contact form error:', error)
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'envoi du message.",
+        variant: "destructive",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <Label htmlFor="name">Nom</Label>
-        <Input
-          id="name"
-          type="text"
-          {...register('name')}
-          className={errors.name ? 'border-red-500' : ''}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nom</FormLabel>
+              <FormControl>
+                <Input placeholder="Votre nom" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.name && (
-          <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
-        )}
-      </div>
 
-      <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          {...register('email')}
-          className={errors.email ? 'border-red-500' : ''}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="votre@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.email && (
-          <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
-        )}
-      </div>
 
-      <div>
-        <Label htmlFor="message">Message</Label>
-        <Textarea
-          id="message"
-          rows={4}
-          {...register('message')}
-          className={errors.message ? 'border-red-500' : ''}
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Message</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Votre message..."
+                  className="min-h-[120px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.message && (
-          <p className="text-sm text-red-500 mt-1">{errors.message.message}</p>
-        )}
-      </div>
 
-      <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? 'Envoi...' : 'Envoyer'}
-      </Button>
-
-      {message && (
-        <p className={`text-sm mt-2 ${message.includes('succès') ? 'text-green-600' : 'text-red-600'}`}>
-          {message}
-        </p>
-      )}
-    </form>
-  )
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Envoi en cours..." : "Envoyer le message"}
+        </Button>
+      </form>
+    </Form>
+  );
 }
