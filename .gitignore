@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Artifacts & répertoires à ne jamais suivre
+.next
+.next/cache
+.next/static
+.next/trace
+# Si tu compiles avec turbo / swc
+.turbo
+.cache
+build
