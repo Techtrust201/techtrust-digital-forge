@@ -148,7 +148,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       } fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
         
         {/* Header sidebar */}
-        <div className="flex items-center justify-between h-16 px-6 border-b bg-gradient-to-r from-red-500 to-orange-500">
+        <div className="flex items-center justify-between h-16 px-6 border-b bg-gradient-to-r from-red-500 to-orange-500 relative">
           <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-red-500" />
@@ -161,20 +161,25 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={toggleSidebarCollapse}
-              className="hidden lg:flex text-white hover:bg-white/20"
-            >
-              {isSidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
               onClick={() => setIsSidebarOpen(false)}
               className="lg:hidden text-white hover:bg-white/20"
             >
               <X className="w-5 h-5" />
             </Button>
           </div>
+
+          {/* Bouton de collapse/expand amélioré */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSidebarCollapse}
+            className={`hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-600 border border-gray-200 shadow-md rounded-full w-6 h-6 items-center justify-center transition-all duration-200 hover:scale-110 ${
+              isSidebarCollapsed ? 'rotate-180' : ''
+            }`}
+            title={isSidebarCollapsed ? 'Élargir la sidebar' : 'Réduire la sidebar'}
+          >
+            <ChevronLeft className="w-3 h-3" />
+          </Button>
         </div>
 
         {/* User info */}
