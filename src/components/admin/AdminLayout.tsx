@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   Home, 
@@ -31,11 +32,10 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 
 interface AdminLayoutProps {
@@ -44,10 +44,12 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [userData, setUserData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     const user = localStorage.getItem('techtrust_user');
@@ -56,6 +58,33 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     }
   }, []);
 
+  // Déterminer l'onglet actif basé sur l'URL
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/admin/users')) {
+      setActiveTab('users');
+      setOpenDropdown('users');
+    } else if (path.includes('/admin/analytics')) {
+      setActiveTab('analytics');
+      setOpenDropdown('analytics');
+    } else if (path.includes('/admin/blog')) {
+      setActiveTab('blog');
+      setOpenDropdown('blog');
+    } else if (path.includes('/admin/campaigns')) {
+      setActiveTab('campaigns');
+      setOpenDropdown('campaigns');
+    } else if (path.includes('/admin/billing')) {
+      setActiveTab('billing');
+      setOpenDropdown('billing');
+    } else if (path.includes('/admin/system')) {
+      setActiveTab('system');
+      setOpenDropdown('system');
+    } else if (path.includes('/admin/dashboard')) {
+      setActiveTab('dashboard');
+      setOpenDropdown(null);
+    }
+  }, [location.pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem('techtrust_user');
     window.location.href = '/auth';
@@ -63,6 +92,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const toggleSidebarCollapse = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const toggleDropdown = (dropdownId: string) => {
+    setOpenDropdown(openDropdown === dropdownId ? null : dropdownId);
   };
 
   const navigationItems = [
@@ -221,20 +254,34 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {/* Navigation */}
         <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
           {!isSidebarCollapsed ? (
-            <Accordion type="multiple" className="w-full space-y-1">
+            <div className="w-full space-y-1">
               {navigationItems.map((item) => {
                 const ItemIcon = item.icon;
                 
                 if (item.submenu) {
                   return (
-                    <AccordionItem key={item.id} value={item.id} className="border-none">
-                      <AccordionTrigger className="hover:no-underline hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors duration-200 group [&[data-state=open]]:bg-red-50 [&[data-state=open]]:text-red-600">
-                        <div className="flex items-center gap-3">
-                          <ItemIcon className="w-5 h-5" />
-                          <span className="font-medium">{item.name}</span>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-2 pt-1">
+                    <Collapsible 
+                      key={item.id} 
+                      open={openDropdown === item.id}
+                      onOpenChange={() => toggleDropdown(item.id)}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className={`w-full justify-between hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors duration-200 group ${
+                            activeTab === item.id ? 'bg-red-50 text-red-600 hover:bg-red-100' : ''
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <ItemIcon className="w-5 h-5" />
+                            <span className="font-medium">{item.name}</span>
+                          </div>
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                            openDropdown === item.id ? 'rotate-180' : ''
+                          }`} />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-1 mt-1">
                         <div className="ml-8 space-y-1">
                           {item.submenu.map((subItem) => (
                             <Button
@@ -250,8 +297,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                             </Button>
                           ))}
                         </div>
-                      </AccordionContent>
-                    </AccordionItem>
+                      </CollapsibleContent>
+                    </Collapsible>
                   );
                 } else {
                   return (
@@ -271,7 +318,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   );
                 }
               })}
-            </Accordion>
+            </div>
           ) : (
             // Version collapsed avec tooltips
             <div className="space-y-2">
