@@ -19,7 +19,9 @@ import {
   Database,
   Mail,
   Zap,
-  CreditCard
+  CreditCard,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -37,6 +39,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { t } = useTranslation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [userData, setUserData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -50,6 +53,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const handleLogout = () => {
     localStorage.removeItem('techtrust_user');
     window.location.href = '/auth';
+  };
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const navigationItems = [
@@ -136,28 +143,42 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Sidebar */}
       <aside className={`${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      } ${
+        isSidebarCollapsed ? 'w-16' : 'w-64'
+      } fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
         
         {/* Header sidebar */}
         <div className="flex items-center justify-between h-16 px-6 border-b bg-gradient-to-r from-red-500 to-orange-500">
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-red-500" />
             </div>
-            <span className="font-bold text-xl text-white">Admin</span>
+            {!isSidebarCollapsed && (
+              <span className="font-bold text-xl text-white">Admin</span>
+            )}
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden text-white hover:bg-white/20"
-          >
-            <X className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleSidebarCollapse}
+              className="hidden lg:flex text-white hover:bg-white/20"
+            >
+              {isSidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden text-white hover:bg-white/20"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
         {/* User info */}
-        {userData && (
+        {userData && !isSidebarCollapsed && (
           <div className="p-6 border-b bg-red-50">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
@@ -175,13 +196,22 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
         )}
 
+        {/* User info collapsed */}
+        {userData && isSidebarCollapsed && (
+          <div className="p-2 border-b bg-red-50 flex justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold">{userData.name.charAt(0)}</span>
+            </div>
+          </div>
+        )}
+
         {/* Navigation */}
         <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
           {navigationItems.map((item) => {
             const ItemIcon = item.icon;
             return (
               <div key={item.id}>
-                {item.submenu ? (
+                {item.submenu && !isSidebarCollapsed ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -209,13 +239,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   <Button
                     variant="ghost"
                     asChild
-                    className={`w-full justify-start hover:bg-gray-100 ${
+                    className={`w-full ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'} hover:bg-gray-100 ${
                       activeTab === item.id ? 'bg-red-50 text-red-600' : ''
                     }`}
+                    title={isSidebarCollapsed ? item.name : undefined}
                   >
                     <a href={item.href} onClick={() => setActiveTab(item.id)}>
-                      <ItemIcon className="w-5 h-5 mr-3" />
-                      {item.name}
+                      <ItemIcon className={`w-5 h-5 ${!isSidebarCollapsed ? 'mr-3' : ''}`} />
+                      {!isSidebarCollapsed && item.name}
                     </a>
                   </Button>
                 )}
@@ -229,26 +260,28 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <Button
             variant="ghost"
             asChild
-            className="w-full justify-start mb-2 hover:bg-blue-50 hover:text-blue-600"
+            className={`w-full ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'} mb-2 hover:bg-blue-50 hover:text-blue-600`}
+            title={isSidebarCollapsed ? 'Retour client' : undefined}
           >
             <a href="/dashboard">
-              <Home className="w-5 h-5 mr-3" />
-              Retour client
+              <Home className={`w-5 h-5 ${!isSidebarCollapsed ? 'mr-3' : ''}`} />
+              {!isSidebarCollapsed && 'Retour client'}
             </a>
           </Button>
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
+            className={`w-full ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'} text-red-600 hover:bg-red-50 hover:text-red-700`}
+            title={isSidebarCollapsed ? 'Se déconnecter' : undefined}
           >
-            <LogOut className="w-5 h-5 mr-3" />
-            Se déconnecter
+            <LogOut className={`w-5 h-5 ${!isSidebarCollapsed ? 'mr-3' : ''}`} />
+            {!isSidebarCollapsed && 'Se déconnecter'}
           </Button>
         </div>
       </aside>
 
       {/* Content */}
-      <div className="flex-1 lg:ml-0">
+      <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
         {/* Header */}
         <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
