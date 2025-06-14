@@ -36,28 +36,28 @@ const PackageCard: React.FC<PackageCardProps> = ({
   index 
 }) => {
   return (
-    <div className="relative group">
+    <div className={`relative group ${pkg.popular ? 'pt-8' : ''}`}>
+      {pkg.popular && (
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 group-hover:scale-110">
+          <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-2 text-sm font-bold shadow-lg rounded-full border-2 border-white`}>
+            <Star className="w-4 h-4 mr-1" />
+            POPULAIRE
+          </Badge>
+        </div>
+      )}
+      
       <Card 
         className={`relative h-full transition-all duration-500 hover:shadow-2xl ${
           pkg.popular 
-            ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl` 
+            ? `ring-4 ring-${service.color}-400 shadow-2xl` 
             : 'hover:scale-105 shadow-lg'
         } ${
           isSelected 
             ? `ring-4 ring-green-500 ${service.lightBg} shadow-2xl` 
             : ''
-        } animate-fade-in rounded-3xl overflow-hidden border-2 hover:border-4 hover:border-${service.color}-400`}
+        } animate-fade-in rounded-3xl overflow-hidden border-2 hover:border-4 hover:border-${service.color}-400 group-hover:scale-105`}
         style={{ animationDelay: `${index * 0.1}s` }}
       >
-        {pkg.popular && (
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-500 group-hover:scale-110">
-            <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-2 text-sm font-bold shadow-lg rounded-full border-2 border-white`}>
-              <Star className="w-4 h-4 mr-1" />
-              POPULAIRE
-            </Badge>
-          </div>
-        )}
-        
         <CardHeader className="text-center pb-6 bg-gradient-to-br from-white to-gray-50">
           <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
             {pkg.name}
