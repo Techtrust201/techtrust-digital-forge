@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -17,7 +16,9 @@ import {
   UserCheck,
   Mail,
   Phone,
-  Calendar
+  Calendar,
+  X,
+  Plus
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -40,14 +41,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const AdminUsersPage = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedPackage, setSelectedPackage] = useState('');
+  const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [editingPackages, setEditingPackages] = useState<string[]>([]);
 
-  // Packages data matching the pricing page
   const packagesData = {
     website: {
       title: "Création Site Web",
@@ -83,14 +92,6 @@ const AdminUsersPage = () => {
     }
   };
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path.includes('/new')) return 'Nouveaux comptes';
-    if (path.includes('/suspended')) return 'Comptes suspendus';
-    if (path.includes('/create')) return 'Créer un compte';
-    return 'Tous les utilisateurs';
-  };
-
   const getFilteredUsers = () => {
     const path = location.pathname;
     
@@ -101,8 +102,7 @@ const AdminUsersPage = () => {
           name: 'Marie Dubois',
           email: 'marie.dubois@email.com',
           role: 'client',
-          package: 'Website Business',
-          category: 'Création Site Web',
+          packages: ['website-business', 'growth-pro'],
           status: 'pending',
           created: '2024-01-20',
           lastLogin: 'Jamais'
@@ -112,8 +112,7 @@ const AdminUsersPage = () => {
           name: 'Jean Durand',
           email: 'jean.durand@email.com',
           role: 'client',
-          package: 'Growth Pro',
-          category: 'Growth Hacking IA',
+          packages: ['community-starter'],
           status: 'pending',
           created: '2024-01-19',
           lastLogin: 'Jamais'
@@ -128,8 +127,7 @@ const AdminUsersPage = () => {
           name: 'Sophie Laurent',
           email: 'sophie.laurent@email.com',
           role: 'client',
-          package: 'Community Starter',
-          category: 'Community Management',
+          packages: ['community-starter', 'custom-audit'],
           status: 'suspended',
           created: '2024-01-05',
           lastLogin: '2024-01-18'
@@ -139,8 +137,7 @@ const AdminUsersPage = () => {
           name: 'Paul Moreau',
           email: 'paul.moreau@email.com',
           role: 'client',
-          package: 'Website Starter',
-          category: 'Création Site Web',
+          packages: ['website-starter'],
           status: 'suspended',
           created: '2023-12-15',
           lastLogin: '2024-01-10'
@@ -148,15 +145,13 @@ const AdminUsersPage = () => {
       ];
     }
     
-    // Tous les utilisateurs par défaut
     return [
       {
         id: 1,
         name: 'Marie Dubois',
         email: 'marie.dubois@email.com',
         role: 'client',
-        package: 'Website Business',
-        category: 'Création Site Web',
+        packages: ['website-business', 'growth-pro'],
         status: 'active',
         created: '2024-01-15',
         lastLogin: '2024-01-20'
@@ -166,8 +161,7 @@ const AdminUsersPage = () => {
         name: 'Pierre Martin',
         email: 'pierre.martin@email.com',
         role: 'client',
-        package: 'Growth Pro',
-        category: 'Growth Hacking IA',
+        packages: ['growth-pro', 'community-premium'],
         status: 'active',
         created: '2024-01-10',
         lastLogin: '2024-01-19'
@@ -177,13 +171,20 @@ const AdminUsersPage = () => {
         name: 'Sophie Laurent',
         email: 'sophie.laurent@email.com',
         role: 'client',
-        package: 'Community Premium',
-        category: 'Community Management',
+        packages: ['community-premium'],
         status: 'suspended',
         created: '2024-01-05',
         lastLogin: '2024-01-18'
       }
     ];
+  };
+
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path.includes('/new')) return 'Nouveaux comptes';
+    if (path.includes('/suspended')) return 'Comptes suspendus';
+    if (path.includes('/create')) return 'Créer un compte';
+    return 'Tous les utilisateurs';
   };
 
   const getPageDescription = () => {
@@ -196,12 +197,31 @@ const AdminUsersPage = () => {
 
   const users = getFilteredUsers();
 
-  const getPackageColor = (category: string) => {
-    switch (category) {
-      case 'Création Site Web': return 'bg-blue-100 text-blue-800';
-      case 'Growth Hacking IA': return 'bg-green-100 text-green-800';
-      case 'Community Management': return 'bg-orange-100 text-orange-800';
-      case 'Solutions Sur Mesure': return 'bg-purple-100 text-purple-800';
+  const getAllPackages = () => {
+    const allPackages: any[] = [];
+    Object.entries(packagesData).forEach(([categoryKey, category]) => {
+      category.packages.forEach(pkg => {
+        allPackages.push({
+          ...pkg,
+          category: category.title,
+          categoryKey
+        });
+      });
+    });
+    return allPackages;
+  };
+
+  const getPackageById = (packageId: string) => {
+    const allPackages = getAllPackages();
+    return allPackages.find(pkg => pkg.id === packageId);
+  };
+
+  const getPackageColor = (categoryKey: string) => {
+    switch (categoryKey) {
+      case 'website': return 'bg-blue-100 text-blue-800';
+      case 'growth': return 'bg-green-100 text-green-800';
+      case 'community': return 'bg-orange-100 text-orange-800';
+      case 'custom': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -224,16 +244,47 @@ const AdminUsersPage = () => {
     }
   };
 
-  const getSelectedPackageData = () => {
-    if (!selectedCategory || !selectedPackage) return null;
-    const category = packagesData[selectedCategory];
-    return category?.packages.find(pkg => pkg.id === selectedPackage);
+  const addPackage = (packageId: string, isEditing: boolean = false) => {
+    if (isEditing) {
+      if (!editingPackages.includes(packageId)) {
+        setEditingPackages([...editingPackages, packageId]);
+      }
+    } else {
+      if (!selectedPackages.includes(packageId)) {
+        setSelectedPackages([...selectedPackages, packageId]);
+      }
+    }
+  };
+
+  const removePackage = (packageId: string, isEditing: boolean = false) => {
+    if (isEditing) {
+      setEditingPackages(editingPackages.filter(id => id !== packageId));
+    } else {
+      setSelectedPackages(selectedPackages.filter(id => id !== packageId));
+    }
+  };
+
+  const getTotalPrice = (packageIds: string[]) => {
+    return packageIds.reduce((total, packageId) => {
+      const pkg = getPackageById(packageId);
+      return total + (pkg?.price || 0);
+    }, 0);
+  };
+
+  const openEditDialog = (user: any) => {
+    setEditingUser(user);
+    setEditingPackages([...user.packages]);
+  };
+
+  const saveUserPackages = () => {
+    // Ici, vous intégrerais la logique pour sauvegarder les modifications
+    console.log('Sauvegarde des formules pour', editingUser.name, ':', editingPackages);
+    setEditingUser(null);
+    setEditingPackages([]);
   };
 
   // Si on est sur la page de création
   if (location.pathname.includes('/create')) {
-    const selectedPackageData = getSelectedPackageData();
-
     return (
       <AdminLayout>
         <div className="space-y-6">
@@ -242,12 +293,12 @@ const AdminUsersPage = () => {
             <p className="text-gray-500 mt-2">{getPageDescription()}</p>
           </div>
 
-          <Card className="max-w-2xl">
+          <Card className="max-w-4xl">
             <CardHeader>
               <CardTitle>Nouveau compte utilisateur</CardTitle>
-              <CardDescription>Créez un nouveau compte pour un client avec une formule spécifique</CardDescription>
+              <CardDescription>Créez un nouveau compte pour un client avec une ou plusieurs formules</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">Prénom</label>
@@ -264,58 +315,81 @@ const AdminUsersPage = () => {
               </div>
               
               <div>
-                <label className="text-sm font-medium">Catégorie de service</label>
-                <Select onValueChange={setSelectedCategory} value={selectedCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionnez une catégorie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(packagesData).map(([key, category]) => (
-                      <SelectItem key={key} value={key}>
-                        {category.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {selectedCategory && (
-                <div>
-                  <label className="text-sm font-medium">Formule</label>
-                  <Select onValueChange={setSelectedPackage} value={selectedPackage}>
+                <label className="text-sm font-medium">Formules sélectionnées</label>
+                <div className="mt-2 space-y-4">
+                  {selectedPackages.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedPackages.map((packageId) => {
+                        const pkg = getPackageById(packageId);
+                        if (!pkg) return null;
+                        return (
+                          <Badge 
+                            key={packageId} 
+                            className={`${getPackageColor(pkg.categoryKey)} flex items-center gap-1`}
+                          >
+                            {pkg.category} - {pkg.name} ({pkg.price}€{pkg.duration || ''})
+                            <X 
+                              className="w-3 h-3 cursor-pointer" 
+                              onClick={() => removePackage(packageId)}
+                            />
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  )}
+                  
+                  <Select onValueChange={(value) => addPackage(value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionnez une formule" />
+                      <SelectValue placeholder="Ajouter une formule..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {packagesData[selectedCategory].packages.map((pkg) => (
-                        <SelectItem key={pkg.id} value={pkg.id}>
-                          {pkg.name} - {pkg.price}€{pkg.duration || ''}
+                      {getAllPackages().map((pkg) => (
+                        <SelectItem 
+                          key={pkg.id} 
+                          value={pkg.id}
+                          disabled={selectedPackages.includes(pkg.id)}
+                        >
+                          {pkg.category} - {pkg.name} ({pkg.price}€{pkg.duration || ''})
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              )}
+              </div>
 
-              {selectedPackageData && (
+              {selectedPackages.length > 0 && (
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-2">Récapitulatif de la formule</h4>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm text-gray-600">{packagesData[selectedCategory].title}</p>
-                      <p className="font-medium">{selectedPackageData.name}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-red-600">
-                        {selectedPackageData.price}€{selectedPackageData.duration || ''}
-                      </p>
+                  <h4 className="font-medium text-gray-900 mb-3">Récapitulatif des formules</h4>
+                  <div className="space-y-2">
+                    {selectedPackages.map((packageId) => {
+                      const pkg = getPackageById(packageId);
+                      if (!pkg) return null;
+                      return (
+                        <div key={packageId} className="flex justify-between items-center text-sm">
+                          <div>
+                            <span className="text-gray-600">{pkg.category}</span>
+                            <span className="font-medium ml-2">{pkg.name}</span>
+                          </div>
+                          <span className="font-bold text-red-600">
+                            {pkg.price}€{pkg.duration || ''}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    <div className="border-t pt-2 mt-2">
+                      <div className="flex justify-between items-center font-bold">
+                        <span>Total :</span>
+                        <span className="text-red-600 text-lg">
+                          {getTotalPrice(selectedPackages)}€
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
 
               <div className="flex gap-2 pt-4">
-                <Button className="bg-red-500 hover:bg-red-600" disabled={!selectedPackageData}>
+                <Button className="bg-red-500 hover:bg-red-600" disabled={selectedPackages.length === 0}>
                   Créer le compte
                 </Button>
                 <Button variant="outline">Annuler</Button>
@@ -417,8 +491,7 @@ const AdminUsersPage = () => {
                 <TableRow>
                   <TableHead>Utilisateur</TableHead>
                   <TableHead>Statut</TableHead>
-                  <TableHead>Formule</TableHead>
-                  <TableHead>Catégorie</TableHead>
+                  <TableHead>Formules</TableHead>
                   <TableHead>Création</TableHead>
                   <TableHead>Dernière connexion</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -444,12 +517,20 @@ const AdminUsersPage = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="font-medium">{user.package}</div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getPackageColor(user.category)}>
-                        {user.category}
-                      </Badge>
+                      <div className="flex flex-wrap gap-1">
+                        {user.packages.map((packageId: string) => {
+                          const pkg = getPackageById(packageId);
+                          if (!pkg) return null;
+                          return (
+                            <Badge 
+                              key={packageId}
+                              className={`${getPackageColor(pkg.categoryKey)} text-xs`}
+                            >
+                              {pkg.name}
+                            </Badge>
+                          );
+                        })}
+                      </div>
                     </TableCell>
                     <TableCell>{user.created}</TableCell>
                     <TableCell>{user.lastLogin}</TableCell>
@@ -461,9 +542,9 @@ const AdminUsersPage = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openEditDialog(user)}>
                             <Edit className="w-4 h-4 mr-2" />
-                            Modifier
+                            Modifier les formules
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Mail className="w-4 h-4 mr-2" />
@@ -482,6 +563,102 @@ const AdminUsersPage = () => {
             </Table>
           </CardContent>
         </Card>
+
+        <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier les formules - {editingUser?.name}</DialogTitle>
+              <DialogDescription>
+                Ajoutez ou supprimez des formules pour ce client
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Formules actuelles</label>
+                <div className="mt-2 space-y-4">
+                  {editingPackages.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {editingPackages.map((packageId) => {
+                        const pkg = getPackageById(packageId);
+                        if (!pkg) return null;
+                        return (
+                          <Badge 
+                            key={packageId} 
+                            className={`${getPackageColor(pkg.categoryKey)} flex items-center gap-1`}
+                          >
+                            {pkg.category} - {pkg.name} ({pkg.price}€{pkg.duration || ''})
+                            <X 
+                              className="w-3 h-3 cursor-pointer" 
+                              onClick={() => removePackage(packageId, true)}
+                            />
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  )}
+                  
+                  <Select onValueChange={(value) => addPackage(value, true)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ajouter une formule..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getAllPackages().map((pkg) => (
+                        <SelectItem 
+                          key={pkg.id} 
+                          value={pkg.id}
+                          disabled={editingPackages.includes(pkg.id)}
+                        >
+                          {pkg.category} - {pkg.name} ({pkg.price}€{pkg.duration || ''})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {editingPackages.length > 0 && (
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-3">Nouveau total</h4>
+                  <div className="space-y-2">
+                    {editingPackages.map((packageId) => {
+                      const pkg = getPackageById(packageId);
+                      if (!pkg) return null;
+                      return (
+                        <div key={packageId} className="flex justify-between items-center text-sm">
+                          <div>
+                            <span className="text-gray-600">{pkg.category}</span>
+                            <span className="font-medium ml-2">{pkg.name}</span>
+                          </div>
+                          <span className="font-bold text-red-600">
+                            {pkg.price}€{pkg.duration || ''}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    <div className="border-t pt-2 mt-2">
+                      <div className="flex justify-between items-center font-bold">
+                        <span>Total :</span>
+                        <span className="text-red-600 text-lg">
+                          {getTotalPrice(editingPackages)}€
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={() => setEditingUser(null)}>
+                Annuler
+              </Button>
+              <Button className="bg-red-500 hover:bg-red-600" onClick={saveUserPackages}>
+                Sauvegarder
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
