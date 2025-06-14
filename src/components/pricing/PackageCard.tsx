@@ -44,17 +44,22 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
       )}
       
       <CardHeader className={`text-center pb-6 ${pkg.popular ? service.lightBg : 'bg-gradient-to-br from-white to-gray-50'}`}>
-        <CardTitle className="text-gray-900 mb-4 px-2 min-h-[3rem] flex items-center justify-center">
-          <span 
-            className="font-bold leading-tight text-center break-words hyphens-auto"
-            style={{
-              fontSize: pkg.name.length > 20 ? '1.25rem' : pkg.name.length > 15 ? '1.5rem' : '1.75rem',
-              lineHeight: pkg.name.length > 15 ? '1.2' : '1.3'
-            }}
+        <CardTitle className="text-2xl font-bold text-gray-900 mb-4 h-16 flex items-center justify-center px-2">
+          <div 
+            className="text-center leading-tight cursor-help group relative max-w-full"
             title={pkg.name}
           >
-            {pkg.name}
-          </span>
+            <span className="block truncate">
+              {pkg.name}
+            </span>
+            {/* Tooltip qui apparait au survol si le texte est tronqué */}
+            {pkg.name.length > 25 && (
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                {pkg.name}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+              </div>
+            )}
+          </div>
         </CardTitle>
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
