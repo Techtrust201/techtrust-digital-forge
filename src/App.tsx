@@ -24,6 +24,17 @@ import LegalMentions from "./pages/LegalMentions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import Analytics from "./pages/dashboard/Analytics";
+import Campaigns from "./pages/dashboard/Campaigns";
+import Account from "./pages/dashboard/Account";
+import DashboardHelp from "./pages/dashboard/Help";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import AdminBlogPage from "./pages/admin/AdminBlogPage";
+import AdminCampaignsPage from "./pages/admin/AdminCampaignsPage";
+import AdminBillingPage from "./pages/admin/AdminBillingPage";
+import AdminSystemPage from "./pages/admin/AdminSystemPage";
 
 const queryClient = new QueryClient();
 
