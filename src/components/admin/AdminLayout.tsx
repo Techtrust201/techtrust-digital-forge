@@ -166,16 +166,18 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <X className="w-5 h-5" />
             </Button>
           </div>
+        </div>
 
-          {/* Bouton chevron moderne inspiré des meilleurs sites */}
+        {/* Bouton de collapse/expand repositionné au milieu avec encastrement parfait */}
+        <div className="hidden lg:block">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleSidebarCollapse}
-            className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-lg rounded-full w-7 h-7 items-center justify-center transition-all duration-300 hover:shadow-xl hover:scale-105 group"
-            title={isSidebarCollapsed ? 'Élargir la sidebar' : 'Réduire la sidebar'}
+            className="absolute top-1/2 -translate-y-1/2 -right-4 z-30 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-800 border border-gray-200 shadow-md hover:shadow-lg rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 hover:scale-110 group"
+            title={isSidebarCollapsed ? 'Ouvrir la barre latérale' : 'Fermer la barre latérale'}
           >
-            <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${
+            <ChevronLeft className={`w-4 h-4 transition-transform duration-200 ${
               isSidebarCollapsed ? 'rotate-180' : ''
             } group-hover:scale-110`} />
           </Button>
