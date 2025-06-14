@@ -61,7 +61,9 @@ const AdminCampaignsPage = () => {
       date: '2025-01-15',
       openRate: 40,
       ctr: 6.4,
-      conversionRate: 0.9
+      conversionRate: 0.9,
+      budget: '2,500€',
+      created: '2025-01-15'
     },
     {
       id: 2,
@@ -76,7 +78,9 @@ const AdminCampaignsPage = () => {
       date: '2025-01-12',
       openRate: 92,
       ctr: 27.5,
-      conversionRate: 5.3
+      conversionRate: 5.3,
+      budget: '1,200€',
+      created: '2025-01-12'
     },
     {
       id: 3,
@@ -91,7 +95,9 @@ const AdminCampaignsPage = () => {
       date: '2025-01-10',
       openRate: 0,
       ctr: 75.1,
-      conversionRate: 75.1
+      conversionRate: 75.1,
+      budget: '800€',
+      created: '2025-01-10'
     },
     {
       id: 4,
@@ -106,7 +112,9 @@ const AdminCampaignsPage = () => {
       date: '2025-01-08',
       openRate: 68.5,
       ctr: 23.8,
-      conversionRate: 7.1
+      conversionRate: 7.1,
+      budget: '500€',
+      created: '2025-01-08'
     },
     {
       id: 5,
@@ -121,7 +129,9 @@ const AdminCampaignsPage = () => {
       date: '2025-01-20',
       openRate: 0,
       ctr: 0,
-      conversionRate: 0
+      conversionRate: 0,
+      budget: '1,000€',
+      created: '2025-01-20'
     }
   ];
 
@@ -145,127 +155,19 @@ const AdminCampaignsPage = () => {
     const path = location.pathname;
     
     if (path.includes('/email')) {
-      return [
-        {
-          id: 1,
-          name: 'Newsletter Janvier 2024',
-          type: 'email',
-          status: 'active',
-          sent: 15420,
-          opened: 8935,
-          clicked: 1247,
-          openRate: 58,
-          clickRate: 8.1,
-          created: '2024-01-15',
-          budget: '2,500€'
-        },
-        {
-          id: 3,
-          name: 'Webinar Growth Hacking',
-          type: 'email',
-          status: 'draft',
-          sent: 0,
-          opened: 0,
-          clicked: 0,
-          openRate: 0,
-          clickRate: 0,
-          created: '2024-01-18',
-          budget: '800€'
-        }
-      ];
+      return mockCampaigns.filter(campaign => campaign.type === 'email');
     }
     
     if (path.includes('/sms')) {
-      return [
-        {
-          id: 2,
-          name: 'Promo Black Friday SMS',
-          type: 'sms',
-          status: 'completed',
-          sent: 8920,
-          opened: 8756,
-          clicked: 2147,
-          openRate: 98,
-          clickRate: 24.5,
-          created: '2024-01-10',
-          budget: '1,200€'
-        }
-      ];
+      return mockCampaigns.filter(campaign => campaign.type === 'sms');
     }
     
     if (path.includes('/automation')) {
-      return [
-        {
-          id: 4,
-          name: 'Séquence Bienvenue',
-          type: 'automation',
-          status: 'active',
-          sent: 2340,
-          opened: 1876,
-          clicked: 456,
-          openRate: 80,
-          clickRate: 19.5,
-          created: '2024-01-05',
-          budget: '500€'
-        },
-        {
-          id: 5,
-          name: 'Abandon Panier',
-          type: 'automation',
-          status: 'active',
-          sent: 1890,
-          opened: 1234,
-          clicked: 234,
-          openRate: 65,
-          clickRate: 12.4,
-          created: '2024-01-12',
-          budget: '300€'
-        }
-      ];
+      return mockCampaigns.filter(campaign => campaign.type === 'automation');
     }
     
     // Toutes les campagnes
-    return [
-      {
-        id: 1,
-        name: 'Newsletter Janvier 2024',
-        type: 'email',
-        status: 'active',
-        sent: 15420,
-        opened: 8935,
-        clicked: 1247,
-        openRate: 58,
-        clickRate: 8.1,
-        created: '2024-01-15',
-        budget: '2,500€'
-      },
-      {
-        id: 2,
-        name: 'Promo Black Friday SMS',
-        type: 'sms',
-        status: 'completed',
-        sent: 8920,
-        opened: 8756,
-        clicked: 2147,
-        openRate: 98,
-        clickRate: 24.5,
-        created: '2024-01-10',
-        budget: '1,200€'
-      },
-      {
-        id: 3,
-        name: 'Webinar Growth Hacking',
-        type: 'email',
-        status: 'draft',
-        sent: 0,
-        opened: 0,
-        clicked: 0,
-        openRate: 0,
-        clickRate: 0,
-        created: '2024-01-18',
-        budget: '800€'
-      }
-    ];
+    return mockCampaigns;
   };
 
   const campaigns = getFilteredCampaigns();
@@ -273,8 +175,10 @@ const AdminCampaignsPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800';
+      case 'sent': return 'bg-blue-100 text-blue-800';
       case 'completed': return 'bg-blue-100 text-blue-800';
       case 'draft': return 'bg-yellow-100 text-yellow-800';
+      case 'scheduled': return 'bg-yellow-100 text-yellow-800';
       case 'paused': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -283,8 +187,10 @@ const AdminCampaignsPage = () => {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active': return 'Active';
+      case 'sent': return 'Envoyée';
       case 'completed': return 'Terminée';
       case 'draft': return 'Brouillon';
+      case 'scheduled': return 'Programmée';
       case 'paused': return 'En pause';
       default: return status;
     }
@@ -294,6 +200,7 @@ const AdminCampaignsPage = () => {
     switch (type) {
       case 'email': return Mail;
       case 'sms': return MessageSquare;
+      case 'lead': return Target;
       case 'automation': return Settings;
       default: return Zap;
     }
@@ -303,6 +210,7 @@ const AdminCampaignsPage = () => {
     switch (type) {
       case 'email': return 'bg-blue-100 text-blue-800';
       case 'sms': return 'bg-green-100 text-green-800';
+      case 'lead': return 'bg-purple-100 text-purple-800';
       case 'automation': return 'bg-purple-100 text-purple-800';
       default: return 'bg-purple-100 text-purple-800';
     }
@@ -505,8 +413,8 @@ const AdminCampaignsPage = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Progress value={campaign.clickRate} className="w-16" />
-                            <span className="text-sm">{campaign.clickRate}%</span>
+                            <Progress value={campaign.ctr} className="w-16" />
+                            <span className="text-sm">{campaign.ctr}%</span>
                           </div>
                         </TableCell>
                         <TableCell>{campaign.budget}</TableCell>
@@ -841,8 +749,8 @@ const AdminCampaignsPage = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Progress value={campaign.clickRate} className="w-16" />
-                            <span className="text-sm">{campaign.clickRate}%</span>
+                            <Progress value={campaign.ctr} className="w-16" />
+                            <span className="text-sm">{campaign.ctr}%</span>
                           </div>
                         </TableCell>
                         <TableCell>{campaign.budget}</TableCell>
@@ -1095,8 +1003,8 @@ const AdminCampaignsPage = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Progress value={campaign.clickRate} className="w-16" />
-                          <span className="text-sm">{campaign.clickRate}%</span>
+                          <Progress value={campaign.ctr} className="w-16" />
+                          <span className="text-sm">{campaign.ctr}%</span>
                         </div>
                       </TableCell>
                       <TableCell>{campaign.budget}</TableCell>
