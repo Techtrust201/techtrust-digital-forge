@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +17,7 @@ interface PackageCardProps {
 const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelected, onSelect }) => {
   return (
     <Card 
-      className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
+      className={`relative transition-all duration-500 hover:shadow-2xl group ${
         pkg.popular 
           ? `ring-2 ring-gradient-to-r ${service.bgGradient} transform shadow-xl hover:scale-105 ${service.lightBg} border-${service.color}-300` 
           : 'shadow-lg hover:scale-105 border-gray-200'
@@ -24,7 +25,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         isSelected 
           ? `ring-4 ring-green-500 ${service.lightBg} shadow-2xl` 
           : ''
-      } animate-fade-in rounded-3xl overflow-hidden border-2`}
+      } animate-fade-in rounded-3xl overflow-hidden border-2 flex flex-col`}
       style={{ animationDelay: `${index * 0.1}s` }}
     >
       {pkg.popular && (
@@ -42,12 +43,12 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         </>
       )}
       
-      <CardHeader className={`text-center pb-6 ${pkg.popular ? service.lightBg : 'bg-gradient-to-br from-white to-gray-50'}`}>
-        <CardTitle className="text-gray-900 mb-4 px-2 flex items-center justify-center">
-          <h3 className="text-xl lg:text-2xl font-bold text-center leading-tight max-w-full break-words hyphens-auto">
+      <CardHeader className={`text-center pb-6 flex-shrink-0 ${pkg.popular ? service.lightBg : 'bg-gradient-to-br from-white to-gray-50'}`}>
+        <div className="min-h-[80px] flex items-center justify-center mb-4">
+          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 text-center leading-snug px-2 break-words">
             {pkg.name}
           </h3>
-        </CardTitle>
+        </div>
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
             <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
@@ -58,8 +59,8 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 space-y-6 p-6">
-        <div className="space-y-4">
+      <CardContent className="flex-1 space-y-6 p-6 flex flex-col">
+        <div className="space-y-4 flex-1">
           {pkg.features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200">
               <div className={`flex-shrink-0 w-6 h-6 ${pkg.popular ? `bg-${service.color}-100` : 'bg-green-100'} rounded-full flex items-center justify-center mt-0.5`}>
@@ -80,7 +81,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
 
         <Button
           onClick={onSelect}
-          className={`w-full h-14 text-lg font-bold transition-all duration-300 rounded-2xl ${
+          className={`w-full h-14 text-lg font-bold transition-all duration-300 rounded-2xl mt-auto ${
             isSelected
               ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg transform scale-105'
               : pkg.popular
