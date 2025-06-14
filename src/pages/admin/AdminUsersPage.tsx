@@ -33,10 +33,55 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const AdminUsersPage = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedPackage, setSelectedPackage] = useState('');
+
+  // Packages data matching the pricing page
+  const packagesData = {
+    website: {
+      title: "Création Site Web",
+      packages: [
+        { id: "website-starter", name: "Starter", price: 899 },
+        { id: "website-business", name: "Business", price: 1599 },
+        { id: "website-premium", name: "Premium E-commerce", price: 2999 }
+      ]
+    },
+    growth: {
+      title: "Growth Hacking IA",
+      packages: [
+        { id: "growth-easy", name: "Easy", price: 299, duration: "/mois" },
+        { id: "growth-pro", name: "Pro", price: 599, duration: "/mois" },
+        { id: "growth-enterprise", name: "Enterprise", price: 1299, duration: "/mois" }
+      ]
+    },
+    community: {
+      title: "Community Management",
+      packages: [
+        { id: "community-starter", name: "Starter", price: 799, duration: "/mois" },
+        { id: "community-growth", name: "Growth", price: 1499, duration: "/mois" },
+        { id: "community-premium", name: "Premium", price: 2999, duration: "/mois" }
+      ]
+    },
+    custom: {
+      title: "Solutions Sur Mesure",
+      packages: [
+        { id: "custom-audit", name: "Audit & Conseil", price: 1500 },
+        { id: "custom-app", name: "Application Sur Mesure", price: 15000 },
+        { id: "custom-enterprise", name: "Solution Enterprise", price: 50000 }
+      ]
+    }
+  };
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -56,7 +101,8 @@ const AdminUsersPage = () => {
           name: 'Marie Dubois',
           email: 'marie.dubois@email.com',
           role: 'client',
-          tier: 'gold',
+          package: 'Website Business',
+          category: 'Création Site Web',
           status: 'pending',
           created: '2024-01-20',
           lastLogin: 'Jamais'
@@ -66,7 +112,8 @@ const AdminUsersPage = () => {
           name: 'Jean Durand',
           email: 'jean.durand@email.com',
           role: 'client',
-          tier: 'silver',
+          package: 'Growth Pro',
+          category: 'Growth Hacking IA',
           status: 'pending',
           created: '2024-01-19',
           lastLogin: 'Jamais'
@@ -81,7 +128,8 @@ const AdminUsersPage = () => {
           name: 'Sophie Laurent',
           email: 'sophie.laurent@email.com',
           role: 'client',
-          tier: 'bronze',
+          package: 'Community Starter',
+          category: 'Community Management',
           status: 'suspended',
           created: '2024-01-05',
           lastLogin: '2024-01-18'
@@ -91,7 +139,8 @@ const AdminUsersPage = () => {
           name: 'Paul Moreau',
           email: 'paul.moreau@email.com',
           role: 'client',
-          tier: 'silver',
+          package: 'Website Starter',
+          category: 'Création Site Web',
           status: 'suspended',
           created: '2023-12-15',
           lastLogin: '2024-01-10'
@@ -106,7 +155,8 @@ const AdminUsersPage = () => {
         name: 'Marie Dubois',
         email: 'marie.dubois@email.com',
         role: 'client',
-        tier: 'gold',
+        package: 'Website Business',
+        category: 'Création Site Web',
         status: 'active',
         created: '2024-01-15',
         lastLogin: '2024-01-20'
@@ -116,7 +166,8 @@ const AdminUsersPage = () => {
         name: 'Pierre Martin',
         email: 'pierre.martin@email.com',
         role: 'client',
-        tier: 'silver',
+        package: 'Growth Pro',
+        category: 'Growth Hacking IA',
         status: 'active',
         created: '2024-01-10',
         lastLogin: '2024-01-19'
@@ -126,7 +177,8 @@ const AdminUsersPage = () => {
         name: 'Sophie Laurent',
         email: 'sophie.laurent@email.com',
         role: 'client',
-        tier: 'bronze',
+        package: 'Community Premium',
+        category: 'Community Management',
         status: 'suspended',
         created: '2024-01-05',
         lastLogin: '2024-01-18'
@@ -144,11 +196,12 @@ const AdminUsersPage = () => {
 
   const users = getFilteredUsers();
 
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case 'gold': return 'bg-yellow-100 text-yellow-800';
-      case 'silver': return 'bg-gray-100 text-gray-800';
-      case 'bronze': return 'bg-orange-100 text-orange-800';
+  const getPackageColor = (category: string) => {
+    switch (category) {
+      case 'Création Site Web': return 'bg-blue-100 text-blue-800';
+      case 'Growth Hacking IA': return 'bg-green-100 text-green-800';
+      case 'Community Management': return 'bg-orange-100 text-orange-800';
+      case 'Solutions Sur Mesure': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -171,8 +224,16 @@ const AdminUsersPage = () => {
     }
   };
 
+  const getSelectedPackageData = () => {
+    if (!selectedCategory || !selectedPackage) return null;
+    const category = packagesData[selectedCategory];
+    return category?.packages.find(pkg => pkg.id === selectedPackage);
+  };
+
   // Si on est sur la page de création
   if (location.pathname.includes('/create')) {
+    const selectedPackageData = getSelectedPackageData();
+
     return (
       <AdminLayout>
         <div className="space-y-6">
@@ -184,7 +245,7 @@ const AdminUsersPage = () => {
           <Card className="max-w-2xl">
             <CardHeader>
               <CardTitle>Nouveau compte utilisateur</CardTitle>
-              <CardDescription>Créez un nouveau compte pour un client</CardDescription>
+              <CardDescription>Créez un nouveau compte pour un client avec une formule spécifique</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -201,16 +262,62 @@ const AdminUsersPage = () => {
                 <label className="text-sm font-medium">Email</label>
                 <Input placeholder="jean.dupont@email.com" type="email" />
               </div>
+              
               <div>
-                <label className="text-sm font-medium">Plan</label>
-                <select className="w-full p-2 border rounded-md">
-                  <option value="bronze">Bronze</option>
-                  <option value="silver">Silver</option>
-                  <option value="gold">Gold</option>
-                </select>
+                <label className="text-sm font-medium">Catégorie de service</label>
+                <Select onValueChange={setSelectedCategory} value={selectedCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionnez une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(packagesData).map(([key, category]) => (
+                      <SelectItem key={key} value={key}>
+                        {category.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {selectedCategory && (
+                <div>
+                  <label className="text-sm font-medium">Formule</label>
+                  <Select onValueChange={setSelectedPackage} value={selectedPackage}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionnez une formule" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {packagesData[selectedCategory].packages.map((pkg) => (
+                        <SelectItem key={pkg.id} value={pkg.id}>
+                          {pkg.name} - {pkg.price}€{pkg.duration || ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {selectedPackageData && (
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Récapitulatif de la formule</h4>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-sm text-gray-600">{packagesData[selectedCategory].title}</p>
+                      <p className="font-medium">{selectedPackageData.name}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-red-600">
+                        {selectedPackageData.price}€{selectedPackageData.duration || ''}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-2 pt-4">
-                <Button className="bg-red-500 hover:bg-red-600">Créer le compte</Button>
+                <Button className="bg-red-500 hover:bg-red-600" disabled={!selectedPackageData}>
+                  Créer le compte
+                </Button>
                 <Button variant="outline">Annuler</Button>
               </div>
             </CardContent>
@@ -310,7 +417,8 @@ const AdminUsersPage = () => {
                 <TableRow>
                   <TableHead>Utilisateur</TableHead>
                   <TableHead>Statut</TableHead>
-                  <TableHead>Plan</TableHead>
+                  <TableHead>Formule</TableHead>
+                  <TableHead>Catégorie</TableHead>
                   <TableHead>Création</TableHead>
                   <TableHead>Dernière connexion</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -336,8 +444,11 @@ const AdminUsersPage = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getTierColor(user.tier)}>
-                        {user.tier.charAt(0).toUpperCase() + user.tier.slice(1)}
+                      <div className="font-medium">{user.package}</div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getPackageColor(user.category)}>
+                        {user.category}
                       </Badge>
                     </TableCell>
                     <TableCell>{user.created}</TableCell>
