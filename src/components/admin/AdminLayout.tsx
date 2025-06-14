@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,12 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 
 interface AdminLayoutProps {
@@ -213,52 +220,81 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
         {/* Navigation */}
         <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
-          {navigationItems.map((item) => {
-            const ItemIcon = item.icon;
-            return (
-              <div key={item.id}>
-                {item.submenu && !isSidebarCollapsed ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-between hover:bg-gray-100"
-                      >
+          {!isSidebarCollapsed ? (
+            <Accordion type="multiple" className="w-full space-y-1">
+              {navigationItems.map((item) => {
+                const ItemIcon = item.icon;
+                
+                if (item.submenu) {
+                  return (
+                    <AccordionItem key={item.id} value={item.id} className="border-none">
+                      <AccordionTrigger className="hover:no-underline hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors duration-200 group [&[data-state=open]]:bg-red-50 [&[data-state=open]]:text-red-600">
                         <div className="flex items-center gap-3">
                           <ItemIcon className="w-5 h-5" />
-                          <span>{item.name}</span>
+                          <span className="font-medium">{item.name}</span>
                         </div>
-                        <ChevronDown className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      {item.submenu.map((subItem) => (
-                        <DropdownMenuItem key={subItem.href} asChild>
-                          <a href={subItem.href} className="cursor-pointer">
-                            {subItem.name}
-                          </a>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2 pt-1">
+                        <div className="ml-8 space-y-1">
+                          {item.submenu.map((subItem) => (
+                            <Button
+                              key={subItem.href}
+                              variant="ghost"
+                              asChild
+                              className="w-full justify-start h-8 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-200"
+                            >
+                              <a href={subItem.href}>
+                                <span className="w-2 h-2 bg-gray-300 rounded-full mr-3"></span>
+                                {subItem.name}
+                              </a>
+                            </Button>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                } else {
+                  return (
+                    <Button
+                      key={item.id}
+                      variant="ghost"
+                      asChild
+                      className={`w-full justify-start hover:bg-gray-100 transition-colors duration-200 ${
+                        activeTab === item.id ? 'bg-red-50 text-red-600 hover:bg-red-100' : ''
+                      }`}
+                    >
+                      <a href={item.href} onClick={() => setActiveTab(item.id)}>
+                        <ItemIcon className="w-5 h-5 mr-3" />
+                        {item.name}
+                      </a>
+                    </Button>
+                  );
+                }
+              })}
+            </Accordion>
+          ) : (
+            // Version collapsed avec tooltips
+            <div className="space-y-2">
+              {navigationItems.map((item) => {
+                const ItemIcon = item.icon;
+                return (
                   <Button
+                    key={item.id}
                     variant="ghost"
                     asChild
-                    className={`w-full ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'} hover:bg-gray-100 ${
+                    className={`w-full justify-center px-2 hover:bg-gray-100 ${
                       activeTab === item.id ? 'bg-red-50 text-red-600' : ''
                     }`}
-                    title={isSidebarCollapsed ? item.name : undefined}
+                    title={item.name}
                   >
                     <a href={item.href} onClick={() => setActiveTab(item.id)}>
-                      <ItemIcon className={`w-5 h-5 ${!isSidebarCollapsed ? 'mr-3' : ''}`} />
-                      {!isSidebarCollapsed && item.name}
+                      <ItemIcon className="w-5 h-5" />
                     </a>
                   </Button>
-                )}
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          )}
         </nav>
 
         {/* Footer sidebar */}
