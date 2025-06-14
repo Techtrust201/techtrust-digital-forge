@@ -564,13 +564,22 @@ ${formData.message}
                       </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto pt-8">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto pt-16">
                       {service.packages.map((pkg, index) => (
                         <div key={pkg.id} className="relative">
+                          {pkg.popular && (
+                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                              <Badge className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-xs font-semibold rounded-full border border-white shadow-lg">
+                                <Star className="w-3 h-3 mr-1 fill-current" />
+                                POPULAIRE
+                              </Badge>
+                            </div>
+                          )}
+                          
                           <Card 
                             className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
                               pkg.popular 
-                                ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl` 
+                                ? `ring-2 ring-blue-400 transform shadow-xl` 
                                 : 'hover:scale-105 shadow-lg'
                             } ${
                               selectedPackages[serviceId]?.id === pkg.id 
@@ -637,23 +646,6 @@ ${formData.message}
                               </Button>
                             </CardContent>
                           </Card>
-                          
-                          {pkg.popular && (
-                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-20">
-                              <div className="relative">
-                                <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-8 py-4 text-sm font-bold shadow-2xl rounded-2xl flex items-center gap-3 border-2 border-white/20 backdrop-blur-sm`}>
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 bg-yellow-300 rounded-full animate-pulse"></div>
-                                    <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
-                                  </div>
-                                  <span className="font-extrabold tracking-wide">LE PLUS POPULAIRE</span>
-                                  <div className="w-3 h-3 bg-yellow-300 rounded-full animate-pulse"></div>
-                                </Badge>
-                                {/* Glow effect */}
-                                <div className={`absolute inset-0 bg-gradient-to-r ${service.bgGradient} rounded-2xl blur-lg opacity-60 -z-10 scale-110`}></div>
-                              </div>
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
