@@ -19,7 +19,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
     <Card 
       className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
         pkg.popular 
-          ? `ring-2 ring-gradient-to-r from-yellow-400 to-orange-500 transform shadow-xl hover:scale-105 bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300` 
+          ? `ring-2 ring-gradient-to-r ${service.bgGradient} transform shadow-xl hover:scale-105 ${service.lightBg} border-${service.color}-300` 
           : 'shadow-lg hover:scale-105 border-gray-200'
       } ${
         isSelected 
@@ -31,25 +31,25 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
       {pkg.popular && (
         <>
           {/* Coin décoratif en haut à droite */}
-          <div className="absolute -top-1 -right-1 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-bl-2xl flex items-start justify-end p-2">
+          <div className={`absolute -top-1 -right-1 w-16 h-16 bg-gradient-to-br ${service.bgGradient} rounded-bl-2xl flex items-start justify-end p-2`}>
             <Crown className="w-5 h-5 text-white rotate-12" />
           </div>
           
           {/* Texte "Populaire" intégré dans le header */}
-          <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+          <div className={`absolute top-4 right-4 bg-gradient-to-r ${service.bgGradient} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg`}>
             <Star className="w-3 h-3 inline mr-1 fill-current" />
             POPULAIRE
           </div>
         </>
       )}
       
-      <CardHeader className={`text-center pb-6 ${pkg.popular ? 'bg-gradient-to-br from-yellow-50 to-orange-50' : 'bg-gradient-to-br from-white to-gray-50'}`}>
+      <CardHeader className={`text-center pb-6 ${pkg.popular ? service.lightBg : 'bg-gradient-to-br from-white to-gray-50'}`}>
         <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
           {pkg.name}
         </CardTitle>
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? 'text-orange-600' : service.darkColor}`}>
+            <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
               {typeof pkg.price === 'string' ? pkg.price : `${pkg.price.toLocaleString()}€`}
             </span>
           </div>
@@ -61,8 +61,8 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         <div className="space-y-4">
           {pkg.features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200">
-              <div className={`flex-shrink-0 w-6 h-6 ${pkg.popular ? 'bg-orange-100' : 'bg-green-100'} rounded-full flex items-center justify-center mt-0.5`}>
-                <Check className={`w-4 h-4 ${pkg.popular ? 'text-orange-600' : 'text-green-600'}`} />
+              <div className={`flex-shrink-0 w-6 h-6 ${pkg.popular ? `bg-${service.color}-100` : 'bg-green-100'} rounded-full flex items-center justify-center mt-0.5`}>
+                <Check className={`w-4 h-4 ${pkg.popular ? `text-${service.color}-600` : 'text-green-600'}`} />
               </div>
               <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
             </div>
@@ -83,7 +83,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
             isSelected
               ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg transform scale-105'
               : pkg.popular
-              ? `bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 hover:shadow-lg text-white transform hover:scale-105`
+              ? `bg-gradient-to-r ${service.bgGradient} hover:shadow-lg text-white transform hover:scale-105`
               : `bg-gray-900 hover:bg-gray-800 text-white hover:shadow-lg transform hover:scale-105`
           }`}
         >
