@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import NavbarPublic from '@/components/NavbarPublic';
@@ -17,18 +16,17 @@ import {
   Star, 
   ShoppingCart, 
   Trash2,
-  Globe,
-  Rocket,
-  Crown,
+  Monitor,
   Zap,
+  Crown,
   Users,
   Settings,
   Mail,
   Phone,
   Building,
   TrendingUp,
-  Code,
-  MessageSquare,
+  Lightbulb,
+  MessageCircle,
   Target
 } from 'lucide-react';
 
@@ -51,7 +49,7 @@ const Pricing = () => {
       title: "Sites Web Pro",
       subtitle: "Sites professionnels & E-commerce",
       description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils.",
-      icon: Globe,
+      icon: Monitor,
       color: "blue",
       bgGradient: "from-blue-500 to-blue-600",
       lightBg: "bg-blue-50",
@@ -126,7 +124,7 @@ const Pricing = () => {
       title: "Growth Hacking IA",
       subtitle: "Automatisation complète avec IA",
       description: "Nos outils IA propriétaires automatisent votre prospection et community management.",
-      icon: TrendingUp,
+      icon: Zap,
       color: "green",
       bgGradient: "from-green-500 to-green-600",
       lightBg: "bg-green-50",
@@ -201,7 +199,7 @@ const Pricing = () => {
       title: "Solutions Sur Mesure",
       subtitle: "Développement personnalisé",
       description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus.",
-      icon: Code,
+      icon: Settings,
       color: "purple",
       bgGradient: "from-purple-500 to-purple-600",
       lightBg: "bg-purple-50",
@@ -267,7 +265,7 @@ const Pricing = () => {
       title: "Community Management",
       subtitle: "Équipe dédiée d'experts",
       description: "Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.",
-      icon: MessageSquare,
+      icon: Users,
       color: "pink",
       bgGradient: "from-pink-500 to-pink-600",
       lightBg: "bg-pink-50",
@@ -340,7 +338,7 @@ const Pricing = () => {
       title: "Consulting Digital",
       subtitle: "Expertise & accompagnement",
       description: "Audit, stratégie et accompagnement personnalisé pour votre transformation digitale.",
-      icon: Target,
+      icon: Lightbulb,
       color: "orange",
       bgGradient: "from-orange-500 to-orange-600",
       lightBg: "bg-orange-50",
@@ -572,7 +570,7 @@ ${formData.message}
                           key={pkg.id}
                           className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
                             pkg.popular 
-                              ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl` 
+                              ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl mt-8` 
                               : 'hover:scale-105 shadow-lg'
                           } ${
                             selectedPackages[serviceId]?.id === pkg.id 
@@ -582,9 +580,9 @@ ${formData.message}
                           style={{ animationDelay: `${index * 0.1}s` }}
                         >
                           {pkg.popular && (
-                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                              <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-2 text-sm font-bold shadow-lg rounded-full`}>
-                                <Star className="w-4 h-4 mr-1" />
+                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
+                              <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-3 text-sm font-bold shadow-lg rounded-full flex items-center gap-2`}>
+                                <Star className="w-4 h-4" />
                                 LE PLUS POPULAIRE
                               </Badge>
                             </div>
@@ -726,7 +724,7 @@ ${formData.message}
                     <Button
                       variant="ghost"
                       onClick={() => setShowQuoteForm(false)}
-                      className="text-gray-500 hover: text-gray-700 p-2 rounded-full hover:bg-gray-100"
+                      className="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100"
                     >
                       <X className="w-6 h-6" />
                     </Button>
