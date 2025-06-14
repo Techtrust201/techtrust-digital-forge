@@ -22,7 +22,8 @@ import {
   Zap,
   CreditCard,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ArrowLeftRight
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -50,6 +51,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [userData, setUserData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
   useEffect(() => {
     const user = localStorage.getItem('techtrust_user');
@@ -58,30 +60,61 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     }
   }, []);
 
-  // Déterminer l'onglet actif basé sur l'URL
+  // Déterminer l'onglet actif et le sous-menu actif basé sur l'URL
   useEffect(() => {
     const path = location.pathname;
+    
     if (path.includes('/admin/users')) {
       setActiveTab('users');
       setOpenDropdown('users');
+      // Déterminer le sous-menu actif
+      if (path.includes('/admin/users/all')) setActiveSubMenu('/admin/users/all');
+      else if (path.includes('/admin/users/new')) setActiveSubMenu('/admin/users/new');
+      else if (path.includes('/admin/users/suspended')) setActiveSubMenu('/admin/users/suspended');
+      else if (path.includes('/admin/users/create')) setActiveSubMenu('/admin/users/create');
+      else setActiveSubMenu('/admin/users/all');
     } else if (path.includes('/admin/analytics')) {
       setActiveTab('analytics');
       setOpenDropdown('analytics');
+      if (path.includes('/admin/analytics/overview')) setActiveSubMenu('/admin/analytics/overview');
+      else if (path.includes('/admin/analytics/revenue')) setActiveSubMenu('/admin/analytics/revenue');
+      else if (path.includes('/admin/analytics/performance')) setActiveSubMenu('/admin/analytics/performance');
+      else if (path.includes('/admin/analytics/users')) setActiveSubMenu('/admin/analytics/users');
+      else setActiveSubMenu('/admin/analytics/overview');
     } else if (path.includes('/admin/blog')) {
       setActiveTab('blog');
       setOpenDropdown('blog');
+      if (path.includes('/admin/blog/posts')) setActiveSubMenu('/admin/blog/posts');
+      else if (path.includes('/admin/blog/create')) setActiveSubMenu('/admin/blog/create');
+      else if (path.includes('/admin/blog/categories')) setActiveSubMenu('/admin/blog/categories');
+      else if (path.includes('/admin/blog/comments')) setActiveSubMenu('/admin/blog/comments');
+      else setActiveSubMenu('/admin/blog/posts');
     } else if (path.includes('/admin/campaigns')) {
       setActiveTab('campaigns');
       setOpenDropdown('campaigns');
+      if (path.includes('/admin/campaigns/email')) setActiveSubMenu('/admin/campaigns/email');
+      else if (path.includes('/admin/campaigns/sms')) setActiveSubMenu('/admin/campaigns/sms');
+      else if (path.includes('/admin/campaigns/automation')) setActiveSubMenu('/admin/campaigns/automation');
+      else setActiveSubMenu('/admin/campaigns/email');
     } else if (path.includes('/admin/billing')) {
       setActiveTab('billing');
       setOpenDropdown('billing');
+      if (path.includes('/admin/billing/invoices')) setActiveSubMenu('/admin/billing/invoices');
+      else if (path.includes('/admin/billing/payments')) setActiveSubMenu('/admin/billing/payments');
+      else if (path.includes('/admin/billing/subscriptions')) setActiveSubMenu('/admin/billing/subscriptions');
+      else setActiveSubMenu('/admin/billing/invoices');
     } else if (path.includes('/admin/system')) {
       setActiveTab('system');
       setOpenDropdown('system');
+      if (path.includes('/admin/system/config')) setActiveSubMenu('/admin/system/config');
+      else if (path.includes('/admin/system/logs')) setActiveSubMenu('/admin/system/logs');
+      else if (path.includes('/admin/system/backups')) setActiveSubMenu('/admin/system/backups');
+      else if (path.includes('/admin/system/security')) setActiveSubMenu('/admin/system/security');
+      else setActiveSubMenu('/admin/system/config');
     } else if (path.includes('/admin/dashboard')) {
       setActiveTab('dashboard');
       setOpenDropdown(null);
+      setActiveSubMenu(null);
     }
   }, [location.pathname]);
 
@@ -95,7 +128,22 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   };
 
   const toggleDropdown = (dropdownId: string) => {
-    setOpenDropdown(openDropdown === dropdownId ? null : dropdownId);
+    // Fermer tous les autres dropdowns et n'ouvrir que celui cliqué
+    if (openDropdown === dropdownId) {
+      setOpenDropdown(null);
+    } else {
+      setOpenDropdown(dropdownId);
+    }
+  };
+
+  const handleSwitchInterface = () => {
+    // Basculer entre admin et client
+    const currentPath = location.pathname;
+    if (currentPath.startsWith('/admin')) {
+      window.location.href = '/dashboard';
+    } else {
+      window.location.href = '/admin/dashboard';
+    }
   };
 
   const navigationItems = [
@@ -288,10 +336,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                               key={subItem.href}
                               variant="ghost"
                               asChild
-                              className="w-full justify-start h-8 px-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-200"
+                              className={`w-full justify-start h-8 px-3 text-sm hover:bg-gray-100 rounded-md transition-colors duration-200 ${
+                                activeSubMenu === subItem.href 
+                                  ? 'bg-red-100 text-red-700 hover:bg-red-200 font-medium' 
+                                  : 'text-gray-600 hover:text-gray-900'
+                              }`}
                             >
                               <a href={subItem.href}>
-                                <span className="w-2 h-2 bg-gray-300 rounded-full mr-3"></span>
+                                <span className={`w-2 h-2 rounded-full mr-3 ${
+                                  activeSubMenu === subItem.href ? 'bg-red-500' : 'bg-gray-300'
+                                }`}></span>
                                 {subItem.name}
                               </a>
                             </Button>
@@ -348,14 +402,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
           <Button
             variant="ghost"
-            asChild
+            onClick={handleSwitchInterface}
             className={`w-full ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-start'} mb-2 hover:bg-blue-50 hover:text-blue-600`}
-            title={isSidebarCollapsed ? 'Retour client' : undefined}
+            title={isSidebarCollapsed ? 'Interface client' : undefined}
           >
-            <a href="/dashboard">
-              <Home className={`w-5 h-5 ${!isSidebarCollapsed ? 'mr-3' : ''}`} />
-              {!isSidebarCollapsed && 'Retour client'}
-            </a>
+            <ArrowLeftRight className={`w-5 h-5 ${!isSidebarCollapsed ? 'mr-3' : ''}`} />
+            {!isSidebarCollapsed && 'Interface client'}
           </Button>
           <Button
             variant="ghost"
