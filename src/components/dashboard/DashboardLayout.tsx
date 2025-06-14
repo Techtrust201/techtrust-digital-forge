@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,8 @@ import {
   Shield,
   Rocket,
   Crown,
-  Diamond
+  Diamond,
+  ArrowLeftRight
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -55,6 +55,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     window.location.href = '/auth';
   };
 
+  const handleSwitchToAdmin = () => {
+    window.location.href = '/admin/dashboard';
+  };
+
   const getTierInfo = (tier: string) => {
     switch (tier) {
       case 'bronze':
@@ -72,6 +76,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const tierInfo = userData ? getTierInfo(userData.tier) : { icon: Shield, name: 'Bronze', color: 'text-amber-600' };
   const TierIcon = tierInfo.icon;
+
+  // Vérifier si l'utilisateur est un super admin
+  const isSuperAdmin = userData && userData.role === 'admin';
 
   const navigationItems = [
     {
@@ -234,6 +241,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
         {/* Footer sidebar */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
+          {/* Bouton pour retourner à l'interface admin (seulement pour les super admins) */}
+          {isSuperAdmin && (
+            <Button
+              variant="ghost"
+              onClick={handleSwitchToAdmin}
+              className="w-full justify-start mb-2 hover:bg-red-50 hover:text-red-600"
+            >
+              <ArrowLeftRight className="w-5 h-5 mr-3" />
+              Interface Admin
+            </Button>
+          )}
+          
           <Button
             variant="ghost"
             onClick={handleLogout}
