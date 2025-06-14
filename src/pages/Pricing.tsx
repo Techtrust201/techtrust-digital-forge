@@ -639,11 +639,19 @@ ${formData.message}
                           </Card>
                           
                           {pkg.popular && (
-                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                              <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-3 text-sm font-bold shadow-lg rounded-full flex items-center gap-2`}>
-                                <Star className="w-4 h-4" />
-                                LE PLUS POPULAIRE
-                              </Badge>
+                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-20">
+                              <div className="relative">
+                                <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-8 py-4 text-sm font-bold shadow-2xl rounded-2xl flex items-center gap-3 border-2 border-white/20 backdrop-blur-sm`}>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 bg-yellow-300 rounded-full animate-pulse"></div>
+                                    <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+                                  </div>
+                                  <span className="font-extrabold tracking-wide">LE PLUS POPULAIRE</span>
+                                  <div className="w-3 h-3 bg-yellow-300 rounded-full animate-pulse"></div>
+                                </Badge>
+                                {/* Glow effect */}
+                                <div className={`absolute inset-0 bg-gradient-to-r ${service.bgGradient} rounded-2xl blur-lg opacity-60 -z-10 scale-110`}></div>
+                              </div>
                             </div>
                           )}
                         </div>
