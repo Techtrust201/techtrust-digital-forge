@@ -44,8 +44,17 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
       )}
       
       <CardHeader className={`text-center pb-6 ${pkg.popular ? service.lightBg : 'bg-gradient-to-br from-white to-gray-50'}`}>
-        <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
-          {pkg.name}
+        <CardTitle className="text-gray-900 mb-4 px-2 min-h-[3rem] flex items-center justify-center">
+          <span 
+            className="font-bold leading-tight text-center break-words hyphens-auto"
+            style={{
+              fontSize: pkg.name.length > 20 ? '1.25rem' : pkg.name.length > 15 ? '1.5rem' : '1.75rem',
+              lineHeight: pkg.name.length > 15 ? '1.2' : '1.3'
+            }}
+            title={pkg.name}
+          >
+            {pkg.name}
+          </span>
         </CardTitle>
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
