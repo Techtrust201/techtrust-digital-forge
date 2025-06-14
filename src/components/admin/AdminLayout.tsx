@@ -167,18 +167,25 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <X className="w-5 h-5" />
             </Button>
           </div>
+        </div>
 
-          {/* Bouton de collapse/expand amélioré */}
+        {/* Bouton de collapse/expand repositionné */}
+        <div className="hidden lg:flex justify-end p-2 border-b bg-gray-50">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={toggleSidebarCollapse}
-            className={`hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-600 border border-gray-200 shadow-md rounded-full w-6 h-6 items-center justify-center transition-all duration-200 hover:scale-110 ${
-              isSidebarCollapsed ? 'rotate-180' : ''
-            }`}
+            className="flex items-center gap-2 hover:bg-gray-100 transition-all duration-200"
             title={isSidebarCollapsed ? 'Élargir la sidebar' : 'Réduire la sidebar'}
           >
-            <ChevronLeft className="w-3 h-3" />
+            {isSidebarCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <>
+                <ChevronLeft className="w-4 h-4" />
+                {!isSidebarCollapsed && <span className="text-xs">Réduire</span>}
+              </>
+            )}
           </Button>
         </div>
 
