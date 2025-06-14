@@ -28,7 +28,8 @@ import {
   Building,
   TrendingUp,
   Code,
-  MessageSquare
+  MessageSquare,
+  Target
 } from 'lucide-react';
 
 const Pricing = () => {
@@ -36,6 +37,7 @@ const Pricing = () => {
   const [selectedPackages, setSelectedPackages] = useState<{[key: string]: any}>({});
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [activeTab, setActiveTab] = useState('website');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -51,6 +53,9 @@ const Pricing = () => {
       description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils.",
       icon: Globe,
       color: "blue",
+      bgGradient: "from-blue-500 to-blue-600",
+      lightBg: "bg-blue-50",
+      darkColor: "text-blue-700",
       packages: [
         {
           id: "website-starter",
@@ -123,6 +128,9 @@ const Pricing = () => {
       description: "Nos outils IA propriétaires automatisent votre prospection et community management.",
       icon: TrendingUp,
       color: "green",
+      bgGradient: "from-green-500 to-green-600",
+      lightBg: "bg-green-50",
+      darkColor: "text-green-700",
       packages: [
         {
           id: "growth-easy",
@@ -195,6 +203,9 @@ const Pricing = () => {
       description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus.",
       icon: Code,
       color: "purple",
+      bgGradient: "from-purple-500 to-purple-600",
+      lightBg: "bg-purple-50",
+      darkColor: "text-purple-700",
       packages: [
         {
           id: "custom-audit",
@@ -257,7 +268,10 @@ const Pricing = () => {
       subtitle: "Équipe dédiée d'experts",
       description: "Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.",
       icon: MessageSquare,
-      color: "orange",
+      color: "pink",
+      bgGradient: "from-pink-500 to-pink-600",
+      lightBg: "bg-pink-50",
+      darkColor: "text-pink-700",
       packages: [
         {
           id: "community-starter",
@@ -317,6 +331,75 @@ const Pricing = () => {
             "Analytics avancées",
             "Account manager",
             "Support VIP 24/7"
+          ],
+          notIncluded: []
+        }
+      ]
+    },
+    consulting: {
+      title: "Consulting Digital",
+      subtitle: "Expertise & accompagnement",
+      description: "Audit, stratégie et accompagnement personnalisé pour votre transformation digitale.",
+      icon: Target,
+      color: "orange",
+      bgGradient: "from-orange-500 to-orange-600",
+      lightBg: "bg-orange-50",
+      darkColor: "text-orange-700",
+      packages: [
+        {
+          id: "consulting-audit",
+          name: "Audit Digital",
+          price: 2500,
+          duration: "Paiement unique",
+          popular: false,
+          features: [
+            "Audit complet digital",
+            "Analyse concurrentielle",
+            "Recommandations stratégiques",
+            "Plan d'action détaillé",
+            "Présentation exécutive",
+            "Support 15 jours"
+          ],
+          notIncluded: [
+            "Mise en œuvre",
+            "Formation équipe"
+          ]
+        },
+        {
+          id: "consulting-strategy",
+          name: "Stratégie & Accompagnement",
+          price: 4500,
+          duration: "/mois",
+          popular: true,
+          features: [
+            "Stratégie digitale complète",
+            "Accompagnement mensuel",
+            "Sessions de coaching",
+            "Suivi des KPIs",
+            "Optimisations continues",
+            "Reporting détaillé",
+            "Formation équipe",
+            "Support prioritaire"
+          ],
+          notIncluded: [
+            "Développement technique"
+          ]
+        },
+        {
+          id: "consulting-premium",
+          name: "Transformation Complète",
+          price: "À partir de 15 000",
+          duration: "Selon projet",
+          popular: false,
+          features: [
+            "Transformation digitale 360°",
+            "Accompagnement sur mesure",
+            "Formation avancée équipe",
+            "Mise en place process",
+            "Outils & technologies",
+            "Suivi performance",
+            "Support dédié 6 mois",
+            "Consultant dédié"
           ],
           notIncluded: []
         }
@@ -394,119 +477,148 @@ ${formData.message}
         canonicalUrl="https://www.tech-trust.fr/pricing"
       />
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         <NavbarPublic />
         
         <main className="pt-20">
-          {/* Header */}
-          <section className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
-            <div className="container mx-auto px-4 text-center">
-              <h1 className="text-4xl lg:text-6xl font-bold mb-6">
-                Nos <span className="text-cyan-300">Tarifs</span> 2025
-              </h1>
-              <p className="text-xl lg:text-2xl mb-8 opacity-90">
-                Des solutions transparentes pour tous vos besoins digitaux
-              </p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm">
-                <Badge className="bg-green-500 text-white px-4 py-2">
-                  ✅ Devis gratuit en 24h
-                </Badge>
-                <Badge className="bg-blue-500 text-white px-4 py-2">
-                  🚀 Paiement en plusieurs fois
-                </Badge>
-                <Badge className="bg-purple-500 text-white px-4 py-2">
-                  💎 Satisfaction garantie
-                </Badge>
+          {/* Header avec animation */}
+          <section className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white py-20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-black/10"></div>
+            <div className="container mx-auto px-4 text-center relative z-10">
+              <div className="animate-fade-in">
+                <h1 className="text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                  Nos <span className="text-cyan-300">Tarifs</span> 2025
+                </h1>
+                <p className="text-xl lg:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
+                  Des solutions transparentes et personnalisées pour tous vos besoins digitaux
+                </p>
+                <div className="flex flex-wrap justify-center gap-4 text-sm">
+                  <Badge className="bg-green-500/20 border border-green-400 text-green-100 px-6 py-3 text-base font-semibold backdrop-blur-sm">
+                    ✅ Devis gratuit en 24h
+                  </Badge>
+                  <Badge className="bg-blue-500/20 border border-blue-400 text-blue-100 px-6 py-3 text-base font-semibold backdrop-blur-sm">
+                    🚀 Paiement en plusieurs fois
+                  </Badge>
+                  <Badge className="bg-purple-500/20 border border-purple-400 text-purple-100 px-6 py-3 text-base font-semibold backdrop-blur-sm">
+                    💎 Satisfaction garantie
+                  </Badge>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Services Tabs */}
+          {/* Services Tabs avec animations et couleurs */}
           <section className="py-20">
             <div className="container mx-auto px-4">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                  Choisissez votre <span className="text-blue-600">Solution</span>
+              <div className="text-center mb-16 animate-fade-in">
+                <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+                  Choisissez votre <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Solution</span>
                 </h2>
-                <p className="text-xl text-gray-600">
-                  Sélectionnez le service qui correspond à vos besoins
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  Découvrez nos 5 expertises pour accélérer votre croissance digitale
                 </p>
               </div>
 
-              <Tabs defaultValue="website" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 max-w-4xl mx-auto mb-12 h-16">
-                  {Object.entries(services).map(([key, service]) => (
-                    <TabsTrigger 
-                      key={key} 
-                      value={key}
-                      className="flex flex-col items-center gap-1 text-xs lg:text-sm font-bold data-[state=active]:bg-blue-600 data-[state=active]:text-white h-full p-2"
-                    >
-                      <service.icon className="w-5 h-5" />
-                      <span className="hidden lg:inline">{service.title}</span>
-                      <span className="lg:hidden">{service.title.split(' ')[0]}</span>
-                    </TabsTrigger>
-                  ))}
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 max-w-6xl mx-auto mb-16 h-auto bg-white shadow-xl rounded-2xl p-2 border">
+                  {Object.entries(services).map(([key, service]) => {
+                    const isActive = activeTab === key;
+                    return (
+                      <TabsTrigger 
+                        key={key} 
+                        value={key}
+                        className={`flex flex-col items-center gap-2 text-xs lg:text-sm font-bold p-4 rounded-xl transition-all duration-300 ${
+                          isActive 
+                            ? `bg-gradient-to-br ${service.bgGradient} text-white shadow-lg transform scale-105` 
+                            : `hover:${service.lightBg} ${service.darkColor} hover:scale-105`
+                        }`}
+                      >
+                        <service.icon className={`w-6 h-6 ${isActive ? 'text-white' : `text-${service.color}-600`}`} />
+                        <span className="hidden lg:inline font-bold">{service.title}</span>
+                        <span className="lg:hidden font-bold">{service.title.split(' ')[0]}</span>
+                      </TabsTrigger>
+                    );
+                  })}
                 </TabsList>
 
                 {Object.entries(services).map(([serviceId, service]) => (
-                  <TabsContent key={serviceId} value={serviceId}>
-                    <div className="text-center mb-8">
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <service.icon className="w-8 h-8 text-blue-600" />
-                        <h3 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                          {service.title}
-                        </h3>
+                  <TabsContent 
+                    key={serviceId} 
+                    value={serviceId}
+                    className="animate-fade-in"
+                  >
+                    <div className={`text-center mb-12 p-8 rounded-3xl ${service.lightBg} border-2 border-${service.color}-200`}>
+                      <div className="flex items-center justify-center gap-4 mb-6">
+                        <div className={`p-4 rounded-2xl bg-gradient-to-br ${service.bgGradient} shadow-lg`}>
+                          <service.icon className="w-12 h-12 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className={`text-3xl lg:text-4xl font-bold ${service.darkColor}`}>
+                            {service.title}
+                          </h3>
+                          <p className={`text-lg font-medium ${service.darkColor} opacity-80`}>
+                            {service.subtitle}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-lg text-blue-600 font-medium mb-2">{service.subtitle}</p>
-                      <p className="text-gray-600 max-w-2xl mx-auto">{service.description}</p>
+                      <p className="text-gray-700 max-w-3xl mx-auto text-lg leading-relaxed">
+                        {service.description}
+                      </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                      {service.packages.map((pkg) => (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                      {service.packages.map((pkg, index) => (
                         <Card 
                           key={pkg.id}
-                          className={`relative h-full transition-all duration-300 hover:shadow-2xl ${
+                          className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
                             pkg.popular 
-                              ? 'ring-2 ring-blue-500 transform scale-105' 
-                              : 'hover:scale-105'
+                              ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl` 
+                              : 'hover:scale-105 shadow-lg'
                           } ${
                             selectedPackages[serviceId]?.id === pkg.id 
-                              ? 'ring-4 ring-green-500 bg-green-50' 
+                              ? `ring-4 ring-green-500 ${service.lightBg} shadow-2xl` 
                               : ''
-                          }`}
+                          } animate-fade-in rounded-3xl overflow-hidden border-2`}
+                          style={{ animationDelay: `${index * 0.1}s` }}
                         >
                           {pkg.popular && (
                             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                              <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-sm font-bold">
+                              <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-2 text-sm font-bold shadow-lg rounded-full`}>
                                 <Star className="w-4 h-4 mr-1" />
-                                POPULAIRE
+                                LE PLUS POPULAIRE
                               </Badge>
                             </div>
                           )}
                           
-                          <CardHeader className="text-center pb-4">
-                            <CardTitle className="text-2xl font-bold text-gray-900">
+                          <CardHeader className="text-center pb-6 bg-gradient-to-br from-white to-gray-50">
+                            <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
                               {pkg.name}
                             </CardTitle>
-                            <div className="mt-4">
-                              <span className="text-4xl font-bold text-gray-900">
-                                {typeof pkg.price === 'string' ? pkg.price : `${pkg.price}€`}
-                              </span>
-                              <div className="text-gray-500 mt-1">{pkg.duration}</div>
+                            <div className="space-y-2">
+                              <div className="flex items-baseline justify-center gap-1">
+                                <span className={`text-4xl lg:text-5xl font-bold ${service.darkColor}`}>
+                                  {typeof pkg.price === 'string' ? pkg.price : `${pkg.price.toLocaleString()}€`}
+                                </span>
+                              </div>
+                              <div className="text-gray-600 font-medium">{pkg.duration}</div>
                             </div>
                           </CardHeader>
 
-                          <CardContent className="flex-1 space-y-6">
-                            <div className="space-y-3">
+                          <CardContent className="flex-1 space-y-6 p-6">
+                            <div className="space-y-4">
                               {pkg.features.map((feature, index) => (
-                                <div key={index} className="flex items-start gap-3">
-                                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                                  <span className="text-gray-700 text-sm">{feature}</span>
+                                <div key={index} className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200">
+                                  <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                    <Check className="w-4 h-4 text-green-600" />
+                                  </div>
+                                  <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
                                 </div>
                               ))}
                               {pkg.notIncluded && pkg.notIncluded.map((feature, index) => (
-                                <div key={index} className="flex items-start gap-3 opacity-60">
-                                  <X className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                <div key={index} className="flex items-start gap-3 opacity-50">
+                                  <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                                    <X className="w-4 h-4 text-red-500" />
+                                  </div>
                                   <span className="text-gray-500 line-through text-sm">{feature}</span>
                                 </div>
                               ))}
@@ -514,12 +626,12 @@ ${formData.message}
 
                             <Button
                               onClick={() => handlePackageSelect(serviceId, pkg)}
-                              className={`w-full h-12 text-lg font-bold transition-all ${
+                              className={`w-full h-14 text-lg font-bold transition-all duration-300 rounded-2xl ${
                                 selectedPackages[serviceId]?.id === pkg.id
-                                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                                  ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg transform scale-105'
                                   : pkg.popular
-                                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
-                                  : 'bg-gray-900 hover:bg-gray-800 text-white'
+                                  ? `bg-gradient-to-r ${service.bgGradient} hover:shadow-lg text-white transform hover:scale-105`
+                                  : `bg-gray-900 hover:bg-gray-800 text-white hover:shadow-lg transform hover:scale-105`
                               }`}
                             >
                               {selectedPackages[serviceId]?.id === pkg.id ? (
@@ -528,7 +640,10 @@ ${formData.message}
                                   Sélectionné
                                 </>
                               ) : (
-                                'Choisir ce package'
+                                <>
+                                  <ShoppingCart className="w-5 h-5 mr-2" />
+                                  Choisir ce package
+                                </>
                               )}
                             </Button>
                           </CardContent>
@@ -541,49 +656,56 @@ ${formData.message}
             </div>
           </section>
 
-          {/* Cart Summary */}
+          {/* Cart Summary amélioré */}
           {cartItems.length > 0 && (
-            <section className="bg-white border-t border-gray-200 sticky bottom-0 z-40 shadow-lg">
-              <div className="container mx-auto px-4 py-6">
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+            <section className="bg-white border-t-4 border-gradient-to-r from-blue-500 to-purple-500 sticky bottom-0 z-40 shadow-2xl animate-slide-in-right">
+              <div className="container mx-auto px-4 py-8">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+                  <div className="flex-1 w-full">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                      <ShoppingCart className="w-6 h-6 text-blue-600" />
                       Votre sélection ({cartItems.length} package{cartItems.length > 1 ? 's' : ''})
                     </h3>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {cartItems.map((item) => (
-                        <div key={item.serviceId} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900">{item.serviceTitle}</p>
-                            <p className="text-sm text-gray-600">{item.name}</p>
-                            <p className="text-lg font-bold text-blue-600">
-                              {typeof item.price === 'string' ? item.price : `${item.price}€`}
-                              <span className="text-sm font-normal text-gray-500 ml-1">{item.duration}</span>
-                            </p>
+                      {cartItems.map((item) => {
+                        const service = services[item.serviceId];
+                        return (
+                          <div key={item.serviceId} className={`flex items-center justify-between ${service.lightBg} p-6 rounded-2xl border-2 border-${service.color}-200 shadow-md`}>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <service.icon className={`w-5 h-5 text-${service.color}-600`} />
+                                <p className="font-bold text-gray-900">{item.serviceTitle}</p>
+                              </div>
+                              <p className="text-sm text-gray-700 font-medium">{item.name}</p>
+                              <p className={`text-xl font-bold ${service.darkColor}`}>
+                                {typeof item.price === 'string' ? item.price : `${item.price.toLocaleString()}€`}
+                                <span className="text-sm font-normal text-gray-600 ml-2">{item.duration}</span>
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeFromCart(item.serviceId)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeFromCart(item.serviceId)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                   
-                  <div className="text-center lg:text-right">
-                    <p className="text-2xl font-bold text-gray-900 mb-4">
+                  <div className="text-center lg:text-right bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-3xl border-2 border-blue-200">
+                    <p className="text-3xl font-bold text-gray-900 mb-6">
                       Total: {getTotalPrice().toLocaleString()}€
                     </p>
                     <Button
                       onClick={() => setShowQuoteForm(true)}
-                      className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-3 text-lg font-bold"
+                      className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-10 py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                     >
-                      <ShoppingCart className="w-5 h-5 mr-2" />
-                      Demander un devis
+                      <Mail className="w-6 h-6 mr-3" />
+                      Demander un devis gratuit
                     </Button>
                   </div>
                 </div>
@@ -593,109 +715,116 @@ ${formData.message}
 
           {/* Quote Form Modal */}
           {showQuoteForm && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+              <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+                <div className="p-8">
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                      <Mail className="w-8 h-8 text-blue-600" />
                       Demande de devis personnalisé
                     </h3>
                     <Button
                       variant="ghost"
                       onClick={() => setShowQuoteForm(false)}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 hover: text-gray-700 p-2 rounded-full hover:bg-gray-100"
                     >
                       <X className="w-6 h-6" />
                     </Button>
                   </div>
 
                   <form onSubmit={handleQuoteRequest} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <Label htmlFor="name">Nom complet *</Label>
+                        <Label htmlFor="name" className="text-lg font-semibold text-gray-700">Nom complet *</Label>
                         <Input
                           id="name"
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          className="mt-1"
+                          className="mt-2 h-12 rounded-xl border-2 focus:border-blue-500"
                           required
                         />
                       </div>
                       <div>
-                        <Label htmlFor="email">Email professionnel *</Label>
+                        <Label htmlFor="email" className="text-lg font-semibold text-gray-700">Email professionnel *</Label>
                         <Input
                           id="email"
                           type="email"
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
-                          className="mt-1"
+                          className="mt-2 h-12 rounded-xl border-2 focus:border-blue-500"
                           required
                         />
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <Label htmlFor="phone">Téléphone</Label>
+                        <Label htmlFor="phone" className="text-lg font-semibold text-gray-700">Téléphone</Label>
                         <Input
                           id="phone"
                           value={formData.phone}
                           onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                          className="mt-1"
+                          className="mt-2 h-12 rounded-xl border-2 focus:border-blue-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="company">Entreprise</Label>
+                        <Label htmlFor="company" className="text-lg font-semibold text-gray-700">Entreprise</Label>
                         <Input
                           id="company"
                           value={formData.company}
                           onChange={(e) => setFormData({...formData, company: e.target.value})}
-                          className="mt-1"
+                          className="mt-2 h-12 rounded-xl border-2 focus:border-blue-500"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="message">Message (besoins spécifiques, délais...)</Label>
+                      <Label htmlFor="message" className="text-lg font-semibold text-gray-700">Message (besoins spécifiques, délais...)</Label>
                       <Textarea
                         id="message"
                         value={formData.message}
                         onChange={(e) => setFormData({...formData, message: e.target.value})}
-                        className="mt-1"
+                        className="mt-2 rounded-xl border-2 focus:border-blue-500"
                         rows={4}
                         placeholder="Décrivez vos besoins spécifiques, vos délais, ou toute information utile..."
                       />
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">Récapitulatif de votre sélection:</h4>
-                      {cartItems.map((item) => (
-                        <div key={item.serviceId} className="flex justify-between items-center py-1">
-                          <span>{item.serviceTitle} - {item.name}</span>
-                          <span className="font-bold">
-                            {typeof item.price === 'string' ? item.price : `${item.price}€`}
-                            <span className="text-sm font-normal text-gray-500 ml-1">{item.duration}</span>
-                          </span>
-                        </div>
-                      ))}
-                      <div className="border-t pt-2 mt-2">
-                        <div className="flex justify-between items-center font-bold text-lg">
+                    <div className="bg-gradient-to-br from-gray-50 to-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                      <h4 className="font-bold text-gray-900 mb-4 text-xl">Récapitulatif de votre sélection:</h4>
+                      {cartItems.map((item) => {
+                        const service = services[item.serviceId];
+                        return (
+                          <div key={item.serviceId} className="flex justify-between items-center py-3 border-b border-gray-200 last:border-0">
+                            <div className="flex items-center gap-3">
+                              <service.icon className={`w-5 h-5 text-${service.color}-600`} />
+                              <span className="font-medium">{item.serviceTitle} - {item.name}</span>
+                            </div>
+                            <span className="font-bold text-lg">
+                              {typeof item.price === 'string' ? item.price : `${item.price.toLocaleString()}€`}
+                              <span className="text-sm font-normal text-gray-500 ml-1">{item.duration}</span>
+                            </span>
+                          </div>
+                        );
+                      })}
+                      <div className="border-t-2 border-blue-300 pt-4 mt-4">
+                        <div className="flex justify-between items-center font-bold text-2xl">
                           <span>Total estimé:</span>
-                          <span>{getTotalPrice().toLocaleString()}€</span>
+                          <span className="text-blue-600">{getTotalPrice().toLocaleString()}€</span>
                         </div>
                       </div>
                     </div>
 
                     <Button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3 text-lg font-bold"
+                      className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                     >
-                      <Mail className="w-5 h-5 mr-2" />
+                      <Mail className="w-6 h-6 mr-3" />
                       Envoyer ma demande de devis
                     </Button>
 
-                    <p className="text-sm text-gray-500 text-center">
-                      * Nous vous répondrons sous 24h avec un devis détaillé et personnalisé
+                    <p className="text-sm text-gray-600 text-center bg-blue-50 p-4 rounded-xl">
+                      * Nous vous répondrons sous 24h avec un devis détaillé et personnalisé 🚀
                     </p>
                   </form>
                 </div>
