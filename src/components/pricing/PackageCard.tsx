@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +29,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
       style={{ animationDelay: `${index * 0.1}s` }}
     >
       {pkg.popular && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
           <Badge className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-xs font-semibold rounded-full border border-white shadow-lg">
             <Star className="w-3 h-3 mr-1 fill-current" />
             POPULAIRE
