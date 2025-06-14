@@ -577,10 +577,10 @@ ${formData.message}
                           )}
                           
                           <Card 
-                            className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
+                            className={`relative h-full transition-all duration-500 hover:shadow-2xl hover:scale-105 group ${
                               pkg.popular 
                                 ? `ring-2 ring-blue-400 transform shadow-xl` 
-                                : 'hover:scale-105 shadow-lg'
+                                : 'shadow-lg'
                             } ${
                               selectedPackages[serviceId]?.id === pkg.id 
                                 ? `ring-4 ring-green-500 ${service.lightBg} shadow-2xl` 
