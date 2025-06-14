@@ -27,6 +27,12 @@ import Campaigns from "./pages/dashboard/Campaigns";
 import Account from "./pages/dashboard/Account";
 import DashboardHelp from "./pages/dashboard/Help";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import AdminBlogPage from "./pages/admin/AdminBlogPage";
+import AdminCampaignsPage from "./pages/admin/AdminCampaignsPage";
+import AdminBillingPage from "./pages/admin/AdminBillingPage";
+import AdminSystemPage from "./pages/admin/AdminSystemPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -81,34 +87,34 @@ const App = () => (
           
           {/* Routes Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminDashboard />} />
-          <Route path="/admin/users/all" element={<AdminDashboard />} />
-          <Route path="/admin/users/new" element={<AdminDashboard />} />
-          <Route path="/admin/users/suspended" element={<AdminDashboard />} />
-          <Route path="/admin/users/create" element={<AdminDashboard />} />
-          <Route path="/admin/analytics" element={<AdminDashboard />} />
-          <Route path="/admin/analytics/overview" element={<AdminDashboard />} />
-          <Route path="/admin/analytics/revenue" element={<AdminDashboard />} />
-          <Route path="/admin/analytics/performance" element={<AdminDashboard />} />
-          <Route path="/admin/analytics/users" element={<AdminDashboard />} />
-          <Route path="/admin/blog" element={<AdminDashboard />} />
-          <Route path="/admin/blog/posts" element={<AdminDashboard />} />
-          <Route path="/admin/blog/create" element={<AdminDashboard />} />
-          <Route path="/admin/blog/categories" element={<AdminDashboard />} />
-          <Route path="/admin/blog/comments" element={<AdminDashboard />} />
-          <Route path="/admin/campaigns" element={<AdminDashboard />} />
-          <Route path="/admin/campaigns/email" element={<AdminDashboard />} />
-          <Route path="/admin/campaigns/sms" element={<AdminDashboard />} />
-          <Route path="/admin/campaigns/automation" element={<AdminDashboard />} />
-          <Route path="/admin/billing" element={<AdminDashboard />} />
-          <Route path="/admin/billing/invoices" element={<AdminDashboard />} />
-          <Route path="/admin/billing/payments" element={<AdminDashboard />} />
-          <Route path="/admin/billing/subscriptions" element={<AdminDashboard />} />
-          <Route path="/admin/system" element={<AdminDashboard />} />
-          <Route path="/admin/system/config" element={<AdminDashboard />} />
-          <Route path="/admin/system/logs" element={<AdminDashboard />} />
-          <Route path="/admin/system/backups" element={<AdminDashboard />} />
-          <Route path="/admin/system/security" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/users/all" element={<AdminUsersPage />} />
+          <Route path="/admin/users/new" element={<AdminUsersPage />} />
+          <Route path="/admin/users/suspended" element={<AdminUsersPage />} />
+          <Route path="/admin/users/create" element={<AdminUsersPage />} />
+          <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+          <Route path="/admin/analytics/overview" element={<AdminAnalyticsPage />} />
+          <Route path="/admin/analytics/revenue" element={<AdminAnalyticsPage />} />
+          <Route path="/admin/analytics/performance" element={<AdminAnalyticsPage />} />
+          <Route path="/admin/analytics/users" element={<AdminAnalyticsPage />} />
+          <Route path="/admin/blog" element={<AdminBlogPage />} />
+          <Route path="/admin/blog/posts" element={<AdminBlogPage />} />
+          <Route path="/admin/blog/create" element={<AdminBlogPage />} />
+          <Route path="/admin/blog/categories" element={<AdminBlogPage />} />
+          <Route path="/admin/blog/comments" element={<AdminBlogPage />} />
+          <Route path="/admin/campaigns" element={<AdminCampaignsPage />} />
+          <Route path="/admin/campaigns/email" element={<AdminCampaignsPage />} />
+          <Route path="/admin/campaigns/sms" element={<AdminCampaignsPage />} />
+          <Route path="/admin/campaigns/automation" element={<AdminCampaignsPage />} />
+          <Route path="/admin/billing" element={<AdminBillingPage />} />
+          <Route path="/admin/billing/invoices" element={<AdminBillingPage />} />
+          <Route path="/admin/billing/payments" element={<AdminBillingPage />} />
+          <Route path="/admin/billing/subscriptions" element={<AdminBillingPage />} />
+          <Route path="/admin/system" element={<AdminSystemPage />} />
+          <Route path="/admin/system/config" element={<AdminSystemPage />} />
+          <Route path="/admin/system/logs" element={<AdminSystemPage />} />
+          <Route path="/admin/system/backups" element={<AdminSystemPage />} />
+          <Route path="/admin/system/security" element={<AdminSystemPage />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
           
           <Route path="*" element={<NotFound />} />
