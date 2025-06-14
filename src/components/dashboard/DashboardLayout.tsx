@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   Home, 
@@ -31,6 +33,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 
 interface DashboardLayoutProps {
@@ -39,9 +46,12 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
   useEffect(() => {
     const user = localStorage.getItem('techtrust_user');
@@ -50,6 +60,48 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   }, []);
 
+  // Déterminer l'onglet actif et le sous-menu actif basé sur l'URL
+  useEffect(() => {
+    const path = location.pathname;
+    
+    if (path.includes('/dashboard/analytics')) {
+      setActiveTab('analytics');
+      setOpenDropdown('analytics');
+      if (path.includes('/dashboard/analytics/website')) setActiveSubMenu('/dashboard/analytics/website');
+      else if (path.includes('/dashboard/analytics/social')) setActiveSubMenu('/dashboard/analytics/social');
+      else if (path.includes('/dashboard/analytics/growth')) setActiveSubMenu('/dashboard/analytics/growth');
+      else if (path.includes('/dashboard/analytics/community')) setActiveSubMenu('/dashboard/analytics/community');
+      else setActiveSubMenu('/dashboard/analytics/website');
+    } else if (path.includes('/dashboard/campaigns')) {
+      setActiveTab('campaigns');
+      setOpenDropdown('campaigns');
+      if (path.includes('/dashboard/campaigns/email')) setActiveSubMenu('/dashboard/campaigns/email');
+      else if (path.includes('/dashboard/campaigns/sms')) setActiveSubMenu('/dashboard/campaigns/sms');
+      else if (path.includes('/dashboard/campaigns/leads')) setActiveSubMenu('/dashboard/campaigns/leads');
+      else if (path.includes('/dashboard/campaigns/automation')) setActiveSubMenu('/dashboard/campaigns/automation');
+      else setActiveSubMenu('/dashboard/campaigns/email');
+    } else if (path.includes('/dashboard/account')) {
+      setActiveTab('account');
+      setOpenDropdown('account');
+      if (path.includes('/dashboard/account/profile')) setActiveSubMenu('/dashboard/account/profile');
+      else if (path.includes('/dashboard/account/plan')) setActiveSubMenu('/dashboard/account/plan');
+      else if (path.includes('/dashboard/account/billing')) setActiveSubMenu('/dashboard/account/billing');
+      else if (path.includes('/dashboard/account/security')) setActiveSubMenu('/dashboard/account/security');
+      else setActiveSubMenu('/dashboard/account/profile');
+    } else if (path.includes('/dashboard/help')) {
+      setActiveTab('help');
+      setOpenDropdown('help');
+      if (path.includes('/dashboard/help/faq')) setActiveSubMenu('/dashboard/help/faq');
+      else if (path.includes('/dashboard/help/support')) setActiveSubMenu('/dashboard/help/support');
+      else if (path.includes('/dashboard/help/tutorials')) setActiveSubMenu('/dashboard/help/tutorials');
+      else setActiveSubMenu('/dashboard/help/faq');
+    } else if (path.includes('/dashboard')) {
+      setActiveTab('dashboard');
+      setOpenDropdown(null);
+      setActiveSubMenu(null);
+    }
+  }, [location.pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem('techtrust_user');
     window.location.href = '/auth';
@@ -57,6 +109,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const handleSwitchToAdmin = () => {
     window.location.href = '/admin/dashboard';
+  };
+
+  const toggleDropdown = (dropdownId: string) => {
+    if (openDropdown === dropdownId) {
+      setOpenDropdown(null);
+    } else {
+      setOpenDropdown(dropdownId);
+    }
   };
 
   const getTierInfo = (tier: string) => {
@@ -191,41 +251,67 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         )}
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
-          {filteredNavigation.map((item) => {
-            const ItemIcon = item.icon;
-            return (
-              <div key={item.id}>
-                {item.submenu ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+        <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
+          <div className="w-full space-y-1">
+            {filteredNavigation.map((item) => {
+              const ItemIcon = item.icon;
+              
+              if (item.submenu) {
+                return (
+                  <Collapsible 
+                    key={item.id} 
+                    open={openDropdown === item.id}
+                    onOpenChange={() => toggleDropdown(item.id)}
+                  >
+                    <CollapsibleTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="w-full justify-between hover:bg-gray-100"
+                        className={`w-full justify-between hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors duration-200 group ${
+                          activeTab === item.id ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : ''
+                        }`}
                       >
                         <div className="flex items-center gap-3">
                           <ItemIcon className="w-5 h-5" />
-                          <span>{item.name}</span>
+                          <span className="font-medium">{item.name}</span>
                         </div>
-                        <ChevronDown className="w-4 h-4" />
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                          openDropdown === item.id ? 'rotate-180' : ''
+                        }`} />
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      {item.submenu.map((subItem) => (
-                        <DropdownMenuItem key={subItem.href} asChild>
-                          <a href={subItem.href} className="cursor-pointer">
-                            {subItem.name}
-                          </a>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-1 mt-1">
+                      <div className="ml-8 space-y-1">
+                        {item.submenu.map((subItem) => (
+                          <Button
+                            key={subItem.href}
+                            variant="ghost"
+                            asChild
+                            className={`w-full justify-start h-8 px-3 text-sm hover:bg-gray-100 rounded-md transition-colors duration-200 ${
+                              activeSubMenu === subItem.href 
+                                ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 font-medium' 
+                                : 'text-gray-600 hover:text-gray-900'
+                            }`}
+                          >
+                            <a href={subItem.href}>
+                              <span className={`w-2 h-2 rounded-full mr-3 ${
+                                activeSubMenu === subItem.href ? 'bg-blue-500' : 'bg-gray-300'
+                              }`}></span>
+                              {subItem.name}
+                            </a>
+                          </Button>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              } else {
+                return (
                   <Button
+                    key={item.id}
                     variant="ghost"
                     asChild
-                    className={`w-full justify-start hover:bg-gray-100 ${
-                      activeTab === item.id ? 'bg-blue-50 text-blue-600' : ''
+                    className={`w-full justify-start hover:bg-gray-100 transition-colors duration-200 ${
+                      activeTab === item.id ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : ''
                     }`}
                   >
                     <a href={item.href} onClick={() => setActiveTab(item.id)}>
@@ -233,10 +319,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       {item.name}
                     </a>
                   </Button>
-                )}
-              </div>
-            );
-          })}
+                );
+              }
+            })}
+          </div>
         </nav>
 
         {/* Footer sidebar */}
@@ -265,7 +351,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </aside>
 
       {/* Content */}
-      <div className="flex-1 lg:ml-0">
+      <div className="flex-1">
         {/* Header */}
         <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
           <Button
