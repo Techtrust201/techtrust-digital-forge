@@ -46,38 +46,103 @@ const AdminUsersPage = () => {
     return 'Tous les utilisateurs';
   };
 
-  const mockUsers = [
-    {
-      id: 1,
-      name: 'Marie Dubois',
-      email: 'marie.dubois@email.com',
-      role: 'client',
-      tier: 'gold',
-      status: 'active',
-      created: '2024-01-15',
-      lastLogin: '2024-01-20'
-    },
-    {
-      id: 2,
-      name: 'Pierre Martin',
-      email: 'pierre.martin@email.com',
-      role: 'client',
-      tier: 'silver',
-      status: 'active',
-      created: '2024-01-10',
-      lastLogin: '2024-01-19'
-    },
-    {
-      id: 3,
-      name: 'Sophie Laurent',
-      email: 'sophie.laurent@email.com',
-      role: 'client',
-      tier: 'bronze',
-      status: 'suspended',
-      created: '2024-01-05',
-      lastLogin: '2024-01-18'
+  const getFilteredUsers = () => {
+    const path = location.pathname;
+    
+    if (path.includes('/new')) {
+      return [
+        {
+          id: 1,
+          name: 'Marie Dubois',
+          email: 'marie.dubois@email.com',
+          role: 'client',
+          tier: 'gold',
+          status: 'pending',
+          created: '2024-01-20',
+          lastLogin: 'Jamais'
+        },
+        {
+          id: 2,
+          name: 'Jean Durand',
+          email: 'jean.durand@email.com',
+          role: 'client',
+          tier: 'silver',
+          status: 'pending',
+          created: '2024-01-19',
+          lastLogin: 'Jamais'
+        }
+      ];
     }
-  ];
+    
+    if (path.includes('/suspended')) {
+      return [
+        {
+          id: 3,
+          name: 'Sophie Laurent',
+          email: 'sophie.laurent@email.com',
+          role: 'client',
+          tier: 'bronze',
+          status: 'suspended',
+          created: '2024-01-05',
+          lastLogin: '2024-01-18'
+        },
+        {
+          id: 4,
+          name: 'Paul Moreau',
+          email: 'paul.moreau@email.com',
+          role: 'client',
+          tier: 'silver',
+          status: 'suspended',
+          created: '2023-12-15',
+          lastLogin: '2024-01-10'
+        }
+      ];
+    }
+    
+    // Tous les utilisateurs par défaut
+    return [
+      {
+        id: 1,
+        name: 'Marie Dubois',
+        email: 'marie.dubois@email.com',
+        role: 'client',
+        tier: 'gold',
+        status: 'active',
+        created: '2024-01-15',
+        lastLogin: '2024-01-20'
+      },
+      {
+        id: 2,
+        name: 'Pierre Martin',
+        email: 'pierre.martin@email.com',
+        role: 'client',
+        tier: 'silver',
+        status: 'active',
+        created: '2024-01-10',
+        lastLogin: '2024-01-19'
+      },
+      {
+        id: 3,
+        name: 'Sophie Laurent',
+        email: 'sophie.laurent@email.com',
+        role: 'client',
+        tier: 'bronze',
+        status: 'suspended',
+        created: '2024-01-05',
+        lastLogin: '2024-01-18'
+      }
+    ];
+  };
+
+  const getPageDescription = () => {
+    const path = location.pathname;
+    if (path.includes('/new')) return 'Comptes créés récemment en attente de validation';
+    if (path.includes('/suspended')) return 'Comptes suspendus temporairement ou définitivement';
+    if (path.includes('/create')) return 'Créer un nouveau compte utilisateur';
+    return 'Gérez tous vos utilisateurs et leurs accès';
+  };
+
+  const users = getFilteredUsers();
 
   const getTierColor = (tier: string) => {
     switch (tier) {
@@ -97,13 +162,71 @@ const AdminUsersPage = () => {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'active': return 'Actif';
+      case 'suspended': return 'Suspendu';
+      case 'pending': return 'En attente';
+      default: return status;
+    }
+  };
+
+  // Si on est sur la page de création
+  if (location.pathname.includes('/create')) {
+    return (
+      <AdminLayout>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
+            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
+          </div>
+
+          <Card className="max-w-2xl">
+            <CardHeader>
+              <CardTitle>Nouveau compte utilisateur</CardTitle>
+              <CardDescription>Créez un nouveau compte pour un client</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Prénom</label>
+                  <Input placeholder="Jean" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Nom</label>
+                  <Input placeholder="Dupont" />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Email</label>
+                <Input placeholder="jean.dupont@email.com" type="email" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Plan</label>
+                <select className="w-full p-2 border rounded-md">
+                  <option value="bronze">Bronze</option>
+                  <option value="silver">Silver</option>
+                  <option value="gold">Gold</option>
+                </select>
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button className="bg-red-500 hover:bg-red-600">Créer le compte</Button>
+                <Button variant="outline">Annuler</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">Gérez vos utilisateurs et leurs accès</p>
+            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
           </div>
           <Button className="bg-red-500 hover:bg-red-600">
             <UserPlus className="w-4 h-4 mr-2" />
@@ -162,7 +285,7 @@ const AdminUsersPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Liste des utilisateurs</CardTitle>
-                <CardDescription>Gérez tous vos utilisateurs depuis cette interface</CardDescription>
+                <CardDescription>{getPageDescription()}</CardDescription>
               </div>
               <div className="flex items-center gap-2">
                 <div className="relative">
@@ -194,7 +317,7 @@ const AdminUsersPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockUsers.map((user) => (
+                {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -209,7 +332,7 @@ const AdminUsersPage = () => {
                     </TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(user.status)}>
-                        {user.status === 'active' ? 'Actif' : 'Suspendu'}
+                        {getStatusLabel(user.status)}
                       </Badge>
                     </TableCell>
                     <TableCell>
