@@ -525,7 +525,7 @@ ${formData.message}
                       <TabsTrigger 
                         key={key} 
                         value={key}
-                        className={`flex flex-col items-center gap-2 text-xs lg:text-sm font-bold p-4 rounded-xl transition-all duration-300 ${
+                        className={`flex flex-col items-center gap-2 text-xs lg:text-sm font-bold p-4 rounded-xl transition-all duration-500 ${
                           isActive 
                             ? `bg-gradient-to-br ${service.bgGradient} text-white shadow-lg transform scale-105` 
                             : `hover:${service.lightBg} ${service.darkColor} hover:scale-105`
@@ -543,7 +543,7 @@ ${formData.message}
                   <TabsContent 
                     key={serviceId} 
                     value={serviceId}
-                    className="animate-fade-in"
+                    className="animate-fade-in transition-all duration-500"
                   >
                     <div className={`text-center mb-12 p-8 rounded-3xl ${service.lightBg} border-2 border-${service.color}-200`}>
                       <div className="flex items-center justify-center gap-4 mb-6">
@@ -564,88 +564,89 @@ ${formData.message}
                       </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto pt-8">
                       {service.packages.map((pkg, index) => (
-                        <Card 
-                          key={pkg.id}
-                          className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
-                            pkg.popular 
-                              ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl mt-8` 
-                              : 'hover:scale-105 shadow-lg'
-                          } ${
-                            selectedPackages[serviceId]?.id === pkg.id 
-                              ? `ring-4 ring-green-500 ${service.lightBg} shadow-2xl` 
-                              : ''
-                          } animate-fade-in rounded-3xl overflow-hidden border-2`}
-                          style={{ animationDelay: `${index * 0.1}s` }}
-                        >
+                        <div key={pkg.id} className="relative">
+                          <Card 
+                            className={`relative h-full transition-all duration-500 hover:shadow-2xl group ${
+                              pkg.popular 
+                                ? `ring-4 ring-${service.color}-400 transform scale-105 shadow-2xl` 
+                                : 'hover:scale-105 shadow-lg'
+                            } ${
+                              selectedPackages[serviceId]?.id === pkg.id 
+                                ? `ring-4 ring-green-500 ${service.lightBg} shadow-2xl` 
+                                : ''
+                            } animate-fade-in rounded-3xl overflow-hidden border-2`}
+                            style={{ animationDelay: `${index * 0.1}s` }}
+                          >
+                            <CardHeader className="text-center pb-6 bg-gradient-to-br from-white to-gray-50">
+                              <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
+                                {pkg.name}
+                              </CardTitle>
+                              <div className="space-y-2">
+                                <div className="flex items-baseline justify-center gap-1">
+                                  <span className={`text-4xl lg:text-5xl font-bold ${service.darkColor}`}>
+                                    {typeof pkg.price === 'string' ? pkg.price : `${pkg.price.toLocaleString()}€`}
+                                  </span>
+                                </div>
+                                <div className="text-gray-600 font-medium">{pkg.duration}</div>
+                              </div>
+                            </CardHeader>
+
+                            <CardContent className="flex-1 space-y-6 p-6">
+                              <div className="space-y-4">
+                                {pkg.features.map((feature, index) => (
+                                  <div key={index} className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200">
+                                    <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                      <Check className="w-4 h-4 text-green-600" />
+                                    </div>
+                                    <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
+                                  </div>
+                                ))}
+                                {pkg.notIncluded && pkg.notIncluded.map((feature, index) => (
+                                  <div key={index} className="flex items-start gap-3 opacity-50">
+                                    <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                                      <X className="w-4 h-4 text-red-500" />
+                                    </div>
+                                    <span className="text-gray-500 line-through text-sm">{feature}</span>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <Button
+                                onClick={() => handlePackageSelect(serviceId, pkg)}
+                                className={`w-full h-14 text-lg font-bold transition-all duration-300 rounded-2xl ${
+                                  selectedPackages[serviceId]?.id === pkg.id
+                                    ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg transform scale-105'
+                                    : pkg.popular
+                                    ? `bg-gradient-to-r ${service.bgGradient} hover:shadow-lg text-white transform hover:scale-105`
+                                    : `bg-gray-900 hover:bg-gray-800 text-white hover:shadow-lg transform hover:scale-105`
+                                }`}
+                              >
+                                {selectedPackages[serviceId]?.id === pkg.id ? (
+                                  <>
+                                    <Check className="w-5 h-5 mr-2" />
+                                    Sélectionné
+                                  </>
+                                ) : (
+                                  <>
+                                    <ShoppingCart className="w-5 h-5 mr-2" />
+                                    Choisir ce package
+                                  </>
+                                )}
+                              </Button>
+                            </CardContent>
+                          </Card>
+                          
                           {pkg.popular && (
-                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
+                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
                               <Badge className={`bg-gradient-to-r ${service.bgGradient} text-white px-6 py-3 text-sm font-bold shadow-lg rounded-full flex items-center gap-2`}>
                                 <Star className="w-4 h-4" />
                                 LE PLUS POPULAIRE
                               </Badge>
                             </div>
                           )}
-                          
-                          <CardHeader className="text-center pb-6 bg-gradient-to-br from-white to-gray-50">
-                            <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
-                              {pkg.name}
-                            </CardTitle>
-                            <div className="space-y-2">
-                              <div className="flex items-baseline justify-center gap-1">
-                                <span className={`text-4xl lg:text-5xl font-bold ${service.darkColor}`}>
-                                  {typeof pkg.price === 'string' ? pkg.price : `${pkg.price.toLocaleString()}€`}
-                                </span>
-                              </div>
-                              <div className="text-gray-600 font-medium">{pkg.duration}</div>
-                            </div>
-                          </CardHeader>
-
-                          <CardContent className="flex-1 space-y-6 p-6">
-                            <div className="space-y-4">
-                              {pkg.features.map((feature, index) => (
-                                <div key={index} className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200">
-                                  <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                                    <Check className="w-4 h-4 text-green-600" />
-                                  </div>
-                                  <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
-                                </div>
-                              ))}
-                              {pkg.notIncluded && pkg.notIncluded.map((feature, index) => (
-                                <div key={index} className="flex items-start gap-3 opacity-50">
-                                  <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
-                                    <X className="w-4 h-4 text-red-500" />
-                                  </div>
-                                  <span className="text-gray-500 line-through text-sm">{feature}</span>
-                                </div>
-                              ))}
-                            </div>
-
-                            <Button
-                              onClick={() => handlePackageSelect(serviceId, pkg)}
-                              className={`w-full h-14 text-lg font-bold transition-all duration-300 rounded-2xl ${
-                                selectedPackages[serviceId]?.id === pkg.id
-                                  ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg transform scale-105'
-                                  : pkg.popular
-                                  ? `bg-gradient-to-r ${service.bgGradient} hover:shadow-lg text-white transform hover:scale-105`
-                                  : `bg-gray-900 hover:bg-gray-800 text-white hover:shadow-lg transform hover:scale-105`
-                              }`}
-                            >
-                              {selectedPackages[serviceId]?.id === pkg.id ? (
-                                <>
-                                  <Check className="w-5 h-5 mr-2" />
-                                  Sélectionné
-                                </>
-                              ) : (
-                                <>
-                                  <ShoppingCart className="w-5 h-5 mr-2" />
-                                  Choisir ce package
-                                </>
-                              )}
-                            </Button>
-                          </CardContent>
-                        </Card>
+                        </div>
                       ))}
                     </div>
                   </TabsContent>
