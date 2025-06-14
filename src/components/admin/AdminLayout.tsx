@@ -423,8 +423,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Content */}
       <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
         {/* Header */}
-        <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6 pl-0">
-          <div className="flex items-center gap-4 pl-6">
+        <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
