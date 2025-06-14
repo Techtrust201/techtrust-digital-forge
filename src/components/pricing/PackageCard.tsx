@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +14,22 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelected, onSelect }) => {
+  // Fonction pour nettoyer le prix et extraire seulement le nombre/montant principal
+  const getCleanPrice = (price: number | string) => {
+    if (typeof price === 'number') {
+      return `${price.toLocaleString()}€`;
+    }
+    
+    // Pour les strings, on extrait juste le prix principal
+    if (price.includes('€')) {
+      // Si c'est déjà formaté avec €, on garde tel quel
+      return price.replace('à partir de ', '').replace('À partir de ', '');
+    }
+    
+    // Sinon on retourne tel quel
+    return price;
+  };
+
   return (
     <Card 
       className={`relative transition-all duration-500 hover:shadow-2xl group ${
@@ -52,7 +67,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
             <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
-              {typeof pkg.price === 'string' ? pkg.price.replace('à partir de ', '') : `${pkg.price.toLocaleString()}€`}
+              {getCleanPrice(pkg.price)}
             </span>
           </div>
           <div className="text-gray-600 font-medium">{pkg.duration}</div>
