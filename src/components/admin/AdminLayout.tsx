@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -145,7 +144,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       } ${
         isSidebarCollapsed ? 'w-16' : 'w-64'
-      } fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      } fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 relative`}>
         
         {/* Header sidebar */}
         <div className="flex items-center justify-between h-16 px-6 border-b bg-gradient-to-r from-red-500 to-orange-500 relative">
@@ -167,25 +166,18 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <X className="w-5 h-5" />
             </Button>
           </div>
-        </div>
 
-        {/* Bouton de collapse/expand repositionné */}
-        <div className="hidden lg:flex justify-end p-2 border-b bg-gray-50">
+          {/* Bouton chevron moderne inspiré des meilleurs sites */}
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            size="icon"
             onClick={toggleSidebarCollapse}
-            className="flex items-center gap-2 hover:bg-gray-100 transition-all duration-200"
+            className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-lg rounded-full w-7 h-7 items-center justify-center transition-all duration-300 hover:shadow-xl hover:scale-105 group"
             title={isSidebarCollapsed ? 'Élargir la sidebar' : 'Réduire la sidebar'}
           >
-            {isSidebarCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <>
-                <ChevronLeft className="w-4 h-4" />
-                {!isSidebarCollapsed && <span className="text-xs">Réduire</span>}
-              </>
-            )}
+            <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${
+              isSidebarCollapsed ? 'rotate-180' : ''
+            } group-hover:scale-110`} />
           </Button>
         </div>
 
