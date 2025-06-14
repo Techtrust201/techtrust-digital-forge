@@ -52,7 +52,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
             <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
-              {typeof pkg.price === 'string' ? pkg.price : `${pkg.price.toLocaleString()}€`}
+              {typeof pkg.price === 'string' ? pkg.price.replace('à partir de ', '') : `${pkg.price.toLocaleString()}€`}
             </span>
           </div>
           <div className="text-gray-600 font-medium">{pkg.duration}</div>
