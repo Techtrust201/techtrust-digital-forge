@@ -26,7 +26,9 @@ import {
   Key,
   Monitor,
   FileText,
-  Save
+  Save,
+  Mail,
+  Plus
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import {

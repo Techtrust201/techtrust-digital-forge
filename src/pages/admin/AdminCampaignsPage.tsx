@@ -46,6 +46,85 @@ const AdminCampaignsPage = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Mock data for campaigns
+  const mockCampaigns = [
+    {
+      id: 1,
+      name: 'Newsletter Janvier 2025',
+      type: 'email',
+      status: 'sent',
+      sent: 2450,
+      opened: 980,
+      clicked: 156,
+      converted: 23,
+      revenue: 4500,
+      date: '2025-01-15',
+      openRate: 40,
+      ctr: 6.4,
+      conversionRate: 0.9
+    },
+    {
+      id: 2,
+      name: 'Promo Flash Week-end',
+      type: 'sms',
+      status: 'sent',
+      sent: 850,
+      opened: 782,
+      clicked: 234,
+      converted: 45,
+      revenue: 2800,
+      date: '2025-01-12',
+      openRate: 92,
+      ctr: 27.5,
+      conversionRate: 5.3
+    },
+    {
+      id: 3,
+      name: 'Lead Magnet eBook',
+      type: 'lead',
+      status: 'active',
+      sent: 0,
+      opened: 0,
+      clicked: 445,
+      converted: 334,
+      revenue: 0,
+      date: '2025-01-10',
+      openRate: 0,
+      ctr: 75.1,
+      conversionRate: 75.1
+    },
+    {
+      id: 4,
+      name: 'Séquence Onboarding',
+      type: 'automation',
+      status: 'active',
+      sent: 1250,
+      opened: 856,
+      clicked: 298,
+      converted: 89,
+      revenue: 8900,
+      date: '2025-01-08',
+      openRate: 68.5,
+      ctr: 23.8,
+      conversionRate: 7.1
+    },
+    {
+      id: 5,
+      name: 'Campagne de Retargeting',
+      type: 'email',
+      status: 'scheduled',
+      sent: 0,
+      opened: 0,
+      clicked: 0,
+      converted: 0,
+      revenue: 0,
+      date: '2025-01-20',
+      openRate: 0,
+      ctr: 0,
+      conversionRate: 0
+    }
+  ];
+
   const getPageTitle = () => {
     const path = location.pathname;
     if (path.includes('/email')) return 'Campagnes Email';

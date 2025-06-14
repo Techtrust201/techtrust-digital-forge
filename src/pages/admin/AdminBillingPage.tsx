@@ -43,6 +43,74 @@ const AdminBillingPage = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Mock data for invoices
+  const mockInvoices = [
+    {
+      id: 'INV-2024-001',
+      customer: 'Marie Dubois',
+      email: 'marie.dubois@email.com',
+      amount: 2500,
+      status: 'paid',
+      plan: 'Gold',
+      dueDate: '2024-01-15',
+      paidDate: '2024-01-14',
+      created: '2024-01-01'
+    },
+    {
+      id: 'INV-2024-002',
+      customer: 'Pierre Martin',
+      email: 'pierre.martin@email.com',
+      amount: 1200,
+      status: 'pending',
+      plan: 'Silver',
+      dueDate: '2024-01-20',
+      paidDate: null,
+      created: '2024-01-05'
+    },
+    {
+      id: 'INV-2024-003',
+      customer: 'Sophie Laurent',
+      email: 'sophie.laurent@email.com',
+      amount: 800,
+      status: 'overdue',
+      plan: 'Bronze',
+      dueDate: '2024-01-10',
+      paidDate: null,
+      created: '2023-12-28'
+    }
+  ];
+
+  // Mock data for subscriptions
+  const mockSubscriptions = [
+    {
+      id: 1,
+      customer: 'Marie Dubois',
+      plan: 'Gold',
+      price: 299,
+      status: 'active',
+      nextBilling: '2024-02-15',
+      created: '2023-02-15'
+    },
+    {
+      id: 2,
+      customer: 'Pierre Martin',
+      plan: 'Silver',
+      price: 149,
+      status: 'active',
+      nextBilling: '2024-02-05',
+      created: '2023-05-05'
+    },
+    {
+      id: 3,
+      customer: 'Sophie Laurent',
+      plan: 'Bronze',
+      price: 79,
+      status: 'cancelled',
+      nextBilling: null,
+      created: '2023-08-12'
+    }
+  ];
+
   const getPageTitle = () => {
     const path = location.pathname;
     if (path.includes('/invoices')) return 'Factures';
@@ -65,41 +133,7 @@ const AdminBillingPage = () => {
     if (path.includes('/invoices')) {
       return {
         type: 'invoices',
-        data: [
-          {
-            id: 'INV-2024-001',
-            customer: 'Marie Dubois',
-            email: 'marie.dubois@email.com',
-            amount: 2500,
-            status: 'paid',
-            plan: 'Gold',
-            dueDate: '2024-01-15',
-            paidDate: '2024-01-14',
-            created: '2024-01-01'
-          },
-          {
-            id: 'INV-2024-002',
-            customer: 'Pierre Martin',
-            email: 'pierre.martin@email.com',
-            amount: 1200,
-            status: 'pending',
-            plan: 'Silver',
-            dueDate: '2024-01-20',
-            paidDate: null,
-            created: '2024-01-05'
-          },
-          {
-            id: 'INV-2024-003',
-            customer: 'Sophie Laurent',
-            email: 'sophie.laurent@email.com',
-            amount: 800,
-            status: 'overdue',
-            plan: 'Bronze',
-            dueDate: '2024-01-10',
-            paidDate: null,
-            created: '2023-12-28'
-          }
-        ]
+        data: mockInvoices
       };
     }
     
@@ -144,39 +178,11 @@ const AdminBillingPage = () => {
     if (path.includes('/subscriptions')) {
       return {
         type: 'subscriptions',
-        data: [
-          {
-            id: 1,
-            customer: 'Marie Dubois',
-            plan: 'Gold',
-            price: 299,
-            status: 'active',
-            nextBilling: '2024-02-15',
-            created: '2023-02-15'
-          },
-          {
-            id: 2,
-            customer: 'Pierre Martin',
-            plan: 'Silver',
-            price: 149,
-            status: 'active',
-            nextBilling: '2024-02-05',
-            created: '2023-05-05'
-          },
-          {
-            id: 3,
-            customer: 'Sophie Laurent',
-            plan: 'Bronze',
-            price: 79,
-            status: 'cancelled',
-            nextBilling: null,
-            created: '2023-08-12'
-          }
-        ]
+        data: mockSubscriptions
       };
     }
     
-    return { type: 'invoices', data: [] };
+    return { type: 'invoices', data: mockInvoices };
   };
 
   const { type, data } = getFilteredData();
@@ -818,27 +824,8 @@ const AdminBillingPage = () => {
 
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Factures récentes</CardTitle>
-                <CardDescription>Gérez toutes les factures et paiements</CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Rechercher une facture..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 w-64"
-                  />
-                </div>
-                <Button variant="outline">
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filtres
-                </Button>
-              </div>
-            </div>
+            <CardTitle>Factures récentes</CardTitle>
+            <CardDescription>Gérez toutes les factures et paiements</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
