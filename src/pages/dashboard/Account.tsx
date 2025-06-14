@@ -10,20 +10,20 @@ import { Progress } from '@/components/ui/progress';
 import { 
   User, 
   CreditCard, 
+  Download, 
   Shield, 
-  Bell, 
-  Download,
-  Edit,
-  Crown,
+  Crown, 
   Rocket,
   Diamond,
+  Star,
   Calendar,
-  Mail,
-  Phone,
-  MapPin,
-  Building,
-  Zap,
-  Star
+  FileText,
+  Settings,
+  Bell,
+  Lock,
+  CheckCircle,
+  ArrowRight,
+  Package
 } from 'lucide-react';
 
 const Account = () => {
@@ -33,117 +33,168 @@ const Account = () => {
     return user ? JSON.parse(user) : null;
   });
 
-  const getUserPackages = () => {
-    switch(userData?.tier) {
+  const getTierInfo = (tier: string) => {
+    switch (tier) {
       case 'bronze':
-        return [
-          { service: 'Site Web', package: 'Starter', price: 899, status: 'active', nextBilling: '2025-02-15' }
-        ];
+        return { 
+          icon: Shield, 
+          name: 'Bronze', 
+          color: 'text-amber-600 bg-amber-50',
+          nextTier: 'Silver',
+          progress: 25,
+          benefits: ['Site web basique', 'Support email', 'SSL gratuit']
+        };
       case 'silver':
-        return [
-          { service: 'Site Web', package: 'Business', price: 1599, status: 'active', nextBilling: '2025-02-15' },
-          { service: 'Community Management', package: 'Basic', price: 199, status: 'active', nextBilling: '2025-02-15' }
-        ];
+        return { 
+          icon: Rocket, 
+          name: 'Silver', 
+          color: 'text-gray-600 bg-gray-50',
+          nextTier: 'Gold',
+          progress: 50,
+          benefits: ['Growth Hacking Pro', 'Analytics avancées', 'Support prioritaire']
+        };
       case 'gold':
-        return [
-          { service: 'Site Web', package: 'Business', price: 1599, status: 'active', nextBilling: '2025-02-15' },
-          { service: 'Growth Hacking', package: 'Medium', price: 599, status: 'active', nextBilling: '2025-02-15' },
-          { service: 'Community Management', package: 'Pro', price: 399, status: 'active', nextBilling: '2025-02-15' }
-        ];
+        return { 
+          icon: Crown, 
+          name: 'Gold', 
+          color: 'text-yellow-600 bg-yellow-50',
+          nextTier: 'Diamond',
+          progress: 75,
+          benefits: ['Solutions sur mesure', 'Community Pro', 'Account manager']
+        };
       case 'diamond':
-        return [
-          { service: 'Site Web', package: 'Premium E-commerce', price: 2999, status: 'active', nextBilling: '2025-02-15' },
-          { service: 'Growth Hacking', package: 'High Performance', price: 1299, status: 'active', nextBilling: '2025-02-15' },
-          { service: 'Community Management', package: 'Expert', price: 799, status: 'active', nextBilling: '2025-02-15' },
-          { service: 'Consulting', package: 'Accompagnement', price: 1999, status: 'active', nextBilling: '2025-02-15' }
-        ];
+        return { 
+          icon: Diamond, 
+          name: 'Diamond', 
+          color: 'text-purple-600 bg-purple-50',
+          nextTier: null,
+          progress: 100,
+          benefits: ['Accès illimité', 'Support VIP 24/7', 'Services premium']
+        };
       default:
-        return [];
+        return { 
+          icon: Shield, 
+          name: 'Bronze', 
+          color: 'text-amber-600 bg-amber-50',
+          nextTier: 'Silver',
+          progress: 25,
+          benefits: ['Site web basique', 'Support email', 'SSL gratuit']
+        };
     }
   };
 
-  const getTierInfo = () => {
-    const packages = getUserPackages();
-    const totalValue = packages.reduce((sum, pkg) => sum + pkg.price, 0);
-    
-    if (totalValue >= 5000) return { name: 'Diamond', icon: Diamond, color: 'text-purple-600', bg: 'bg-purple-50' };
-    if (totalValue >= 2000) return { name: 'Gold', icon: Crown, color: 'text-yellow-600', bg: 'bg-yellow-50' };
-    if (totalValue >= 1000) return { name: 'Silver', icon: Rocket, color: 'text-gray-600', bg: 'bg-gray-50' };
-    return { name: 'Bronze', icon: Shield, color: 'text-amber-600', bg: 'bg-amber-50' };
-  };
-
-  const getInvoices = () => [
-    { id: 'INV-2025-001', date: '2025-01-15', amount: getTierInfo().name === 'Diamond' ? 7096 : getTierInfo().name === 'Gold' ? 2597 : getTierInfo().name === 'Silver' ? 1798 : 899, status: 'paid' },
-    { id: 'INV-2024-012', date: '2024-12-15', amount: getTierInfo().name === 'Diamond' ? 7096 : getTierInfo().name === 'Gold' ? 2597 : getTierInfo().name === 'Silver' ? 1798 : 899, status: 'paid' },
-    { id: 'INV-2024-011', date: '2024-11-15', amount: getTierInfo().name === 'Diamond' ? 7096 : getTierInfo().name === 'Gold' ? 2597 : getTierInfo().name === 'Silver' ? 1798 : 899, status: 'paid' }
-  ];
-
-  const tierInfo = getTierInfo();
+  const tierInfo = getTierInfo(userData?.tier || 'bronze');
   const TierIcon = tierInfo.icon;
-  const packages = getUserPackages();
-  const invoices = getInvoices();
+
+  // Données simulées pour les factures
+  const invoices = [
+    {
+      id: 'INV-2025-001',
+      date: '2025-01-15',
+      amount: 599,
+      status: 'paid',
+      description: 'Growth Hacking Pro - Janvier 2025',
+      downloadUrl: '#'
+    },
+    {
+      id: 'INV-2024-012',
+      date: '2024-12-15',
+      amount: 599,
+      status: 'paid',
+      description: 'Growth Hacking Pro - Décembre 2024',
+      downloadUrl: '#'
+    },
+    {
+      id: 'INV-2024-011',
+      date: '2024-11-15',
+      amount: 1599,
+      status: 'paid',
+      description: 'Site Web Business - Développement',
+      downloadUrl: '#'
+    }
+  ];
 
   const renderProfile = () => (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="w-5 h-5" />
-            Informations personnelles
-          </CardTitle>
+          <CardTitle>Informations personnelles</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">{userData?.name?.charAt(0)}</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-gray-900">{userData?.name}</h3>
+              <p className="text-gray-600">{userData?.email}</p>
+              <Badge className={`mt-2 ${tierInfo.color}`}>
+                <TierIcon className="w-4 h-4 mr-1" />
+                Niveau {tierInfo.name}
+              </Badge>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="firstName">Prénom</Label>
-              <Input id="firstName" defaultValue={userData?.name?.split(' ')[0] || 'Jean'} />
-            </div>
-            <div>
-              <Label htmlFor="lastName">Nom</Label>
-              <Input id="lastName" defaultValue={userData?.name?.split(' ')[1] || 'Dupont'} />
+              <Label htmlFor="name">Nom complet</Label>
+              <Input id="name" defaultValue={userData?.name} className="mt-1" />
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" defaultValue={userData?.email || ''} />
+              <Input id="email" type="email" defaultValue={userData?.email} className="mt-1" />
             </div>
             <div>
               <Label htmlFor="phone">Téléphone</Label>
-              <Input id="phone" defaultValue="+33 1 23 45 67 89" />
+              <Input id="phone" placeholder="+33 1 23 45 67 89" className="mt-1" />
+            </div>
+            <div>
+              <Label htmlFor="company">Entreprise</Label>
+              <Input id="company" placeholder="Mon Entreprise SAS" className="mt-1" />
             </div>
           </div>
+
           <Button className="bg-blue-500 hover:bg-blue-600">
-            <Edit className="w-4 h-4 mr-2" />
-            Mettre à jour
+            Sauvegarder les modifications
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building className="w-5 h-5" />
-            Informations entreprise
-          </CardTitle>
+          <CardTitle>Paramètres de notification</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="company">Nom de l'entreprise</Label>
-              <Input id="company" defaultValue="Ma Startup SAS" />
+              <h4 className="font-medium">Notifications par email</h4>
+              <p className="text-sm text-gray-600">Recevoir les notifications importantes</p>
             </div>
-            <div>
-              <Label htmlFor="siret">SIRET</Label>
-              <Input id="siret" defaultValue="12345678901234" />
-            </div>
-            <div className="md:col-span-2">
-              <Label htmlFor="address">Adresse</Label>
-              <Input id="address" defaultValue="123 Rue de la Innovation, 75001 Paris" />
-            </div>
+            <Button variant="outline" size="sm">
+              <Bell className="w-4 h-4 mr-2" />
+              Configuré
+            </Button>
           </div>
-          <Button className="bg-blue-500 hover:bg-blue-600">
-            <Edit className="w-4 h-4 mr-2" />
-            Mettre à jour
-          </Button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Rapports hebdomadaires</h4>
+              <p className="text-sm text-gray-600">Résumé de vos performances</p>
+            </div>
+            <Button variant="outline" size="sm">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Activé
+            </Button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Alertes de sécurité</h4>
+              <p className="text-sm text-gray-600">Connexions suspectes et changements</p>
+            </div>
+            <Button variant="outline" size="sm">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Activé
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -151,96 +202,121 @@ const Account = () => {
 
   const renderPlan = () => (
     <div className="space-y-6">
-      <Card className={`${tierInfo.bg} border-2`}>
-        <CardContent className="p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Mon plan actuel</CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <TierIcon className={`w-12 h-12 ${tierInfo.color}`} />
+              <div className={`p-4 rounded-lg ${tierInfo.color}`}>
+                <TierIcon className="w-8 h-8" />
+              </div>
               <div>
                 <h3 className="text-2xl font-bold text-gray-900">Plan {tierInfo.name}</h3>
-                <p className="text-gray-600">Votre niveau actuel</p>
+                <p className="text-gray-600">Membre depuis janvier 2025</p>
               </div>
             </div>
-            <Badge className={`${tierInfo.color} text-lg px-4 py-2`}>
-              {packages.length} service{packages.length > 1 ? 's' : ''} actif{packages.length > 1 ? 's' : ''}
-            </Badge>
+            <div className="text-right">
+              <p className="text-3xl font-bold text-gray-900">
+                {userData?.tier === 'bronze' ? '89' : userData?.tier === 'silver' ? '299' : userData?.tier === 'gold' ? '599' : '1299'}€
+              </p>
+              <p className="text-gray-600">/mois</p>
+            </div>
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-3">Vos services actifs :</h4>
-              <div className="space-y-2">
-                {packages.map((pkg, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg">
-                    <div>
-                      <p className="font-medium">{pkg.service}</p>
-                      <p className="text-sm text-gray-600">{pkg.package}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold">{pkg.price}€</p>
-                      <Badge className="bg-green-100 text-green-800 text-xs">Actif</Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-3">Prochaine facturation :</h4>
-              <div className="p-4 bg-white rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-blue-500" />
-                  <span className="font-medium">15 février 2025</span>
+
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-900">Vos avantages inclus :</h4>
+            <div className="grid md:grid-cols-2 gap-3">
+              {tierInfo.benefits.map((benefit, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-gray-700">{benefit}</span>
                 </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {packages.reduce((sum, pkg) => sum + pkg.price, 0).toLocaleString()}€
-                </p>
-                <p className="text-sm text-gray-600">Facturation mensuelle</p>
+              ))}
+            </div>
+          </div>
+
+          {tierInfo.nextTier && (
+            <div className="mt-6 pt-6 border-t">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-medium text-gray-900">Progression vers {tierInfo.nextTier}</h4>
+                <span className="text-sm text-gray-600">{tierInfo.progress}%</span>
               </div>
-              
-              <div className="mt-4 space-y-2">
-                <Button className="w-full bg-green-500 hover:bg-green-600">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Upgrade vers un plan supérieur
-                </Button>
-                <Button variant="outline" className="w-full">
-                  Voir tous les plans
-                </Button>
+              <Progress value={tierInfo.progress} className="mb-4" />
+              <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                <Star className="w-4 h-4 mr-2" />
+                Passer au niveau {tierInfo.nextTier}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Utilisation ce mois</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-600">Emails envoyés</span>
+                <span className="text-sm font-medium">2,450 / 10,000</span>
               </div>
+              <Progress value={24.5} />
+            </div>
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-600">SMS envoyés</span>
+                <span className="text-sm font-medium">340 / 2,000</span>
+              </div>
+              <Progress value={17} />
+            </div>
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-600">Leads générés</span>
+                <span className="text-sm font-medium">156 / 500</span>
+              </div>
+              <Progress value={31.2} />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Suggestions d'upgrade */}
-      {tierInfo.name !== 'Diamond' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-yellow-500" />
-              Optimisez votre plan
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
-              <h4 className="font-bold text-lg mb-2">
-                🚀 Passez au niveau supérieur et économisez !
-              </h4>
-              <p className="text-gray-600 mb-4">
-                Débloquez de nouvelles fonctionnalités et bénéficiez de tarifs préférentiels.
-              </p>
-              <div className="flex gap-3">
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-500">
-                  Voir les upgrades
-                </Button>
-                <Button variant="outline">
-                  Parler à un conseiller
+      <Card>
+        <CardHeader>
+          <CardTitle>Services actifs</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {userData?.services?.map((service: string, index: number) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Package className="w-5 h-5 text-blue-500" />
+                  <div>
+                    <h4 className="font-medium text-gray-900">
+                      {service.replace('-', ' ').toUpperCase()}
+                    </h4>
+                    <p className="text-sm text-gray-600">Actif depuis janvier 2025</p>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm">
+                  Gérer
                 </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            )) || (
+              <div className="text-center py-8">
+                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">Aucun service actif</p>
+                <Button className="mt-4">
+                  Découvrir nos services
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 
@@ -248,60 +324,74 @@ const Account = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5" />
-            Mode de paiement
-          </CardTitle>
+          <CardTitle>Méthode de paiement</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-6 bg-blue-500 rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">VISA</span>
-              </div>
+              <CreditCard className="w-6 h-6 text-blue-500" />
               <div>
-                <p className="font-medium">•••• •••• •••• 1234</p>
-                <p className="text-sm text-gray-600">Expire 12/26</p>
+                <p className="font-medium">•••• •••• •••• 4242</p>
+                <p className="text-sm text-gray-600">Expire 12/27</p>
               </div>
             </div>
             <Button variant="outline" size="sm">
-              <Edit className="w-4 h-4 mr-2" />
               Modifier
             </Button>
+          </div>
+          
+          <div className="mt-6">
+            <h4 className="font-medium text-gray-900 mb-4">Informations de facturation</h4>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label>Nom sur la carte</Label>
+                <Input defaultValue={userData?.name} className="mt-1" />
+              </div>
+              <div>
+                <Label>Email de facturation</Label>
+                <Input defaultValue={userData?.email} className="mt-1" />
+              </div>
+              <div>
+                <Label>Adresse</Label>
+                <Input placeholder="123 Rue de la Paix" className="mt-1" />
+              </div>
+              <div>
+                <Label>Code postal</Label>
+                <Input placeholder="75001" className="mt-1" />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <Download className="w-5 h-5" />
-              Historique des factures
-            </span>
-            <Button variant="outline" size="sm">
-              Télécharger tout
-            </Button>
-          </CardTitle>
+          <CardTitle>Historique des factures</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {invoices.map((invoice) => (
-              <div key={invoice.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                <div>
-                  <p className="font-medium">{invoice.id}</p>
-                  <p className="text-sm text-gray-600">{invoice.date}</p>
+              <div key={invoice.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center gap-4">
+                  <FileText className="w-6 h-6 text-gray-400" />
+                  <div>
+                    <p className="font-medium text-gray-900">{invoice.id}</p>
+                    <p className="text-sm text-gray-600">{invoice.description}</p>
+                    <p className="text-sm text-gray-500">{invoice.date}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold">{invoice.amount.toLocaleString()}€</p>
-                  <Badge className="bg-green-100 text-green-800 text-xs">
-                    Payée
-                  </Badge>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="font-bold text-gray-900">{invoice.amount}€</p>
+                    <Badge className={invoice.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                      {invoice.status === 'paid' ? 'Payée' : 'En attente'}
+                    </Badge>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    PDF
+                  </Button>
                 </div>
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-1" />
-                  PDF
-                </Button>
               </div>
             ))}
           </div>
@@ -314,49 +404,77 @@ const Account = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
-            Sécurité du compte
-          </CardTitle>
+          <CardTitle>Sécurité du compte</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div>
-            <Label htmlFor="currentPassword">Mot de passe actuel</Label>
-            <Input id="currentPassword" type="password" />
+          <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="w-6 h-6 text-green-500" />
+              <div>
+                <h4 className="font-medium text-green-900">Compte sécurisé</h4>
+                <p className="text-sm text-green-700">Toutes les vérifications sont passées</p>
+              </div>
+            </div>
+            <Badge className="bg-green-100 text-green-800">Vérifié</Badge>
           </div>
-          <div>
-            <Label htmlFor="newPassword">Nouveau mot de passe</Label>
-            <Input id="newPassword" type="password" />
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Authentification à deux facteurs</h4>
+                <p className="text-sm text-gray-600">Sécurisez votre compte avec 2FA</p>
+              </div>
+              <Button variant="outline">
+                <Shield className="w-4 h-4 mr-2" />
+                Activer
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Mot de passe</h4>
+                <p className="text-sm text-gray-600">Dernière modification il y a 2 mois</p>
+              </div>
+              <Button variant="outline">
+                <Lock className="w-4 h-4 mr-2" />
+                Modifier
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Sessions actives</h4>
+                <p className="text-sm text-gray-600">Gérez vos connexions actives</p>
+              </div>
+              <Button variant="outline">
+                Voir les sessions
+              </Button>
+            </div>
           </div>
-          <div>
-            <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-            <Input id="confirmPassword" type="password" />
-          </div>
-          <Button className="bg-blue-500 hover:bg-blue-600">
-            Changer le mot de passe
-          </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="w-5 h-5" />
-            Notifications
-          </CardTitle>
+          <CardTitle>Connexions récentes</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {[
-            'Nouvelles factures',
-            'Mises à jour produits',
-            'Rapports mensuels',
-            'Alertes sécurité'
-          ].map((notif, index) => (
-            <div key={index} className="flex items-center justify-between">
-              <span>{notif}</span>
-              <input type="checkbox" defaultChecked className="rounded" />
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <p className="font-medium">Paris, France</p>
+                <p className="text-sm text-gray-600">Aujourd'hui à 14:30 • Chrome sur macOS</p>
+              </div>
+              <Badge className="bg-green-100 text-green-800">Actuelle</Badge>
             </div>
-          ))}
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <p className="font-medium">Paris, France</p>
+                <p className="text-sm text-gray-600">Hier à 09:15 • Safari sur iPhone</p>
+              </div>
+              <Badge variant="outline">Mobile</Badge>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -365,13 +483,22 @@ const Account = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Mon Compte 👤</h1>
-            <p className="text-gray-600">Gérez vos informations et préférences</p>
+            <p className="text-gray-600">Gérez vos informations et paramètres</p>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Badge className={tierInfo.color}>
+              <TierIcon className="w-4 h-4 mr-1" />
+              {tierInfo.name}
+            </Badge>
           </div>
         </div>
 
+        {/* Navigation */}
         <div className="flex flex-wrap gap-2 border-b border-gray-200">
           <Button
             variant={activeTab === 'profile' ? 'default' : 'ghost'}
@@ -386,7 +513,7 @@ const Account = () => {
             onClick={() => setActiveTab('plan')}
             className="flex items-center gap-2"
           >
-            <Crown className="w-4 h-4" />
+            <Package className="w-4 h-4" />
             Mon Plan
           </Button>
           <Button
@@ -407,6 +534,7 @@ const Account = () => {
           </Button>
         </div>
 
+        {/* Contenu */}
         {activeTab === 'profile' && renderProfile()}
         {activeTab === 'plan' && renderPlan()}
         {activeTab === 'billing' && renderBilling()}

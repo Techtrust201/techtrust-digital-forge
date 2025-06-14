@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +33,7 @@ interface UserData {
 }
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [notifications] = useState([
     {
@@ -63,34 +65,6 @@ const Dashboard = () => {
   if (!userData) {
     return <div>Chargement...</div>;
   }
-
-  const getUserServices = () => {
-    switch(userData.tier) {
-      case 'bronze':
-        return ['site-web'];
-      case 'silver':
-        return ['site-web', 'community-management'];
-      case 'gold':
-        return ['site-web', 'growth-hacking', 'community-management'];
-      case 'diamond':
-        return ['site-web', 'growth-hacking', 'community-management', 'consulting'];
-      default:
-        return [];
-    }
-  };
-
-  const getUserCredits = () => {
-    switch(userData.tier) {
-      case 'diamond':
-        return { emails: 50000, sms: 10000, leads: 10000, automations: 'unlimited' };
-      case 'gold':
-        return { emails: 20000, sms: 5000, leads: 5000, automations: 50 };
-      case 'silver':
-        return { emails: 10000, sms: 2000, leads: 2000, automations: 20 };
-      default:
-        return { emails: 2000, sms: 500, leads: 500, automations: 5 };
-    }
-  };
 
   const getTierInfo = (tier: string) => {
     switch (tier) {
@@ -144,44 +118,32 @@ const Dashboard = () => {
 
   const tierInfo = getTierInfo(userData.tier);
   const TierIcon = tierInfo.icon;
-  const userServices = getUserServices();
-  const userCredits = getUserCredits();
-
-  const getServiceDisplayName = (service: string) => {
-    switch(service) {
-      case 'site-web': return 'Site Web';
-      case 'growth-hacking': return 'Growth Hacking IA';
-      case 'community-management': return 'Community Management';
-      case 'consulting': return 'Consulting Digital';
-      default: return service;
-    }
-  };
 
   const quickStats = [
     {
       title: 'Projets actifs',
-      value: userServices.length,
+      value: userData.services?.length || 0,
       icon: Target,
       change: '+12%',
       positive: true
     },
     {
       title: 'Performances',
-      value: userData.tier === 'diamond' ? '92%' : userData.tier === 'gold' ? '87%' : userData.tier === 'silver' ? '78%' : '65%',
+      value: '87%',
       icon: TrendingUp,
       change: '+5%',
       positive: true
     },
     {
       title: 'Économies',
-      value: userData.tier === 'diamond' ? '8,340€' : userData.tier === 'gold' ? '3,240€' : userData.tier === 'silver' ? '1,890€' : '450€',
+      value: '2,340€',
       icon: Award,
-      change: userData.tier === 'diamond' ? '+1,230€' : userData.tier === 'gold' ? '+680€' : userData.tier === 'silver' ? '+320€' : '+150€',
+      change: '+230€',
       positive: true
     },
     {
       title: 'Score qualité',
-      value: userData.tier === 'diamond' ? '9.8/10' : userData.tier === 'gold' ? '9.2/10' : userData.tier === 'silver' ? '8.5/10' : '7.8/10',
+      value: '9.2/10',
       icon: Star,
       change: '+0.3',
       positive: true
@@ -191,22 +153,22 @@ const Dashboard = () => {
   const recentActivity = [
     {
       id: 1,
-      action: userServices.includes('growth-hacking') ? 'Rapport mensuel généré' : 'Sauvegarde automatique',
-      service: userServices.includes('growth-hacking') ? 'Growth Hacking IA' : 'Site Web',
+      action: 'Rapport mensuel généré',
+      service: 'Growth Hacking IA',
       time: '2h',
       status: 'completed'
     },
     {
       id: 2,
-      action: userServices.includes('community-management') ? 'Posts programmés publiés' : 'Maintenance site',
-      service: userServices.includes('community-management') ? 'Community Management' : 'Site Web',
+      action: 'Sauvegarde automatique',
+      service: 'Site Web',
       time: '6h',
       status: 'completed'
     },
     {
       id: 3,
-      action: userServices.includes('growth-hacking') ? 'Campagne email lancée' : 'Optimisation SEO',
-      service: userServices.includes('growth-hacking') ? 'Growth Hacking IA' : 'Site Web',
+      action: 'Campagne email lancée',
+      service: 'Growth Hacking IA',
       time: '1d',
       status: 'running'
     }
@@ -259,73 +221,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Crédits restants */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-gray-600">Emails</p>
-                  <p className="text-2xl font-bold text-blue-600">{(userCredits.emails * 0.65).toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">/ {userCredits.emails.toLocaleString()}</p>
-                </div>
-                <Globe className="w-8 h-8 text-blue-500" />
-              </div>
-              <Progress value={65} className="h-2" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-gray-600">SMS</p>
-                  <p className="text-2xl font-bold text-green-600">{(userCredits.sms * 0.42).toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">/ {userCredits.sms.toLocaleString()}</p>
-                </div>
-                <Zap className="w-8 h-8 text-green-500" />
-              </div>
-              <Progress value={42} className="h-2" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-gray-600">Leads</p>
-                  <p className="text-2xl font-bold text-purple-600">{(userCredits.leads * 0.78).toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">/ {userCredits.leads.toLocaleString()}</p>
-                </div>
-                <Target className="w-8 h-8 text-purple-500" />
-              </div>
-              <Progress value={78} className="h-2" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm text-gray-600">Automations</p>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {typeof userCredits.automations === 'number' ? userCredits.automations * 0.6 : '∞'}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    / {typeof userCredits.automations === 'number' ? userCredits.automations : 'Illimité'}
-                  </p>
-                </div>
-                <Star className="w-8 h-8 text-orange-500" />
-              </div>
-              {typeof userCredits.automations === 'number' ? (
-                <Progress value={60} className="h-2" />
-              ) : (
-                <div className="h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Stats rapides */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {quickStats.map((stat, index) => {
@@ -363,7 +258,7 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {userServices.length > 0 ? userServices.map((service, index) => (
+                {userData.services?.map((service, index) => (
                   <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -371,26 +266,17 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900">
-                          {getServiceDisplayName(service)}
+                          {service.replace('-', ' ').toUpperCase()}
                         </h4>
                         <p className="text-sm text-gray-600">Service actif</p>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => {
-                        if (service === 'site-web') window.location.href = '/dashboard/analytics';
-                        else if (service === 'growth-hacking') window.location.href = '/dashboard/campaigns';
-                        else if (service === 'community-management') window.location.href = '/dashboard/analytics';
-                        else window.location.href = '/dashboard/account';
-                      }}
-                    >
+                    <Button variant="outline" size="sm">
                       Gérer
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
-                )) : (
+                )) || (
                   <div className="text-center py-8">
                     <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -399,7 +285,7 @@ const Dashboard = () => {
                     <p className="text-gray-600 mb-4">
                       Découvrez nos solutions pour développer votre business
                     </p>
-                    <Button onClick={() => window.location.href = '/pricing'}>
+                    <Button>
                       Voir nos services
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
@@ -469,10 +355,7 @@ const Dashboard = () => {
                   <p className="text-sm text-gray-600 mb-4">
                     Débloquez de nouvelles fonctionnalités et économisez plus
                   </p>
-                  <Button 
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500"
-                    onClick={() => window.location.href = '/pricing'}
-                  >
+                  <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500">
                     Découvrir
                   </Button>
                 </CardContent>
@@ -489,11 +372,7 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600 mb-4">
                   Notre équipe est là pour vous accompagner
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.location.href = '/dashboard/help'}
-                >
+                <Button variant="outline" className="w-full">
                   Contacter le support
                 </Button>
               </CardContent>

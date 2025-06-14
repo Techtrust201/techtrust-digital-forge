@@ -10,8 +10,7 @@ import {
   Search, 
   BarChart3,
   Users,
-  Clock,
-  Target
+  Clock
 } from 'lucide-react';
 
 const features = [
@@ -94,12 +93,9 @@ const FeaturesSection = () => {
 
         {/* Section bonus */}
         <div className="mt-20 bg-gradient-to-r from-custom-blue to-custom-purple rounded-3xl p-8 lg:p-12 text-white text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Target className="w-8 h-8 text-yellow-300" />
-            <h3 className="text-2xl lg:text-3xl font-bold">
-              Garantie Résultats
-            </h3>
-          </div>
+          <h3 className="text-2xl lg:text-3xl font-bold mb-4">
+            🎯 Garantie Résultats
+          </h3>
           <p className="text-lg text-gray-100 max-w-2xl mx-auto">
             Si vous n'êtes pas 100% satisfait de nos services dans les 30 premiers jours, 
             nous vous remboursons intégralement. C'est notre engagement qualité !

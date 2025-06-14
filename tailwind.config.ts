@@ -1,13 +1,27 @@
 
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
+  safelist: [
+    "bg-custom-purple", 
+    "bg-custom-blue", 
+    "bg-custom-green",
+    "text-custom-purple", 
+    "text-custom-blue", 
+    "text-custom-green",
+    "from-custom-purple",
+    "from-custom-blue", 
+    "from-custom-green",
+    "to-custom-purple",
+    "to-custom-blue", 
+    "to-custom-green"
   ],
   prefix: "",
   theme: {
@@ -19,6 +33,12 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+      },
+      maxWidth: {
+        "2xl": "1400px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -53,9 +73,22 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))'
+        },
         "custom-blue": "#45C7FF",
-        "custom-purple": "#8B5CF6",
-        "custom-green": "#10B981",
+        "custom-purple": "#A482B7",
+        "custom-pink": "#FF9FA6",
+        "custom-green": "#00CCC3",
+        "custom-slate": "#E4EDF5",
+        "052736": "#052736",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -71,14 +104,19 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        myAnim: {
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(1.4)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-scale": "fade-scale 3s ease 0s infinite normal forwards",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;

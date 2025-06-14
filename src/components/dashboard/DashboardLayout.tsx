@@ -1,404 +1,325 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { 
-  Menu,
+  Home, 
+  BarChart3, 
+  User, 
+  HelpCircle, 
+  Zap, 
+  LogOut, 
+  Menu, 
   X,
-  LayoutDashboard,
-  BarChart3,
-  Mail,
-  User,
-  HelpCircle,
-  LogOut,
-  Shield,
-  ChevronDown,
-  ChevronRight,
-  Globe,
-  Instagram,
-  TrendingUp,
-  MessageSquare,
-  Target,
+  Bell,
   Settings,
+  ChevronDown,
+  TrendingUp,
+  Globe,
+  Mail,
+  MessageSquare,
   CreditCard,
-  FileText,
-  Crown,
+  Shield,
   Rocket,
+  Crown,
   Diamond
 } from 'lucide-react';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
-  const [currentUser] = useState(() => {
-    const user = localStorage.getItem('techtrust_user');
-    return user ? JSON.parse(user) : null;
-  });
+  const { t } = useTranslation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
-  const toggleMenu = (menuId: string) => {
-    setExpandedMenus(prev => 
-      prev.includes(menuId) 
-        ? prev.filter(id => id !== menuId)
-        : [...prev, menuId]
-    );
-  };
+  useEffect(() => {
+    const user = localStorage.getItem('techtrust_user');
+    if (user) {
+      setUserData(JSON.parse(user));
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('techtrust_user');
     window.location.href = '/auth';
   };
 
-  const getUserServices = () => {
-    switch(currentUser?.tier) {
+  const getTierInfo = (tier: string) => {
+    switch (tier) {
       case 'bronze':
-        return ['site-web'];
+        return { icon: Shield, name: 'Bronze', color: 'text-amber-600' };
       case 'silver':
-        return ['site-web', 'community-management'];
+        return { icon: Rocket, name: 'Silver', color: 'text-gray-600' };
       case 'gold':
-        return ['site-web', 'growth-hacking', 'community-management'];
+        return { icon: Crown, name: 'Gold', color: 'text-yellow-600' };
       case 'diamond':
-        return ['site-web', 'growth-hacking', 'community-management', 'consulting'];
+        return { icon: Diamond, name: 'Diamond', color: 'text-purple-600' };
       default:
-        return [];
+        return { icon: Shield, name: 'Bronze', color: 'text-amber-600' };
     }
   };
 
-  const getTierInfo = () => {
-    switch(currentUser?.tier) {
-      case 'diamond':
-        return { name: 'Diamond', icon: Diamond, color: 'text-purple-600' };
-      case 'gold':
-        return { name: 'Gold', icon: Crown, color: 'text-yellow-600' };
-      case 'silver':
-        return { name: 'Silver', icon: Rocket, color: 'text-gray-600' };
-      default:
-        return { name: 'Bronze', icon: Shield, color: 'text-amber-600' };
-    }
-  };
-
-  const userServices = getUserServices();
-  const tierInfo = getTierInfo();
+  const tierInfo = userData ? getTierInfo(userData.tier) : { icon: Shield, name: 'Bronze', color: 'text-amber-600' };
   const TierIcon = tierInfo.icon;
 
-  const menuItems = [
+  const navigationItems = [
     {
       id: 'dashboard',
-      label: 'Tableau de bord',
-      icon: LayoutDashboard,
+      name: 'Tableau de bord',
+      icon: Home,
       href: '/dashboard',
-      available: true
+      access: ['admin', 'client', 'manager', 'employee']
     },
     {
       id: 'analytics',
-      label: 'Analytics',
+      name: 'Analytics',
       icon: BarChart3,
-      expandable: true,
-      available: userServices.length > 0,
-      children: [
-        { 
-          id: 'analytics-website', 
-          label: 'Site Web', 
-          icon: Globe, 
-          href: '/dashboard/analytics/website',
-          available: userServices.includes('site-web')
-        },
-        { 
-          id: 'analytics-social', 
-          label: 'Réseaux Sociaux', 
-          icon: Instagram, 
-          href: '/dashboard/analytics/social',
-          available: userServices.includes('community-management')
-        },
-        { 
-          id: 'analytics-growth', 
-          label: 'Growth Hacking', 
-          icon: TrendingUp, 
-          href: '/dashboard/analytics/growth',
-          available: userServices.includes('growth-hacking')
-        }
+      href: '/dashboard/analytics',
+      access: ['admin', 'client', 'manager'],
+      submenu: [
+        { name: 'Performance Site', href: '/dashboard/analytics/website' },
+        { name: 'Réseaux Sociaux', href: '/dashboard/analytics/social' },
+        { name: 'Growth Hacking', href: '/dashboard/analytics/growth' },
+        { name: 'Community Management', href: '/dashboard/analytics/community' }
       ]
     },
     {
       id: 'campaigns',
-      label: 'Campagnes',
-      icon: Mail,
-      expandable: true,
-      available: userServices.includes('growth-hacking') || userServices.includes('community-management'),
-      children: [
-        { 
-          id: 'campaigns-email', 
-          label: 'Email Marketing', 
-          icon: Mail, 
-          href: '/dashboard/campaigns/email',
-          available: userServices.includes('growth-hacking')
-        },
-        { 
-          id: 'campaigns-sms', 
-          label: 'SMS Marketing', 
-          icon: MessageSquare, 
-          href: '/dashboard/campaigns/sms',
-          available: userServices.includes('growth-hacking')
-        },
-        { 
-          id: 'campaigns-leads', 
-          label: 'Génération Leads', 
-          icon: Target, 
-          href: '/dashboard/campaigns/leads',
-          available: userServices.includes('growth-hacking')
-        },
-        { 
-          id: 'campaigns-automation', 
-          label: 'Automations', 
-          icon: Settings, 
-          href: '/dashboard/campaigns/automation',
-          available: userServices.includes('growth-hacking')
-        }
+      name: 'Campagnes', 
+      icon: Zap,
+      href: '/dashboard/campaigns',
+      access: ['admin', 'client', 'manager'],
+      submenu: [
+        { name: 'Email Marketing', href: '/dashboard/campaigns/email' },
+        { name: 'SMS Marketing', href: '/dashboard/campaigns/sms' },
+        { name: 'Lead Generation', href: '/dashboard/campaigns/leads' },
+        { name: 'Automation', href: '/dashboard/campaigns/automation' }
       ]
     },
     {
       id: 'account',
-      label: 'Mon Compte',
+      name: 'Mon Compte',
       icon: User,
-      expandable: true,
-      available: true,
-      children: [
-        { id: 'account-profile', label: 'Profil', icon: User, href: '/dashboard/account/profile', available: true },
-        { id: 'account-plan', label: 'Mon Plan', icon: Crown, href: '/dashboard/account/plan', available: true },
-        { id: 'account-billing', label: 'Facturation', icon: CreditCard, href: '/dashboard/account/billing', available: true },
-        { id: 'account-security', label: 'Sécurité', icon: Shield, href: '/dashboard/account/security', available: true }
+      href: '/dashboard/account',
+      access: ['admin', 'client', 'manager', 'employee'],
+      submenu: [
+        { name: 'Informations', href: '/dashboard/account/profile' },
+        { name: 'Mon Plan', href: '/dashboard/account/plan' },
+        { name: 'Facturation', href: '/dashboard/account/billing' },
+        { name: 'Sécurité', href: '/dashboard/account/security' }
       ]
     },
     {
       id: 'help',
-      label: 'Aide',
+      name: 'Aide',
       icon: HelpCircle,
-      expandable: true,
-      available: true,
-      children: [
-        { id: 'help-faq', label: 'FAQ', icon: FileText, href: '/dashboard/help/faq', available: true },
-        { id: 'help-support', label: 'Support', icon: MessageSquare, href: '/dashboard/help/support', available: true },
-        { id: 'help-tutorials', label: 'Tutoriels', icon: BarChart3, href: '/dashboard/help/tutorials', available: true }
+      href: '/dashboard/help',
+      access: ['admin', 'client', 'manager', 'employee'],
+      submenu: [
+        { name: 'FAQ', href: '/dashboard/help/faq' },
+        { name: 'Support', href: '/dashboard/help/support' },
+        { name: 'Tutoriels', href: '/dashboard/help/tutorials' }
       ]
     }
   ];
 
-  const handleMenuClick = (item: any) => {
-    if (!item.available) {
-      alert('⚠️ Cette fonctionnalité nécessite un plan supérieur. Contactez-nous pour upgrader !');
-      return;
-    }
-
-    if (item.expandable) {
-      toggleMenu(item.id);
-    } else {
-      const currentPath = window.location.pathname;
-      
-      // Navigation intelligente
-      if (item.id === 'dashboard') {
-        window.location.href = '/dashboard';
-      } else if (item.id.startsWith('analytics')) {
-        if (item.href) {
-          // Navigation vers un sous-menu analytics spécifique
-          window.location.href = '/dashboard/analytics';
-        } else {
-          window.location.href = '/dashboard/analytics';
-        }
-      } else if (item.id.startsWith('campaigns')) {
-        if (item.href) {
-          window.location.href = '/dashboard/campaigns';
-        } else {
-          window.location.href = '/dashboard/campaigns';
-        }
-      } else if (item.id.startsWith('account')) {
-        if (item.href) {
-          window.location.href = '/dashboard/account';
-        } else {
-          window.location.href = '/dashboard/account';
-        }
-      } else if (item.id.startsWith('help')) {
-        if (item.href) {
-          window.location.href = '/dashboard/help';
-        } else {
-          window.location.href = '/dashboard/help';
-        }
-      } else if (item.href) {
-        window.location.href = item.href;
-      }
-    }
-  };
+  // Filtrer selon les permissions
+  const filteredNavigation = navigationItems.filter(item => 
+    userData ? item.access.includes(userData.role) : true
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-72' : 'w-16'} flex flex-col`}>
-        {/* Header Sidebar */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            {sidebarOpen && (
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">Techtrust</h2>
-                <p className="text-sm text-gray-600">Dashboard Client</p>
-              </div>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="hover:bg-gray-100"
-            >
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
+      <aside className={`${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        
+        {/* Header sidebar */}
+        <div className="flex items-center justify-between h-16 px-6 border-b">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">T</span>
+            </div>
+            <span className="font-bold text-xl text-gray-900">Techtrust</span>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden"
+          >
+            <X className="w-5 h-5" />
+          </Button>
         </div>
 
-        {/* Menu Navigation */}
-        <div className="flex-1 overflow-y-auto py-4">
-          <nav className="space-y-1 px-2">
-            {menuItems.map((item) => {
-              const ItemIcon = item.icon;
-              const isExpanded = expandedMenus.includes(item.id);
-              
-              if (!item.available && item.id !== 'analytics' && item.id !== 'campaigns') {
-                return null;
-              }
-              
-              return (
-                <div key={item.id}>
+        {/* User info */}
+        {userData && (
+          <div className="p-6 border-b">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold">{userData.name.charAt(0)}</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 truncate">{userData.name}</h3>
+                <p className="text-sm text-gray-500 truncate">{userData.email}</p>
+              </div>
+            </div>
+            <Badge className={`${tierInfo.color} bg-opacity-10 border-current`}>
+              <TierIcon className="w-3 h-3 mr-1" />
+              {tierInfo.name}
+            </Badge>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <nav className="p-4 space-y-2">
+          {filteredNavigation.map((item) => {
+            const ItemIcon = item.icon;
+            return (
+              <div key={item.id}>
+                {item.submenu ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-between hover:bg-gray-100"
+                      >
+                        <div className="flex items-center gap-3">
+                          <ItemIcon className="w-5 h-5" />
+                          <span>{item.name}</span>
+                        </div>
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      {item.submenu.map((subItem) => (
+                        <DropdownMenuItem key={subItem.href} asChild>
+                          <a href={subItem.href} className="cursor-pointer">
+                            {subItem.name}
+                          </a>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
                   <Button
                     variant="ghost"
-                    className={`w-full justify-start hover:bg-blue-50 hover:text-blue-600 ${
-                      sidebarOpen ? 'px-3' : 'px-2'
-                    } ${!item.available ? 'opacity-50' : ''}`}
-                    onClick={() => handleMenuClick(item)}
+                    asChild
+                    className={`w-full justify-start hover:bg-gray-100 ${
+                      activeTab === item.id ? 'bg-blue-50 text-blue-600' : ''
+                    }`}
                   >
-                    <ItemIcon className={`${sidebarOpen ? 'w-5 h-5 mr-3' : 'w-5 h-5'}`} />
-                    {sidebarOpen && (
-                      <>
-                        <span className="flex-1 text-left">{item.label}</span>
-                        {item.expandable && (
-                          <div className="ml-2">
-                            {isExpanded ? (
-                              <ChevronDown className="w-4 h-4" />
-                            ) : (
-                              <ChevronRight className="w-4 h-4" />
-                            )}
-                          </div>
-                        )}
-                      </>
-                    )}
+                    <a href={item.href} onClick={() => setActiveTab(item.id)}>
+                      <ItemIcon className="w-5 h-5 mr-3" />
+                      {item.name}
+                    </a>
                   </Button>
-
-                  {/* Sous-menu */}
-                  {item.expandable && isExpanded && sidebarOpen && item.children && (
-                    <div className="ml-4 mt-1 space-y-1">
-                      {item.children.filter((child: any) => child.available).map((child: any) => {
-                        const ChildIcon = child.icon;
-                        return (
-                          <Button
-                            key={child.id}
-                            variant="ghost"
-                            className="w-full justify-start text-sm hover:bg-blue-50 hover:text-blue-600 px-3"
-                            onClick={() => handleMenuClick(child)}
-                          >
-                            <ChildIcon className="w-4 h-4 mr-3" />
-                            {child.label}
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* User Info & Actions */}
-        <div className="border-t border-gray-200 p-4">
-          {sidebarOpen && (
-            <Card className="mb-3">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">{currentUser?.name?.charAt(0) || 'U'}</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{currentUser?.name || 'Utilisateur'}</p>
-                    <p className="text-xs text-gray-600">{currentUser?.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Badge className={`${tierInfo.color} text-xs`}>
-                    <TierIcon className="w-3 h-3 mr-1" />
-                    {tierInfo.name}
-                  </Badge>
-                  <span className="text-xs text-gray-500">{userServices.length} service{userServices.length > 1 ? 's' : ''}</span>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          <div className="space-y-2">
-            {currentUser?.role === 'admin' && (
-              <Button
-                variant="outline"
-                className={`w-full ${sidebarOpen ? 'justify-start' : 'justify-center'} text-red-600 hover:bg-red-50`}
-                onClick={() => window.location.href = '/admin/dashboard'}
-              >
-                <Shield className="w-4 h-4 mr-2" />
-                {sidebarOpen && 'Mode Admin'}
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              className={`w-full ${sidebarOpen ? 'justify-start' : 'justify-center'} text-red-600 hover:bg-red-50`}
-              onClick={handleLogout}
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              {sidebarOpen && 'Déconnexion'}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard Techtrust</h1>
-              <Badge className={`${tierInfo.color}`}>
-                <TierIcon className="w-4 h-4 mr-1" />
-                Plan {tierInfo.name}
-              </Badge>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" onClick={() => window.location.href = '/pricing'}>
-                <Crown className="w-4 h-4 mr-2" />
-                Upgrader
-              </Button>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">{currentUser?.name?.charAt(0) || 'U'}</span>
-                </div>
-                <span className="font-medium text-gray-900">{currentUser?.name || 'Utilisateur'}</span>
+                )}
               </div>
-            </div>
+            );
+          })}
+        </nav>
+
+        {/* Footer sidebar */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            <LogOut className="w-5 h-5 mr-3" />
+            Se déconnecter
+          </Button>
+        </div>
+      </aside>
+
+      {/* Content */}
+      <div className="flex-1 lg:ml-0">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+
+          <div className="flex items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="w-5 h-5" />
+                  <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
+                    3
+                  </Badge>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                <DropdownMenuItem className="p-4">
+                  <div>
+                    <h4 className="font-medium">Nouveau rapport disponible</h4>
+                    <p className="text-sm text-gray-500">Vos performances du mois</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="p-4">
+                  <div>
+                    <h4 className="font-medium">Mise à jour IA</h4>
+                    <p className="text-sm text-gray-500">Nouvelles fonctionnalités</p>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <a href="/dashboard/account/profile">Mon profil</a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/dashboard/account/settings">Paramètres</a>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                  Se déconnecter
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6">
+        {/* Main content */}
+        <main className="p-6">
           {children}
         </main>
       </div>
+
+      {/* Overlay pour mobile */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };
