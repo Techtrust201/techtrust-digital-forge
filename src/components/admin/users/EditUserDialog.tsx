@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import PackageSelector from './PackageSelector';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
+import { Save, X } from 'lucide-react';
 
 interface User {
   id: number;
@@ -59,19 +60,29 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
     onClose();
   };
 
+  const hasChanges = () => {
+    if (!user) return false;
+    return JSON.stringify(editingPackages.sort()) !== JSON.stringify(user.packages.sort());
+  };
+
   if (!user) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Modifier les formules - {user.name}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-medium text-sm">{user.name.charAt(0)}</span>
+            </div>
+            Modifier les formules - {user.name}
+          </DialogTitle>
           <DialogDescription>
-            Ajoutez ou supprimez des formules pour ce client
+            Ajoutez ou supprimez des formules pour ce client. Les changements seront appliqués immédiatement.
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="py-4">
           <PackageSelector
             selectedPackages={editingPackages}
             allPackages={getAllPackages()}
@@ -83,13 +94,28 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
-            Annuler
-          </Button>
-          <Button className="bg-red-500 hover:bg-red-600" onClick={handleSave}>
-            Sauvegarder
-          </Button>
+        <div className="flex justify-between items-center pt-4 border-t">
+          <div className="text-sm text-gray-600">
+            {hasChanges() ? (
+              <span className="text-orange-600 font-medium">⚠️ Modifications non sauvegardées</span>
+            ) : (
+              <span className="text-green-600">✓ Aucune modification</span>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
+              <X className="w-4 h-4 mr-2" />
+              Annuler
+            </Button>
+            <Button 
+              className="bg-red-500 hover:bg-red-600" 
+              onClick={handleSave}
+              disabled={!hasChanges()}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Sauvegarder
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
