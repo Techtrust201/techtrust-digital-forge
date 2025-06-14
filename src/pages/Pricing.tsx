@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Check, 
   X, 
@@ -24,7 +25,10 @@ import {
   Settings,
   Mail,
   Phone,
-  Building
+  Building,
+  TrendingUp,
+  Code,
+  MessageSquare
 } from 'lucide-react';
 
 const Pricing = () => {
@@ -40,18 +44,20 @@ const Pricing = () => {
     message: ''
   });
 
-  const pricingData = {
+  const services = {
     website: {
-      title: "Création Site Web",
+      title: "Sites Web Pro",
       subtitle: "Sites professionnels & E-commerce",
       description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils.",
-      color: "from-blue-500 to-cyan-500",
+      icon: Globe,
+      color: "blue",
       packages: [
         {
           id: "website-starter",
           name: "Starter",
           price: 899,
-          duration: "one-time",
+          duration: "Paiement unique",
+          popular: false,
           features: [
             "Site vitrine 5 pages",
             "Design responsive",
@@ -65,14 +71,14 @@ const Pricing = () => {
             "E-commerce",
             "Analytics avancées",
             "Maintenance premium"
-          ],
-          popular: false
+          ]
         },
         {
           id: "website-business",
           name: "Business",
           price: 1599,
-          duration: "one-time",
+          duration: "Paiement unique",
+          popular: true,
           features: [
             "Site web jusqu'à 15 pages",
             "Design sur mesure",
@@ -87,14 +93,14 @@ const Pricing = () => {
           notIncluded: [
             "E-commerce complet",
             "Fonctionnalités avancées"
-          ],
-          popular: true
+          ]
         },
         {
           id: "website-premium",
           name: "Premium E-commerce",
           price: 2999,
-          duration: "one-time",
+          duration: "Paiement unique",
+          popular: false,
           features: [
             "Site e-commerce complet",
             "Nombre de pages illimité",
@@ -107,22 +113,23 @@ const Pricing = () => {
             "Formation complète",
             "Support VIP 24/7"
           ],
-          notIncluded: [],
-          popular: false
+          notIncluded: []
         }
       ]
     },
     growth: {
       title: "Growth Hacking IA",
-      subtitle: "🤖 Automatisation complète + Community IA",
+      subtitle: "Automatisation complète avec IA",
       description: "Nos outils IA propriétaires automatisent votre prospection et community management.",
-      color: "from-green-500 to-emerald-500",
+      icon: TrendingUp,
+      color: "green",
       packages: [
         {
           id: "growth-easy",
           name: "Easy",
           price: 299,
           duration: "/mois",
+          popular: false,
           features: [
             "1000 prospects/mois",
             "500 emails automatisés",
@@ -135,14 +142,14 @@ const Pricing = () => {
             "SMS marketing",
             "Lead scoring avancé",
             "Intégrations CRM"
-          ],
-          popular: false
+          ]
         },
         {
           id: "growth-pro",
           name: "Pro",
           price: 599,
           duration: "/mois",
+          popular: true,
           features: [
             "5000 prospects/mois",
             "2000 emails automatisés",
@@ -157,14 +164,14 @@ const Pricing = () => {
           notIncluded: [
             "White label",
             "API access"
-          ],
-          popular: true
+          ]
         },
         {
           id: "growth-enterprise",
           name: "Enterprise",
           price: 1299,
           duration: "/mois",
+          popular: false,
           features: [
             "Prospects illimités",
             "Emails illimités",
@@ -178,8 +185,7 @@ const Pricing = () => {
             "Account manager dédié",
             "Support VIP 24/7"
           ],
-          notIncluded: [],
-          popular: false
+          notIncluded: []
         }
       ]
     },
@@ -187,13 +193,15 @@ const Pricing = () => {
       title: "Solutions Sur Mesure",
       subtitle: "Développement personnalisé",
       description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus.",
-      color: "from-purple-500 to-pink-500",
+      icon: Code,
+      color: "purple",
       packages: [
         {
           id: "custom-audit",
           name: "Audit & Conseil",
           price: 1500,
-          duration: "one-time",
+          duration: "Paiement unique",
+          popular: false,
           features: [
             "Audit complet de vos besoins",
             "Recommandations personnalisées",
@@ -204,14 +212,14 @@ const Pricing = () => {
           notIncluded: [
             "Développement inclus",
             "Maintenance"
-          ],
-          popular: false
+          ]
         },
         {
           id: "custom-app",
           name: "Application Sur Mesure",
-          price: 15000,
-          duration: "starting at",
+          price: "À partir de 15 000",
+          duration: "Selon projet",
+          popular: true,
           features: [
             "Développement complet",
             "Design UX/UI personnalisé",
@@ -222,14 +230,14 @@ const Pricing = () => {
             "Maintenance 6 mois",
             "Support technique"
           ],
-          notIncluded: [],
-          popular: true
+          notIncluded: []
         },
         {
           id: "custom-enterprise",
           name: "Solution Enterprise",
-          price: 50000,
-          duration: "starting at",
+          price: "À partir de 50 000",
+          duration: "Selon projet",
+          popular: false,
           features: [
             "Architecture enterprise",
             "Sécurité avancée",
@@ -240,22 +248,23 @@ const Pricing = () => {
             "SLA garantis",
             "Account manager dédié"
           ],
-          notIncluded: [],
-          popular: false
+          notIncluded: []
         }
       ]
     },
     community: {
       title: "Community Management",
-      subtitle: "Équipe dédiée experte",
+      subtitle: "Équipe dédiée d'experts",
       description: "Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.",
-      color: "from-orange-500 to-red-500",
+      icon: MessageSquare,
+      color: "orange",
       packages: [
         {
           id: "community-starter",
           name: "Starter",
           price: 799,
           duration: "/mois",
+          popular: false,
           features: [
             "2 réseaux sociaux",
             "10 posts/mois",
@@ -268,14 +277,14 @@ const Pricing = () => {
             "Vidéos premium",
             "Publicités payantes",
             "Stories quotidiennes"
-          ],
-          popular: false
+          ]
         },
         {
           id: "community-growth",
           name: "Growth",
           price: 1499,
           duration: "/mois",
+          popular: true,
           features: [
             "4 réseaux sociaux",
             "25 posts/mois",
@@ -289,14 +298,14 @@ const Pricing = () => {
           notIncluded: [
             "Influenceurs",
             "Événements"
-          ],
-          popular: true
+          ]
         },
         {
           id: "community-premium",
           name: "Premium",
           price: 2999,
           duration: "/mois",
+          popular: false,
           features: [
             "Tous réseaux sociaux",
             "Posts illimités",
@@ -309,41 +318,37 @@ const Pricing = () => {
             "Account manager",
             "Support VIP 24/7"
           ],
-          notIncluded: [],
-          popular: false
+          notIncluded: []
         }
       ]
     }
   };
 
-  const handlePackageSelect = (categoryId: string, packageData: any) => {
+  const handlePackageSelect = (serviceId: string, packageData: any) => {
     const newSelected = { ...selectedPackages };
-    
-    // Un seul package par catégorie
-    newSelected[categoryId] = packageData;
+    newSelected[serviceId] = packageData;
     setSelectedPackages(newSelected);
 
-    // Ajouter au panier
-    const existingCartItem = cartItems.find(item => item.categoryId === categoryId);
+    const existingCartItem = cartItems.find(item => item.serviceId === serviceId);
     if (existingCartItem) {
       setCartItems(cartItems.map(item => 
-        item.categoryId === categoryId 
-          ? { ...packageData, categoryId, categoryTitle: pricingData[categoryId].title }
+        item.serviceId === serviceId 
+          ? { ...packageData, serviceId, serviceTitle: services[serviceId].title }
           : item
       ));
     } else {
       setCartItems([...cartItems, { 
         ...packageData, 
-        categoryId, 
-        categoryTitle: pricingData[categoryId].title 
+        serviceId, 
+        serviceTitle: services[serviceId].title 
       }]);
     }
   };
 
-  const removeFromCart = (categoryId: string) => {
-    setCartItems(cartItems.filter(item => item.categoryId !== categoryId));
+  const removeFromCart = (serviceId: string) => {
+    setCartItems(cartItems.filter(item => item.serviceId !== serviceId));
     const newSelected = { ...selectedPackages };
-    delete newSelected[categoryId];
+    delete newSelected[serviceId];
     setSelectedPackages(newSelected);
   };
 
@@ -366,7 +371,7 @@ Téléphone: ${formData.phone}
 Entreprise: ${formData.company}
 
 Packages sélectionnés:
-${cartItems.map(item => `- ${item.categoryTitle}: ${item.name} (${item.price}€${item.duration})`).join('\n')}
+${cartItems.map(item => `- ${item.serviceTitle}: ${item.name} (${item.price}€${item.duration})`).join('\n')}
 
 Total estimé: ${getTotalPrice()}€
 
@@ -416,95 +421,123 @@ ${formData.message}
             </div>
           </section>
 
-          {/* Pricing Tables */}
+          {/* Services Tabs */}
           <section className="py-20">
             <div className="container mx-auto px-4">
-              {Object.entries(pricingData).map(([categoryId, category]) => (
-                <div key={categoryId} className="mb-20">
-                  <div className="text-center mb-12">
-                    <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                      {category.title}
-                    </h2>
-                    <p className="text-xl text-gray-600 mb-2">{category.subtitle}</p>
-                    <p className="text-lg text-gray-500">{category.description}</p>
-                  </div>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                  Choisissez votre <span className="text-blue-600">Solution</span>
+                </h2>
+                <p className="text-xl text-gray-600">
+                  Sélectionnez le service qui correspond à vos besoins
+                </p>
+              </div>
 
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {category.packages.map((pkg) => (
-                      <Card 
-                        key={pkg.id}
-                        className={`relative h-full transition-all duration-300 hover:shadow-2xl ${
-                          pkg.popular 
-                            ? 'ring-2 ring-blue-500 transform scale-105' 
-                            : 'hover:scale-105'
-                        } ${
-                          selectedPackages[categoryId]?.id === pkg.id 
-                            ? 'ring-4 ring-green-500 bg-green-50' 
-                            : ''
-                        }`}
-                      >
-                        {pkg.popular && (
-                          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-sm font-bold">
-                              <Star className="w-4 h-4 mr-1" />
-                              POPULAIRE
-                            </Badge>
-                          </div>
-                        )}
-                        
-                        <CardHeader className="text-center pb-4">
-                          <CardTitle className="text-2xl font-bold text-gray-900">
-                            {pkg.name}
-                          </CardTitle>
-                          <div className="mt-4">
-                            <span className="text-4xl font-bold text-gray-900">
-                              {typeof pkg.price === 'string' ? pkg.price : `${pkg.price}€`}
-                            </span>
-                            <span className="text-gray-500 ml-2">{pkg.duration}</span>
-                          </div>
-                        </CardHeader>
+              <Tabs defaultValue="website" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 max-w-4xl mx-auto mb-12 h-16">
+                  {Object.entries(services).map(([key, service]) => (
+                    <TabsTrigger 
+                      key={key} 
+                      value={key}
+                      className="flex flex-col items-center gap-1 text-xs lg:text-sm font-bold data-[state=active]:bg-blue-600 data-[state=active]:text-white h-full p-2"
+                    >
+                      <service.icon className="w-5 h-5" />
+                      <span className="hidden lg:inline">{service.title}</span>
+                      <span className="lg:hidden">{service.title.split(' ')[0]}</span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
 
-                        <CardContent className="flex-1 space-y-6">
-                          <div className="space-y-3">
-                            {pkg.features.map((feature, index) => (
-                              <div key={index} className="flex items-center gap-3">
-                                <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-                                <span className="text-gray-700">{feature}</span>
-                              </div>
-                            ))}
-                            {pkg.notIncluded.map((feature, index) => (
-                              <div key={index} className="flex items-center gap-3 opacity-60">
-                                <X className="w-5 h-5 text-red-400 flex-shrink-0" />
-                                <span className="text-gray-500 line-through">{feature}</span>
-                              </div>
-                            ))}
-                          </div>
+                {Object.entries(services).map(([serviceId, service]) => (
+                  <TabsContent key={serviceId} value={serviceId}>
+                    <div className="text-center mb-8">
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <service.icon className="w-8 h-8 text-blue-600" />
+                        <h3 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                          {service.title}
+                        </h3>
+                      </div>
+                      <p className="text-lg text-blue-600 font-medium mb-2">{service.subtitle}</p>
+                      <p className="text-gray-600 max-w-2xl mx-auto">{service.description}</p>
+                    </div>
 
-                          <Button
-                            onClick={() => handlePackageSelect(categoryId, pkg)}
-                            className={`w-full h-12 text-lg font-bold transition-all ${
-                              selectedPackages[categoryId]?.id === pkg.id
-                                ? 'bg-green-500 hover:bg-green-600 text-white'
-                                : pkg.popular
-                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
-                                : 'bg-gray-900 hover:bg-gray-800 text-white'
-                            }`}
-                          >
-                            {selectedPackages[categoryId]?.id === pkg.id ? (
-                              <>
-                                <Check className="w-5 h-5 mr-2" />
-                                Sélectionné
-                              </>
-                            ) : (
-                              'Choisir ce package'
-                            )}
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                      {service.packages.map((pkg) => (
+                        <Card 
+                          key={pkg.id}
+                          className={`relative h-full transition-all duration-300 hover:shadow-2xl ${
+                            pkg.popular 
+                              ? 'ring-2 ring-blue-500 transform scale-105' 
+                              : 'hover:scale-105'
+                          } ${
+                            selectedPackages[serviceId]?.id === pkg.id 
+                              ? 'ring-4 ring-green-500 bg-green-50' 
+                              : ''
+                          }`}
+                        >
+                          {pkg.popular && (
+                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                              <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-sm font-bold">
+                                <Star className="w-4 h-4 mr-1" />
+                                POPULAIRE
+                              </Badge>
+                            </div>
+                          )}
+                          
+                          <CardHeader className="text-center pb-4">
+                            <CardTitle className="text-2xl font-bold text-gray-900">
+                              {pkg.name}
+                            </CardTitle>
+                            <div className="mt-4">
+                              <span className="text-4xl font-bold text-gray-900">
+                                {typeof pkg.price === 'string' ? pkg.price : `${pkg.price}€`}
+                              </span>
+                              <div className="text-gray-500 mt-1">{pkg.duration}</div>
+                            </div>
+                          </CardHeader>
+
+                          <CardContent className="flex-1 space-y-6">
+                            <div className="space-y-3">
+                              {pkg.features.map((feature, index) => (
+                                <div key={index} className="flex items-start gap-3">
+                                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                                  <span className="text-gray-700 text-sm">{feature}</span>
+                                </div>
+                              ))}
+                              {pkg.notIncluded && pkg.notIncluded.map((feature, index) => (
+                                <div key={index} className="flex items-start gap-3 opacity-60">
+                                  <X className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                  <span className="text-gray-500 line-through text-sm">{feature}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <Button
+                              onClick={() => handlePackageSelect(serviceId, pkg)}
+                              className={`w-full h-12 text-lg font-bold transition-all ${
+                                selectedPackages[serviceId]?.id === pkg.id
+                                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                                  : pkg.popular
+                                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                                  : 'bg-gray-900 hover:bg-gray-800 text-white'
+                              }`}
+                            >
+                              {selectedPackages[serviceId]?.id === pkg.id ? (
+                                <>
+                                  <Check className="w-5 h-5 mr-2" />
+                                  Sélectionné
+                                </>
+                              ) : (
+                                'Choisir ce package'
+                              )}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
             </div>
           </section>
 
@@ -519,18 +552,19 @@ ${formData.message}
                     </h3>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {cartItems.map((item) => (
-                        <div key={item.categoryId} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                        <div key={item.serviceId} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">{item.categoryTitle}</p>
+                            <p className="font-medium text-gray-900">{item.serviceTitle}</p>
                             <p className="text-sm text-gray-600">{item.name}</p>
                             <p className="text-lg font-bold text-blue-600">
-                              {typeof item.price === 'string' ? item.price : `${item.price}€${item.duration}`}
+                              {typeof item.price === 'string' ? item.price : `${item.price}€`}
+                              <span className="text-sm font-normal text-gray-500 ml-1">{item.duration}</span>
                             </p>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => removeFromCart(item.categoryId)}
+                            onClick={() => removeFromCart(item.serviceId)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -636,10 +670,11 @@ ${formData.message}
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <h4 className="font-bold text-gray-900 mb-2">Récapitulatif de votre sélection:</h4>
                       {cartItems.map((item) => (
-                        <div key={item.categoryId} className="flex justify-between items-center py-1">
-                          <span>{item.categoryTitle} - {item.name}</span>
+                        <div key={item.serviceId} className="flex justify-between items-center py-1">
+                          <span>{item.serviceTitle} - {item.name}</span>
                           <span className="font-bold">
-                            {typeof item.price === 'string' ? item.price : `${item.price}€${item.duration}`}
+                            {typeof item.price === 'string' ? item.price : `${item.price}€`}
+                            <span className="text-sm font-normal text-gray-500 ml-1">{item.duration}</span>
                           </span>
                         </div>
                       ))}
