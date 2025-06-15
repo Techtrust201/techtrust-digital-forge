@@ -1,134 +1,38 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { UserPlus } from 'lucide-react';
+import AdminUsersHeader from '@/components/admin/users/AdminUsersHeader';
 import UserStatsCards from '@/components/admin/users/UserStatsCards';
 import CreateUserForm from '@/components/admin/users/CreateUserForm';
-import UsersTable from '@/components/admin/users/UsersTable';
-import EditUserDialog from '@/components/admin/users/EditUserDialog';
-import SearchFilters from '@/components/admin/SearchFilters';
+import UserFilters from '@/components/admin/users/UserFilters';
+import UserListManager from '@/components/admin/users/UserListManager';
 import CreateUserModal from '@/components/admin/CreateUserModal';
-import { useSupabaseUsers } from '@/hooks/useSupabaseUsers';
+import { useAdminUsersPage } from '@/hooks/useAdminUsersPage';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
-
-// Define a compatible User type for the UsersTable component
-interface User {
-  id: string;
-  name?: string;
-  email?: string;
-  role?: string;
-  tier: string;
-  status: string;
-  created: string;
-  packages?: string[];
-  subscriptions?: any[];
-  revenue?: number;
-  joinDate?: string;
-  lastLogin?: string;
-  phone?: string;
-  company?: string;
-  position?: string;
-  industry?: string;
-  address?: any;
-  notes?: string;
-}
 
 const AdminUsersPage = () => {
   const location = useLocation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [tierFilter, setTierFilter] = useState('all');
-  const [editingUser, setEditingUser] = useState<any>(null);
-  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
-
-  const {
-    users: supabaseUsers,
-    isLoading,
-    updateUserPackages,
-    getUserStats
-  } = useSupabaseUsers();
-
   const { getPackageById, getPackageColor } = usePackageUtils();
-
-  // Convert supabase users to the expected User format
-  const users: User[] = supabaseUsers.map(user => ({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role || 'user',
-    tier: user.tier,
-    status: user.status,
-    created: user.created || user.created_at,
-    packages: user.packages,
-    subscriptions: user.subscriptions,
-    revenue: user.revenue,
-    joinDate: user.joinDate,
-    lastLogin: user.lastLogin,
-    phone: user.phone,
-    company: user.company,
-    position: user.position,
-    industry: user.industry,
-    address: user.address,
-    notes: user.notes
-  }));
-
-  // Filtrer les utilisateurs selon les critères
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-    const matchesTier = tierFilter === 'all' || user.tier === tierFilter;
-    
-    return matchesSearch && matchesStatus && matchesTier;
-  });
-
-  const stats = getUserStats();
-
-  const openEditDialog = (user: any) => {
-    setEditingUser(user);
-  };
-
-  const saveUserPackages = async (packages: string[]) => {
-    if (!editingUser) return;
-    
-    const result = await updateUserPackages(editingUser.id, packages);
-    if (result.success) {
-      setEditingUser(null);
-    }
-  };
-
-  const clearFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('all');
-    setTierFilter('all');
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'inactive':
-        return 'bg-red-100 text-red-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'Actif';
-      case 'inactive':
-        return 'Inactif';
-      case 'pending':
-        return 'En attente';
-      default:
-        return status;
-    }
-  };
+  
+  const {
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    tierFilter,
+    setTierFilter,
+    editingUser,
+    showCreateUserModal,
+    setShowCreateUserModal,
+    users,
+    isLoading,
+    stats,
+    openEditDialog,
+    saveUserPackages,
+    clearFilters,
+    closeEditDialog
+  } = useAdminUsersPage();
 
   const getPageTitle = () => {
     if (location.pathname.includes('/create')) {
@@ -175,23 +79,15 @@ const AdminUsersPage = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-          </div>
-          <Button 
-            className="bg-red-500 hover:bg-red-600"
-            onClick={() => setShowCreateUserModal(true)}
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Nouveau client
-          </Button>
-        </div>
+        <AdminUsersHeader
+          title={getPageTitle()}
+          description={getPageDescription()}
+          onCreateUser={() => setShowCreateUserModal(true)}
+        />
 
         <UserStatsCards />
 
-        <SearchFilters
+        <UserFilters
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           statusFilter={statusFilter}
@@ -201,23 +97,17 @@ const AdminUsersPage = () => {
           onClearFilters={clearFilters}
         />
 
-        <UsersTable
-          users={filteredUsers}
+        <UserListManager
+          users={users}
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           getPageDescription={getPageDescription}
           getPackageById={getPackageById}
           getPackageColor={getPackageColor}
-          getStatusColor={getStatusColor}
-          getStatusLabel={getStatusLabel}
+          editingUser={editingUser}
           onEditUser={openEditDialog}
-        />
-
-        <EditUserDialog
-          user={editingUser}
-          isOpen={!!editingUser}
-          onClose={() => setEditingUser(null)}
-          onSave={saveUserPackages}
+          onCloseEdit={closeEditDialog}
+          onSaveUserPackages={saveUserPackages}
         />
 
         <CreateUserModal 
