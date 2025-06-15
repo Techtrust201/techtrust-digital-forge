@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +12,7 @@ import { useBlogCategories, useBlogActions } from '@/hooks/useBlogData';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
+import RichTextEditor from '@/components/blog/RichTextEditor';
 
 const AdminBlogCreatePage = () => {
   const navigate = useNavigate();
@@ -196,16 +196,12 @@ const AdminBlogCreatePage = () => {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="content">Contenu</Label>
-                  <Textarea
-                    id="content"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Rédigez votre article ici..."
-                    className="mt-2 min-h-[400px]"
-                  />
-                </div>
+                <RichTextEditor
+                  value={content}
+                  onChange={setContent}
+                  label="Contenu"
+                  placeholder="Rédigez votre article ici..."
+                />
               </CardContent>
             </Card>
           </div>
@@ -342,9 +338,7 @@ const AdminBlogCreatePage = () => {
                     <Badge key={tag} variant="secondary">{tag}</Badge>
                   ))}
                 </div>
-                <div className="prose max-w-none">
-                  <div className="whitespace-pre-wrap">{content}</div>
-                </div>
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content }} />
               </div>
             </div>
           </DialogContent>

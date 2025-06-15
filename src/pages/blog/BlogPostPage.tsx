@@ -102,10 +102,8 @@ const BlogPostPage = () => {
       <BlogPostSEO post={post} />
       <div className="min-h-screen flex flex-col bg-white/95">
         <NavbarPublic />
-        {/* Nouvelle expérience UX UI ultra centrée et élégante */}
         <main className="flex-grow flex items-center justify-center py-10 md:py-16 bg-white/95">
           <div className="w-full max-w-3xl mx-auto">
-            {/* Hero modernisé avec image, auteur, date... */}
             <BlogPostHero
               title={post.title}
               author={post.author}
@@ -114,7 +112,6 @@ const BlogPostPage = () => {
               date={new Date(post.publish_date ?? post.created_at).toLocaleDateString("fr-FR")}
               excerpt={post.excerpt}
             />
-            {/* Bloc contenu centré */}
             <div
               className="prose prose-lg max-w-none mx-auto px-2 sm:px-4 md:px-8 pb-12 text-gray-900 bg-white/95 rounded-2xl shadow-2xl border border-gray-200 animate-fade-in"
               style={{
@@ -123,10 +120,8 @@ const BlogPostPage = () => {
                 letterSpacing: "0.01em",
                 minHeight: 180,
               }}
-            >
-              {post.content}
-            </div>
-            {/* Bouton retour fixed mobile, visible sur desktop */}
+              dangerouslySetInnerHTML={{ __html: post.content || '' }}
+            />
             <div className="flex justify-start mt-8 mx-2">
               <Button
                 size="sm"

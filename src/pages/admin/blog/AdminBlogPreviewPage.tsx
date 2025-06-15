@@ -133,8 +133,8 @@ const AdminBlogPreviewPage = () => {
                 </blockquote>
               )}
               
-              <div className="prose prose-neutral max-w-none text-lg break-words whitespace-pre-line leading-relaxed">
-                {post.content}
+              <div className="prose prose-neutral max-w-none text-lg break-words leading-relaxed">
+                <div dangerouslySetInnerHTML={{ __html: post.content || '' }} />
               </div>
             </div>
           </CardContent>

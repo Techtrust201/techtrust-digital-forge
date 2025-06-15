@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import RichTextEditor from '@/components/blog/RichTextEditor';
 
 interface FormData {
   title: string;
@@ -51,17 +52,12 @@ const AdminBlogEditForm: React.FC<AdminBlogEditFormProps> = ({
           />
         </div>
         
-        <div>
-          <Label htmlFor="content">Contenu *</Label>
-          <Textarea
-            id="content"
-            value={formData.content}
-            onChange={(e) => onChange('content', e.target.value)}
-            placeholder="Contenu complet de l'article"
-            rows={15}
-            required
-          />
-        </div>
+        <RichTextEditor
+          value={formData.content}
+          onChange={(value) => onChange('content', value)}
+          label="Contenu *"
+          placeholder="Contenu complet de l'article"
+        />
       </CardContent>
     </Card>
   );
