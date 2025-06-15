@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,9 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminCampaignsEmailPage = () => {
   const { data: emailCampaigns, isLoading } = useEmailCampaigns();
-  const { createEmailCampaign, sendEmailCampaign } = useCampaign
-
-Actions();
+  const { createEmailCampaign, sendEmailCampaign } = useCampaignActions();
   const [showNewCampaignModal, setShowNewCampaignModal] = useState(false);
   const [newCampaign, setNewCampaign] = useState({
     name: '',
