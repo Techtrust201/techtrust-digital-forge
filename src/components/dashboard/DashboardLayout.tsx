@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -25,7 +24,8 @@ import {
   Crown,
   Diamond,
   ArrowLeftRight,
-  Lock
+  Lock,
+  BookOpen
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -157,6 +157,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: Home,
       href: '/dashboard',
       access: ['admin', 'client', 'manager', 'employee'],
+      requiresSubscription: false
+    },
+    {
+      id: 'blog',
+      name: 'Blog',
+      icon: BookOpen,
+      href: '/dashboard/blog',
+      access: ['admin', 'client', 'manager',  'employee'],
       requiresSubscription: false
     },
     {

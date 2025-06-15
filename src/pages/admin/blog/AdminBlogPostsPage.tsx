@@ -84,8 +84,8 @@ const AdminBlogPostsPage = () => {
   };
 
   const handleViewPost = (id: string) => {
-    // Redirige vers la vue publique de l'article
-    navigate(`/blog/${id}`);
+    // Redirige vers la prévisualisation admin au lieu de la page publique
+    navigate(`/admin/blog/preview/${id}`);
   };
 
   const handleEditPost = (id: string) => {

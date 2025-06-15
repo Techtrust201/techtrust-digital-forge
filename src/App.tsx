@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -21,6 +22,8 @@ import Terms from '@/pages/Terms';
 import Auth from '@/pages/Auth';
 import Dashboard from '@/pages/Dashboard';
 import Services from '@/pages/dashboard/Services';
+import DashboardBlog from '@/pages/dashboard/Blog';
+import BlogPostView from '@/pages/dashboard/blog/BlogPostView';
 import Campaigns from '@/pages/dashboard/Campaigns';
 import EmailCampaigns from '@/pages/dashboard/campaigns/EmailCampaigns';
 import SMSCampaigns from '@/pages/dashboard/campaigns/SMSCampaigns';
@@ -54,6 +57,7 @@ import AdminBlogPage from '@/pages/admin/AdminBlogPage';
 import AdminBlogCreatePage from '@/pages/admin/blog/AdminBlogCreatePage';
 import AdminBlogPostsPage from '@/pages/admin/blog/AdminBlogPostsPage';
 import AdminBlogEditPage from '@/pages/admin/blog/AdminBlogEditPage';
+import AdminBlogPreviewPage from '@/pages/admin/blog/AdminBlogPreviewPage';
 import AdminBlogCategoriesPage from '@/pages/admin/blog/AdminBlogCategoriesPage';
 import AdminBlogCommentsPage from '@/pages/admin/blog/AdminBlogCommentsPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
