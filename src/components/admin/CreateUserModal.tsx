@@ -2,77 +2,37 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, UserPlus, Mail, Phone, Building, MapPin, Package } from 'lucide-react';
+import { X, UserPlus } from 'lucide-react';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
-
-interface CreateUserModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-interface PackageWithCategory {
-  id: string;
-  name: string;
-  price: number;
-  duration?: string;
-  category: string;
-  categoryKey: string;
-}
-
-interface CategoryGroup {
-  title: string;
-  packages: PackageWithCategory[];
-}
+import { CreateUserModalProps, FormData } from './createUser/types';
+import ProgressBar from './createUser/ProgressBar';
+import PersonalInfoStep from './createUser/PersonalInfoStep';
+import CompanyInfoStep from './createUser/CompanyInfoStep';
+import AddressStep from './createUser/AddressStep';
+import PackageSelectionStep from './createUser/PackageSelectionStep';
+import Summary from './createUser/Summary';
 
 const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    // Informations personnelles
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    // Informations entreprise
     company: '',
     position: '',
     industry: '',
-    // Adresse
     address: '',
     city: '',
     postalCode: '',
     country: 'France',
-    // Services sélectionnés
-    selectedPackages: [] as string[],
-    // Notes
+    selectedPackages: [],
     notes: ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
-  const allPackages = getAllPackages();
-
-  const industryOptions = [
-    'E-commerce', 'Services', 'Technologie', 'Santé', 'Éducation', 
-    'Finance', 'Immobilier', 'Restaurant', 'Mode', 'Autre'
-  ];
-
-  // Grouper les packages par catégorie avec types corrects
-  const packagesByCategory = allPackages.reduce((acc: Record<string, CategoryGroup>, pkg: PackageWithCategory) => {
-    if (!acc[pkg.categoryKey]) {
-      acc[pkg.categoryKey] = {
-        title: pkg.category,
-        packages: []
-      };
-    }
-    acc[pkg.categoryKey].packages.push(pkg);
-    return acc;
-  }, {});
+  const { getPackageById, getTotalPrice } = usePackageUtils();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -200,6 +160,28 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     }
   };
 
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1:
+        return <PersonalInfoStep formData={formData} onInputChange={handleInputChange} />;
+      case 2:
+        return <CompanyInfoStep formData={formData} onInputChange={handleInputChange} />;
+      case 3:
+        return <AddressStep formData={formData} onInputChange={handleInputChange} />;
+      case 4:
+        return (
+          <PackageSelectionStep
+            formData={formData}
+            onInputChange={handleInputChange}
+            onAddPackage={addPackage}
+            onRemovePackage={removePackage}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -215,289 +197,10 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           </DialogTitle>
         </DialogHeader>
 
-        {/* Progress bar */}
-        <div className="flex items-center gap-2 mb-6">
-          {[1, 2, 3, 4].map((step) => (
-            <div key={step} className="flex items-center flex-1">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                step <= currentStep ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-500'
-              }`}>
-                {step}
-              </div>
-              {step < 4 && (
-                <div className={`flex-1 h-1 mx-2 ${
-                  step < currentStep ? 'bg-red-500' : 'bg-gray-200'
-                }`} />
-              )}
-            </div>
-          ))}
-        </div>
+        <ProgressBar currentStep={currentStep} totalSteps={4} />
 
         <div className="space-y-6">
-          {/* Étape 1: Informations personnelles */}
-          {currentStep === 1 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium flex items-center gap-2">
-                <Mail className="w-5 h-5 text-blue-500" />
-                Informations personnelles
-              </h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">Prénom *</Label>
-                  <Input
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    placeholder="Jean"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Nom *</Label>
-                  <Input
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    placeholder="Dupont"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="jean.dupont@entreprise.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phone">Téléphone</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="+33 1 23 45 67 89"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Étape 2: Informations entreprise */}
-          {currentStep === 2 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium flex items-center gap-2">
-                <Building className="w-5 h-5 text-green-500" />
-                Informations entreprise
-              </h3>
-
-              <div>
-                <Label htmlFor="company">Entreprise *</Label>
-                <Input
-                  id="company"
-                  value={formData.company}
-                  onChange={(e) => handleInputChange('company', e.target.value)}
-                  placeholder="Mon Entreprise SARL"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="position">Poste</Label>
-                <Input
-                  id="position"
-                  value={formData.position}
-                  onChange={(e) => handleInputChange('position', e.target.value)}
-                  placeholder="Directeur Marketing"
-                />
-              </div>
-
-              <div>
-                <Label>Secteur d'activité</Label>
-                <Select value={formData.industry} onValueChange={(value) => handleInputChange('industry', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un secteur" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {industryOptions.map((industry) => (
-                      <SelectItem key={industry} value={industry}>
-                        {industry}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          )}
-
-          {/* Étape 3: Adresse */}
-          {currentStep === 3 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-purple-500" />
-                Adresse
-              </h3>
-
-              <div>
-                <Label htmlFor="address">Adresse</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="123 Rue de la Paix"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="city">Ville *</Label>
-                  <Input
-                    id="city"
-                    value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    placeholder="Paris"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="postalCode">Code postal</Label>
-                  <Input
-                    id="postalCode"
-                    value={formData.postalCode}
-                    onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                    placeholder="75001"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="country">Pays</Label>
-                <Input
-                  id="country"
-                  value={formData.country}
-                  onChange={(e) => handleInputChange('country', e.target.value)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Étape 4: Sélection des packages */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-medium flex items-center gap-2">
-                <Package className="w-5 h-5 text-orange-500" />
-                Sélection des formules
-              </h3>
-
-              <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
-                💡 Vous pouvez sélectionner une formule par catégorie. Choisir une nouvelle formule remplacera la précédente dans la même catégorie.
-              </div>
-
-              {/* Packages par catégorie */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(packagesByCategory).map(([categoryKey, categoryData]) => {
-                  const selectedInCategory = categoryData.packages.find(pkg => formData.selectedPackages.includes(pkg.id));
-                  
-                  return (
-                    <div key={categoryKey} className={`border-2 rounded-lg p-4 transition-all ${
-                      selectedInCategory ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                    }`}>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${getPackageColor(categoryKey).replace('text-', 'bg-').replace('100', '500')}`}></div>
-                          <h4 className="font-medium">{categoryData.title}</h4>
-                        </div>
-                        {selectedInCategory && (
-                          <Badge className="bg-red-500 text-white text-xs">
-                            {selectedInCategory.name}
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {categoryData.packages.map((pkg) => {
-                          const isSelected = formData.selectedPackages.includes(pkg.id);
-                          
-                          return (
-                            <div
-                              key={pkg.id}
-                              className={`p-3 rounded-lg border-2 cursor-pointer transition-all hover:scale-[1.02] ${
-                                isSelected
-                                  ? 'border-red-500 bg-red-100 shadow-md'
-                                  : 'border-gray-200 hover:border-red-300 hover:bg-red-50'
-                              }`}
-                              onClick={() => isSelected ? removePackage(pkg.id) : addPackage(pkg.id)}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <div className="font-medium text-sm">{pkg.name}</div>
-                                  <div className="text-red-600 font-bold">
-                                    {pkg.price}€{pkg.duration || ''}
-                                  </div>
-                                </div>
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                                  isSelected ? 'bg-red-500 border-red-500' : 'border-gray-300'
-                                }`}>
-                                  {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Résumé des packages sélectionnés */}
-              {formData.selectedPackages.length > 0 && (
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <span className="font-medium">
-                        Formules sélectionnées ({formData.selectedPackages.length})
-                      </span>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.selectedPackages.map(packageId => {
-                          const pkg = getPackageById(packageId);
-                          if (!pkg) return null;
-                          return (
-                            <Badge key={packageId} className={getPackageColor(pkg.categoryKey)}>
-                              {pkg.name}
-                            </Badge>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-bold text-red-600 text-xl">
-                        {getTotalPrice(formData.selectedPackages)}€
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <Label htmlFor="notes">Notes internes</Label>
-                <Textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Notes ou commentaires sur ce client..."
-                  rows={3}
-                />
-              </div>
-            </div>
-          )}
+          {renderCurrentStep()}
         </div>
 
         {/* Navigation buttons */}
@@ -530,17 +233,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         </div>
 
         {/* Récapitulatif en dernière étape */}
-        {currentStep === 4 && formData.selectedPackages.length > 0 && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-medium mb-2">Récapitulatif</h4>
-            <div className="text-sm space-y-1">
-              <p><strong>Client :</strong> {formData.firstName} {formData.lastName}</p>
-              <p><strong>Email :</strong> {formData.email}</p>
-              <p><strong>Entreprise :</strong> {formData.company}</p>
-              <p><strong>Total :</strong> <span className="font-bold text-red-600">{getTotalPrice(formData.selectedPackages)}€</span></p>
-            </div>
-          </div>
-        )}
+        {currentStep === 4 && <Summary formData={formData} />}
       </DialogContent>
     </Dialog>
   );
