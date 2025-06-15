@@ -118,11 +118,11 @@ const config = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
-        "custom-blue": "#45C7FF",
-        "custom-purple": "#A482B7",
-        "custom-pink": "#FF9FA6",
-        "custom-green": "#00CCC3",
-        "custom-slate": "#E4EDF5",
+        "custom-blue": "#3B82F6",
+        "custom-purple": "#8B5CF6",
+        "custom-pink": "#EC4899",
+        "custom-green": "#10B981",
+        "custom-slate": "#64748B",
         "052736": "#052736",
       },
       borderRadius: {
