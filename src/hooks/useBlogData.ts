@@ -142,6 +142,34 @@ export const useBlogActions = () => {
     },
   });
 
+  const incrementViews = useMutation({
+    mutationFn: async (postId: string) => {
+      const { data: currentPost } = await supabase
+        .from('blog_posts')
+        .select('views')
+        .eq('id', postId)
+        .single();
+
+      if (currentPost) {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .update({ views: (currentPost.views || 0) + 1 })
+          .eq('id', postId)
+          .select()
+          .single();
+        
+        if (error) throw error;
+        return data;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+    },
+    onError: (error) => {
+      console.error('Erreur incrémentation vues:', error);
+    },
+  });
+
   const createCategory = useMutation({
     mutationFn: async (category: Omit<BlogCategory, 'id' | 'created_at'>) => {
       const { data, error } = await supabase
@@ -181,6 +209,7 @@ export const useBlogActions = () => {
     createPost,
     updatePost,
     deletePost,
+    incrementViews,
     createCategory,
     updateCommentStatus,
   };

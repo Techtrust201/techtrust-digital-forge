@@ -1,12 +1,13 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import CookieBanner from '@/components/CookieBanner';
 import { Button } from '@/components/ui/button';
 import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useBlogPosts, useBlogCategories } from '@/hooks/useBlogData';
+import { useVisitorTracking } from '@/hooks/useVisitorTracking';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 
@@ -15,12 +16,28 @@ const Blog = () => {
   const { data: categories, isLoading: categoriesLoading } = useBlogCategories();
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  
+  const { cookiesAccepted, acceptCookies, declineCookies, trackPageView, trackBlogPostView } = useVisitorTracking();
+
+  // Tracker la page vue
+  useEffect(() => {
+    if (cookiesAccepted) {
+      trackPageView('/blog', 'Blog Techtrust 2025');
+    }
+  }, [cookiesAccepted, trackPageView]);
 
   // Filtrer les articles publiés
   const publishedPosts = blogPosts?.filter(post => post.status === 'published') || [];
   const filteredPosts = selectedCategory 
     ? publishedPosts.filter(post => post.category === selectedCategory)
     : publishedPosts;
+
+  const handlePostClick = async (post: any) => {
+    setSelectedPost(post);
+    if (cookiesAccepted) {
+      await trackBlogPostView(post.id, post.title);
+    }
+  };
 
   if (postsLoading || categoriesLoading) {
     return (
@@ -46,6 +63,7 @@ const Blog = () => {
           </section>
         </main>
         <Footer />
+        <CookieBanner onAccept={acceptCookies} onDecline={declineCookies} />
       </>
     );
   }
@@ -194,7 +212,7 @@ const Blog = () => {
                           <DialogTrigger asChild>
                             <Button 
                               className="w-full bg-red-600 hover:bg-red-700 text-white hover:text-white group/btn"
-                              onClick={() => setSelectedPost(post)}
+                              onClick={() => handlePostClick(post)}
                             >
                               Lire l'article
                               <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -254,6 +272,7 @@ const Blog = () => {
         </main>
 
         <Footer />
+        <CookieBanner onAccept={acceptCookies} onDecline={declineCookies} />
       </div>
     </>
   );
