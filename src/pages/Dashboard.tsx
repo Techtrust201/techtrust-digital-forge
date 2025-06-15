@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -307,9 +306,11 @@ const Dashboard = () => {
                     <p className="text-gray-600 mb-4">
                       Découvrez nos solutions pour développer votre business
                     </p>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Voir nos services
+                    <Button asChild>
+                      <a href="/dashboard/services">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Voir nos services
+                      </a>
                     </Button>
                   </div>
                 )}
@@ -367,8 +368,10 @@ const Dashboard = () => {
                     <p>• Rapports détaillés restreints</p>
                   )}
                 </div>
-                <Button className="w-full mt-4 bg-gradient-to-r from-orange-500 to-red-500">
-                  Upgrader mon plan
+                <Button asChild className="w-full mt-4 bg-gradient-to-r from-orange-500 to-red-500">
+                  <a href="/dashboard/upgrade">
+                    Upgrader mon plan
+                  </a>
                 </Button>
               </CardContent>
             </Card>
@@ -404,8 +407,10 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600 mb-4">
                   Notre équipe est là pour vous accompagner
                 </p>
-                <Button variant="outline" className="w-full">
-                  Contacter le support
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="/dashboard/support">
+                    Contacter le support
+                  </a>
                 </Button>
               </CardContent>
             </Card>
