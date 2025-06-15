@@ -104,7 +104,7 @@ export const useBetterAuthIndependent = () => {
       const result = await auth.api.forgetPassword({
         body: { 
           email, 
-          callbackURL: `${window.location.origin}/auth?reset=true` 
+          redirectTo: `${window.location.origin}/auth?reset=true` 
         },
         headers: new Headers({
           'Cookie': document.cookie
@@ -140,7 +140,7 @@ export const useBetterAuthIndependent = () => {
       const result = await auth.api.sendVerificationEmail({
         body: { 
           email, 
-          callbackURL: `${window.location.origin}/auth?verified=true` 
+          redirectTo: `${window.location.origin}/auth?verified=true` 
         },
         headers: new Headers({
           'Cookie': document.cookie
