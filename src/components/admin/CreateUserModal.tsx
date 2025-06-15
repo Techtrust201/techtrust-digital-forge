@@ -16,6 +16,20 @@ interface CreateUserModalProps {
   onClose: () => void;
 }
 
+interface PackageWithCategory {
+  id: string;
+  name: string;
+  price: number;
+  duration?: string;
+  category: string;
+  categoryKey: string;
+}
+
+interface CategoryGroup {
+  title: string;
+  packages: PackageWithCategory[];
+}
+
 const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -48,8 +62,8 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     'Finance', 'Immobilier', 'Restaurant', 'Mode', 'Autre'
   ];
 
-  // Grouper les packages par catégorie
-  const packagesByCategory = allPackages.reduce((acc, pkg) => {
+  // Grouper les packages par catégorie avec types corrects
+  const packagesByCategory = allPackages.reduce((acc: Record<string, CategoryGroup>, pkg: PackageWithCategory) => {
     if (!acc[pkg.categoryKey]) {
       acc[pkg.categoryKey] = {
         title: pkg.category,
@@ -58,7 +72,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     }
     acc[pkg.categoryKey].packages.push(pkg);
     return acc;
-  }, {} as Record<string, { title: string; packages: any[] }>);
+  }, {});
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -388,8 +402,8 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
 
               {/* Packages par catégorie */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(packagesByCategory).map(([categoryKey, { title, packages }]) => {
-                  const selectedInCategory = packages.find(pkg => formData.selectedPackages.includes(pkg.id));
+                {Object.entries(packagesByCategory).map(([categoryKey, categoryData]) => {
+                  const selectedInCategory = categoryData.packages.find(pkg => formData.selectedPackages.includes(pkg.id));
                   
                   return (
                     <div key={categoryKey} className={`border-2 rounded-lg p-4 transition-all ${
@@ -398,7 +412,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <div className={`w-3 h-3 rounded-full ${getPackageColor(categoryKey).replace('text-', 'bg-').replace('100', '500')}`}></div>
-                          <h4 className="font-medium">{title}</h4>
+                          <h4 className="font-medium">{categoryData.title}</h4>
                         </div>
                         {selectedInCategory && (
                           <Badge className="bg-red-500 text-white text-xs">
@@ -408,7 +422,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
                       </div>
                       
                       <div className="space-y-2">
-                        {packages.map((pkg) => {
+                        {categoryData.packages.map((pkg) => {
                           const isSelected = formData.selectedPackages.includes(pkg.id);
                           
                           return (
