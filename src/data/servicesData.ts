@@ -22,7 +22,7 @@ export const servicesData = {
       {
         id: "website-starter",
         name: "Starter",
-        price: 899,
+        price: 990,
         duration: "Paiement unique",
         popular: false,
         features: [
@@ -85,25 +85,25 @@ export const servicesData = {
     ]
   },
   growth: {
-    title: "Growth Hacking IA",
-    subtitle: "Automatisation complète avec IA",
-    description: "Nos outils IA propriétaires automatisent votre prospection et community management.",
+    title: "Growth Hacking",
+    subtitle: "Acquisition & Croissance",
+    description: "Stratégies de growth hacking pour multiplier vos leads et conversions. Prospection automatisée, email marketing et optimisation des tunnels de vente.",
     icon: Zap,
-    color: "green",
-    bgGradient: "from-green-500 to-green-600",
-    lightBg: "bg-green-50",
-    darkColor: "text-green-700",
+    color: "purple",
+    bgGradient: "from-purple-500 to-purple-600",
+    lightBg: "bg-purple-50",
+    darkColor: "text-purple-700",
     packages: [
       {
         id: "growth-easy",
         name: "Easy",
-        price: 299,
+        price: 499,
         duration: "/mois",
         popular: false,
         features: [
           "1000 prospects/mois",
           "500 emails automatisés",
-          "Community IA basique",
+          "Lead generation basique",
           "2 réseaux sociaux",
           "Analytics de base",
           "Support email"
@@ -117,13 +117,13 @@ export const servicesData = {
       {
         id: "growth-pro",
         name: "Pro",
-        price: 599,
+        price: 899,
         duration: "/mois",
         popular: true,
         features: [
           "5000 prospects/mois",
           "2000 emails automatisés",
-          "Community IA avancée",
+          "Automation avancée",
           "5 réseaux sociaux",
           "Lead scoring IA",
           "Analytics avancées",
@@ -139,7 +139,7 @@ export const servicesData = {
       {
         id: "growth-enterprise",
         name: "Enterprise",
-        price: 1299,
+        price: 1599,
         duration: "/mois",
         popular: false,
         features: [
@@ -162,12 +162,12 @@ export const servicesData = {
   custom: {
     title: "Solutions Sur Mesure",
     subtitle: "Développement personnalisé",
-    description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus.",
+    description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité.",
     icon: Settings,
-    color: "purple",
-    bgGradient: "from-purple-500 to-purple-600",
-    lightBg: "bg-purple-50",
-    darkColor: "text-purple-700",
+    color: "green",
+    bgGradient: "from-green-500 to-green-600",
+    lightBg: "bg-green-50",
+    darkColor: "text-green-700",
     packages: [
       {
         id: "custom-audit",
@@ -227,7 +227,7 @@ export const servicesData = {
   },
   community: {
     title: "Community Management",
-    subtitle: "Équipe dédiée d'experts",
+    subtitle: "Réseaux sociaux & Contenu",
     description: "Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée.",
     icon: Users,
     color: "pink",
@@ -303,10 +303,10 @@ export const servicesData = {
     subtitle: "Expertise & accompagnement",
     description: "Audit, stratégie et accompagnement personnalisé pour votre transformation digitale.",
     icon: Lightbulb,
-    color: "orange",
-    bgGradient: "from-orange-500 to-orange-600",
-    lightBg: "bg-orange-50",
-    darkColor: "text-orange-700",
+    color: "slate",
+    bgGradient: "from-slate-500 to-slate-600",
+    lightBg: "bg-slate-50",
+    darkColor: "text-slate-700",
     packages: [
       {
         id: "consulting-audit",

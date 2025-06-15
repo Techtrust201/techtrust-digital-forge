@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Globe, TrendingUp, Code, Users, MessageSquare, Lightbulb, ArrowRight } from 'lucide-react';
@@ -14,7 +13,7 @@ const solutions = [
     subtitle: "Sites professionnels & E-commerce",
     description: "Création de sites web modernes, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe, nous développons votre présence digitale.",
     features: ["Design responsive", "Optimisation SEO", "E-commerce", "Web App", "Maintenance"],
-    color: "custom-blue",
+    color: "blue",
     link: "/solutions/agence-web",
     clients: "Palais des Festivals, Chopard"
   },
@@ -24,7 +23,7 @@ const solutions = [
     subtitle: "Acquisition & Croissance",
     description: "Stratégies de growth hacking pour multiplier vos leads et conversions. Prospection automatisée, email marketing et optimisation des tunnels de vente.",
     features: ["Lead generation", "Email marketing", "Automation", "Analytics", "A/B Testing"],
-    color: "custom-purple", 
+    color: "purple", 
     link: "/solutions/growth-hacking",
     clients: "Monaco Business, French Tech"
   },
@@ -34,7 +33,7 @@ const solutions = [
     subtitle: "Développement personnalisé",
     description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité.",
     features: ["Audit métier", "Développement agile", "API", "Intégrations", "Support"],
-    color: "custom-green",
+    color: "green",
     link: "/solutions/digitales-sur-mesure", 
     clients: "Christina France, Luxury Hotels"
   },
@@ -44,7 +43,7 @@ const solutions = [
     subtitle: "Réseaux sociaux & Contenu",
     description: "Gestion complète de vos réseaux sociaux, création de contenu engageant et stratégie d'influence pour développer votre communauté.",
     features: ["Stratégie sociale", "Création contenu", "Engagement", "Influence", "Analytics"],
-    color: "custom-pink",
+    color: "pink",
     link: "/solutions/community-management",
     clients: "Marques de luxe, Startups"
   },
@@ -54,7 +53,7 @@ const solutions = [
     subtitle: "Stratégie & Transformation",
     description: "Audit digital, stratégie de transformation numérique et accompagnement dans vos projets d'innovation technologique.",
     features: ["Audit digital", "Stratégie", "Innovation", "Formation", "Accompagnement"],
-    color: "custom-slate",
+    color: "slate",
     link: "/solutions/consulting-digital",
     clients: "Grandes entreprises, PME"
   }
@@ -122,20 +121,20 @@ const Solutions = () => {
           {/* Hero Section */}
           <section className="relative py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
             {/* Éléments décoratifs */}
-            <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-custom-blue/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-custom-purple/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-purple-500/10 rounded-full blur-3xl"></div>
             
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <span className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-medium text-gray-800 shadow-sm mb-6">
-                  <Users className="w-4 h-4 text-custom-blue" />
+                  <Users className="w-4 h-4 text-blue-600" />
                   Plus de 200 entreprises accompagnées
                 </span>
                 
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-8">
-                  <span className="text-custom-blue">Solutions Digitales</span> Sur Mesure 
+                  <span className="text-blue-600">Solutions Digitales</span> Sur Mesure 
                   <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-green">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-green-600">
                     Pour Votre Croissance
                   </span>
                 </h1>
@@ -147,13 +146,13 @@ const Solutions = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a 
                     href="/contact" 
-                    className="bg-gradient-to-r from-custom-blue to-custom-purple text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center"
                   >
                     Discuter de mon projet
                   </a>
                   <a 
                     href="/pricing" 
-                    className="border-2 border-gray-300 bg-white px-8 py-4 rounded-xl font-semibold hover:border-custom-blue transition-all duration-300 inline-flex items-center justify-center"
+                    className="border-2 border-gray-300 bg-white px-8 py-4 rounded-xl font-semibold hover:border-blue-600 transition-all duration-300 inline-flex items-center justify-center"
                   >
                     Voir nos tarifs
                   </a>
@@ -167,7 +166,7 @@ const Solutions = () => {
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Notre <span className="text-custom-blue">Expertise</span> Digitale
+                  Notre <span className="text-blue-600">Expertise</span> Digitale
                 </h2>
                 <p className="text-lg text-gray-600">
                   Découvrez notre écosystème de solutions digitales pour transformer votre entreprise et accélérer votre croissance.
@@ -176,24 +175,24 @@ const Solutions = () => {
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {solutions.map((solution, index) => (
-                  <Card key={solution.title} className={`hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-full border-t-4 border-${solution.color}`}>
+                  <Card key={solution.title} className={`hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-full border-t-4 border-${solution.color}-600`}>
                     <CardContent className="p-8 h-full flex flex-col">
                       {/* Icône */}
-                      <div className={`w-16 h-16 bg-${solution.color}/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                        <solution.icon className={`w-8 h-8 text-${solution.color}`} />
+                      <div className={`w-16 h-16 bg-${solution.color}-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                        <solution.icon className={`w-8 h-8 text-${solution.color}-600`} />
                       </div>
 
                       {/* Contenu */}
                       <div className="flex-1">
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{solution.title}</h3>
-                        <p className={`text-${solution.color} font-medium mb-4`}>{solution.subtitle}</p>
+                        <p className={`text-${solution.color}-600 font-medium mb-4`}>{solution.subtitle}</p>
                         <p className="text-gray-600 mb-6 leading-relaxed">{solution.description}</p>
 
                         {/* Features */}
                         <ul className="space-y-2 mb-6">
                           {solution.features.map((feature, idx) => (
                             <li key={idx} className="flex items-center text-sm text-gray-600">
-                              <div className={`w-2 h-2 bg-${solution.color} rounded-full mr-3`}></div>
+                              <div className={`w-2 h-2 bg-${solution.color}-600 rounded-full mr-3`}></div>
                               {feature}
                             </li>
                           ))}
@@ -208,7 +207,7 @@ const Solutions = () => {
                       {/* CTA */}
                       <Button 
                         asChild
-                        className={`w-full bg-${solution.color} hover:bg-${solution.color}/90 text-white group`}
+                        className={`w-full bg-${solution.color}-600 hover:bg-${solution.color}-700 text-white group`}
                       >
                         <a href={solution.link}>
                           En savoir plus
@@ -223,12 +222,12 @@ const Solutions = () => {
           </section>
 
           {/* Approche méthodologique */}
-          <section className="py-20 bg-gradient-to-br from-gray-900 via-custom-blue/90 to-custom-purple/90 text-white">
+          <section className="py-20 bg-gradient-to-br from-gray-900 via-blue-900/90 to-purple-900/90 text-white">
             <div className="container mx-auto px-4">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-16">
                   <h2 className="text-3xl lg:text-5xl font-bold mb-6">
-                    Notre <span className="text-custom-green">Méthode</span> d'Excellence
+                    Notre <span className="text-blue-600">Méthode</span> d'Excellence
                   </h2>
                   <p className="text-lg text-gray-300">
                     Une approche structurée pour des résultats mesurables et durables
@@ -271,7 +270,7 @@ const Solutions = () => {
                 </div>
 
                 <div className="text-center mt-16">
-                  <Button asChild size="lg" className="bg-white text-custom-blue hover:bg-gray-100">
+                  <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
                     <a href="/contact">
                       Commencer votre projet
                     </a>
@@ -286,7 +285,7 @@ const Solutions = () => {
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Questions <span className="text-custom-blue">Fréquentes</span>
+                  Questions <span className="text-blue-600">Fréquentes</span>
                 </h2>
                 <p className="text-lg text-gray-600">
                   Tout ce que vous devez savoir sur nos solutions digitales

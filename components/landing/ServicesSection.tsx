@@ -14,7 +14,7 @@ const services = [
     subtitle: "Sites professionnels & E-commerce",
     description: "Développement de sites web modernes, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe.",
     features: ["Design responsive", "Optimisation SEO", "Hébergement sécurisé", "Maintenance incluse"],
-    color: "custom-blue",
+    color: "blue",
     link: "/solutions/agence-web",
     price: "À partir de 990€"
   },
@@ -24,7 +24,7 @@ const services = [
     subtitle: "Acquisition & Croissance",
     description: "Stratégies de growth hacking pour multiplier vos leads et conversions. Prospection automatisée, email marketing et optimisation des tunnels de vente.",
     features: ["Lead generation", "Email marketing", "Automation", "Analytics avancés"],
-    color: "custom-purple", 
+    color: "purple", 
     link: "/solutions/growth-hacking",
     price: "À partir de 499€/mois"
   },
@@ -34,7 +34,7 @@ const services = [
     subtitle: "Développement personnalisé",
     description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité.",
     features: ["Audit métier", "Développement agile", "Formation équipe", "Support technique"],
-    color: "custom-green",
+    color: "green",
     link: "/solutions/digitales-sur-mesure", 
     price: "Devis personnalisé"
   }
@@ -44,8 +44,8 @@ export default function ServicesSection() {
   return (
     <section className="py-24 bg-white relative overflow-hidden" id="services">
       {/* Éléments décoratifs */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-custom-blue/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-custom-purple/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-0 left-0 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* En-tête de section */}
@@ -57,9 +57,9 @@ export default function ServicesSection() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Nos <span className="text-custom-blue">Solutions Digitales</span>
+            Nos <span className="text-blue-600">Solutions Digitales</span>
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-green">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-green-600">
               Sur Mesure
             </span>
           </h2>
@@ -81,25 +81,25 @@ export default function ServicesSection() {
             >
               <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-white relative overflow-hidden h-full">
                 {/* Gradient de fond */}
-                <div className={`absolute inset-0 bg-gradient-to-br from-${service.color}/5 to-${service.color}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br from-${service.color}-500/5 to-${service.color}-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
                 
                 <CardContent className="p-8 relative z-10 h-full flex flex-col">
                   {/* Icône */}
-                  <div className={`w-16 h-16 bg-${service.color}/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <service.icon className={`w-8 h-8 text-${service.color}`} />
+                  <div className={`w-16 h-16 bg-${service.color}-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <service.icon className={`w-8 h-8 text-${service.color}-600`} />
                   </div>
 
                   {/* Contenu */}
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                    <p className={`text-${service.color} font-medium mb-4 text-sm`}>{service.subtitle}</p>
+                    <p className={`text-${service.color}-600 font-medium mb-4 text-sm`}>{service.subtitle}</p>
                     <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
 
                     {/* Features */}
                     <ul className="space-y-2 mb-6">
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center text-sm text-gray-600">
-                          <div className={`w-2 h-2 bg-${service.color} rounded-full mr-3`}></div>
+                          <div className={`w-2 h-2 bg-${service.color}-600 rounded-full mr-3`}></div>
                           {feature}
                         </li>
                       ))}
@@ -108,10 +108,10 @@ export default function ServicesSection() {
 
                   {/* Prix et CTA */}
                   <div>
-                    <div className={`text-${service.color} font-bold text-lg mb-4`}>{service.price}</div>
+                    <div className={`text-${service.color}-600 font-bold text-lg mb-4`}>{service.price}</div>
                     <Button 
                       asChild
-                      className={`w-full bg-${service.color} hover:bg-${service.color}/90 text-white group/btn`}
+                      className={`w-full bg-${service.color}-600 hover:bg-${service.color}-700 text-white group/btn`}
                     >
                       <Link href={service.link}>
                         En savoir plus
@@ -140,7 +140,7 @@ export default function ServicesSection() {
             asChild
             size="lg"
             variant="outline"
-            className="border-2 border-custom-blue text-custom-blue hover:bg-custom-blue hover:text-white"
+            className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
           >
             <Link href="/contact">
               Demander un devis gratuit
