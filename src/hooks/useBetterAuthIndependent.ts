@@ -40,15 +40,15 @@ export const useBetterAuthIndependent = () => {
         });
         
         let userRole = null;
-        if (result?.data?.user) {
-          userRole = await getUserRole(result.data.user.id);
+        if (result?.user) {
+          userRole = await getUserRole(result.user.id);
         }
         
         setAuthState({
-          user: result?.data?.user || null,
-          session: result?.data?.session || null,
+          user: result?.user || null,
+          session: result?.session || null,
           isLoading: false,
-          isAuthenticated: !!result?.data?.user,
+          isAuthenticated: !!result?.user,
           userRole
         });
       } catch (error) {
@@ -75,11 +75,11 @@ export const useBetterAuthIndependent = () => {
         })
       });
       
-      if (result?.data?.user) {
-        const userRole = await getUserRole(result.data.user.id);
+      if (result?.user) {
+        const userRole = await getUserRole(result.user.id);
         setAuthState({
-          user: result.data.user,
-          session: result.data.session || null,
+          user: result.user,
+          session: null, // Better Auth signIn doesn't return session directly
           isLoading: false,
           isAuthenticated: true,
           userRole

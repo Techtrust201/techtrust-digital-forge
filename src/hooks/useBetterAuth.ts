@@ -28,12 +28,12 @@ export const useBetterAuth = () => {
           })
         });
         
-        if (result?.data?.session && result?.data?.user) {
-          const userRole = result.data.user.role || 'client';
+        if (result?.session && result?.user) {
+          const userRole = result.user.role || 'client';
           
           setAuthState({
-            user: result.data.user,
-            session: result.data.session,
+            user: result.user,
+            session: result.session,
             isLoading: false,
             isAuthenticated: true,
             userRole
@@ -71,12 +71,12 @@ export const useBetterAuth = () => {
         })
       });
       
-      if (result?.data?.user) {
-        const userRole = result.data.user.role || 'client';
+      if (result?.user) {
+        const userRole = result.user.role || 'client';
         
         setAuthState({
-          user: result.data.user,
-          session: result.data.session || null,
+          user: result.user,
+          session: null, // Better Auth signIn doesn't return session directly
           isLoading: false,
           isAuthenticated: true,
           userRole
