@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -37,22 +38,17 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
         <Button
           type="button"
           onClick={() => navigate('/admin/blog/posts')}
+          // On passe par les variants Shadcn pour la couleur principale
+          variant="default"
           className="
-            group
-            relative
             px-6 py-3
-            bg-white
-            text-blue-700
             font-semibold
             rounded-full
             flex items-center gap-2
-            border border-blue-300
-            hover:bg-blue-50
-            hover:text-blue-800
             shadow-sm
             active:scale-95
             transition-all duration-200
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200
+            text-base
           "
           style={{ minHeight: 44 }}
         >
@@ -122,3 +118,4 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
 };
 
 export default AdminBlogEditHeader;
+
