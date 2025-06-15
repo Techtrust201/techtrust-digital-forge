@@ -227,11 +227,20 @@ const Blog = () => {
                                 </div>
                               )}
                               
-                              <div className="prose max-w-none">
-                                <div className="whitespace-pre-wrap leading-relaxed">
-                                  {selectedPost?.content}
-                                </div>
-                              </div>
+                              <div 
+                                className="prose prose-lg prose-gray max-w-none
+                                  prose-headings:text-gray-900 prose-headings:font-bold
+                                  prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                                  prose-p:text-gray-700 prose-p:leading-relaxed
+                                  prose-strong:text-gray-900 prose-strong:font-semibold
+                                  prose-em:text-gray-700 prose-em:italic
+                                  prose-ul:list-disc prose-ol:list-decimal
+                                  prose-li:text-gray-700 prose-li:mb-1
+                                  prose-blockquote:border-l-4 prose-blockquote:border-blue-300 prose-blockquote:pl-4 prose-blockquote:italic
+                                  prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded
+                                  prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800"
+                                dangerouslySetInnerHTML={{ __html: selectedPost?.content || '' }}
+                              />
                             </div>
                           </DialogContent>
                         </Dialog>
