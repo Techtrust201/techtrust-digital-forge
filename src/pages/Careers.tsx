@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { 
   Code, 
   TrendingUp, 
@@ -29,7 +30,7 @@ const jobCategories = [
     description: "Rejoignez notre équipe technique pour développer nos outils IA révolutionnaires",
     requirements: "React, TypeScript, Node.js, IA/ML",
     salary: "45K - 65K€",
-    type: "CDI / Freelance"
+    types: ["CDI", "Freelance"]
   },
   {
     title: "Growth Hacker IA",
@@ -38,7 +39,7 @@ const jobCategories = [
     description: "Concevez des stratégies d'acquisition avec nos outils IA propriétaires",
     requirements: "Growth hacking, automatisation, analytics",
     salary: "40K - 60K€",
-    type: "CDI"
+    types: ["CDI", "Freelance"]
   },
   {
     title: "Community Manager",
@@ -47,7 +48,7 @@ const jobCategories = [
     description: "Gérez les communautés de nos clients avec nos outils d'IA",
     requirements: "Réseaux sociaux, création contenu, outils IA",
     salary: "35K - 45K€", 
-    type: "CDI / Stage"
+    types: ["CDI", "Stage", "Freelance"]
   },
   {
     title: "Data Scientist IA",
@@ -56,7 +57,7 @@ const jobCategories = [
     description: "Développez nos algorithmes d'IA pour le growth hacking",
     requirements: "Python, ML, TensorFlow, Analytics",
     salary: "50K - 70K€",
-    type: "CDI"
+    types: ["CDI", "Freelance"]
   },
   {
     title: "UX/UI Designer",
@@ -65,7 +66,7 @@ const jobCategories = [
     description: "Concevez des interfaces utilisateur pour nos outils IA",
     requirements: "Figma, Design System, UX Research",
     salary: "40K - 55K€",
-    type: "CDI / Freelance"
+    types: ["CDI", "Freelance"]
   },
   {
     title: "Chef de Projet Tech",
@@ -74,9 +75,22 @@ const jobCategories = [
     description: "Coordonnez le développement de nos solutions IA",
     requirements: "Gestion projet, méthodologies agiles",
     salary: "45K - 60K€",
-    type: "CDI"
+    types: ["CDI", "Freelance"]
   }
 ];
+
+const getTypeVariant = (type: string) => {
+  switch (type) {
+    case 'CDI':
+      return 'default';
+    case 'Freelance':
+      return 'secondary';
+    case 'Stage':
+      return 'outline';
+    default:
+      return 'secondary';
+  }
+};
 
 const Careers = () => {
   const [selectedJob, setSelectedJob] = useState<typeof jobCategories[0] | null>(null);
@@ -170,14 +184,20 @@ const Careers = () => {
                           </div>
                           <h3 className="text-xl font-bold text-gray-900 mb-2">{job.title}</h3>
                           <p className="text-gray-600 mb-4 text-sm">{job.description}</p>
-                          <div className="space-y-2 text-sm">
+                          <div className="space-y-3 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-500">Salaire:</span>
                               <span className="font-medium">{job.salary}</span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="flex justify-between items-center">
                               <span className="text-gray-500">Type:</span>
-                              <span className="font-medium">{job.type}</span>
+                              <div className="flex gap-1 flex-wrap">
+                                {job.types.map((type, typeIndex) => (
+                                  <Badge key={typeIndex} variant={getTypeVariant(type)} className="text-xs">
+                                    {type}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
                           </div>
                           <Button className={`w-full mt-4 bg-${job.color} hover:bg-${job.color}/90`}>
@@ -203,9 +223,15 @@ const Careers = () => {
                                 <span className="text-gray-500">Salaire:</span>
                                 <span className="ml-2 font-medium">{job.salary}</span>
                               </div>
-                              <div>
-                                <span className="text-gray-500">Type:</span>
-                                <span className="ml-2 font-medium">{job.type}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500">Types:</span>
+                                <div className="flex gap-1 flex-wrap">
+                                  {job.types.map((type, typeIndex) => (
+                                    <Badge key={typeIndex} variant={getTypeVariant(type)} className="text-xs">
+                                      {type}
+                                    </Badge>
+                                  ))}
+                                </div>
                               </div>
                             </div>
                           </div>
