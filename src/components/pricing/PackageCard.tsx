@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +14,15 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelected, onSelect }) => {
+  const formatPrice = (price: number | string) => {
+    if (typeof price === 'number') {
+      return price.toLocaleString('fr-FR');
+    }
+    // Nettoyer les strings pour extraire juste le nombre
+    const cleanPrice = price.toString().replace(/[^\d]/g, '');
+    return cleanPrice ? parseInt(cleanPrice).toLocaleString('fr-FR') : price;
+  };
+
   return (
     <Card 
       className={`relative transition-all duration-500 hover:shadow-2xl group ${
@@ -49,14 +57,22 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
             {pkg.name}
           </h3>
         </div>
-        <div className="space-y-2">
-          <div className="flex items-baseline justify-center gap-1">
-            <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
-              {typeof pkg.price === 'number' ? pkg.price.toLocaleString() : pkg.price}
-            </span>
-            <span className="text-2xl font-bold text-gray-600">€</span>
+        
+        {/* Nouveau design pour les prix - Plus moderne et épuré */}
+        <div className="relative">
+          <div className={`inline-flex items-center justify-center bg-white rounded-2xl px-6 py-4 shadow-lg border-2 ${pkg.popular ? `border-${service.color}-200` : 'border-gray-200'} mb-2`}>
+            <div className="text-center">
+              <div className="flex items-baseline justify-center gap-1 mb-1">
+                <span className={`text-3xl lg:text-4xl font-black ${pkg.popular ? service.darkColor : 'text-gray-900'}`}>
+                  {formatPrice(pkg.price)}
+                </span>
+                <span className="text-lg font-bold text-gray-500">€</span>
+              </div>
+              <div className={`text-sm font-semibold ${pkg.popular ? `text-${service.color}-600` : 'text-gray-600'} uppercase tracking-wide`}>
+                {pkg.duration}
+              </div>
+            </div>
           </div>
-          <div className="text-gray-600 font-medium">{pkg.duration}</div>
         </div>
       </CardHeader>
 
