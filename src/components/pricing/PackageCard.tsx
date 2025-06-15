@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,17 +15,6 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelected, onSelect }) => {
-  // Fonction pour afficher un prix propre et simple
-  const getCleanPrice = (price: number | string) => {
-    if (typeof price === 'number') {
-      return price.toLocaleString();
-    }
-    
-    // Pour les strings, on extrait juste le nombre
-    const match = price.toString().match(/(\d+(?:\s?\d+)*)/);
-    return match ? match[1].replace(/\s/g, '') : price;
-  };
-
   return (
     <Card 
       className={`relative transition-all duration-500 hover:shadow-2xl group ${
@@ -62,7 +52,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         <div className="space-y-2">
           <div className="flex items-baseline justify-center gap-1">
             <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
-              {getCleanPrice(pkg.price)}
+              {typeof pkg.price === 'number' ? pkg.price.toLocaleString() : pkg.price}
             </span>
             <span className="text-2xl font-bold text-gray-600">€</span>
           </div>
