@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Index from '@/pages/Index';
@@ -58,14 +59,14 @@ import NotFound from '@/pages/NotFound';
 import { useAuth } from '@/hooks/useAuth';
 import { Toast } from '@/components/ui/toast';
 import { useToast } from '@/hooks/use-toast';
-import { useIs হাইড্রating } from '@/hooks/useIsHydrating';
+import { useIsHydrating } from '@/hooks/useIsHydrating';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function App() {
   const { isLoading } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
-  const isHydrating = useIs হাইড্রating();
+  const isHydrating = useIsHydrating();
 
   useEffect(() => {
     if (location.pathname === '/dashboard' || location.pathname === '/admin') {
