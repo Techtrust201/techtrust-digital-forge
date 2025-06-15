@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,6 +7,7 @@ import PricingOptimized from '@/pages/PricingOptimized';
 import Contact from '@/pages/Contact';
 import Help from '@/pages/Help';
 import Blog from '@/pages/Blog';
+import BlogPostPage from '@/pages/blog/BlogPostPage';
 import Careers from '@/pages/Careers';
 import Solutions from '@/pages/Solutions';
 import AgenceWeb from '@/pages/solutions/AgenceWeb';
@@ -53,6 +53,7 @@ import AdminCampaignsAutomationPage from '@/pages/admin/campaigns/AdminCampaigns
 import AdminBlogPage from '@/pages/admin/AdminBlogPage';
 import AdminBlogCreatePage from '@/pages/admin/blog/AdminBlogCreatePage';
 import AdminBlogPostsPage from '@/pages/admin/blog/AdminBlogPostsPage';
+import AdminBlogEditPage from '@/pages/admin/blog/AdminBlogEditPage';
 import AdminBlogCategoriesPage from '@/pages/admin/blog/AdminBlogCategoriesPage';
 import AdminBlogCommentsPage from '@/pages/admin/blog/AdminBlogCommentsPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
@@ -110,6 +111,7 @@ function AppContent() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/help" element={<Help />} />
       <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:id" element={<BlogPostPage />} />
       <Route path="/careers" element={<Careers />} />
       <Route path="/solutions" element={<Solutions />} />
       <Route path="/solutions/agence-web" element={<AgenceWeb />} />
@@ -159,6 +161,7 @@ function AppContent() {
       <Route path="/admin/blog" element={<AdminBlogPage />} />
       <Route path="/admin/blog/create" element={<AdminBlogCreatePage />} />
       <Route path="/admin/blog/posts" element={<AdminBlogPostsPage />} />
+      <Route path="/admin/blog/edit/:id" element={<AdminBlogEditPage />} />
       <Route path="/admin/blog/categories" element={<AdminBlogCategoriesPage />} />
       <Route path="/admin/blog/comments" element={<AdminBlogCommentsPage />} />
       <Route path="/admin/system" element={<AdminSystemPage />} />
