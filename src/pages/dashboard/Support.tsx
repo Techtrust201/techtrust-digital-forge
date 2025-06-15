@@ -158,7 +158,7 @@ const Support = () => {
               <CardContent className="space-y-3">
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <h4 className="font-medium mb-1">Comment changer de plan ?</h4>
-                  <p className="text-sm text-gray-600">Rendez-vous dans Mon Compte > Mon Plan</p>
+                  <p className="text-sm text-gray-600">Rendez-vous dans Mon Compte {'>'}  Mon Plan</p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <h4 className="font-medium mb-1">Problème de facturation ?</h4>
