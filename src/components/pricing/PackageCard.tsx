@@ -14,20 +14,15 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelected, onSelect }) => {
-  // Fonction pour nettoyer le prix et extraire seulement le nombre/montant principal
+  // Fonction pour afficher un prix propre et simple
   const getCleanPrice = (price: number | string) => {
     if (typeof price === 'number') {
-      return `${price.toLocaleString()}€`;
+      return price.toLocaleString();
     }
     
-    // Pour les strings, on extrait juste le prix principal
-    if (price.includes('€')) {
-      // Si c'est déjà formaté avec €, on garde tel quel
-      return price.replace('à partir de ', '').replace('À partir de ', '');
-    }
-    
-    // Sinon on retourne tel quel
-    return price;
+    // Pour les strings, on extrait juste le nombre
+    const match = price.toString().match(/(\d+(?:\s?\d+)*)/);
+    return match ? match[1].replace(/\s/g, '') : price;
   };
 
   return (
@@ -69,6 +64,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
             <span className={`text-4xl lg:text-5xl font-bold ${pkg.popular ? service.darkColor : service.darkColor}`}>
               {getCleanPrice(pkg.price)}
             </span>
+            <span className="text-2xl font-bold text-gray-600">€</span>
           </div>
           <div className="text-gray-600 font-medium">{pkg.duration}</div>
         </div>
