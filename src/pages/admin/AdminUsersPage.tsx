@@ -10,7 +10,7 @@ import UsersTable from '@/components/admin/users/UsersTable';
 import EditUserDialog from '@/components/admin/users/EditUserDialog';
 import SearchFilters from '@/components/admin/SearchFilters';
 import CreateUserModal from '@/components/admin/CreateUserModal';
-import { useUserData } from '@/hooks/useUserData';
+import { useSupabaseUsers } from '@/hooks/useSupabaseUsers';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
 
 const AdminUsersPage = () => {
@@ -22,39 +22,83 @@ const AdminUsersPage = () => {
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 
   const {
-    getFilteredUsers,
-    getPageTitle,
-    getPageDescription,
-    getStatusColor,
-    getStatusLabel
-  } = useUserData();
+    users,
+    isLoading,
+    updateUserPackages,
+    getUserStats
+  } = useSupabaseUsers();
 
   const { getPackageById, getPackageColor } = usePackageUtils();
 
   // Filtrer les utilisateurs selon les critères
-  const allUsers = getFilteredUsers();
-  const filteredUsers = allUsers.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
     const matchesTier = tierFilter === 'all' || user.tier === tierFilter;
     
     return matchesSearch && matchesStatus && matchesTier;
   });
 
+  const stats = getUserStats();
+
   const openEditDialog = (user: any) => {
     setEditingUser(user);
   };
 
-  const saveUserPackages = (packages: string[]) => {
-    console.log('Sauvegarde des formules pour', editingUser?.name, ':', packages);
-    setEditingUser(null);
+  const saveUserPackages = async (packages: string[]) => {
+    if (!editingUser) return;
+    
+    const result = await updateUserPackages(editingUser.id, packages);
+    if (result.success) {
+      setEditingUser(null);
+    }
   };
 
   const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('all');
     setTierFilter('all');
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-red-100 text-red-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'Actif';
+      case 'inactive':
+        return 'Inactif';
+      case 'pending':
+        return 'En attente';
+      default:
+        return status;
+    }
+  };
+
+  const getPageTitle = () => {
+    if (location.pathname.includes('/create')) {
+      return 'Créer un nouveau client';
+    }
+    return 'Gestion des utilisateurs';
+  };
+
+  const getPageDescription = () => {
+    if (location.pathname.includes('/create')) {
+      return 'Créez un nouveau compte client avec ses formules';
+    }
+    return `${stats.totalUsers} utilisateurs dont ${stats.activeUsers} actifs`;
   };
 
   // Si on est sur la page de création
@@ -67,6 +111,19 @@ const AdminUsersPage = () => {
             <p className="text-gray-500 mt-2">{getPageDescription()}</p>
           </div>
           <CreateUserForm />
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Chargement des utilisateurs...</p>
+          </div>
         </div>
       </AdminLayout>
     );

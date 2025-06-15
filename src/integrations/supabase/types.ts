@@ -387,6 +387,51 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          address: Json | null
+          company: string | null
+          created_at: string | null
+          id: string
+          industry: string | null
+          name: string | null
+          notes: string | null
+          phone: string | null
+          position: string | null
+          status: string | null
+          tier: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: Json | null
+          company?: string | null
+          created_at?: string | null
+          id: string
+          industry?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          status?: string | null
+          tier?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: Json | null
+          company?: string | null
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          status?: string | null
+          tier?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       session: {
         Row: {
           createdAt: string
@@ -593,7 +638,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       verification: {
         Row: {

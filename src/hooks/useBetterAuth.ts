@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { auth, type Session, type User } from '@/lib/auth';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthState {
   user: User | null;
@@ -107,13 +108,19 @@ export const useBetterAuth = () => {
 
   const getUserRole = async (userId: string): Promise<string | null> => {
     try {
-      const response = await fetch('/api/user/role', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId })
-      });
-      const data = await response.json();
-      return data.role || null;
+      // Utiliser Supabase pour récupérer le rôle
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('userId', userId)
+        .single();
+
+      if (error) {
+        console.error('Get user role error:', error);
+        return null;
+      }
+
+      return data?.role || null;
     } catch (error) {
       console.error('Get user role error:', error);
       return null;
