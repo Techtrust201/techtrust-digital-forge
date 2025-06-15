@@ -34,10 +34,10 @@ const SolutionsDigitales = () => {
         
         <main>
           {/* Hero Section */}
-          <section className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-hidden">
+          <section className="relative py-20 lg:py-32 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
-                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-blue-200 rounded-full px-4 py-2 text-sm font-medium text-blue-600 mb-6">
+                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-green-200 rounded-full px-4 py-2 text-sm font-medium text-green-600 mb-6">
                   <Code className="w-4 h-4" />
                   Solutions Sur Mesure
                 </div>
@@ -45,7 +45,7 @@ const SolutionsDigitales = () => {
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
                   Solutions Digitales
                   <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Sur Mesure</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600">Sur Mesure</span>
                 </h1>
                 
                 <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -54,7 +54,7 @@ const SolutionsDigitales = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                  <Button size="lg" className="bg-green-600 hover:bg-green-700">
                     <a href="/contact">Discuter de mon projet</a>
                   </Button>
                   <Button size="lg" variant="outline">
@@ -70,7 +70,7 @@ const SolutionsDigitales = () => {
             <div className="container mx-auto px-4">
               <div className="text-center mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Nos <span className="text-blue-600">Solutions</span> Digitales
+                  Nos <span className="text-green-600">Solutions</span> Digitales
                 </h2>
               </div>
 
@@ -108,7 +108,7 @@ const SolutionsDigitales = () => {
                   }
                 ].map((service, index) => (
                   <div key={index} className="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow">
-                    <div className="text-blue-600 mb-4">{service.icon}</div>
+                    <div className="text-green-600 mb-4">{service.icon}</div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-3">{service.title}</h3>
                     <p className="text-gray-600">{service.description}</p>
                   </div>
