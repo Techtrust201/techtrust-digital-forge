@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, UserPlus, Mail, Phone, Building, MapPin } from 'lucide-react';
+import { X, UserPlus, Mail, Phone, Building, MapPin, Package } from 'lucide-react';
+import { usePackageUtils } from '@/hooks/usePackageUtils';
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -32,45 +33,58 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     city: '',
     postalCode: '',
     country: 'France',
-    // Plan et services
-    tier: 'bronze',
-    services: [] as string[],
+    // Services sélectionnés
+    selectedPackages: [] as string[],
     // Notes
     notes: ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const tierOptions = [
-    { value: 'bronze', label: 'Bronze', price: '39€/mois', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-    { value: 'silver', label: 'Silver', price: '299€/mois', color: 'bg-gray-50 text-gray-700 border-gray-200' },
-    { value: 'gold', label: 'Gold', price: '599€/mois', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    { value: 'diamond', label: 'Diamond', price: '1299€/mois', color: 'bg-purple-50 text-purple-700 border-purple-200' }
-  ];
+  const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
+  const allPackages = getAllPackages();
 
   const industryOptions = [
     'E-commerce', 'Services', 'Technologie', 'Santé', 'Éducation', 
     'Finance', 'Immobilier', 'Restaurant', 'Mode', 'Autre'
   ];
 
-  const serviceOptions = [
-    { id: 'website', label: 'Site Web', category: 'web' },
-    { id: 'ecommerce', label: 'E-commerce', category: 'web' },
-    { id: 'seo', label: 'SEO', category: 'marketing' },
-    { id: 'social', label: 'Réseaux Sociaux', category: 'marketing' },
-    { id: 'ads', label: 'Publicité', category: 'marketing' },
-    { id: 'analytics', label: 'Analytics', category: 'data' }
-  ];
+  // Grouper les packages par catégorie
+  const packagesByCategory = allPackages.reduce((acc, pkg) => {
+    if (!acc[pkg.categoryKey]) {
+      acc[pkg.categoryKey] = {
+        title: pkg.category,
+        packages: []
+      };
+    }
+    acc[pkg.categoryKey].packages.push(pkg);
+    return acc;
+  }, {} as Record<string, { title: string; packages: any[] }>);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleServiceToggle = (serviceId: string) => {
+  const addPackage = (packageId: string) => {
+    const packageToAdd = getPackageById(packageId);
+    if (!packageToAdd) return;
+
+    // Supprimer tout package existant de la même catégorie
+    const updatedPackages = formData.selectedPackages.filter(id => {
+      const existingPackage = getPackageById(id);
+      return existingPackage?.categoryKey !== packageToAdd.categoryKey;
+    });
+
+    // Ajouter le nouveau package
     setFormData(prev => ({
       ...prev,
-      services: prev.services.includes(serviceId)
-        ? prev.services.filter(id => id !== serviceId)
-        : [...prev.services, serviceId]
+      selectedPackages: [...updatedPackages, packageId]
+    }));
+  };
+
+  const removePackage = (packageId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedPackages: prev.selectedPackages.filter(id => id !== packageId)
     }));
   };
 
@@ -82,6 +96,8 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         return formData.company.trim();
       case 3:
         return formData.city.trim() && formData.country.trim();
+      case 4:
+        return formData.selectedPackages.length > 0;
       default:
         return true;
     }
@@ -100,7 +116,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
   };
 
   const handleSubmit = async () => {
-    if (!isStepValid(1) || !isStepValid(2)) {
+    if (!isStepValid(1) || !isStepValid(2) || !isStepValid(4)) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
@@ -117,7 +133,9 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         return;
       }
 
-      // Créer le nouvel utilisateur
+      // Créer le nouvel utilisateur avec les vrais packages
+      const selectedPackageDetails = formData.selectedPackages.map(id => getPackageById(id)).filter(Boolean);
+      
       const newUser = {
         id: Math.random().toString(36).substr(2, 9),
         name: `${formData.firstName} ${formData.lastName}`,
@@ -132,12 +150,12 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           postalCode: formData.postalCode,
           country: formData.country
         },
-        tier: formData.tier,
-        services: formData.services,
+        packages: selectedPackageDetails,
+        selectedPackages: formData.selectedPackages,
         notes: formData.notes,
         status: 'active',
         joinDate: new Date().toISOString().split('T')[0],
-        revenue: tierOptions.find(t => t.value === formData.tier)?.price.split('€')[0] || '0'
+        revenue: getTotalPrice(formData.selectedPackages)
       };
 
       // Sauvegarder localement
@@ -153,7 +171,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         firstName: '', lastName: '', email: '', phone: '',
         company: '', position: '', industry: '',
         address: '', city: '', postalCode: '', country: 'France',
-        tier: 'bronze', services: [], notes: ''
+        selectedPackages: [], notes: ''
       });
 
       // Actualiser la page pour voir le nouvel utilisateur
@@ -168,11 +186,9 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     }
   };
 
-  const selectedTier = tierOptions.find(t => t.value === formData.tier);
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between text-xl">
             <div className="flex items-center gap-2">
@@ -358,49 +374,103 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
             </div>
           )}
 
-          {/* Étape 4: Plan et services */}
+          {/* Étape 4: Sélection des packages */}
           {currentStep === 4 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-medium">Plan et services</h3>
+              <h3 className="text-lg font-medium flex items-center gap-2">
+                <Package className="w-5 h-5 text-orange-500" />
+                Sélection des formules
+              </h3>
 
-              <div>
-                <Label>Plan tarifaire</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  {tierOptions.map((tier) => (
-                    <div
-                      key={tier.value}
-                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                        formData.tier === tier.value
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      onClick={() => handleInputChange('tier', tier.value)}
-                    >
-                      <div className="font-medium">{tier.label}</div>
-                      <div className="text-sm text-gray-600">{tier.price}</div>
-                    </div>
-                  ))}
-                </div>
+              <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
+                💡 Vous pouvez sélectionner une formule par catégorie. Choisir une nouvelle formule remplacera la précédente dans la même catégorie.
               </div>
 
-              <div>
-                <Label>Services inclus</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {serviceOptions.map((service) => (
-                    <div
-                      key={service.id}
-                      className={`p-2 border rounded-lg cursor-pointer text-sm transition-all ${
-                        formData.services.includes(service.id)
-                          ? 'border-red-500 bg-red-50 text-red-700'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      onClick={() => handleServiceToggle(service.id)}
-                    >
-                      {service.label}
+              {/* Packages par catégorie */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(packagesByCategory).map(([categoryKey, { title, packages }]) => {
+                  const selectedInCategory = packages.find(pkg => formData.selectedPackages.includes(pkg.id));
+                  
+                  return (
+                    <div key={categoryKey} className={`border-2 rounded-lg p-4 transition-all ${
+                      selectedInCategory ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                    }`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-3 h-3 rounded-full ${getPackageColor(categoryKey).replace('text-', 'bg-').replace('100', '500')}`}></div>
+                          <h4 className="font-medium">{title}</h4>
+                        </div>
+                        {selectedInCategory && (
+                          <Badge className="bg-red-500 text-white text-xs">
+                            {selectedInCategory.name}
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-2">
+                        {packages.map((pkg) => {
+                          const isSelected = formData.selectedPackages.includes(pkg.id);
+                          
+                          return (
+                            <div
+                              key={pkg.id}
+                              className={`p-3 rounded-lg border-2 cursor-pointer transition-all hover:scale-[1.02] ${
+                                isSelected
+                                  ? 'border-red-500 bg-red-100 shadow-md'
+                                  : 'border-gray-200 hover:border-red-300 hover:bg-red-50'
+                              }`}
+                              onClick={() => isSelected ? removePackage(pkg.id) : addPackage(pkg.id)}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <div className="font-medium text-sm">{pkg.name}</div>
+                                  <div className="text-red-600 font-bold">
+                                    {pkg.price}€{pkg.duration || ''}
+                                  </div>
+                                </div>
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                  isSelected ? 'bg-red-500 border-red-500' : 'border-gray-300'
+                                }`}>
+                                  {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
+
+              {/* Résumé des packages sélectionnés */}
+              {formData.selectedPackages.length > 0 && (
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <span className="font-medium">
+                        Formules sélectionnées ({formData.selectedPackages.length})
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.selectedPackages.map(packageId => {
+                          const pkg = getPackageById(packageId);
+                          if (!pkg) return null;
+                          return (
+                            <Badge key={packageId} className={getPackageColor(pkg.categoryKey)}>
+                              {pkg.name}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-red-600 text-xl">
+                        {getTotalPrice(formData.selectedPackages)}€
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="notes">Notes internes</Label>
@@ -437,7 +507,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={isLoading || !isStepValid(1) || !isStepValid(2)}
+              disabled={isLoading || !isStepValid(1) || !isStepValid(2) || !isStepValid(4)}
               className="bg-red-500 hover:bg-red-600"
             >
               {isLoading ? 'Création...' : 'Créer le client'}
@@ -445,18 +515,15 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           )}
         </div>
 
-        {/* Summary in last step */}
-        {currentStep === 4 && (
+        {/* Récapitulatif en dernière étape */}
+        {currentStep === 4 && formData.selectedPackages.length > 0 && (
           <div className="mt-4 p-4 bg-gray-50 rounded-lg">
             <h4 className="font-medium mb-2">Récapitulatif</h4>
             <div className="text-sm space-y-1">
               <p><strong>Client :</strong> {formData.firstName} {formData.lastName}</p>
               <p><strong>Email :</strong> {formData.email}</p>
               <p><strong>Entreprise :</strong> {formData.company}</p>
-              <p><strong>Plan :</strong> <Badge className={selectedTier?.color}>{selectedTier?.label} - {selectedTier?.price}</Badge></p>
-              {formData.services.length > 0 && (
-                <p><strong>Services :</strong> {formData.services.length} service(s) sélectionné(s)</p>
-              )}
+              <p><strong>Total :</strong> <span className="font-bold text-red-600">{getTotalPrice(formData.selectedPackages)}€</span></p>
             </div>
           </div>
         )}
