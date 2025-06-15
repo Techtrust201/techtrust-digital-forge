@@ -104,6 +104,25 @@ const getTypeColor = (type: string) => {
   }
 };
 
+const getButtonClasses = (color: string) => {
+  switch (color) {
+    case 'blue-600':
+      return 'bg-blue-600 hover:bg-blue-700 text-white';
+    case 'purple-600':
+      return 'bg-purple-600 hover:bg-purple-700 text-white';
+    case 'pink-600':
+      return 'bg-pink-600 hover:bg-pink-700 text-white';
+    case 'green-600':
+      return 'bg-green-600 hover:bg-green-700 text-white';
+    case 'indigo-600':
+      return 'bg-indigo-600 hover:bg-indigo-700 text-white';
+    case 'orange-600':
+      return 'bg-orange-600 hover:bg-orange-700 text-white';
+    default:
+      return 'bg-blue-600 hover:bg-blue-700 text-white';
+  }
+};
+
 const Careers = () => {
   const [selectedJob, setSelectedJob] = useState<typeof jobCategories[0] | null>(null);
   const [formData, setFormData] = useState({
@@ -215,7 +234,7 @@ const Careers = () => {
                               </div>
                             </div>
                           </div>
-                          <Button className={`w-full mt-4`} style={{ backgroundColor: `var(--${job.color.replace('-', '')})` }}>
+                          <Button className={`w-full mt-4 ${getButtonClasses(job.color)}`}>
                             Postuler <ArrowRight className="ml-2 w-4 h-4" />
                           </Button>
                         </div>
@@ -323,7 +342,7 @@ const Careers = () => {
                               </div>
                             </div>
                             
-                            <Button type="submit" className={`w-full`} style={{ backgroundColor: `var(--${job.color.replace('-', '')})` }}>
+                            <Button type="submit" className={`w-full ${getButtonClasses(job.color)}`}>
                               Envoyer ma candidature
                             </Button>
                           </form>
