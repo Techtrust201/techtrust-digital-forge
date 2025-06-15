@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import CreateUserModal from '@/components/admin/CreateUserModal';
+import { useAdminActions } from '@/hooks/useAdminActions';
 import { 
   Users, 
   TrendingUp, 
@@ -19,10 +20,13 @@ import {
   CheckCircle,
   XCircle
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
   const [userData, setUserData] = useState<any>(null);
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+  const { createNewClient, generateReport, viewPerformances, viewAllUsers, isLoading } = useAdminActions();
   
   // Données simulées pour l'admin
   const [adminStats] = useState({
@@ -158,7 +162,11 @@ const AdminDashboard = () => {
           </div>
           
           <div className="flex items-center gap-4">
-            <Button className="bg-green-500 hover:bg-green-600">
+            <Button 
+              className="bg-green-500 hover:bg-green-600"
+              onClick={() => setShowCreateUserModal(true)}
+              disabled={isLoading}
+            >
               <UserPlus className="w-4 h-4 mr-2" />
               Nouveau client
             </Button>
@@ -280,7 +288,12 @@ const AdminDashboard = () => {
                 </div>
                 
                 <div className="mt-6 text-center">
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={viewAllUsers}
+                    disabled={isLoading}
+                  >
                     Voir tous les utilisateurs
                   </Button>
                 </div>
@@ -321,15 +334,30 @@ const AdminDashboard = () => {
                 <CardTitle>Actions Rapides</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => setShowCreateUserModal(true)}
+                  disabled={isLoading}
+                >
                   <UserPlus className="w-4 h-4 mr-2" />
                   Créer un compte client
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={generateReport}
+                  disabled={isLoading}
+                >
                   <Activity className="w-4 h-4 mr-2" />
-                  Générer un rapport
+                  {isLoading ? 'Génération...' : 'Générer un rapport'}
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={viewPerformances}
+                  disabled={isLoading}
+                >
                   <TrendingUp className="w-4 h-4 mr-2" />
                   Voir les performances
                 </Button>
@@ -338,6 +366,11 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      <CreateUserModal 
+        isOpen={showCreateUserModal}
+        onClose={() => setShowCreateUserModal(false)}
+      />
     </AdminLayout>
   );
 };
