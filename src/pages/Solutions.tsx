@@ -176,24 +176,59 @@ const Solutions = () => {
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {solutions.map((solution, index) => (
-                  <Card key={solution.title} className={`hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-full border-t-4 border-${solution.color}-600`}>
+                  <Card key={solution.title} className={`hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-full ${
+                    solution.color === 'blue' ? 'border-t-4 border-t-blue-600' :
+                    solution.color === 'purple' ? 'border-t-4 border-t-purple-600' :
+                    solution.color === 'green' ? 'border-t-4 border-t-green-600' :
+                    solution.color === 'pink' ? 'border-t-4 border-t-pink-600' :
+                    solution.color === 'orange' ? 'border-t-4 border-t-orange-600' :
+                    'border-t-4 border-t-gray-600'
+                  }`}>
                     <CardContent className="p-8 h-full flex flex-col">
                       {/* Icône */}
-                      <div className={`w-16 h-16 bg-${solution.color}-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                        <solution.icon className={`w-8 h-8 text-${solution.color}-600`} />
+                      <div className={`w-16 h-16 ${
+                        solution.color === 'blue' ? 'bg-blue-500/10' :
+                        solution.color === 'purple' ? 'bg-purple-500/10' :
+                        solution.color === 'green' ? 'bg-green-500/10' :
+                        solution.color === 'pink' ? 'bg-pink-500/10' :
+                        solution.color === 'orange' ? 'bg-orange-500/10' :
+                        'bg-gray-500/10'
+                      } rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                        <solution.icon className={`w-8 h-8 ${
+                          solution.color === 'blue' ? 'text-blue-600' :
+                          solution.color === 'purple' ? 'text-purple-600' :
+                          solution.color === 'green' ? 'text-green-600' :
+                          solution.color === 'pink' ? 'text-pink-600' :
+                          solution.color === 'orange' ? 'text-orange-600' :
+                          'text-gray-600'
+                        }`} />
                       </div>
 
                       {/* Contenu */}
                       <div className="flex-1">
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{solution.title}</h3>
-                        <p className={`text-${solution.color}-600 font-medium mb-4`}>{solution.subtitle}</p>
+                        <p className={`${
+                          solution.color === 'blue' ? 'text-blue-600' :
+                          solution.color === 'purple' ? 'text-purple-600' :
+                          solution.color === 'green' ? 'text-green-600' :
+                          solution.color === 'pink' ? 'text-pink-600' :
+                          solution.color === 'orange' ? 'text-orange-600' :
+                          'text-gray-600'
+                        } font-medium mb-4`}>{solution.subtitle}</p>
                         <p className="text-gray-600 mb-6 leading-relaxed">{solution.description}</p>
 
                         {/* Features */}
                         <ul className="space-y-2 mb-6">
                           {solution.features.map((feature, idx) => (
                             <li key={idx} className="flex items-center text-sm text-gray-600">
-                              <div className={`w-2 h-2 bg-${solution.color}-600 rounded-full mr-3`}></div>
+                              <div className={`w-2 h-2 ${
+                                solution.color === 'blue' ? 'bg-blue-600' :
+                                solution.color === 'purple' ? 'bg-purple-600' :
+                                solution.color === 'green' ? 'bg-green-600' :
+                                solution.color === 'pink' ? 'bg-pink-600' :
+                                solution.color === 'orange' ? 'bg-orange-600' :
+                                'bg-gray-600'
+                              } rounded-full mr-3`}></div>
                               {feature}
                             </li>
                           ))}
@@ -208,7 +243,14 @@ const Solutions = () => {
                       {/* CTA */}
                       <Button 
                         asChild
-                        className={`w-full bg-${solution.color}-600 hover:bg-${solution.color}-700 text-white group`}
+                        className={`w-full ${
+                          solution.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700' :
+                          solution.color === 'purple' ? 'bg-purple-600 hover:bg-purple-700' :
+                          solution.color === 'green' ? 'bg-green-600 hover:bg-green-700' :
+                          solution.color === 'pink' ? 'bg-pink-600 hover:bg-pink-700' :
+                          solution.color === 'orange' ? 'bg-orange-600 hover:bg-orange-700' :
+                          'bg-gray-600 hover:bg-gray-700'
+                        } text-white group`}
                       >
                         <a href={solution.link}>
                           En savoir plus
