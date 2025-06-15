@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PackageSelector from './PackageSelector';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
-import { ArrowLeft, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 
 const CreateUserForm = () => {
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
@@ -49,15 +49,9 @@ const CreateUserForm = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Nouveau compte utilisateur</h1>
-          <p className="text-gray-600">Créez un compte client avec ses formules</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Nouveau compte utilisateur</h1>
+        <p className="text-gray-600">Créez un compte client avec ses formules</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
