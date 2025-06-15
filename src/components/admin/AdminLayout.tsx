@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { useBetterAuth } from '@/hooks/useBetterAuth';
+import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   LayoutDashboard, 
@@ -29,14 +28,7 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { user, signOut, getUserRole } = useBetterAuth();
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (user?.id) {
-      getUserRole(user.id).then(setUserRole);
-    }
-  }, [user, getUserRole]);
+  const { user, signOut, userRole } = useBetterAuthIndependent();
 
   const menuItems = [
     {

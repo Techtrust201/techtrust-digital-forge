@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useSupabaseUsers } from './useSupabaseUsersIndependent';
+import { useUsersIndependent } from './useUsersIndependent';
 import { UserWithAuth } from '@/types/user';
 
 interface User {
@@ -32,14 +32,14 @@ export const useAdminUsersPage = () => {
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 
   const {
-    users: supabaseUsers,
+    users: independentUsers,
     isLoading,
     updateUserPackages,
     getUserStats
-  } = useSupabaseUsers();
+  } = useUsersIndependent();
 
-  // Convert supabase users to the expected User format
-  const users: User[] = supabaseUsers.map(user => ({
+  // Convert independent users to the expected User format
+  const users: User[] = independentUsers.map(user => ({
     id: user.id,
     name: user.name,
     email: user.email,
