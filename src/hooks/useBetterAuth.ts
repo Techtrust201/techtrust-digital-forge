@@ -21,9 +21,9 @@ export const useBetterAuth = () => {
     const checkAuth = async () => {
       try {
         const result = await auth.api.getSession({
-          headers: {
-            'cookie': document.cookie
-          }
+          headers: new Headers({
+            'Cookie': document.cookie
+          })
         });
         
         setAuthState({
@@ -50,9 +50,9 @@ export const useBetterAuth = () => {
     try {
       const result = await auth.api.signInEmail({
         body: { email, password },
-        headers: {
-          'cookie': document.cookie
-        }
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
       
       if (result?.user) {
@@ -75,9 +75,9 @@ export const useBetterAuth = () => {
     try {
       const result = await auth.api.signUpEmail({
         body: { email, password, name },
-        headers: {
-          'cookie': document.cookie
-        }
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
       
       return result;
@@ -90,9 +90,9 @@ export const useBetterAuth = () => {
   const signOut = async () => {
     try {
       await auth.api.signOut({
-        headers: {
-          'cookie': document.cookie
-        }
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
       setAuthState({
         user: null,
