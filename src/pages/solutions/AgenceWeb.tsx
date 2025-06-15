@@ -462,7 +462,7 @@ const AgenceWeb = () => {
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold mb-6">
-                  Notre <span className="text-custom-green">Processus</span> de Création
+                  Notre <span className="text-white">Processus</span> de Création
                 </h2>
                 <p className="text-lg text-gray-300">
                   Une méthodologie éprouvée pour des résultats à la hauteur de vos attentes
