@@ -92,6 +92,19 @@ const getTypeVariant = (type: string) => {
   }
 };
 
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case 'CDI':
+      return 'bg-blue-100 text-blue-800 border-blue-200';
+    case 'Freelance':
+      return 'bg-purple-100 text-purple-800 border-purple-200';
+    case 'Stage':
+      return 'bg-green-100 text-green-800 border-green-200';
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+};
+
 const Careers = () => {
   const [selectedJob, setSelectedJob] = useState<typeof jobCategories[0] | null>(null);
   const [formData, setFormData] = useState({
@@ -193,9 +206,12 @@ const Careers = () => {
                               <span className="text-gray-500">Type:</span>
                               <div className="flex gap-1 flex-wrap">
                                 {job.types.map((type, typeIndex) => (
-                                  <Badge key={typeIndex} variant={getTypeVariant(type)} className="text-xs">
+                                  <span 
+                                    key={typeIndex} 
+                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getTypeColor(type)}`}
+                                  >
                                     {type}
-                                  </Badge>
+                                  </span>
                                 ))}
                               </div>
                             </div>
@@ -227,9 +243,12 @@ const Careers = () => {
                                 <span className="text-gray-500">Types:</span>
                                 <div className="flex gap-1 flex-wrap">
                                   {job.types.map((type, typeIndex) => (
-                                    <Badge key={typeIndex} variant={getTypeVariant(type)} className="text-xs">
+                                    <span 
+                                      key={typeIndex} 
+                                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getTypeColor(type)}`}
+                                    >
                                       {type}
-                                    </Badge>
+                                    </span>
                                   ))}
                                 </div>
                               </div>
