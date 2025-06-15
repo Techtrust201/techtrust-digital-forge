@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
@@ -30,7 +29,7 @@ const jobCategories = [
     description: "Rejoignez notre équipe technique pour développer nos outils IA révolutionnaires",
     requirements: "React, TypeScript, Node.js, IA/ML",
     salary: "45K - 65K€",
-    types: ["CDI", "Freelance"]
+    types: ["CDI", "Freelance", "Stage"]
   },
   {
     title: "Growth Hacker IA",
@@ -39,7 +38,7 @@ const jobCategories = [
     description: "Concevez des stratégies d'acquisition avec nos outils IA propriétaires",
     requirements: "Growth hacking, automatisation, analytics",
     salary: "40K - 60K€",
-    types: ["CDI", "Freelance"]
+    types: ["CDI", "Freelance", "Stage"]
   },
   {
     title: "Community Manager",
@@ -216,7 +215,7 @@ const Careers = () => {
                               </div>
                             </div>
                           </div>
-                          <Button className={`w-full mt-4 bg-${job.color} hover:bg-${job.color}/90`}>
+                          <Button className={`w-full mt-4`} style={{ backgroundColor: `var(--${job.color.replace('-', '')})` }}>
                             Postuler <ArrowRight className="ml-2 w-4 h-4" />
                           </Button>
                         </div>
@@ -324,7 +323,7 @@ const Careers = () => {
                               </div>
                             </div>
                             
-                            <Button type="submit" className={`w-full bg-${job.color} hover:bg-${job.color}/90`}>
+                            <Button type="submit" className={`w-full`} style={{ backgroundColor: `var(--${job.color.replace('-', '')})` }}>
                               Envoyer ma candidature
                             </Button>
                           </form>
