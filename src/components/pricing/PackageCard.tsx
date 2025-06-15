@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -80,8 +81,8 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, service, index, isSelect
         <div className="space-y-4 flex-1">
           {pkg.features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200">
-              <div className={`flex-shrink-0 w-6 h-6 ${pkg.popular ? `bg-${service.color}-100` : 'bg-green-100'} rounded-full flex items-center justify-center mt-0.5`}>
-                <Check className={`w-4 h-4 ${pkg.popular ? `text-${service.color}-600` : 'text-green-600'}`} />
+              <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                <Check className="w-4 h-4 text-green-600" />
               </div>
               <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
             </div>
