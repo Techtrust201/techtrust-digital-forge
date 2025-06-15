@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -135,7 +134,7 @@ const NavbarPublic = () => {
             </Button>
             
             <Button asChild className="bg-custom-blue hover:bg-custom-blue/90">
-              <a href="/auth/signin">
+              <a href="/auth">
                 Connexion
               </a>
             </Button>
@@ -260,7 +259,7 @@ const NavbarPublic = () => {
                 </Button>
                 
                 <Button asChild className="w-full justify-center bg-custom-blue">
-                  <a href="/auth/signin">
+                  <a href="/auth">
                     Connexion
                   </a>
                 </Button>
