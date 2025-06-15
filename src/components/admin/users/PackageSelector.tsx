@@ -47,12 +47,6 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
 
   const isSelected = (packageId: string) => selectedPackages.includes(packageId);
 
-  // Check if category already has a selection
-  const hasSelectionInCategory = (categoryKey: string) => {
-    const categoryPackages = packagesByCategory[categoryKey]?.packages || [];
-    return categoryPackages.some(pkg => isSelected(pkg.id));
-  };
-
   // Get selected package in category
   const getSelectedInCategory = (categoryKey: string) => {
     const categoryPackages = packagesByCategory[categoryKey]?.packages || [];
@@ -61,15 +55,15 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
 
   const handlePackageClick = (pkg: Package) => {
     if (isSelected(pkg.id)) {
-      // If already selected, remove it
+      // Si le package est déjà sélectionné, on le désélectionne
       onRemovePackage(pkg.id);
     } else {
-      // If not selected, check if category already has a selection
+      // Si un autre package de la même catégorie est sélectionné, on le remplace
       const selectedInCategory = getSelectedInCategory(pkg.categoryKey);
       if (selectedInCategory) {
-        // Replace the existing selection
         onRemovePackage(selectedInCategory.id);
       }
+      // Ajouter le nouveau package
       onAddPackage(pkg.id);
     }
   };
@@ -80,7 +74,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
         <h3 className="text-lg font-semibold mb-2">Sélectionner les formules</h3>
         <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg mb-4">
           <AlertCircle className="w-4 h-4" />
-          <span>Une seule formule par catégorie peut être sélectionnée</span>
+          <span>Une seule formule par catégorie peut être sélectionnée. Cliquez pour basculer entre les options.</span>
         </div>
       </div>
 
@@ -109,19 +103,16 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
               <CardContent className="space-y-2">
                 {packages.map((pkg) => {
                   const isThisSelected = isSelected(pkg.id);
-                  const isDisabled = hasSelectionInCategory(categoryKey) && !isThisSelected;
                   
                   return (
                     <div
                       key={pkg.id}
-                      className={`p-3 rounded-lg border-2 transition-all cursor-pointer ${
+                      className={`p-3 rounded-lg border-2 transition-all cursor-pointer hover:scale-[1.02] ${
                         isThisSelected
-                          ? 'border-red-500 bg-red-100'
-                          : isDisabled
-                          ? 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
-                          : 'border-gray-200 hover:border-red-300 hover:bg-red-50'
+                          ? 'border-red-500 bg-red-100 shadow-md'
+                          : 'border-gray-200 hover:border-red-300 hover:bg-red-50 hover:shadow-sm'
                       }`}
-                      onClick={() => !isDisabled && handlePackageClick(pkg)}
+                      onClick={() => handlePackageClick(pkg)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -136,9 +127,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                               <Check className="w-4 h-4 text-white" />
                             </div>
                           ) : (
-                            <div className={`w-6 h-6 border-2 rounded-full ${
-                              isDisabled ? 'border-gray-300' : 'border-gray-300 hover:border-red-500'
-                            }`}></div>
+                            <div className="w-6 h-6 border-2 border-gray-300 rounded-full hover:border-red-500 transition-colors"></div>
                           )}
                         </div>
                       </div>
