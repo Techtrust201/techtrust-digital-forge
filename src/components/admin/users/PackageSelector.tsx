@@ -18,7 +18,7 @@ interface PackageSelectorProps {
   selectedPackages: string[];
   allPackages: Package[];
   onAddPackage: (packageId: string) => void;
-  onRemovePackage: (packageId: string) => void;
+  onRemovePackage: () => void; // Simplifié car on ne remove qu'un package à la fois
   getPackageById: (packageId: string) => Package | undefined;
   getPackageColor: (categoryKey: string) => string;
   getTotalPrice: (packageIds: string[]) => number;
@@ -46,17 +46,14 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
   }, {} as Record<string, { title: string; packages: Package[] }>);
 
   const isSelected = (packageId: string) => selectedPackages.includes(packageId);
+  const selectedPackageId = selectedPackages[0] || ''; // Il ne peut y en avoir qu'un
 
   const handlePackageClick = (pkg: Package) => {
     if (isSelected(pkg.id)) {
       // Si le package est déjà sélectionné, on le désélectionne
-      onRemovePackage(pkg.id);
+      onRemovePackage();
     } else {
-      // Désélectionner tous les autres packages avant de sélectionner le nouveau
-      selectedPackages.forEach(packageId => {
-        onRemovePackage(packageId);
-      });
-      // Ajouter le nouveau package
+      // Sélectionner le nouveau package (l'ancien sera automatiquement remplacé)
       onAddPackage(pkg.id);
     }
   };
@@ -134,7 +131,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
       </div>
 
       {/* Selected Package Summary */}
-      {selectedPackages.length > 0 && (
+      {selectedPackageId && (
         <Card className="bg-gray-50 border-gray-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -143,12 +140,12 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                   Formule sélectionnée
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {selectedPackages.map((packageId) => {
-                    const pkg = getPackageById(packageId);
+                  {(() => {
+                    const pkg = getPackageById(selectedPackageId);
                     if (!pkg) return null;
                     return (
                       <Badge 
-                        key={packageId} 
+                        key={selectedPackageId} 
                         className={`${getPackageColor(pkg.categoryKey)} flex items-center gap-1 py-1 px-2 text-xs`}
                       >
                         {pkg.name}
@@ -156,18 +153,18 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                           size="sm"
                           variant="ghost"
                           className="h-4 w-4 p-0 hover:bg-transparent"
-                          onClick={() => onRemovePackage(packageId)}
+                          onClick={onRemovePackage}
                         >
                           <X className="w-3 h-3" />
                         </Button>
                       </Badge>
                     );
-                  })}
+                  })()}
                 </div>
               </div>
               <div className="text-right">
                 <span className="font-bold text-red-600 text-xl">
-                  {getTotalPrice(selectedPackages)}€
+                  {getTotalPrice([selectedPackageId])}€
                 </span>
               </div>
             </div>
@@ -175,7 +172,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
         </Card>
       )}
 
-      {selectedPackages.length === 0 && (
+      {!selectedPackageId && (
         <div className="text-center py-8 text-gray-500">
           <div className="text-4xl mb-2">📦</div>
           <p className="text-sm">Aucune formule sélectionnée</p>

@@ -9,7 +9,7 @@ import { usePackageUtils } from '@/hooks/usePackageUtils';
 import { UserPlus } from 'lucide-react';
 
 const CreateUserForm = () => {
-  const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<string>(''); // Un seul package au lieu d'un tableau
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,13 +19,11 @@ const CreateUserForm = () => {
   const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
 
   const addPackage = (packageId: string) => {
-    if (!selectedPackages.includes(packageId)) {
-      setSelectedPackages([...selectedPackages, packageId]);
-    }
+    setSelectedPackage(packageId);
   };
 
-  const removePackage = (packageId: string) => {
-    setSelectedPackages(selectedPackages.filter(id => id !== packageId));
+  const removePackage = () => {
+    setSelectedPackage('');
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -36,12 +34,12 @@ const CreateUserForm = () => {
     return formData.firstName.trim() && 
            formData.lastName.trim() && 
            formData.email.trim() && 
-           selectedPackages.length > 0;
+           selectedPackage !== '';
   };
 
   const handleSubmit = () => {
     if (isFormValid()) {
-      console.log('Création du compte:', { ...formData, packages: selectedPackages });
+      console.log('Création du compte:', { ...formData, package: selectedPackage });
       // Handle form submission
     }
   };
@@ -104,9 +102,6 @@ const CreateUserForm = () => {
                 <UserPlus className="w-4 h-4 mr-2" />
                 Créer le compte
               </Button>
-              <Button variant="outline" className="w-full">
-                Annuler
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -116,7 +111,7 @@ const CreateUserForm = () => {
           <Card>
             <CardContent className="p-6">
               <PackageSelector
-                selectedPackages={selectedPackages}
+                selectedPackages={selectedPackage ? [selectedPackage] : []} // Convertir en tableau pour la compatibilité
                 allPackages={getAllPackages()}
                 onAddPackage={addPackage}
                 onRemovePackage={removePackage}
