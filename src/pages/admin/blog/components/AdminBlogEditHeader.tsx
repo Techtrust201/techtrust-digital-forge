@@ -35,12 +35,13 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="secondary"
+          className="hover-scale bg-secondary text-gray-900 border border-gray-300 shadow-sm rounded-full px-5 py-3 transition-all duration-200 focus:ring-2 focus:ring-blue-300 flex items-center gap-2"
           onClick={() => navigate('/admin/blog/posts')}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          <span className="font-semibold">Retour</span>
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Modifier l'article</h1>
@@ -51,7 +52,7 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
               'bg-gray-100 text-gray-800'
             }>
               {post.status === 'published' ? 'Publié' : 
-               post.status === 'scheduled' ? 'Programmé' : 'Brouillon'}
+              post.status === 'scheduled' ? 'Programmé' : 'Brouillon'}
             </Badge>
             <span className="text-sm text-gray-500">
               {post.views} vues • Créé le {new Date(post.created_at).toLocaleDateString('fr-FR')}
@@ -105,3 +106,4 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
 };
 
 export default AdminBlogEditHeader;
+
