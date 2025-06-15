@@ -13,6 +13,18 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import NotFound from './pages/NotFound';
 import Blog from './pages/Blog';
+import Pricing from './pages/Pricing';
+import Careers from './pages/Careers';
+import Help from './pages/Help';
+import Contact from './pages/Contact';
+import Solutions from './pages/Solutions';
+
+// Solution pages
+import AgenceWeb from './pages/solutions/AgenceWeb';
+import GrowthHacking from './pages/solutions/GrowthHacking';
+import SolutionsDigitales from './pages/solutions/SolutionsDigitales';
+import CommunityManagement from './pages/solutions/CommunityManagement';
+import ConsultingDigital from './pages/solutions/ConsultingDigital';
 
 // Admin pages
 import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
@@ -69,9 +81,22 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/solutions" element={<Solutions />} />
+            
+            {/* Solution pages */}
+            <Route path="/solutions/agence-web" element={<AgenceWeb />} />
+            <Route path="/solutions/growth-hacking" element={<GrowthHacking />} />
+            <Route path="/solutions/digitales-sur-mesure" element={<SolutionsDigitales />} />
+            <Route path="/solutions/community-management" element={<CommunityManagement />} />
+            <Route path="/solutions/consulting-digital" element={<ConsultingDigital />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={
