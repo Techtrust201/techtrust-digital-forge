@@ -102,7 +102,7 @@ const Auth = () => {
       
       // Rediriger selon le rôle
       if (account.role === 'admin') {
-        window.location.href = '/admin/dashboard';
+        window.location.href = '/admin';
       } else {
         window.location.href = '/dashboard';
       }
