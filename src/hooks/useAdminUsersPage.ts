@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useSupabaseUsers } from './useSupabaseUsers';
+import { useSupabaseUsers } from './useSupabaseUsersIndependent';
 import { UserWithAuth } from '@/types/user';
 
 interface User {

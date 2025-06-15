@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
-import { useBetterAuth } from '@/hooks/useBetterAuth';
+import { useBetterAuth } from '@/hooks/useBetterAuthIndependent';
 import { toast } from 'sonner';
 
 const Auth = () => {
