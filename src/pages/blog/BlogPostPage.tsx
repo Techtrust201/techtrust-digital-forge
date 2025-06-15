@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import NavbarPublic from '@/components/NavbarPublic';
@@ -97,50 +96,48 @@ const BlogPostPage = () => {
       <div className="min-h-screen flex flex-col bg-white/95">
         <NavbarPublic />
         <main className="flex-grow">
-          <div className="max-w-3xl mx-auto px-2 pt-10 pb-20 flex flex-col gap-7 items-center">
-            {/* Cover image */}
-            <div className="w-full h-56 md:h-80 overflow-hidden rounded-3xl shadow-lg bg-gray-100 flex items-center justify-center mb-2">
+          {/* Bloc centré et moderne */}
+          <div className="max-w-2xl w-full mx-auto px-2 pt-10 pb-12 flex flex-col gap-0 items-center animate-fade-in">
+            {/* Cover Image améliorée */}
+            <div className="w-full h-56 md:h-80 overflow-hidden rounded-3xl shadow-sm bg-gray-100 flex items-center justify-center mb-0">
               <img
-                src={DEFAULT_COVER}
+                src={post.cover_image || DEFAULT_COVER}
                 alt={post.title}
                 className="w-full h-full object-cover"
                 loading="lazy"
                 style={{ objectPosition: 'center', objectFit: 'cover' }}
               />
             </div>
-            {/* Card content */}
-            <section className="w-full bg-white rounded-2xl shadow-xl px-4 py-8 md:px-10 flex flex-col gap-7 relative z-10 animate-fade-in">
-              {/* Catégorie + vues */}
-              <div className="flex gap-3 items-center flex-wrap mb-3">
-                <Badge className="bg-red-100 text-red-800 border-red-200 px-3 text-sm">{post.category}</Badge>
-                <Badge variant="outline" className="text-gray-600 border-gray-200 bg-gray-50 px-3 text-sm">
-                  {post.views?.toLocaleString() || 0} vues
-                </Badge>
-              </div>
-              {/* Titre */}
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight text-center">{post.title}</h1>
-              {/* Metadonnées */}
-              <div className="flex flex-wrap justify-center items-center gap-5 mb-3">
-                <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-100 border border-gray-200">
-                  <SimpleAvatar name={post.author} />
-                  <span className="font-medium text-gray-800">{post.author}</span>
+            {/* Card centrée et aérée */}
+            <section className="w-full bg-white rounded-2xl shadow-xl px-5 py-7 md:px-10 flex flex-col gap-7 relative z-10 border border-gray-100 -mt-12">
+              {/* Auteur, catégorie, date */}
+              <div className="flex items-center justify-center gap-4 mb-2">
+                <SimpleAvatar name={post.author} />
+                <div className="flex flex-col">
+                  <span className="font-medium text-gray-900">{post.author}</span>
+                  <span className="flex items-center gap-2 text-gray-500 text-xs">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(post.publish_date ?? post.created_at).toLocaleDateString('fr-FR')}
+                  </span>
                 </div>
-                <span className="flex items-center gap-2 text-gray-500 text-sm">
-                  <Calendar className="w-4 h-4" />
-                  {new Date(post.publish_date ?? post.created_at).toLocaleDateString('fr-FR')}
-                </span>
+                <Badge className="bg-red-100 text-red-800 border-red-200 px-3 text-xs ml-4">{post.category}</Badge>
+                <Badge variant="outline" className="text-gray-600 border-gray-200 bg-gray-50 px-3 text-xs ml-0">{post.views?.toLocaleString() || 0} vues</Badge>
               </div>
-              {/* Blockquote/extrait si disponible */}
+              {/* Titre bien visible */}
+              <h1 className="text-3xl md:text-4xl font-extrabold text-center leading-tight tracking-tight mb-2">{post.title}</h1>
+              {/* Blockquote (extrait) si dispo */}
               {post.excerpt && (
                 <blockquote className="mx-auto max-w-xl italic relative text-lg text-blue-800 bg-blue-50 pl-6 pr-3 py-4 mb-3 border-l-4 border-blue-300 rounded overflow-hidden">
                   <span className="block">{post.excerpt}</span>
                   <span className="absolute left-1 top-2 text-3xl text-blue-300 opacity-40 select-none">“</span>
                 </blockquote>
               )}
-              {/* Contenu principal */}
-              <div className="prose prose-lg max-w-none mx-auto text-gray-900 break-words whitespace-pre-line leading-relaxed" style={{ fontSize: '1.12rem' }}>
+              {/* Contenu principal plus lisible */}
+              <div className="prose prose-lg max-w-none mx-auto text-gray-900 break-words whitespace-pre-line leading-relaxed"
+                   style={{ fontSize: '1.13rem' }}>
                 {post.content}
               </div>
+              {/* Bouton retour sobre */}
               <div className="flex justify-start mt-4">
                 <Button
                   size="sm"
