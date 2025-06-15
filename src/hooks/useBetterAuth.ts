@@ -20,12 +20,17 @@ export const useBetterAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const session = await auth.api.getSession();
+        const session = await auth.api.getSession({
+          headers: {
+            authorization: `Bearer ${document.cookie}`
+          }
+        });
+        
         setAuthState({
-          user: session?.user || null,
-          session: session || null,
+          user: session?.data?.user || null,
+          session: session?.data || null,
           isLoading: false,
-          isAuthenticated: !!session?.user
+          isAuthenticated: !!session?.data?.user
         });
       } catch (error) {
         console.error('Auth check error:', error);
@@ -47,10 +52,10 @@ export const useBetterAuth = () => {
         body: { email, password }
       });
       
-      if (result?.user) {
+      if (result?.data?.user) {
         setAuthState({
-          user: result.user,
-          session: result.session,
+          user: result.data.user,
+          session: result.data,
           isLoading: false,
           isAuthenticated: true
         });
@@ -78,7 +83,11 @@ export const useBetterAuth = () => {
 
   const signOut = async () => {
     try {
-      await auth.api.signOut();
+      await auth.api.signOut({
+        headers: {
+          authorization: `Bearer ${document.cookie}`
+        }
+      });
       setAuthState({
         user: null,
         session: null,

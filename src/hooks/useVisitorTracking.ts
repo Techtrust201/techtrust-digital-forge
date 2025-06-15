@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useBetterAuth } from '@/hooks/useBetterAuth';
@@ -21,7 +20,7 @@ interface VisitorData {
 export const useVisitorTracking = () => {
   const [cookiesAccepted, setCookiesAccepted] = useState<boolean>(false);
   const [visitorData, setVisitorData] = useState<VisitorData | null>(null);
-  const { session } = useBetterAuth();
+  const { session, user } = useBetterAuth();
 
   // Vérifier si les cookies ont été acceptés
   useEffect(() => {
@@ -54,8 +53,8 @@ export const useVisitorTracking = () => {
 
   const getOrCreateSessionId = (): string => {
     // Utiliser session Better-Auth si disponible, sinon générer un ID temporaire
-    if (session?.id) {
-      return session.id;
+    if (session?.session?.id) {
+      return session.session.id;
     }
     
     let sessionId = sessionStorage.getItem('techtrust_session_id');
@@ -126,7 +125,7 @@ export const useVisitorTracking = () => {
       setVisitorData(updatedVisitorData);
 
       // Utiliser l'ID utilisateur si connecté, sinon l'ID de session
-      const trackingId = session?.userId || visitorData.sessionId;
+      const trackingId = user?.id || visitorData.sessionId;
 
       // Sauvegarder l'événement de page vue
       await supabase.from('user_analytics').insert({
@@ -174,7 +173,7 @@ export const useVisitorTracking = () => {
 
   const saveVisitorData = async (data: VisitorData) => {
     try {
-      const trackingId = session?.userId || data.sessionId;
+      const trackingId = user?.id || data.sessionId;
       
       await supabase.from('user_analytics').insert({
         user_id: trackingId,

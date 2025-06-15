@@ -1,6 +1,5 @@
 
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 // Configuration flexible pour multi-environnements
 const getBetterAuthURL = () => {
@@ -21,7 +20,8 @@ const getBetterAuthURL = () => {
     return 'http://localhost:8080';
   }
   
-  return process.env.BETTER_AUTH_URL || 'http://localhost:8080';
+  // Fallback pour SSR
+  return 'http://localhost:8080';
 };
 
 export const auth = betterAuth({
@@ -38,12 +38,12 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false // Pour faciliter les tests
+    requireEmailVerification: false
   },
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
+      clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || "",
     }
   },
   session: {
