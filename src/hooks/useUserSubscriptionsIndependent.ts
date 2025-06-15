@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/database';
 import { useBetterAuthIndependent } from './useBetterAuthIndependent';
 
 export interface UserSubscription {
@@ -24,6 +23,8 @@ export const useUserSubscriptions = () => {
   useEffect(() => {
     if (user) {
       fetchSubscriptions();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
@@ -32,11 +33,23 @@ export const useUserSubscriptions = () => {
     
     try {
       setLoading(true);
-      const data = await db.query<UserSubscription>(
-        'SELECT * FROM public.user_subscriptions WHERE user_id = $1 AND status = $2',
-        [user.id, 'active']
-      );
-      setSubscriptions(data || []);
+      // Simulation de données pour le moment
+      // En production, remplacer par un appel API réel
+      const mockSubscriptions: UserSubscription[] = [
+        {
+          id: '1',
+          user_id: user.id,
+          package_id: 'website-starter',
+          package_name: 'Website Starter',
+          package_category: 'website',
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ];
+      
+      setSubscriptions(mockSubscriptions);
+      setError(null);
     } catch (err: any) {
       setError(err.message);
       console.error('Error fetching subscriptions:', err);
@@ -58,7 +71,6 @@ export const useUserSubscriptions = () => {
   };
 
   const hasAnalyticsAccess = () => {
-    // Accès Analytics pour tous les packages sauf les plus basiques
     return subscriptions.some(sub => 
       sub.status === 'active' && 
       !['website-starter', 'custom-audit'].includes(sub.package_id)
@@ -66,7 +78,6 @@ export const useUserSubscriptions = () => {
   };
 
   const hasCampaignsAccess = () => {
-    // Accès Campagnes pour Growth Hacking et Community Management
     return subscriptions.some(sub => 
       sub.status === 'active' && 
       ['growth-easy', 'growth-pro', 'growth-enterprise', 'community-starter', 'community-growth', 'community-premium'].includes(sub.package_id)
@@ -74,7 +85,6 @@ export const useUserSubscriptions = () => {
   };
 
   const hasAdvancedAnalytics = () => {
-    // Analytics avancées pour les packages premium
     return subscriptions.some(sub => 
       sub.status === 'active' && 
       ['growth-pro', 'growth-enterprise', 'community-premium', 'website-premium', 'custom-enterprise'].includes(sub.package_id)

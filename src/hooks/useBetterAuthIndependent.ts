@@ -99,6 +99,55 @@ export const useBetterAuthIndependent = () => {
     }
   };
 
+  const forgotPassword = async (email: string) => {
+    try {
+      const result = await auth.api.forgetPassword({
+        body: { email, redirectTo: `${window.location.origin}/auth?reset=true` },
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (password: string, token: string) => {
+    try {
+      const result = await auth.api.resetPassword({
+        body: { newPassword: password },
+        headers: new Headers({
+          'Cookie': document.cookie,
+          'Authorization': `Bearer ${token}`
+        })
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Reset password error:', error);
+      throw error;
+    }
+  };
+
+  const resendVerification = async (email: string) => {
+    try {
+      const result = await auth.api.sendVerificationEmail({
+        body: { email, redirectTo: `${window.location.origin}/auth?verified=true` },
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Resend verification error:', error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     try {
       await auth.api.signOut({
@@ -123,6 +172,9 @@ export const useBetterAuthIndependent = () => {
     signIn,
     signUp,
     signOut,
+    forgotPassword,
+    resetPassword,
+    resendVerification,
     getUserRole: () => authState.userRole
   };
 };
