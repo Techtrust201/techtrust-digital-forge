@@ -1,0 +1,65 @@
+
+import { 
+  Code, 
+  TrendingUp, 
+  MessageSquare, 
+  LineChart, 
+  Users
+} from 'lucide-react';
+
+export const jobCategories = [
+  {
+    title: "Développeur Full Stack",
+    icon: Code,
+    color: "blue-600",
+    description: "Rejoignez notre équipe technique pour développer nos outils IA révolutionnaires",
+    requirements: "React, TypeScript, Node.js, IA/ML",
+    salary: "45K - 65K€",
+    types: ["CDI", "Freelance", "Stage"]
+  },
+  {
+    title: "Growth Hacker IA",
+    icon: TrendingUp,
+    color: "purple-600", 
+    description: "Concevez des stratégies d'acquisition avec nos outils IA propriétaires",
+    requirements: "Growth hacking, automatisation, analytics",
+    salary: "40K - 60K€",
+    types: ["CDI", "Freelance", "Stage"]
+  },
+  {
+    title: "Community Manager",
+    icon: MessageSquare,
+    color: "pink-600",
+    description: "Gérez les communautés de nos clients avec nos outils d'IA",
+    requirements: "Réseaux sociaux, création contenu, outils IA",
+    salary: "35K - 45K€", 
+    types: ["CDI", "Stage", "Freelance"]
+  },
+  {
+    title: "Data Scientist IA",
+    icon: LineChart,
+    color: "green-600",
+    description: "Développez nos algorithmes d'IA pour le growth hacking",
+    requirements: "Python, ML, TensorFlow, Analytics",
+    salary: "50K - 70K€",
+    types: ["CDI", "Freelance"]
+  },
+  {
+    title: "UX/UI Designer",
+    icon: Users,
+    color: "indigo-600",
+    description: "Concevez des interfaces utilisateur pour nos outils IA",
+    requirements: "Figma, Design System, UX Research",
+    salary: "40K - 55K€",
+    types: ["CDI", "Freelance"]
+  },
+  {
+    title: "Chef de Projet Tech",
+    icon: Users,
+    color: "orange-600",
+    description: "Coordonnez le développement de nos solutions IA",
+    requirements: "Gestion projet, méthodologies agiles",
+    salary: "45K - 60K€",
+    types: ["CDI", "Freelance"]
+  }
+];
