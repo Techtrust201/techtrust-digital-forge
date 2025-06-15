@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import NotFound from './pages/NotFound';
+import Blog from './pages/Blog';
 
 // Admin pages
 import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
@@ -70,6 +71,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/blog" element={<Blog />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={
