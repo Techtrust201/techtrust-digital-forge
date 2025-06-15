@@ -232,11 +232,11 @@ Notre IA s'adapte en temps réel aux updates Google :
         
         <main>
           {/* Hero Section */}
-          <section className="py-20 lg:py-32 bg-gradient-to-br from-green-50 to-gray-50">
+          <section className="py-20 lg:py-32 bg-gradient-to-br from-purple-50 to-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-4xl mx-auto">
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-                  Blog <span className="text-green-600">Techtrust</span> 2025
+                  Blog <span className="text-purple-600">Techtrust</span> 2025
                 </h1>
                 <p className="text-xl text-gray-600 mb-8">
                   Découvrez nos guides exclusifs, cas clients et stratégies avancées pour dominer votre marché avec l'IA et le growth hacking.
@@ -262,7 +262,7 @@ Notre IA s'adapte en temps réel aux updates Google :
                     <div className="p-6">
                       <div className="flex flex-wrap gap-2 mb-3">
                         {post.tags.map((tag) => (
-                          <span key={tag} className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+                          <span key={tag} className="inline-flex items-center rounded-full bg-purple-50 px-2.5 py-1 text-xs font-medium text-purple-700">
                             {tag}
                           </span>
                         ))}
@@ -290,7 +290,7 @@ Notre IA s'adapte en temps réel aux updates Google :
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button 
-                            className="w-full bg-green-600 hover:bg-green-700 group/btn"
+                            className="w-full bg-purple-600 hover:bg-purple-700 group/btn"
                             onClick={() => setSelectedPost(post)}
                           >
                             Lire l'article
