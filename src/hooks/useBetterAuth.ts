@@ -20,7 +20,7 @@ export const useBetterAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const result = await auth.api.getSession();
+        const result = await auth.api.getSession({});
         
         setAuthState({
           user: result?.user || null,
@@ -79,7 +79,7 @@ export const useBetterAuth = () => {
 
   const signOut = async () => {
     try {
-      await auth.api.signOut();
+      await auth.api.signOut({});
       setAuthState({
         user: null,
         session: null,

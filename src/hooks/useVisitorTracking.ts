@@ -53,8 +53,8 @@ export const useVisitorTracking = () => {
 
   const getOrCreateSessionId = (): string => {
     // Utiliser session Better-Auth si disponible, sinon générer un ID temporaire
-    if (session?.session?.id) {
-      return session.session.id;
+    if (session?.id) {
+      return session.id;
     }
     
     let sessionId = sessionStorage.getItem('techtrust_session_id');
