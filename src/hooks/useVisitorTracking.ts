@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useBlogActions } from '@/hooks/useBlogData';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 
 interface VisitorData {
   sessionId: string;
@@ -21,6 +21,7 @@ interface VisitorData {
 export const useVisitorTracking = () => {
   const [cookiesAccepted, setCookiesAccepted] = useState<boolean>(false);
   const [visitorData, setVisitorData] = useState<VisitorData | null>(null);
+  const { session } = useBetterAuth();
 
   // Vérifier si les cookies ont été acceptés
   useEffect(() => {
@@ -52,6 +53,11 @@ export const useVisitorTracking = () => {
   };
 
   const getOrCreateSessionId = (): string => {
+    // Utiliser session Better-Auth si disponible, sinon générer un ID temporaire
+    if (session?.id) {
+      return session.id;
+    }
+    
     let sessionId = sessionStorage.getItem('techtrust_session_id');
     if (!sessionId) {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -119,9 +125,12 @@ export const useVisitorTracking = () => {
       };
       setVisitorData(updatedVisitorData);
 
+      // Utiliser l'ID utilisateur si connecté, sinon l'ID de session
+      const trackingId = session?.userId || visitorData.sessionId;
+
       // Sauvegarder l'événement de page vue
       await supabase.from('user_analytics').insert({
-        user_id: visitorData.sessionId,
+        user_id: trackingId,
         event_type: 'page_view',
         page_url: pagePath,
         device_type: visitorData.deviceType,
@@ -130,7 +139,7 @@ export const useVisitorTracking = () => {
         session_duration: Math.floor((Date.now() - new Date(visitorData.sessionStart).getTime()) / 1000),
       });
 
-      console.log(`Page vue trackée: ${pagePath}`);
+      console.log(`Page vue trackée: ${pagePath} (User: ${trackingId})`);
     } catch (error) {
       console.error('Erreur tracking page vue:', error);
     }
@@ -165,8 +174,10 @@ export const useVisitorTracking = () => {
 
   const saveVisitorData = async (data: VisitorData) => {
     try {
+      const trackingId = session?.userId || data.sessionId;
+      
       await supabase.from('user_analytics').insert({
-        user_id: data.sessionId,
+        user_id: trackingId,
         event_type: 'session_start',
         device_type: data.deviceType,
         browser: data.browser,

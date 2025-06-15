@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
@@ -11,74 +12,91 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Lock, Mail, User, Eye, EyeOff, Shield, Rocket, Crown, Diamond, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-
-// Comptes de test disponibles
-const testAccounts = [
-  {
-    email: 'admin@techtrust.fr',
-    password: 'admin123',
-    role: 'admin',
-    tier: 'diamond',
-    name: 'Admin Techtrust',
-    description: 'Accès complet à tous les outils'
-  },
-  {
-    email: 'starter@techtrust.fr', 
-    password: 'starter123',
-    role: 'client',
-    tier: 'bronze',
-    services: ['website-starter'],
-    name: 'Client Starter',
-    description: 'Site web basique'
-  },
-  {
-    email: 'business@techtrust.fr',
-    password: 'business123', 
-    role: 'client',
-    tier: 'silver',
-    services: ['website-business', 'growth-pro'],
-    name: 'Client Business',
-    description: 'Site + Growth Hacking'
-  },
-  {
-    email: 'premium@techtrust.fr',
-    password: 'premium123',
-    role: 'client', 
-    tier: 'gold',
-    services: ['website-premium', 'growth-enterprise', 'community-growth'],
-    name: 'Client Premium',
-    description: 'Formules premium'
-  },
-  {
-    email: 'stagiaire@techtrust.fr',
-    password: 'stage123',
-    role: 'employee',
-    tier: 'bronze',
-    permissions: ['community-management'],
-    name: 'Stagiaire CM',
-    description: 'Community manager stagiaire'
-  },
-  {
-    email: 'manager@techtrust.fr',
-    password: 'manager123',
-    role: 'manager',
-    tier: 'gold', 
-    permissions: ['all-except-admin'],
-    name: 'Manager',
-    description: 'Manager équipe'
-  }
-];
+import { toast } from 'sonner';
 
 const Auth = () => {
   const { t } = useTranslation();
+  const { signIn, signUp, isAuthenticated, isLoading } = useBetterAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
     confirmPassword: ''
   });
-  const [selectedTestAccount, setSelectedTestAccount] = useState<typeof testAccounts[0] | null>(null);
+
+  // Rediriger si déjà connecté
+  useEffect(() => {
+    if (isAuthenticated) {
+      window.location.href = '/dashboard';
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email || !formData.password) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    try {
+      const result = await signIn(formData.email, formData.password);
+      
+      if (result?.user) {
+        toast.success('Connexion réussie !');
+        // La redirection se fera via useEffect
+      } else {
+        toast.error('Email ou mot de passe incorrect');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || 'Erreur de connexion');
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email || !formData.password || !formData.name) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    try {
+      const result = await signUp(formData.email, formData.password, formData.name);
+      
+      if (result?.user) {
+        toast.success('Compte créé avec succès !');
+        setActiveTab('login');
+        setFormData({ email: formData.email, password: '', name: '', confirmPassword: '' });
+      }
+    } catch (error: any) {
+      console.error('Register error:', error);
+      toast.error(error.message || 'Erreur lors de la création du compte');
+    }
+  };
+
+  const fillTestAccount = (email: string, password: string) => {
+    setFormData({ ...formData, email, password });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -86,58 +104,6 @@ const Auth = () => {
     "name": "Connexion Espace Client Techtrust",
     "description": "Accédez à votre espace client Techtrust pour gérer vos outils IA de growth hacking, community management et solutions digitales.",
     "url": "https://www.tech-trust.fr/auth"
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Vérifier les comptes de test
-    const account = testAccounts.find(acc => 
-      acc.email === formData.email && acc.password === formData.password
-    );
-    
-    if (account) {
-      // Stocker les infos de connexion
-      localStorage.setItem('techtrust_user', JSON.stringify(account));
-      
-      // Rediriger selon le rôle
-      if (account.role === 'admin') {
-        window.location.href = '/admin';
-      } else {
-        window.location.href = '/dashboard';
-      }
-    } else {
-      alert('❌ Email ou mot de passe incorrect. Utilisez un compte de test ci-dessous.');
-    }
-  };
-
-  const handleTestAccountSelect = (account: typeof testAccounts[0]) => {
-    setFormData({
-      ...formData,
-      email: account.email,
-      password: account.password
-    });
-    setSelectedTestAccount(account);
-  };
-
-  const getTierIcon = (tier: string) => {
-    switch (tier) {
-      case 'bronze': return Shield;
-      case 'silver': return Rocket;
-      case 'gold': return Crown;
-      case 'diamond': return Diamond;
-      default: return Shield;
-    }
-  };
-
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case 'bronze': return 'text-amber-600 bg-amber-50';
-      case 'silver': return 'text-gray-600 bg-gray-50';
-      case 'gold': return 'text-yellow-600 bg-yellow-50';
-      case 'diamond': return 'text-purple-600 bg-purple-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
   };
 
   return (
@@ -171,7 +137,7 @@ const Auth = () => {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Formulaire de connexion */}
               <div className="lg:col-span-2">
-                <Tabs defaultValue="login" className="w-full">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="grid w-full grid-cols-2 mb-6">
                     <TabsTrigger value="login" className="text-lg py-3">Se connecter</TabsTrigger>
                     <TabsTrigger value="register" className="text-lg py-3">S'inscrire</TabsTrigger>
@@ -186,7 +152,7 @@ const Auth = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form onSubmit={handleLogin} className="space-y-6">
                           <div>
                             <Label htmlFor="email" className="text-base font-medium">Email</Label>
                             <div className="relative mt-2">
@@ -234,12 +200,6 @@ const Auth = () => {
                           >
                             Se connecter
                           </Button>
-                          
-                          <div className="text-center">
-                            <a href="/forgot-password" className="text-blue-500 hover:underline">
-                              Mot de passe oublié ?
-                            </a>
-                          </div>
                         </form>
                       </CardContent>
                     </Card>
@@ -254,7 +214,7 @@ const Auth = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form onSubmit={handleRegister} className="space-y-6">
                           <div>
                             <Label htmlFor="name" className="text-base font-medium">Nom complet</Label>
                             <div className="relative mt-2">
@@ -312,6 +272,23 @@ const Auth = () => {
                               </button>
                             </div>
                           </div>
+
+                          <div>
+                            <Label htmlFor="confirm-password" className="text-base font-medium">Confirmer le mot de passe</Label>
+                            <div className="relative mt-2">
+                              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                              <Input
+                                id="confirm-password"
+                                name="confirmPassword"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={formData.confirmPassword}
+                                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                                className="pl-10 pr-12 h-12 text-base"
+                                required
+                              />
+                            </div>
+                          </div>
                           
                           <Button 
                             type="submit" 
@@ -335,51 +312,36 @@ const Auth = () => {
                       Comptes de Test
                     </CardTitle>
                     <CardDescription>
-                      Utilisez ces comptes pour tester les différents accès
+                      Cliquez pour remplir automatiquement
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {testAccounts.map((account) => {
-                      const TierIcon = getTierIcon(account.tier);
-                      const isSelected = selectedTestAccount?.email === account.email;
-                      
-                      return (
-                        <Card 
-                          key={account.email}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                          }`}
-                          onClick={() => handleTestAccountSelect(account)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <TierIcon className={`w-4 h-4 ${getTierColor(account.tier).split(' ')[0]}`} />
-                                <span className="font-medium text-sm">{account.name}</span>
-                              </div>
-                              <Badge className={`text-xs ${getTierColor(account.tier)}`}>
-                                {account.tier.toUpperCase()}
-                              </Badge>
-                            </div>
-                            <p className="text-xs text-gray-600 mb-2">{account.description}</p>
-                            <div className="text-xs space-y-1">
-                              <div><strong>Email:</strong> {account.email}</div>
-                              <div><strong>Mot de passe:</strong> {account.password}</div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-
-                {/* Info demo */}
-                <Card className="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                  <CardContent className="p-4 text-center">
-                    <h4 className="font-medium text-gray-900 mb-2">Mode Démo</h4>
-                    <p className="text-sm text-gray-600">
-                      Cette version de démo vous permet de tester toutes les fonctionnalités selon votre profil utilisateur.
-                    </p>
+                    {[
+                      { email: 'admin@techtrust.fr', password: 'admin123', name: 'Admin', role: 'Super Admin' },
+                      { email: 'starter@techtrust.fr', password: 'starter123', name: 'Client Starter', role: 'Client' },
+                      { email: 'business@techtrust.fr', password: 'business123', name: 'Client Business', role: 'Client' },
+                      { email: 'premium@techtrust.fr', password: 'premium123', name: 'Client Premium', role: 'Client' },
+                      { email: 'manager@techtrust.fr', password: 'manager123', name: 'Manager', role: 'Manager' }
+                    ].map((account) => (
+                      <Card 
+                        key={account.email}
+                        className="cursor-pointer transition-all hover:shadow-md hover:bg-blue-50"
+                        onClick={() => fillTestAccount(account.email, account.password)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">{account.name}</span>
+                            <Badge variant="outline" className="text-xs">
+                              {account.role}
+                            </Badge>
+                          </div>
+                          <div className="text-xs space-y-1 text-gray-600">
+                            <div><strong>Email:</strong> {account.email}</div>
+                            <div><strong>Password:</strong> {account.password}</div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </CardContent>
                 </Card>
               </div>
