@@ -1,26 +1,21 @@
-
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { 
-  FileText, 
-  Plus, 
-  Search, 
-  Filter,
+  PenTool, 
+  Eye, 
+  MessageSquare, 
+  Calendar,
+  Search,
+  Plus,
   MoreHorizontal,
   Edit,
   Trash2,
-  Eye,
-  Calendar,
-  MessageSquare,
-  TrendingUp,
-  FolderOpen,
-  Tag
+  CheckCircle
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -28,632 +23,372 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useBlogActions } from '@/hooks/useBlogActions';
+import { useCategoryActions } from '@/hooks/useCategoryActions';
+import { useCommentActions } from '@/hooks/useCommentActions';
 
 const AdminBlogPage = () => {
-  const location = useLocation();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('articles');
+  const [newArticle, setNewArticle] = useState({ title: '', content: '', category: '' });
+  const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+  const [showNewArticleModal, setShowNewArticleModal] = useState(false);
+  const [showNewCategoryModal, setShowNewCategoryModal] = useState(false);
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path.includes('/create')) return 'Créer un article';
-    if (path.includes('/categories')) return 'Catégories';
-    if (path.includes('/comments')) return 'Commentaires';
-    return 'Gestion des Articles';
-  };
+  const { createArticle, publishArticle, saveDraft, deleteArticle, isLoading: blogLoading } = useBlogActions();
+  const { createCategory, updateCategory, deleteCategory, isLoading: categoryLoading } = useCategoryActions();
+  const { viewComment, deleteComment, approveComment, isLoading: commentLoading } = useCommentActions();
 
-  const getPageDescription = () => {
-    const path = location.pathname;
-    if (path.includes('/create')) return 'Créer un nouvel article de blog';
-    if (path.includes('/categories')) return 'Gérer les catégories d\'articles';
-    if (path.includes('/comments')) return 'Modérer les commentaires des lecteurs';
-    return 'Gérez votre contenu et vos publications';
-  };
-
-  const mockPosts = [
-    {
-      id: 1,
-      title: 'Les tendances du web design en 2024',
-      author: 'Marie Dubois',
-      status: 'published',
-      category: 'Web Design',
-      views: 1247,
-      comments: 23,
-      created: '2024-01-15',
-      updated: '2024-01-20'
-    },
-    {
-      id: 2,
-      title: 'Comment optimiser votre SEO local',
-      author: 'Pierre Martin',
-      status: 'draft',
-      category: 'SEO',
-      views: 0,
-      comments: 0,
-      created: '2024-01-18',
-      updated: '2024-01-18'
-    },
-    {
-      id: 3,
-      title: 'Growth Hacking : 10 stratégies qui marchent',
-      author: 'Sophie Laurent',
-      status: 'published',
-      category: 'Marketing',
-      views: 2156,
-      comments: 45,
-      created: '2024-01-10',
-      updated: '2024-01-12'
-    }
+  // Données mockées
+  const articles = [
+    { id: '1', title: 'Growth Hacking 2025', status: 'published', views: 1250, comments: 8, author: 'Admin', date: '2025-01-15' },
+    { id: '2', title: 'IA et Marketing', status: 'draft', views: 0, comments: 0, author: 'Admin', date: '2025-01-14' }
   ];
 
-  const mockCategories = [
-    { id: 1, name: 'Web Design', posts: 12, color: 'blue' },
-    { id: 2, name: 'SEO', posts: 8, color: 'green' },
-    { id: 3, name: 'Marketing', posts: 15, color: 'purple' },
-    { id: 4, name: 'Development', posts: 6, color: 'orange' }
+  const categories = [
+    { id: '1', name: 'Growth Hacking', description: 'Stratégies de croissance', articles: 5 },
+    { id: '2', name: 'IA Marketing', description: 'Intelligence artificielle', articles: 3 }
   ];
 
-  const mockComments = [
-    {
-      id: 1,
-      author: 'Jean Dupont',
-      email: 'jean@email.com',
-      content: 'Excellent article ! Très instructif.',
-      post: 'Les tendances du web design en 2024',
-      status: 'approved',
-      created: '2024-01-20 14:30'
-    },
-    {
-      id: 2,
-      author: 'Marie Martin',
-      email: 'marie@email.com',
-      content: 'Pourriez-vous donner plus d\'exemples concrets ?',
-      post: 'Growth Hacking : 10 stratégies',
-      status: 'pending',
-      created: '2024-01-19 16:45'
-    },
-    {
-      id: 3,
-      author: 'Spam Bot',
-      email: 'spam@fake.com',
-      content: 'Visitez notre site pour des offres incroyables !',
-      post: 'Comment optimiser votre SEO',
-      status: 'spam',
-      created: '2024-01-18 09:15'
-    }
+  const comments = [
+    { id: '1', author: 'Marie D.', content: 'Excellent article !', status: 'pending', article: 'Growth Hacking 2025', date: '2025-01-15' },
+    { id: '2', author: 'Jean M.', content: 'Très instructif', status: 'approved', article: 'Growth Hacking 2025', date: '2025-01-14' }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'published': return 'bg-green-100 text-green-800';
-      case 'draft': return 'bg-yellow-100 text-yellow-800';
-      case 'archived': return 'bg-gray-100 text-gray-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'spam': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  const handleCreateArticle = async () => {
+    if (!newArticle.title || !newArticle.content) return;
+    
+    await createArticle(newArticle);
+    setNewArticle({ title: '', content: '', category: '' });
+    setShowNewArticleModal(false);
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'published': return 'Publié';
-      case 'draft': return 'Brouillon';
-      case 'archived': return 'Archivé';
-      case 'approved': return 'Approuvé';
-      case 'pending': return 'En attente';
-      case 'spam': return 'Spam';
-      default: return status;
-    }
+  const handleCreateCategory = async () => {
+    if (!newCategory.name) return;
+    
+    await createCategory(newCategory);
+    setNewCategory({ name: '', description: '' });
+    setShowNewCategoryModal(false);
   };
 
-  const getCategoryColor = (color: string) => {
-    switch (color) {
-      case 'blue': return 'bg-blue-100 text-blue-800';
-      case 'green': return 'bg-green-100 text-green-800';
-      case 'purple': return 'bg-purple-100 text-purple-800';
-      case 'orange': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // Page Créer un article
-  if (location.pathname.includes('/create')) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-          </div>
-
-          <Card className="max-w-4xl">
-            <CardHeader>
-              <CardTitle>Nouvel article</CardTitle>
-              <CardDescription>Rédigez et publiez un nouvel article de blog</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <label className="text-sm font-medium">Titre de l'article</label>
-                <Input placeholder="Entrez le titre de votre article..." />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Catégorie</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option value="">Sélectionner une catégorie</option>
-                    <option value="web-design">Web Design</option>
-                    <option value="seo">SEO</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="development">Development</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Statut</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option value="draft">Brouillon</option>
-                    <option value="published">Publié</option>
-                    <option value="archived">Archivé</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Extrait</label>
-                <Textarea placeholder="Résumé de l'article..." rows={3} />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Contenu</label>
-                <Textarea placeholder="Contenu de l'article..." rows={12} />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Tags</label>
-                <Input placeholder="Séparez les tags par des virgules..." />
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <Button className="bg-red-500 hover:bg-red-600">Publier l'article</Button>
-                <Button variant="outline">Sauvegarder en brouillon</Button>
-                <Button variant="outline">Aperçu</Button>
-              </div>
-            </CardContent>
-          </Card>
+  const renderArticles = () => (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div className="relative">
+          <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+          <Input placeholder="Rechercher un article..." className="pl-10 w-64" />
         </div>
-      </AdminLayout>
-    );
-  }
-
-  // Page Catégories
-  if (location.pathname.includes('/categories')) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-              <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-            </div>
+        <Dialog open={showNewArticleModal} onOpenChange={setShowNewArticleModal}>
+          <DialogTrigger asChild>
             <Button className="bg-red-500 hover:bg-red-600">
               <Plus className="w-4 h-4 mr-2" />
-              Nouvelle catégorie
+              Nouvel article
             </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockCategories.map((category) => (
-              <Card key={category.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <FolderOpen className="w-8 h-8 text-gray-600" />
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Modifier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Supprimer
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Badge className={getCategoryColor(category.color)}>
-                      {category.name}
-                    </Badge>
-                    <p className="text-sm text-gray-600">{category.posts} articles</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Ajouter une catégorie</CardTitle>
-              <CardDescription>Créez une nouvelle catégorie pour organiser vos articles</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input placeholder="Nom de la catégorie" />
-                <select className="p-2 border rounded-md">
-                  <option value="blue">Bleu</option>
-                  <option value="green">Vert</option>
-                  <option value="purple">Violet</option>
-                  <option value="orange">Orange</option>
-                </select>
-                <Button className="bg-red-500 hover:bg-red-600">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Ajouter
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Créer un nouvel article</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Titre de l'article"
+                value={newArticle.title}
+                onChange={(e) => setNewArticle({...newArticle, title: e.target.value})}
+              />
+              <Textarea
+                placeholder="Contenu de l'article"
+                value={newArticle.content}
+                onChange={(e) => setNewArticle({...newArticle, content: e.target.value})}
+                rows={10}
+              />
+              <div className="flex gap-2">
+                <Button onClick={handleCreateArticle} disabled={blogLoading}>
+                  Publier l'article
+                </Button>
+                <Button variant="outline" onClick={() => saveDraft(newArticle)} disabled={blogLoading}>
+                  Sauvegarder en brouillon
+                </Button>
+                <Button variant="outline" onClick={() => setShowNewArticleModal(false)}>
+                  Aperçu
                 </Button>
               </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="grid gap-4">
+        {articles.map((article) => (
+          <Card key={article.id}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-semibold">{article.title}</h3>
+                    <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>
+                      {article.status === 'published' ? 'Publié' : 'Brouillon'}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mt-2">
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      {article.views} vues
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MessageSquare className="w-4 h-4" />
+                      {article.comments} commentaires
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      {article.date}
+                    </span>
+                  </div>
+                </div>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => console.log('Modifier', article.id)}>
+                      <Edit className="w-4 h-4 mr-2" />
+                      Modifier
+                    </DropdownMenuItem>
+                    {article.status === 'draft' && (
+                      <DropdownMenuItem onClick={() => publishArticle(article.id)}>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Publier
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem 
+                      onClick={() => deleteArticle(article.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Supprimer
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </CardContent>
           </Card>
-        </div>
-      </AdminLayout>
-    );
-  }
+        ))}
+      </div>
+    </div>
+  );
 
-  // Page Commentaires
-  if (location.pathname.includes('/comments')) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-              <p className="text-gray-500 mt-2">{getPageDescription()}</p>
+  const renderCategories = () => (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Catégories</h3>
+        <Dialog open={showNewCategoryModal} onOpenChange={setShowNewCategoryModal}>
+          <DialogTrigger asChild>
+            <Button className="bg-red-500 hover:bg-red-600">
+              <Plus className="w-4 h-4 mr-2" />
+              Ajouter
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Créer une catégorie</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Nom de la catégorie"
+                value={newCategory.name}
+                onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+              />
+              <Textarea
+                placeholder="Description"
+                value={newCategory.description}
+                onChange={(e) => setNewCategory({...newCategory, description: e.target.value})}
+              />
+              <Button onClick={handleCreateCategory} disabled={categoryLoading}>
+                Créer la catégorie
+              </Button>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline">Approuver tout</Button>
-              <Button variant="outline" className="text-red-600">Supprimer le spam</Button>
-            </div>
-          </div>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Commentaires</CardTitle>
-                <MessageSquare className="h-4 w-4 text-gray-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">1,234</div>
-                <p className="text-xs text-gray-600">+12 aujourd'hui</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">En attente</CardTitle>
-                <Calendar className="h-4 w-4 text-yellow-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">23</div>
-                <p className="text-xs text-gray-600">À modérer</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Spam détecté</CardTitle>
-                <Trash2 className="h-4 w-4 text-red-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">8</div>
-                <p className="text-xs text-gray-600">Cette semaine</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
+      <div className="grid gap-4">
+        {categories.map((category) => (
+          <Card key={category.id}>
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Commentaires récents</CardTitle>
-                  <CardDescription>Modérez les commentaires des lecteurs</CardDescription>
+                  <h4 className="font-semibold">{category.name}</h4>
+                  <p className="text-sm text-gray-500">{category.description}</p>
+                  <p className="text-xs text-gray-400 mt-1">{category.articles} articles</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Rechercher un commentaire..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-64"
-                  />
-                  <Button variant="outline">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filtres
-                  </Button>
-                </div>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => console.log('Modifier catégorie', category.id)}>
+                      <Edit className="w-4 h-4 mr-2" />
+                      Modifier
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => deleteCategory(category.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Supprimer
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Auteur</TableHead>
-                    <TableHead>Commentaire</TableHead>
-                    <TableHead>Article</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockComments.map((comment) => (
-                    <TableRow key={comment.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{comment.author}</div>
-                          <div className="text-sm text-gray-500">{comment.email}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-xs truncate">{comment.content}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">{comment.post}</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(comment.status)}>
-                          {getStatusText(comment.status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{comment.created}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="w-4 h-4 mr-2" />
-                              Voir
-                            </DropdownMenuItem>
-                            {comment.status === 'pending' && (
-                              <DropdownMenuItem>
-                                <MessageSquare className="w-4 h-4 mr-2" />
-                                Approuver
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Supprimer
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
             </CardContent>
           </Card>
-        </div>
-      </AdminLayout>
-    );
-  }
+        ))}
+      </div>
+    </div>
+  );
 
-  // Page principale Blog
+  const renderComments = () => (
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold">Commentaires</h3>
+      
+      <div className="grid gap-4">
+        {comments.map((comment) => (
+          <Card key={comment.id}>
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-semibold">{comment.author}</span>
+                    <Badge variant={comment.status === 'approved' ? 'default' : 'secondary'}>
+                      {comment.status === 'approved' ? 'Approuvé' : 'En attente'}
+                    </Badge>
+                  </div>
+                  <p className="text-sm mb-2">{comment.content}</p>
+                  <p className="text-xs text-gray-500">Sur: {comment.article} - {comment.date}</p>
+                </div>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => viewComment(comment.id)}>
+                      <Eye className="w-4 h-4 mr-2" />
+                      Voir
+                    </DropdownMenuItem>
+                    {comment.status === 'pending' && (
+                      <DropdownMenuItem onClick={() => approveComment(comment.id)}>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Approuver
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem 
+                      onClick={() => deleteComment(comment.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Supprimer
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">Gérez votre contenu et vos publications</p>
-          </div>
-          <Button className="bg-red-500 hover:bg-red-600">
-            <Plus className="w-4 h-4 mr-2" />
-            Nouvel article
-          </Button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Gestion du Blog</h1>
+          <p className="text-gray-500 mt-2">Créez et gérez vos articles de blog</p>
         </div>
 
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Articles</CardTitle>
-              <FileText className="h-4 w-4 text-gray-600" />
-            </CardHeader>
+              <CardTitle className="text-sm font-medium">Articles</CardTitle>
+              <PenTool className="h-4 w-4 text-muted-foreground" />
+            </Car\dHeader>
             <CardContent>
-              <div className="text-2xl font-bold">247</div>
-              <p className="text-xs text-gray-600">+12 ce mois</p>
+              <div className="text-2xl font-bold">24</div>
+              <p className="text-xs text-muted-foreground">+2 ce mois</p>
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Articles Publiés</CardTitle>
-              <Eye className="h-4 w-4 text-green-600" />
+              <CardTitle className="text-sm font-medium">Vues totales</CardTitle>
+              <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">189</div>
-              <p className="text-xs text-gray-600">76% du total</p>
+              <div className="text-2xl font-bold">12,450</div>
+              <p className="text-xs text-muted-foreground">+15% vs mois dernier</p>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Vues Totales</CardTitle>
-              <TrendingUp className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">45.2K</div>
-              <p className="text-xs text-gray-600">+8.2% cette semaine</p>
-            </CardContent>
-          </Card>
-
+          
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Commentaires</CardTitle>
-              <MessageSquare className="h-4 w-4 text-purple-600" />
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-gray-600">+15 aujourd'hui</p>
+              <div className="text-2xl font-bold">156</div>
+              <p className="text-xs text-muted-foreground">23 en attente</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Engagement</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">8.2%</div>
+              <p className="text-xs text-muted-foreground">+2.1% vs mois dernier</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Articles de blog</CardTitle>
-                <CardDescription>Gérez tous vos articles et publications</CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Rechercher un article..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 w-64"
-                  />
-                </div>
-                <Button variant="outline">
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filtres
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Article</TableHead>
-                  <TableHead>Auteur</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Vues</TableHead>
-                  <TableHead>Commentaires</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockPosts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>
-                      <div className="font-medium max-w-xs truncate">{post.title}</div>
-                    </TableCell>
-                    <TableCell>{post.author}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(post.status)}>
-                        {getStatusText(post.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{post.category}</Badge>
-                    </TableCell>
-                    <TableCell>{post.views.toLocaleString()}</TableCell>
-                    <TableCell>{post.comments}</TableCell>
-                    <TableCell>{post.created}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="w-4 h-4 mr-2" />
-                            Voir
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Modifier
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        {/* Navigation tabs */}
+        <div className="border-b">
+          <nav className="-mb-px flex space-x-8">
+            {[
+              { id: 'articles', label: 'Articles' },
+              { id: 'categories', label: 'Catégories' },
+              { id: 'comments', label: 'Commentaires' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === tab.id
+                    ? 'border-red-500 text-red-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Articles les plus populaires</CardTitle>
-              <CardDescription>Top 5 des articles les plus vus</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {mockPosts.slice(0, 3).map((post, index) => (
-                  <div key={post.id} className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm truncate">{post.title}</div>
-                      <div className="text-xs text-gray-500">{post.views} vues</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Activité récente</CardTitle>
-              <CardDescription>Dernières actions sur le blog</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Article publié</div>
-                    <div className="text-xs text-gray-500">Les tendances du web design - il y a 2h</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Nouveau commentaire</div>
-                    <div className="text-xs text-gray-500">Growth Hacking stratégies - il y a 4h</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Brouillon sauvegardé</div>
-                    <div className="text-xs text-gray-500">Optimiser votre SEO - il y a 1j</div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Content */}
+        <div>
+          {activeTab === 'articles' && renderArticles()}
+          {activeTab === 'categories' && renderCategories()}
+          {activeTab === 'comments' && renderComments()}
         </div>
       </div>
     </AdminLayout>

@@ -16,6 +16,7 @@ export const useUserData = () => {
           role: 'client',
           packages: ['website-business', 'growth-pro'],
           status: 'pending',
+          tier: 'gold',
           created: '2024-01-20',
           lastLogin: 'Jamais'
         },
@@ -26,6 +27,7 @@ export const useUserData = () => {
           role: 'client',
           packages: ['community-starter'],
           status: 'pending',
+          tier: 'bronze',
           created: '2024-01-19',
           lastLogin: 'Jamais'
         }
@@ -41,6 +43,7 @@ export const useUserData = () => {
           role: 'client',
           packages: ['community-starter', 'custom-audit'],
           status: 'suspended',
+          tier: 'silver',
           created: '2024-01-05',
           lastLogin: '2024-01-18'
         },
@@ -51,6 +54,7 @@ export const useUserData = () => {
           role: 'client',
           packages: ['website-starter'],
           status: 'suspended',
+          tier: 'bronze',
           created: '2023-12-15',
           lastLogin: '2024-01-10'
         }
@@ -65,6 +69,7 @@ export const useUserData = () => {
         role: 'client',
         packages: ['website-business', 'growth-pro'],
         status: 'active',
+        tier: 'gold',
         created: '2024-01-15',
         lastLogin: '2024-01-20'
       },
@@ -75,6 +80,7 @@ export const useUserData = () => {
         role: 'client',
         packages: ['growth-pro', 'community-premium'],
         status: 'active',
+        tier: 'diamond',
         created: '2024-01-10',
         lastLogin: '2024-01-19'
       },
@@ -85,6 +91,7 @@ export const useUserData = () => {
         role: 'client',
         packages: ['community-premium'],
         status: 'suspended',
+        tier: 'silver',
         created: '2024-01-05',
         lastLogin: '2024-01-18'
       }
