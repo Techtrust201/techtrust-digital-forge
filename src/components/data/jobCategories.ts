@@ -15,7 +15,7 @@ export const jobCategories = [
     description: "Rejoignez notre équipe technique pour développer nos outils IA révolutionnaires",
     requirements: "React, TypeScript, Node.js, IA/ML",
     salary: "45K - 65K€",
-    types: ["CDI", "Freelance", "Stage"]
+    types: ["Freelance", "CDI", "Stage"]
   },
   {
     title: "Growth Hacker IA",
@@ -24,7 +24,7 @@ export const jobCategories = [
     description: "Concevez des stratégies d'acquisition avec nos outils IA propriétaires",
     requirements: "Growth hacking, automatisation, analytics",
     salary: "40K - 60K€",
-    types: ["CDI", "Freelance", "Stage"]
+    types: ["Freelance", "CDI", "Stage"]
   },
   {
     title: "Community Manager",
@@ -33,7 +33,7 @@ export const jobCategories = [
     description: "Gérez les communautés de nos clients avec nos outils d'IA",
     requirements: "Réseaux sociaux, création contenu, outils IA",
     salary: "35K - 45K€", 
-    types: ["CDI", "Stage", "Freelance"]
+    types: ["Freelance", "CDI", "Stage"]
   },
   {
     title: "Data Scientist IA",
@@ -42,7 +42,7 @@ export const jobCategories = [
     description: "Développez nos algorithmes d'IA pour le growth hacking",
     requirements: "Python, ML, TensorFlow, Analytics",
     salary: "50K - 70K€",
-    types: ["CDI", "Freelance"]
+    types: ["Freelance", "CDI"]
   },
   {
     title: "UX/UI Designer",
@@ -51,7 +51,7 @@ export const jobCategories = [
     description: "Concevez des interfaces utilisateur pour nos outils IA",
     requirements: "Figma, Design System, UX Research",
     salary: "40K - 55K€",
-    types: ["CDI", "Freelance"]
+    types: ["Freelance", "CDI"]
   },
   {
     title: "Chef de Projet Tech",
@@ -60,6 +60,6 @@ export const jobCategories = [
     description: "Coordonnez le développement de nos solutions IA",
     requirements: "Gestion projet, méthodologies agiles",
     salary: "45K - 60K€",
-    types: ["CDI", "Freelance"]
+    types: ["Freelance", "CDI"]
   }
 ];
