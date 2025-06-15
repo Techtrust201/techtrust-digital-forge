@@ -9,7 +9,7 @@ import { usePackageUtils } from '@/hooks/usePackageUtils';
 import { UserPlus } from 'lucide-react';
 
 const CreateUserForm = () => {
-  const [selectedPackage, setSelectedPackage] = useState<string>(''); // Un seul package au lieu d'un tableau
+  const [selectedPackages, setSelectedPackages] = useState<string[]>([]); // Retour à un tableau pour plusieurs packages
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,11 +19,21 @@ const CreateUserForm = () => {
   const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
 
   const addPackage = (packageId: string) => {
-    setSelectedPackage(packageId);
+    const packageToAdd = getPackageById(packageId);
+    if (!packageToAdd) return;
+
+    // Supprimer tout package existant de la même catégorie
+    const updatedPackages = selectedPackages.filter(id => {
+      const existingPackage = getPackageById(id);
+      return existingPackage?.categoryKey !== packageToAdd.categoryKey;
+    });
+
+    // Ajouter le nouveau package
+    setSelectedPackages([...updatedPackages, packageId]);
   };
 
-  const removePackage = () => {
-    setSelectedPackage('');
+  const removePackage = (packageId: string) => {
+    setSelectedPackages(selectedPackages.filter(id => id !== packageId));
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -34,12 +44,12 @@ const CreateUserForm = () => {
     return formData.firstName.trim() && 
            formData.lastName.trim() && 
            formData.email.trim() && 
-           selectedPackage !== '';
+           selectedPackages.length > 0;
   };
 
   const handleSubmit = () => {
     if (isFormValid()) {
-      console.log('Création du compte:', { ...formData, package: selectedPackage });
+      console.log('Création du compte:', { ...formData, packages: selectedPackages });
       // Handle form submission
     }
   };
@@ -111,7 +121,7 @@ const CreateUserForm = () => {
           <Card>
             <CardContent className="p-6">
               <PackageSelector
-                selectedPackages={selectedPackage ? [selectedPackage] : []} // Convertir en tableau pour la compatibilité
+                selectedPackages={selectedPackages}
                 allPackages={getAllPackages()}
                 onAddPackage={addPackage}
                 onRemovePackage={removePackage}
