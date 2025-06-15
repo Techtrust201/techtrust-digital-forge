@@ -180,7 +180,7 @@ const AgenceWeb = () => {
                   >
                     Création de <span className="text-custom-blue">Sites Web</span> 
                     <br />
-                    <span className="text-custom-green">
+                    <span className="text-custom-blue">
                       Professionnels
                     </span>
                   </motion.h1>
