@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
@@ -290,7 +289,7 @@ Notre IA s'adapte en temps réel aux updates Google :
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button 
-                            className="w-full bg-red-600 hover:bg-red-700 group/btn"
+                            className="w-full bg-red-600 hover:bg-red-700 text-white hover:text-white group/btn"
                             onClick={() => setSelectedPost(post)}
                           >
                             Lire l'article
