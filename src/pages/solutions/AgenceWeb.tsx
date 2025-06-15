@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -181,7 +180,7 @@ const AgenceWeb = () => {
                   >
                     Création de <span className="text-custom-blue">Sites Web</span> 
                     <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-blue to-custom-green">
+                    <span className="text-custom-green">
                       Professionnels
                     </span>
                   </motion.h1>
@@ -278,7 +277,6 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          {/* Services Offered */}
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -356,7 +354,6 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          {/* Features */}
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -391,7 +388,6 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          {/* Portfolio / Case Studies */}
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -462,7 +458,6 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          {/* Methodology */}
           <section className="py-20 bg-gradient-to-br from-gray-900 via-custom-blue/90 to-custom-blue/80 text-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -523,7 +518,6 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          {/* Testimonials */}
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -590,7 +584,6 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          {/* FAQ */}
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -641,7 +634,7 @@ const AgenceWeb = () => {
           </section>
 
           {/* CTA */}
-          <section className="py-20 bg-gradient-to-br from-custom-blue via-custom-purple to-custom-green text-white">
+          <section className="py-20 bg-custom-blue text-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto">
                 <h2 className="text-3xl lg:text-5xl font-bold mb-6">
