@@ -20,7 +20,9 @@ export const useBetterAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const result = await auth.api.getSession({});
+        const result = await auth.api.getSession({
+          headers: new Headers()
+        });
         
         setAuthState({
           user: result?.user || null,
@@ -51,7 +53,7 @@ export const useBetterAuth = () => {
       if (result?.user) {
         setAuthState({
           user: result.user,
-          session: null, // Better-Auth gère les sessions automatiquement
+          session: null,
           isLoading: false,
           isAuthenticated: true
         });
@@ -79,7 +81,9 @@ export const useBetterAuth = () => {
 
   const signOut = async () => {
     try {
-      await auth.api.signOut({});
+      await auth.api.signOut({
+        headers: new Headers()
+      });
       setAuthState({
         user: null,
         session: null,
