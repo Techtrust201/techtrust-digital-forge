@@ -4,10 +4,8 @@ import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
-import { Calendar, User, ArrowRight, Edit, Plus, Trash } from 'lucide-react';
+import { Calendar, User, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import BlogPostForm from '@/components/blog/BlogPostForm';
-import AdminAuth from '@/components/blog/AdminAuth';
 
 const Blog = () => {
   const [posts, setPosts] = useState([
@@ -210,10 +208,6 @@ Notre IA s'adapte en temps réel aux updates Google :
   ]);
 
   const [selectedPost, setSelectedPost] = useState<typeof posts[0] | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showAdminAuth, setShowAdminAuth] = useState(false);
-  const [showPostForm, setShowPostForm] = useState(false);
-  const [editingPost, setEditingPost] = useState<typeof posts[0] | null>(null);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -221,35 +215,6 @@ Notre IA s'adapte en temps réel aux updates Google :
     "name": "Blog Techtrust 2025 - Growth Hacking IA & SEO",
     "description": "📚 Blog expert en growth hacking IA, community management automatisé, SEO 2025. Guides exclusifs, cas clients, stratégies d'acquisition avec l'IA.",
     "url": "https://www.tech-trust.fr/blog"
-  };
-
-  const handleAuthenticated = () => {
-    setIsAdmin(true);
-    setShowAdminAuth(false);
-  };
-
-  const handleAddPost = (postData: any) => {
-    const newPost = {
-      id: posts.length + 1,
-      ...postData,
-      date: new Date().toISOString().split('T')[0]
-    };
-    setPosts([newPost, ...posts]);
-    setShowPostForm(false);
-  };
-
-  const handleEditPost = (postData: any) => {
-    if (editingPost) {
-      setPosts(posts.map(post => 
-        post.id === editingPost.id ? { ...editingPost, ...postData } : post
-      ));
-      setEditingPost(null);
-      setShowPostForm(false);
-    }
-  };
-
-  const handleDeletePost = (postId: number) => {
-    setPosts(posts.filter(post => post.id !== postId));
   };
 
   return (
@@ -280,36 +245,6 @@ Notre IA s'adapte en temps réel aux updates Google :
             </div>
           </section>
 
-          {/* Admin Section */}
-          {isAdmin && (
-            <section className="py-8 bg-blue-50 border-b">
-              <div className="container mx-auto px-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold text-gray-900">Mode Administration</h2>
-                  <Dialog open={showPostForm} onOpenChange={setShowPostForm}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setEditingPost(null)}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Nouveau Article
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>
-                          {editingPost ? 'Modifier l\'article' : 'Créer un nouvel article'}
-                        </DialogTitle>
-                      </DialogHeader>
-                      <BlogPostForm 
-                        onSubmit={editingPost ? handleEditPost : handleAddPost}
-                        initialData={editingPost || undefined}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </div>
-            </section>
-          )}
-
           {/* Blog Posts */}
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
@@ -322,25 +257,6 @@ Notre IA s'adapte en temps réel aux updates Google :
                         alt={post.title}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      {isAdmin && (
-                        <div className="absolute top-2 right-2 flex gap-2">
-                          <button
-                            onClick={() => {
-                              setEditingPost(post);
-                              setShowPostForm(true);
-                            }}
-                            className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                          >
-                            <Edit className="w-4 h-4 text-blue-600" />
-                          </button>
-                          <button
-                            onClick={() => handleDeletePost(post.id)}
-                            className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                          >
-                            <Trash className="w-4 h-4 text-red-600" />
-                          </button>
-                        </div>
-                      )}
                     </div>
                     
                     <div className="p-6">
@@ -417,27 +333,6 @@ Notre IA s'adapte en temps réel aux updates Google :
               </div>
             </div>
           </section>
-
-          {/* Admin Login */}
-          {!isAdmin && (
-            <section className="py-12 bg-gray-50">
-              <div className="container mx-auto px-4 text-center">
-                <Dialog open={showAdminAuth} onOpenChange={setShowAdminAuth}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
-                      Gérer le blog
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Authentification Administrateur</DialogTitle>
-                    </DialogHeader>
-                    <AdminAuth onAuthenticated={handleAuthenticated} />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </section>
-          )}
         </main>
 
         <Footer />
