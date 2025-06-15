@@ -8,11 +8,15 @@ import { FileText, Plus, Edit, Trash2, Eye, Calendar, User } from 'lucide-react'
 import { useBlogPosts, useBlogActions } from '@/hooks/useBlogData';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const AdminBlogPostsPage = () => {
   const { data: blogPosts, isLoading } = useBlogPosts();
   const { deletePost, updatePost } = useBlogActions();
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   if (isLoading) {
     return (
@@ -56,16 +60,36 @@ const AdminBlogPostsPage = () => {
   };
 
   const handleDeletePost = async (id: string) => {
-    await deletePost.mutateAsync(id);
+    try {
+      await deletePost.mutateAsync(id);
+      toast({ title: 'Article supprimé avec succès' });
+    } catch (error: any) {
+      toast({ title: 'Erreur lors de la suppression', description: error?.message, variant: 'destructive' });
+    }
     setSelectedPost(null);
   };
 
   const handlePublishPost = async (id: string) => {
-    await updatePost.mutateAsync({
-      id,
-      status: 'published',
-      publish_date: new Date().toISOString(),
-    });
+    try {
+      await updatePost.mutateAsync({
+        id,
+        status: 'published',
+        publish_date: new Date().toISOString(),
+      });
+      toast({ title: 'Article publié avec succès' });
+    } catch (error: any) {
+      toast({ title: 'Erreur lors de la publication', description: error?.message, variant: 'destructive' });
+    }
+  };
+
+  const handleViewPost = (id: string) => {
+    // Redirige vers la vue publique de l'article
+    navigate(`/blog/${id}`);
+  };
+
+  const handleEditPost = (id: string) => {
+    // Redirige vers la page d’édition de l'article
+    navigate(`/admin/blog/edit/${id}`);
   };
 
   const publishedPosts = blogPosts?.filter(post => post.status === 'published') || [];
@@ -81,7 +105,7 @@ const AdminBlogPostsPage = () => {
             <h1 className="text-3xl font-bold text-gray-900">Articles de blog</h1>
             <p className="text-gray-500 mt-2">Gérer tous les articles de blog</p>
           </div>
-          <Button className="bg-red-500 hover:bg-red-600">
+          <Button className="bg-red-500 hover:bg-red-600" onClick={() => navigate('/admin/blog/create')}>
             <Plus className="w-4 h-4 mr-2" />
             Nouvel article
           </Button>
@@ -146,7 +170,12 @@ const AdminBlogPostsPage = () => {
                 <div key={post.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer">{post.title}</h3>
+                      <h3
+                        className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer"
+                        onClick={() => handleViewPost(post.id)}
+                      >
+                        {post.title}
+                      </h3>
                       <Badge className={getStatusColor(post.status)}>
                         {getStatusLabel(post.status)}
                       </Badge>
@@ -175,10 +204,10 @@ const AdminBlogPostsPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="hover:bg-blue-50">
+                    <Button variant="outline" size="sm" className="hover:bg-blue-50" onClick={() => handleViewPost(post.id)}>
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="sm" className="hover:bg-green-50">
+                    <Button variant="outline" size="sm" className="hover:bg-green-50" onClick={() => handleEditPost(post.id)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                     {post.status === 'draft' && (
@@ -188,12 +217,12 @@ const AdminBlogPostsPage = () => {
                         onClick={() => handlePublishPost(post.id)}
                         disabled={updatePost.isPending}
                       >
-                        Publier
+                        {updatePost.isPending ? 'Publication...' : 'Publier'}
                       </Button>
                     )}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" disabled={deletePost.isPending}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </AlertDialogTrigger>
@@ -209,8 +238,9 @@ const AdminBlogPostsPage = () => {
                           <AlertDialogAction 
                             onClick={() => handleDeletePost(post.id)}
                             className="bg-red-600 hover:bg-red-700"
+                            disabled={deletePost.isPending}
                           >
-                            Supprimer
+                            {deletePost.isPending ? 'Suppression...' : 'Supprimer'}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -227,3 +257,4 @@ const AdminBlogPostsPage = () => {
 };
 
 export default AdminBlogPostsPage;
+
