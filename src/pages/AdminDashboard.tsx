@@ -161,19 +161,6 @@ const AdminDashboard = () => {
             </p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <Button 
-              className="bg-green-500 hover:bg-green-600"
-              onClick={() => setShowCreateUserModal(true)}
-              disabled={isLoading}
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Nouveau client
-            </Button>
-            <Badge className="bg-red-100 text-red-800">
-              Admin
-            </Badge>
-          </div>
         </div>
 
         {/* Stats principales */}
