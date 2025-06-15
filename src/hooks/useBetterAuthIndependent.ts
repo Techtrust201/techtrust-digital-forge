@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { auth, type Session, type User } from '@/lib/auth';
-import { getUserRole } from '@/services/authService';
 
 interface AuthState {
   user: User | null;
@@ -10,6 +9,17 @@ interface AuthState {
   isAuthenticated: boolean;
   userRole: string | null;
 }
+
+// Système de rôles indépendant simple
+const getUserRole = async (userId: string): Promise<string> => {
+  // Rôles par défaut pour les comptes de test
+  const testRoles: Record<string, string> = {
+    'admin_test_user': 'admin',
+    'client_test_user': 'client'
+  };
+  
+  return testRoles[userId] || 'client';
+};
 
 export const useBetterAuthIndependent = () => {
   const [authState, setAuthState] = useState<AuthState>({
@@ -30,15 +40,15 @@ export const useBetterAuthIndependent = () => {
         });
         
         let userRole = null;
-        if (result?.user) {
-          userRole = await getUserRole(result.user.id);
+        if (result?.data?.user) {
+          userRole = await getUserRole(result.data.user.id);
         }
         
         setAuthState({
-          user: result?.user || null,
-          session: result?.session || null,
+          user: result?.data?.user || null,
+          session: result?.data?.session || null,
           isLoading: false,
-          isAuthenticated: !!result?.user,
+          isAuthenticated: !!result?.data?.user,
           userRole
         });
       } catch (error) {
@@ -65,11 +75,11 @@ export const useBetterAuthIndependent = () => {
         })
       });
       
-      if (result?.user) {
-        const userRole = await getUserRole(result.user.id);
+      if (result?.data?.user) {
+        const userRole = await getUserRole(result.data.user.id);
         setAuthState({
-          user: result.user,
-          session: null,
+          user: result.data.user,
+          session: result.data.session || null,
           isLoading: false,
           isAuthenticated: true,
           userRole

@@ -28,15 +28,25 @@ export const useBetterAuth = () => {
           })
         });
         
-        const userRole = result?.user?.role || 'client';
-        
-        setAuthState({
-          user: result?.user || null,
-          session: result || null,
-          isLoading: false,
-          isAuthenticated: !!result?.user,
-          userRole
-        });
+        if (result?.data?.session && result?.data?.user) {
+          const userRole = result.data.user.role || 'client';
+          
+          setAuthState({
+            user: result.data.user,
+            session: result.data.session,
+            isLoading: false,
+            isAuthenticated: true,
+            userRole
+          });
+        } else {
+          setAuthState({
+            user: null,
+            session: null,
+            isLoading: false,
+            isAuthenticated: false,
+            userRole: null
+          });
+        }
       } catch (error) {
         console.error('Auth check error:', error);
         setAuthState({
@@ -61,12 +71,12 @@ export const useBetterAuth = () => {
         })
       });
       
-      if (result?.user) {
-        const userRole = result.user.role || 'client';
+      if (result?.data?.user) {
+        const userRole = result.data.user.role || 'client';
         
         setAuthState({
-          user: result.user,
-          session: result,
+          user: result.data.user,
+          session: result.data.session || null,
           isLoading: false,
           isAuthenticated: true,
           userRole
