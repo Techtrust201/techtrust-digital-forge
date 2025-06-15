@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -13,6 +12,28 @@ import CreateUserModal from '@/components/admin/CreateUserModal';
 import { useSupabaseUsers } from '@/hooks/useSupabaseUsers';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
 
+// Define a compatible User type for the UsersTable component
+interface User {
+  id: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  tier: string;
+  status: string;
+  created: string;
+  packages?: string[];
+  subscriptions?: any[];
+  revenue?: number;
+  joinDate?: string;
+  lastLogin?: string;
+  phone?: string;
+  company?: string;
+  position?: string;
+  industry?: string;
+  address?: any;
+  notes?: string;
+}
+
 const AdminUsersPage = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,13 +43,35 @@ const AdminUsersPage = () => {
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 
   const {
-    users,
+    users: supabaseUsers,
     isLoading,
     updateUserPackages,
     getUserStats
   } = useSupabaseUsers();
 
   const { getPackageById, getPackageColor } = usePackageUtils();
+
+  // Convert supabase users to the expected User format
+  const users: User[] = supabaseUsers.map(user => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role || 'user',
+    tier: user.tier,
+    status: user.status,
+    created: user.created || user.created_at,
+    packages: user.packages,
+    subscriptions: user.subscriptions,
+    revenue: user.revenue,
+    joinDate: user.joinDate,
+    lastLogin: user.lastLogin,
+    phone: user.phone,
+    company: user.company,
+    position: user.position,
+    industry: user.industry,
+    address: user.address,
+    notes: user.notes
+  }));
 
   // Filtrer les utilisateurs selon les critères
   const filteredUsers = users.filter(user => {

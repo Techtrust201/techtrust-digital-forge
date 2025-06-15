@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -31,6 +30,8 @@ interface UserWithAuth extends Profile {
   revenue?: number;
   joinDate?: string;
   lastLogin?: string;
+  role?: string;
+  created?: string;
 }
 
 export const useSupabaseUsers = () => {
@@ -67,12 +68,25 @@ export const useSupabaseUsers = () => {
       const combinedUsers: UserWithAuth[] = profiles?.map(profile => {
         const authUser = authUsers?.find(auth => auth.id === profile.id);
         
+        // Parse address safely
+        let parsedAddress;
+        try {
+          parsedAddress = typeof profile.address === 'string' 
+            ? JSON.parse(profile.address) 
+            : profile.address;
+        } catch {
+          parsedAddress = undefined;
+        }
+        
         return {
           ...profile,
+          address: parsedAddress,
           email: authUser?.email,
           emailVerified: authUser?.emailVerified,
           joinDate: profile.created_at?.split('T')[0],
           lastLogin: 'Récemment', // À implémenter avec les sessions
+          created: profile.created_at,
+          role: 'user', // Default role
           packages: profile.user_subscriptions?.map((sub: any) => sub.package_id) || [],
           subscriptions: profile.user_subscriptions || [],
           revenue: profile.user_subscriptions?.reduce((total: number, sub: any) => {
@@ -104,25 +118,9 @@ export const useSupabaseUsers = () => {
     notes?: string;
   }) => {
     try {
-      // Vérifier si l'utilisateur existe déjà
-      const { data: existingUser } = await supabase
-        .from('user')
-        .select('email')
-        .eq('email', userData.email)
-        .single();
-
-      if (existingUser) {
-        toast.error('Un utilisateur avec cet email existe déjà');
-        return { success: false, error: 'Email déjà utilisé' };
-      }
-
-      // Créer l'utilisateur avec Better-Auth via l'API
-      const response = await fetch('/api/admin/create-user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Appeler la fonction Edge admin-create-user
+      const { data, error } = await supabase.functions.invoke('admin-create-user', {
+        body: {
           email: userData.email,
           password: 'TempPassword123!', // Mot de passe temporaire
           name: `${userData.firstName} ${userData.lastName}`,
@@ -135,21 +133,18 @@ export const useSupabaseUsers = () => {
             notes: userData.notes,
           },
           packages: userData.selectedPackages
-        })
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erreur lors de la création');
+      if (error) {
+        throw new Error(error.message || 'Erreur lors de la création');
       }
 
-      const result = await response.json();
-      
       // Rafraîchir la liste des utilisateurs
       await fetchUsers();
       
       toast.success(`Client ${userData.firstName} ${userData.lastName} créé avec succès`);
-      return { success: true, data: result };
+      return { success: true, data };
 
     } catch (error: any) {
       console.error('Erreur lors de la création de l\'utilisateur:', error);
