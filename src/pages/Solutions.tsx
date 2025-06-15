@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Globe, TrendingUp, Code, Users, MessageSquare, Lightbulb, ArrowRight } from 'lucide-react';
@@ -6,63 +5,54 @@ import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-
-const solutions = [
-  {
-    icon: Globe,
-    title: "Agence Web",
-    subtitle: "Sites professionnels & E-commerce",
-    description: "Création de sites web modernes, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe, nous développons votre présence digitale.",
-    features: ["Design responsive", "Optimisation SEO", "E-commerce", "Web App", "Maintenance"],
-    color: "blue",
-    link: "/solutions/agence-web",
-    clients: "Palais des Festivals, Chopard"
-  },
-  {
-    icon: TrendingUp,
-    title: "Growth Hacking",
-    subtitle: "Acquisition & Croissance",
-    description: "Stratégies de growth hacking pour multiplier vos leads et conversions. Prospection automatisée, email marketing et optimisation des tunnels de vente.",
-    features: ["Lead generation", "Email marketing", "Automation", "Analytics", "A/B Testing"],
-    color: "purple", 
-    link: "/solutions/growth-hacking",
-    clients: "Monaco Business, French Tech"
-  },
-  {
-    icon: Code,
-    title: "Solutions Sur Mesure",
-    subtitle: "Développement personnalisé",
-    description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité.",
-    features: ["Audit métier", "Développement agile", "API", "Intégrations", "Support"],
-    color: "green",
-    link: "/solutions/digitales-sur-mesure", 
-    clients: "Christina France, Luxury Hotels"
-  },
-  {
-    icon: MessageSquare,
-    title: "Community Management",
-    subtitle: "Réseaux sociaux & Contenu",
-    description: "Gestion complète de vos réseaux sociaux, création de contenu engageant et stratégie d'influence pour développer votre communauté.",
-    features: ["Stratégie sociale", "Création contenu", "Engagement", "Influence", "Analytics"],
-    color: "pink",
-    link: "/solutions/community-management",
-    clients: "Marques de luxe, Startups"
-  },
-  {
-    icon: Lightbulb,
-    title: "Consulting Digital",
-    subtitle: "Stratégie & Transformation",
-    description: "Audit digital, stratégie de transformation numérique et accompagnement dans vos projets d'innovation technologique.",
-    features: ["Audit digital", "Stratégie", "Innovation", "Formation", "Accompagnement"],
-    color: "orange",
-    link: "/solutions/consulting-digital",
-    clients: "Grandes entreprises, PME"
-  }
-];
-
+const solutions = [{
+  icon: Globe,
+  title: "Agence Web",
+  subtitle: "Sites professionnels & E-commerce",
+  description: "Création de sites web modernes, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe, nous développons votre présence digitale.",
+  features: ["Design responsive", "Optimisation SEO", "E-commerce", "Web App", "Maintenance"],
+  color: "blue",
+  link: "/solutions/agence-web",
+  clients: "Palais des Festivals, Chopard"
+}, {
+  icon: TrendingUp,
+  title: "Growth Hacking",
+  subtitle: "Acquisition & Croissance",
+  description: "Stratégies de growth hacking pour multiplier vos leads et conversions. Prospection automatisée, email marketing et optimisation des tunnels de vente.",
+  features: ["Lead generation", "Email marketing", "Automation", "Analytics", "A/B Testing"],
+  color: "purple",
+  link: "/solutions/growth-hacking",
+  clients: "Monaco Business, French Tech"
+}, {
+  icon: Code,
+  title: "Solutions Sur Mesure",
+  subtitle: "Développement personnalisé",
+  description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité.",
+  features: ["Audit métier", "Développement agile", "API", "Intégrations", "Support"],
+  color: "green",
+  link: "/solutions/digitales-sur-mesure",
+  clients: "Christina France, Luxury Hotels"
+}, {
+  icon: MessageSquare,
+  title: "Community Management",
+  subtitle: "Réseaux sociaux & Contenu",
+  description: "Gestion complète de vos réseaux sociaux, création de contenu engageant et stratégie d'influence pour développer votre communauté.",
+  features: ["Stratégie sociale", "Création contenu", "Engagement", "Influence", "Analytics"],
+  color: "pink",
+  link: "/solutions/community-management",
+  clients: "Marques de luxe, Startups"
+}, {
+  icon: Lightbulb,
+  title: "Consulting Digital",
+  subtitle: "Stratégie & Transformation",
+  description: "Audit digital, stratégie de transformation numérique et accompagnement dans vos projets d'innovation technologique.",
+  features: ["Audit digital", "Stratégie", "Innovation", "Formation", "Accompagnement"],
+  color: "orange",
+  link: "/solutions/consulting-digital",
+  clients: "Grandes entreprises, PME"
+}];
 const Solutions = () => {
-  return (
-    <>
+  return <>
       <Helmet>
         <title>Solutions Digitales Sur Mesure | Agence Web, Growth Hacking, Community Management - Techtrust</title>
         <meta name="description" content="Découvrez nos solutions digitales complètes : création de sites web, growth hacking, développement sur mesure, community management et consulting digital. Un écosystème complet pour votre transformation numérique." />
@@ -93,23 +83,23 @@ const Solutions = () => {
         {/* Schema.org données structurées */}
         <script type="application/ld+json">
           {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "itemListElement": solutions.map((solution, index) => ({
-              "@type": "ListItem",
-              "position": index + 1,
-              "item": {
-                "@type": "Service",
-                "name": solution.title,
-                "description": solution.description,
-                "provider": {
-                  "@type": "Organization",
-                  "name": "Techtrust"
-                },
-                "url": `https://www.tech-trust.fr${solution.link}`
-              }
-            }))
-          })}
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "itemListElement": solutions.map((solution, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "Service",
+              "name": solution.title,
+              "description": solution.description,
+              "provider": {
+                "@type": "Organization",
+                "name": "Techtrust"
+              },
+              "url": `https://www.tech-trust.fr${solution.link}`
+            }
+          }))
+        })}
         </script>
       </Helmet>
 
@@ -145,16 +135,10 @@ const Solutions = () => {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a 
-                    href="/contact" 
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center"
-                  >
+                  <a href="/contact" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center">
                     Discuter de mon projet
                   </a>
-                  <a 
-                    href="/pricing" 
-                    className="bg-white border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 inline-flex items-center justify-center"
-                  >
+                  <a href="/pricing" className="bg-white border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 inline-flex items-center justify-center">
                     Voir nos tarifs
                   </a>
                 </div>
@@ -175,63 +159,25 @@ const Solutions = () => {
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {solutions.map((solution, index) => (
-                  <Card key={solution.title} className={`hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-full ${
-                    solution.color === 'blue' ? 'border-t-4 border-t-blue-600' :
-                    solution.color === 'purple' ? 'border-t-4 border-t-purple-600' :
-                    solution.color === 'green' ? 'border-t-4 border-t-green-600' :
-                    solution.color === 'pink' ? 'border-t-4 border-t-pink-600' :
-                    solution.color === 'orange' ? 'border-t-4 border-t-orange-600' :
-                    'border-t-4 border-t-gray-600'
-                  }`}>
+                {solutions.map((solution, index) => <Card key={solution.title} className={`hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-full ${solution.color === 'blue' ? 'border-t-4 border-t-blue-600' : solution.color === 'purple' ? 'border-t-4 border-t-purple-600' : solution.color === 'green' ? 'border-t-4 border-t-green-600' : solution.color === 'pink' ? 'border-t-4 border-t-pink-600' : solution.color === 'orange' ? 'border-t-4 border-t-orange-600' : 'border-t-4 border-t-gray-600'}`}>
                     <CardContent className="p-8 h-full flex flex-col">
                       {/* Icône */}
-                      <div className={`w-16 h-16 ${
-                        solution.color === 'blue' ? 'bg-blue-500/10' :
-                        solution.color === 'purple' ? 'bg-purple-500/10' :
-                        solution.color === 'green' ? 'bg-green-500/10' :
-                        solution.color === 'pink' ? 'bg-pink-500/10' :
-                        solution.color === 'orange' ? 'bg-orange-500/10' :
-                        'bg-gray-500/10'
-                      } rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                        <solution.icon className={`w-8 h-8 ${
-                          solution.color === 'blue' ? 'text-blue-600' :
-                          solution.color === 'purple' ? 'text-purple-600' :
-                          solution.color === 'green' ? 'text-green-600' :
-                          solution.color === 'pink' ? 'text-pink-600' :
-                          solution.color === 'orange' ? 'text-orange-600' :
-                          'text-gray-600'
-                        }`} />
+                      <div className={`w-16 h-16 ${solution.color === 'blue' ? 'bg-blue-500/10' : solution.color === 'purple' ? 'bg-purple-500/10' : solution.color === 'green' ? 'bg-green-500/10' : solution.color === 'pink' ? 'bg-pink-500/10' : solution.color === 'orange' ? 'bg-orange-500/10' : 'bg-gray-500/10'} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                        <solution.icon className={`w-8 h-8 ${solution.color === 'blue' ? 'text-blue-600' : solution.color === 'purple' ? 'text-purple-600' : solution.color === 'green' ? 'text-green-600' : solution.color === 'pink' ? 'text-pink-600' : solution.color === 'orange' ? 'text-orange-600' : 'text-gray-600'}`} />
                       </div>
 
                       {/* Contenu */}
                       <div className="flex-1">
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{solution.title}</h3>
-                        <p className={`${
-                          solution.color === 'blue' ? 'text-blue-600' :
-                          solution.color === 'purple' ? 'text-purple-600' :
-                          solution.color === 'green' ? 'text-green-600' :
-                          solution.color === 'pink' ? 'text-pink-600' :
-                          solution.color === 'orange' ? 'text-orange-600' :
-                          'text-gray-600'
-                        } font-medium mb-4`}>{solution.subtitle}</p>
+                        <p className={`${solution.color === 'blue' ? 'text-blue-600' : solution.color === 'purple' ? 'text-purple-600' : solution.color === 'green' ? 'text-green-600' : solution.color === 'pink' ? 'text-pink-600' : solution.color === 'orange' ? 'text-orange-600' : 'text-gray-600'} font-medium mb-4`}>{solution.subtitle}</p>
                         <p className="text-gray-600 mb-6 leading-relaxed">{solution.description}</p>
 
                         {/* Features */}
                         <ul className="space-y-2 mb-6">
-                          {solution.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-center text-sm text-gray-600">
-                              <div className={`w-2 h-2 ${
-                                solution.color === 'blue' ? 'bg-blue-600' :
-                                solution.color === 'purple' ? 'bg-purple-600' :
-                                solution.color === 'green' ? 'bg-green-600' :
-                                solution.color === 'pink' ? 'bg-pink-600' :
-                                solution.color === 'orange' ? 'bg-orange-600' :
-                                'bg-gray-600'
-                              } rounded-full mr-3`}></div>
+                          {solution.features.map((feature, idx) => <li key={idx} className="flex items-center text-sm text-gray-600">
+                              <div className={`w-2 h-2 ${solution.color === 'blue' ? 'bg-blue-600' : solution.color === 'purple' ? 'bg-purple-600' : solution.color === 'green' ? 'bg-green-600' : solution.color === 'pink' ? 'bg-pink-600' : solution.color === 'orange' ? 'bg-orange-600' : 'bg-gray-600'} rounded-full mr-3`}></div>
                               {feature}
-                            </li>
-                          ))}
+                            </li>)}
                         </ul>
                         
                         {/* Réalisations */}
@@ -241,25 +187,14 @@ const Solutions = () => {
                       </div>
 
                       {/* CTA */}
-                      <Button 
-                        asChild
-                        className={`w-full ${
-                          solution.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700' :
-                          solution.color === 'purple' ? 'bg-purple-600 hover:bg-purple-700' :
-                          solution.color === 'green' ? 'bg-green-600 hover:bg-green-700' :
-                          solution.color === 'pink' ? 'bg-pink-600 hover:bg-pink-700' :
-                          solution.color === 'orange' ? 'bg-orange-600 hover:bg-orange-700' :
-                          'bg-gray-600 hover:bg-gray-700'
-                        } text-white group`}
-                      >
+                      <Button asChild className={`w-full ${solution.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : solution.color === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : solution.color === 'green' ? 'bg-green-600 hover:bg-green-700' : solution.color === 'pink' ? 'bg-pink-600 hover:bg-pink-700' : solution.color === 'orange' ? 'bg-orange-600 hover:bg-orange-700' : 'bg-gray-600 hover:bg-gray-700'} text-white group`}>
                         <a href={solution.link}>
                           En savoir plus
                           <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </a>
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
+                  </Card>)}
               </div>
             </div>
           </section>
@@ -278,29 +213,23 @@ const Solutions = () => {
                 </div>
 
                 <div className="space-y-12">
-                  {[
-                    {
-                      number: "01",
-                      title: "Audit & Stratégie",
-                      description: "Nous commençons par une analyse approfondie de votre activité, vos objectifs et votre marché pour définir une stratégie digitale sur mesure."
-                    },
-                    {
-                      number: "02",
-                      title: "Conception & Développement",
-                      description: "Notre équipe d'experts conçoit et développe des solutions digitales innovantes, alliant esthétique et performances."
-                    },
-                    {
-                      number: "03",
-                      title: "Déploiement & Optimisation",
-                      description: "Lancement de votre solution avec une méthodologie agile, permettant des ajustements rapides basés sur les résultats."
-                    },
-                    {
-                      number: "04",
-                      title: "Croissance & Évolution",
-                      description: "Analyse continue des performances, optimisations régulières et implémentation de nouvelles fonctionnalités pour soutenir votre croissance."
-                    }
-                  ].map((step) => (
-                    <div key={step.number} className="flex gap-8">
+                  {[{
+                  number: "01",
+                  title: "Audit & Stratégie",
+                  description: "Nous commençons par une analyse approfondie de votre activité, vos objectifs et votre marché pour définir une stratégie digitale sur mesure."
+                }, {
+                  number: "02",
+                  title: "Conception & Développement",
+                  description: "Notre équipe d'experts conçoit et développe des solutions digitales innovantes, alliant esthétique et performances."
+                }, {
+                  number: "03",
+                  title: "Déploiement & Optimisation",
+                  description: "Lancement de votre solution avec une méthodologie agile, permettant des ajustements rapides basés sur les résultats."
+                }, {
+                  number: "04",
+                  title: "Croissance & Évolution",
+                  description: "Analyse continue des performances, optimisations régulières et implémentation de nouvelles fonctionnalités pour soutenir votre croissance."
+                }].map(step => <div key={step.number} className="flex gap-8">
                       <div className="w-20 h-20 flex-shrink-0 bg-white/10 rounded-full flex items-center justify-center text-3xl font-bold">
                         {step.number}
                       </div>
@@ -308,13 +237,12 @@ const Solutions = () => {
                         <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
                         <p className="text-gray-300">{step.description}</p>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
 
                 <div className="text-center mt-16">
                   <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-                    <a href="/contact">
+                    <a href="/contact" className="bg-white border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 inline-flex items-center justify-center ">
                       Commencer votre projet
                     </a>
                   </Button>
@@ -337,33 +265,25 @@ const Solutions = () => {
 
               <div className="max-w-4xl mx-auto bg-gray-50 rounded-2xl p-8">
                 <div className="space-y-8">
-                  {[
-                    {
-                      question: "Comment choisir la solution digitale adaptée à mon entreprise ?",
-                      answer: "Nous réalisons un audit gratuit pour comprendre vos objectifs, votre marché et vos besoins spécifiques. Sur cette base, nous vous recommandons la solution la plus adaptée et élaborons une stratégie sur mesure."
-                    },
-                    {
-                      question: "Quel est le délai de mise en œuvre d'un projet digital ?",
-                      answer: "Les délais varient selon la complexité du projet : un site vitrine peut être livré en 2 semaines, tandis qu'une application métier sur mesure nécessite généralement 2 à 3 mois. Nous définissons ensemble un calendrier précis dès le lancement du projet."
-                    },
-                    {
-                      question: "Comment mesurer le retour sur investissement de mes projets digitaux ?",
-                      answer: "Nous mettons en place des tableaux de bord et des KPIs personnalisés pour suivre avec précision les performances de vos solutions digitales. Vous avez accès à ces métriques en temps réel via notre plateforme client."
-                    },
-                    {
-                      question: "Quelle est votre approche en matière de sécurité des données ?",
-                      answer: "La sécurité est notre priorité absolue. Nous appliquons les meilleures pratiques en matière de protection des données, respectons scrupuleusement le RGPD et réalisons des audits de sécurité réguliers sur tous nos projets."
-                    },
-                    {
-                      question: "Proposez-vous un accompagnement après la livraison du projet ?",
-                      answer: "Absolument. Tous nos projets incluent une période de support technique, et nous proposons des contrats de maintenance pour assurer la pérennité et l'évolution de vos solutions digitales."
-                    }
-                  ].map((faq, index) => (
-                    <div key={index} className="border-b border-gray-200 pb-6 last:border-0">
+                  {[{
+                  question: "Comment choisir la solution digitale adaptée à mon entreprise ?",
+                  answer: "Nous réalisons un audit gratuit pour comprendre vos objectifs, votre marché et vos besoins spécifiques. Sur cette base, nous vous recommandons la solution la plus adaptée et élaborons une stratégie sur mesure."
+                }, {
+                  question: "Quel est le délai de mise en œuvre d'un projet digital ?",
+                  answer: "Les délais varient selon la complexité du projet : un site vitrine peut être livré en 2 semaines, tandis qu'une application métier sur mesure nécessite généralement 2 à 3 mois. Nous définissons ensemble un calendrier précis dès le lancement du projet."
+                }, {
+                  question: "Comment mesurer le retour sur investissement de mes projets digitaux ?",
+                  answer: "Nous mettons en place des tableaux de bord et des KPIs personnalisés pour suivre avec précision les performances de vos solutions digitales. Vous avez accès à ces métriques en temps réel via notre plateforme client."
+                }, {
+                  question: "Quelle est votre approche en matière de sécurité des données ?",
+                  answer: "La sécurité est notre priorité absolue. Nous appliquons les meilleures pratiques en matière de protection des données, respectons scrupuleusement le RGPD et réalisons des audits de sécurité réguliers sur tous nos projets."
+                }, {
+                  question: "Proposez-vous un accompagnement après la livraison du projet ?",
+                  answer: "Absolument. Tous nos projets incluent une période de support technique, et nous proposons des contrats de maintenance pour assurer la pérennité et l'évolution de vos solutions digitales."
+                }].map((faq, index) => <div key={index} className="border-b border-gray-200 pb-6 last:border-0">
                       <h3 className="text-xl font-semibold text-gray-900 mb-3">{faq.question}</h3>
                       <p className="text-gray-600">{faq.answer}</p>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
             </div>
@@ -372,8 +292,6 @@ const Solutions = () => {
 
         <Footer />
       </div>
-    </>
-  );
+    </>;
 };
-
 export default Solutions;
