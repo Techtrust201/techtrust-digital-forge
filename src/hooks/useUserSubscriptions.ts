@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useBetterAuth } from './useBetterAuth';
 
 export interface UserSubscription {
@@ -14,6 +13,44 @@ export interface UserSubscription {
   expires_at?: string;
   updated_at: string;
 }
+
+// Données de test pour les subscriptions
+const mockSubscriptions: Record<string, UserSubscription[]> = {
+  'user_1': [
+    {
+      id: 'sub_1',
+      user_id: 'user_1',
+      package_id: 'growth-pro',
+      package_name: 'Growth Pro',
+      package_category: 'growth',
+      status: 'active',
+      created_at: '2024-01-15T10:00:00Z',
+      updated_at: '2024-06-15T10:00:00Z'
+    },
+    {
+      id: 'sub_2',
+      user_id: 'user_1',
+      package_id: 'website-premium',
+      package_name: 'Website Premium',
+      package_category: 'website',
+      status: 'active',
+      created_at: '2024-01-15T10:00:00Z',
+      updated_at: '2024-06-15T10:00:00Z'
+    }
+  ],
+  'user_2': [
+    {
+      id: 'sub_3',
+      user_id: 'user_2',
+      package_id: 'website-starter',
+      package_name: 'Website Starter',
+      package_category: 'website',
+      status: 'active',
+      created_at: '2024-02-01T10:00:00Z',
+      updated_at: '2024-06-14T10:00:00Z'
+    }
+  ]
+};
 
 export const useUserSubscriptions = () => {
   const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
@@ -34,14 +71,12 @@ export const useUserSubscriptions = () => {
     
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('user_subscriptions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'active');
-
-      if (error) throw error;
-      setSubscriptions(data || []);
+      
+      // Simuler un délai de chargement
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const userSubscriptions = mockSubscriptions[user.id] || [];
+      setSubscriptions(userSubscriptions);
       setError(null);
     } catch (err: any) {
       setError(err.message);

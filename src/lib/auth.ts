@@ -38,12 +38,22 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      console.log('Reset password email for:', user.email, 'URL:', url);
+      // Ici vous pourrez intégrer votre service d'email plus tard
+    },
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log('Verification email for:', user.email, 'URL:', url);
+      // Ici vous pourrez intégrer votre service d'email plus tard
+    }
   },
-  socialProviders: {
-    google: {
-      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
-      clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || "",
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "client"
+      }
     }
   },
   session: {

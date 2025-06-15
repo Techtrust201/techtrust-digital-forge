@@ -1,75 +1,82 @@
 
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Profile, UserWithAuth, CreateUserData } from '@/types/user';
 
+// Données de test pour démonstration
+const mockUsers: UserWithAuth[] = [
+  {
+    id: 'user_1',
+    name: 'Admin Test',
+    email: 'admin@test.com',
+    phone: '+33123456789',
+    company: 'TechTrust Digital',
+    position: 'Administrateur',
+    industry: 'Digital',
+    tier: 'premium',
+    status: 'active',
+    role: 'admin',
+    emailVerified: true,
+    joinDate: '2024-01-15',
+    lastLogin: 'Récemment',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-06-15T10:00:00Z',
+    created: '2024-01-15T10:00:00Z',
+    packages: ['growth-pro', 'website-premium'],
+    subscriptions: [
+      {
+        id: 'sub_1',
+        user_id: 'user_1',
+        package_id: 'growth-pro',
+        package_name: 'Growth Pro',
+        package_category: 'growth',
+        status: 'active',
+        created_at: '2024-01-15T10:00:00Z',
+        updated_at: '2024-06-15T10:00:00Z'
+      }
+    ],
+    revenue: 299
+  },
+  {
+    id: 'user_2',
+    name: 'Client Test',
+    email: 'client@test.com',
+    phone: '+33987654321',
+    company: 'StartupCo',
+    position: 'CEO',
+    industry: 'Tech',
+    tier: 'basic',
+    status: 'active',
+    role: 'client',
+    emailVerified: true,
+    joinDate: '2024-02-01',
+    lastLogin: 'Il y a 2 jours',
+    created_at: '2024-02-01T10:00:00Z',
+    updated_at: '2024-06-14T10:00:00Z',
+    created: '2024-02-01T10:00:00Z',
+    packages: ['website-starter'],
+    subscriptions: [
+      {
+        id: 'sub_2',
+        user_id: 'user_2',
+        package_id: 'website-starter',
+        package_name: 'Website Starter',
+        package_category: 'website',
+        status: 'active',
+        created_at: '2024-02-01T10:00:00Z',
+        updated_at: '2024-06-14T10:00:00Z'
+      }
+    ],
+    revenue: 99
+  }
+];
+
 export const fetchAllUsers = async (): Promise<UserWithAuth[]> => {
   try {
-    // Récupérer tous les profils avec leurs subscriptions
-    const { data: profiles, error: profilesError } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        user_subscriptions (*)
-      `);
-
-    if (profilesError) {
-      console.error('Erreur lors de la récupération des profils:', profilesError);
-      toast.error('Erreur lors du chargement des utilisateurs');
-      return [];
-    }
-
-    // Récupérer les informations d'authentification
-    const { data: authUsers, error: authError } = await supabase
-      .from('user')
-      .select('id, email, emailVerified, createdAt');
-
-    if (authError) {
-      console.error('Erreur lors de la récupération des données auth:', authError);
-    }
-
-    // Récupérer les rôles utilisateurs
-    const { data: userRoles, error: rolesError } = await supabase
-      .from('user_roles')
-      .select('userId, role');
-
-    if (rolesError) {
-      console.error('Erreur lors de la récupération des rôles:', rolesError);
-    }
-
-    // Combiner les données
-    const combinedUsers: UserWithAuth[] = profiles?.map(profile => {
-      const authUser = authUsers?.find(auth => auth.id === profile.id);
-      const userRole = userRoles?.find(role => role.userId === profile.id);
-      
-      // Parse address safely
-      let parsedAddress;
-      try {
-        parsedAddress = typeof profile.address === 'string' 
-          ? JSON.parse(profile.address) 
-          : profile.address;
-      } catch {
-        parsedAddress = undefined;
-      }
-      
-      return {
-        ...profile,
-        address: parsedAddress,
-        email: authUser?.email,
-        emailVerified: authUser?.emailVerified,
-        joinDate: profile.created_at?.split('T')[0],
-        lastLogin: 'Récemment',
-        created: profile.created_at,
-        role: userRole?.role || 'client',
-        packages: profile.user_subscriptions?.map((sub: any) => sub.package_id) || [],
-        subscriptions: profile.user_subscriptions || [],
-        revenue: profile.user_subscriptions?.reduce((total: number, sub: any) => {
-          return total + 0; // À calculer selon la logique métier
-        }, 0) || 0
-      };
-    }) || [];
-
-    return combinedUsers;
+    // Simuler un délai de chargement
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    console.log('Fetching mock users:', mockUsers);
+    return mockUsers;
   } catch (error) {
     console.error('Erreur lors de la récupération des utilisateurs:', error);
     toast.error('Erreur lors du chargement des utilisateurs');
@@ -79,30 +86,44 @@ export const fetchAllUsers = async (): Promise<UserWithAuth[]> => {
 
 export const createNewUser = async (userData: CreateUserData) => {
   try {
-    // Utiliser la fonction Edge admin-create-user
-    const { data, error } = await supabase.functions.invoke('admin-create-user', {
-      body: {
-        email: userData.email,
-        password: 'TempPassword123!',
-        name: `${userData.firstName} ${userData.lastName}`,
-        profile: {
-          phone: userData.phone,
-          company: userData.company,
-          position: userData.position,
-          industry: userData.industry,
-          address: userData.address,
-          notes: userData.notes,
-        },
-        packages: userData.selectedPackages
-      }
-    });
+    const newUser: UserWithAuth = {
+      id: `user_${Date.now()}`,
+      name: `${userData.firstName} ${userData.lastName}`,
+      email: userData.email,
+      phone: userData.phone,
+      company: userData.company,
+      position: userData.position,
+      industry: userData.industry,
+      address: userData.address,
+      notes: userData.notes,
+      tier: 'basic',
+      status: 'active',
+      role: 'client',
+      emailVerified: false,
+      joinDate: new Date().toISOString().split('T')[0],
+      lastLogin: 'Jamais',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      created: new Date().toISOString(),
+      packages: userData.selectedPackages,
+      subscriptions: userData.selectedPackages.map(packageId => ({
+        id: `sub_${Date.now()}_${Math.random()}`,
+        user_id: `user_${Date.now()}`,
+        package_id: packageId,
+        package_name: packageId,
+        package_category: 'general',
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })),
+      revenue: 0
+    };
 
-    if (error) {
-      throw new Error(error.message || 'Erreur lors de la création');
-    }
+    // Ajouter à la liste mock
+    mockUsers.push(newUser);
 
     toast.success(`Client ${userData.firstName} ${userData.lastName} créé avec succès`);
-    return { success: true, data };
+    return { success: true, data: newUser };
 
   } catch (error: any) {
     console.error('Erreur lors de la création de l\'utilisateur:', error);
@@ -113,33 +134,19 @@ export const createNewUser = async (userData: CreateUserData) => {
 
 export const updateUserPackages = async (userId: string, packages: string[]) => {
   try {
-    // Supprimer les anciens packages
-    const { error: deleteError } = await supabase
-      .from('user_subscriptions')
-      .delete()
-      .eq('user_id', userId);
-
-    if (deleteError) {
-      throw deleteError;
-    }
-
-    // Ajouter les nouveaux packages
-    if (packages.length > 0) {
-      const subscriptions = packages.map(packageId => ({
+    const userIndex = mockUsers.findIndex(user => user.id === userId);
+    if (userIndex !== -1) {
+      mockUsers[userIndex].packages = packages;
+      mockUsers[userIndex].subscriptions = packages.map(packageId => ({
+        id: `sub_${Date.now()}_${Math.random()}`,
         user_id: userId,
         package_id: packageId,
         package_name: packageId,
         package_category: 'general',
-        status: 'active'
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }));
-
-      const { error: insertError } = await supabase
-        .from('user_subscriptions')
-        .insert(subscriptions);
-
-      if (insertError) {
-        throw insertError;
-      }
     }
 
     toast.success('Formules mises à jour avec succès');

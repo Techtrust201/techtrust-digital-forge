@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { auth, type Session, type User } from '@/lib/auth';
-import { supabase } from '@/integrations/supabase/client';
 
 interface AuthState {
   user: User | null;
@@ -29,21 +28,11 @@ export const useBetterAuth = () => {
           })
         });
         
-        let userRole = null;
-        if (result?.user) {
-          // Récupérer le rôle depuis Supabase
-          const { data: roleData } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('userId', result.user.id)
-            .single();
-          
-          userRole = roleData?.role || 'client';
-        }
+        const userRole = result?.user?.role || 'client';
         
         setAuthState({
           user: result?.user || null,
-          session: result?.session || null,
+          session: result || null,
           isLoading: false,
           isAuthenticated: !!result?.user,
           userRole
@@ -73,18 +62,11 @@ export const useBetterAuth = () => {
       });
       
       if (result?.user) {
-        // Récupérer le rôle depuis Supabase
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('userId', result.user.id)
-          .single();
-        
-        const userRole = roleData?.role || 'client';
+        const userRole = result.user.role || 'client';
         
         setAuthState({
           user: result.user,
-          session: result.session || null,
+          session: result,
           isLoading: false,
           isAuthenticated: true,
           userRole
@@ -101,7 +83,12 @@ export const useBetterAuth = () => {
   const signUp = async (email: string, password: string, name?: string) => {
     try {
       const result = await auth.api.signUpEmail({
-        body: { email, password, name },
+        body: { 
+          email, 
+          password, 
+          name,
+          callbackURL: `${window.location.origin}/auth?verified=true`
+        },
         headers: new Headers({
           'Cookie': document.cookie
         })
@@ -188,6 +175,14 @@ export const useBetterAuth = () => {
     }
   };
 
+  const isAdmin = () => {
+    return authState.userRole === 'admin' || authState.userRole === 'super_admin';
+  };
+
+  const hasRole = (role: string) => {
+    return authState.userRole === role;
+  };
+
   return {
     ...authState,
     signIn,
@@ -196,6 +191,8 @@ export const useBetterAuth = () => {
     forgotPassword,
     resetPassword,
     resendVerification,
+    isAdmin,
+    hasRole,
     getUserRole: () => authState.userRole
   };
 };
