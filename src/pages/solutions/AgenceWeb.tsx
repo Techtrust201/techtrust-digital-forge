@@ -159,15 +159,15 @@ const AgenceWeb = () => {
 
         <main>
           {/* Hero Section */}
-          <section className="relative py-20 lg:py-32 bg-gradient-to-br from-white to-custom-slate/30 overflow-hidden">
-            <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-custom-blue/5 rounded-full blur-3xl"></div>
+          <section className="relative py-20 lg:py-32 bg-gradient-to-br from-white to-slate-100 overflow-hidden">
+            <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-blue-100 rounded-full blur-3xl"></div>
             
             <div className="container mx-auto px-4 relative z-10">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div className="order-2 lg:order-1">
                   <motion.span 
                     {...fadeIn} 
-                    className="inline-flex items-center gap-2 bg-custom-blue/10 rounded-full px-4 py-2 text-sm font-medium text-custom-blue mb-6"
+                    className="inline-flex items-center gap-2 bg-blue-100 rounded-full px-4 py-2 text-sm font-medium text-blue-600 mb-6"
                   >
                     <Globe className="w-4 h-4" />
                     500+ sites web créés
@@ -178,9 +178,9 @@ const AgenceWeb = () => {
                     transition={{ delay: 0.1 }}
                     className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6"
                   >
-                    Création de <span className="text-custom-blue">Sites Web</span> 
+                    Création de <span className="text-blue-600">Sites Web</span> 
                     <br />
-                    <span className="text-custom-blue">
+                    <span className="text-blue-600">
                       Professionnels
                     </span>
                   </motion.h1>
@@ -201,7 +201,7 @@ const AgenceWeb = () => {
                     <Button 
                       asChild
                       size="lg" 
-                      className="bg-custom-blue hover:bg-custom-blue/90 text-white"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       <a href="/contact">
                         Demander un devis gratuit
@@ -213,7 +213,7 @@ const AgenceWeb = () => {
                       asChild
                       variant="outline" 
                       size="lg"
-                      className="border-2 border-custom-blue text-custom-blue hover:bg-custom-blue/10"
+                      className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
                     >
                       <a href="/pricing">
                         Voir nos tarifs
@@ -252,12 +252,12 @@ const AgenceWeb = () => {
                       </div>
                       
                       <div className="space-y-4">
-                        <div className="h-8 bg-custom-blue rounded-md w-1/3"></div>
+                        <div className="h-8 bg-blue-600 rounded-md w-1/3"></div>
                         <div className="h-4 bg-gray-200 rounded-md w-full"></div>
                         <div className="h-4 bg-gray-200 rounded-md w-2/3"></div>
                         <div className="h-32 bg-gray-100 rounded-md w-full"></div>
                         <div className="flex gap-2">
-                          <div className="h-10 bg-custom-blue rounded-md w-32"></div>
+                          <div className="h-10 bg-blue-600 rounded-md w-32"></div>
                           <div className="h-10 bg-gray-200 rounded-md w-32"></div>
                         </div>
                       </div>
@@ -268,7 +268,7 @@ const AgenceWeb = () => {
                       SEO Optimisé
                     </div>
                     
-                    <div className="absolute -bottom-6 -left-6 bg-custom-purple text-white rounded-full px-4 py-2 text-sm font-medium shadow-lg">
+                    <div className="absolute -bottom-6 -left-6 bg-purple-600 text-white rounded-full px-4 py-2 text-sm font-medium shadow-lg">
                       Mobile-First
                     </div>
                   </div>
@@ -280,9 +280,9 @@ const AgenceWeb = () => {
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block bg-custom-blue/10 text-custom-blue px-4 py-2 rounded-full text-sm font-medium mb-4">Notre Expertise</span>
+                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Notre Expertise</span>
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Nos <span className="text-custom-blue">Services</span> Web
+                  Nos <span className="text-blue-600">Services</span> Web
                 </h2>
                 <p className="text-lg text-gray-600">
                   Des solutions web personnalisées pour répondre à tous vos objectifs business
@@ -318,7 +318,7 @@ const AgenceWeb = () => {
                     viewport={{ once: true }}
                     className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full flex flex-col"
                   >
-                    <div className="w-16 h-16 bg-gradient-to-br from-custom-blue to-custom-blue/70 rounded-2xl flex items-center justify-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
                       <service.icon className="w-8 h-8 text-white" />
                     </div>
                     
@@ -328,8 +328,8 @@ const AgenceWeb = () => {
                     <div className="space-y-3 mb-8">
                       {service.features.map((feature, idx) => (
                         <div key={idx} className="flex items-center">
-                          <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
-                            <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                            <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
@@ -341,7 +341,7 @@ const AgenceWeb = () => {
                     <Button 
                       asChild
                       variant="outline"
-                      className="border-2 border-custom-blue text-custom-blue hover:bg-custom-blue/10 mt-auto"
+                      className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 mt-auto"
                     >
                       <a href="/contact">
                         En savoir plus
@@ -357,9 +357,9 @@ const AgenceWeb = () => {
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block bg-custom-blue/10 text-custom-blue px-4 py-2 rounded-full text-sm font-medium mb-4">Pourquoi nous choisir</span>
+                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Pourquoi nous choisir</span>
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Des Sites Web <span className="text-custom-blue">Performants</span>
+                  Des Sites Web <span className="text-blue-600">Performants</span>
                 </h2>
                 <p className="text-lg text-gray-600">
                   Une expertise technique et créative pour maximiser l'impact de votre présence digitale
@@ -376,8 +376,8 @@ const AgenceWeb = () => {
                     viewport={{ once: true }}
                     className="bg-white rounded-xl p-6 hover:shadow-md transition-all duration-300"
                   >
-                    <div className="w-12 h-12 bg-custom-blue/10 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="w-6 h-6 text-custom-blue" />
+                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                      <feature.icon className="w-6 h-6 text-blue-600" />
                     </div>
                     
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
@@ -391,9 +391,9 @@ const AgenceWeb = () => {
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block bg-custom-blue/10 text-custom-blue px-4 py-2 rounded-full text-sm font-medium mb-4">Nos Réalisations</span>
+                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Nos Réalisations</span>
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  <span className="text-custom-blue">Projets</span> Récents
+                  <span className="text-blue-600">Projets</span> Récents
                 </h2>
                 <p className="text-lg text-gray-600">
                   Découvrez quelques-uns de nos projets web les plus récents
@@ -411,8 +411,8 @@ const AgenceWeb = () => {
                     className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
                   >
                     {/* Image placeholder */}
-                    <div className="w-full h-56 bg-gradient-to-r from-custom-blue/20 to-custom-green/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                      <div className="text-2xl font-bold text-custom-blue/50">{project.title}</div>
+                    <div className="w-full h-56 bg-gradient-to-r from-blue-100 to-green-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                      <div className="text-2xl font-bold text-blue-600">{project.title}</div>
                     </div>
                     
                     <div className="p-6">
@@ -425,13 +425,13 @@ const AgenceWeb = () => {
                       </div>
                       
                       <h3 className="text-xl font-bold text-gray-900 mb-1">{project.title}</h3>
-                      <p className="text-custom-blue font-medium mb-3">Client: {project.client}</p>
+                      <p className="text-blue-600 font-medium mb-3">Client: {project.client}</p>
                       <p className="text-gray-600 mb-6">{project.description}</p>
                       
                       <Button 
                         asChild
                         variant="ghost"
-                        className="text-custom-blue hover:bg-custom-blue/10 p-0 group/btn"
+                        className="text-blue-600 hover:bg-blue-50 p-0 group/btn"
                       >
                         <a href="/contact" className="flex items-center">
                           Voir le projet
@@ -447,7 +447,7 @@ const AgenceWeb = () => {
                 <Button 
                   asChild
                   variant="outline"
-                  className="border-2 border-custom-blue text-custom-blue hover:bg-custom-blue/10"
+                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
                 >
                   <a href="/contact">
                     Découvrir plus de projets
@@ -458,7 +458,7 @@ const AgenceWeb = () => {
             </div>
           </section>
 
-          <section className="py-20 bg-gradient-to-br from-gray-900 via-custom-blue/90 to-custom-blue/80 text-white">
+          <section className="py-20 bg-gradient-to-br from-gray-900 via-blue-800 to-blue-700 text-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold mb-6">
@@ -521,9 +521,9 @@ const AgenceWeb = () => {
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block bg-custom-blue/10 text-custom-blue px-4 py-2 rounded-full text-sm font-medium mb-4">Ils témoignent</span>
+                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Ils témoignent</span>
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Ce que nos <span className="text-custom-blue">Clients</span> disent
+                  Ce que nos <span className="text-blue-600">Clients</span> disent
                 </h2>
                 <p className="text-lg text-gray-600">
                   Découvrez les retours de nos clients sur nos services de création web
@@ -570,7 +570,7 @@ const AgenceWeb = () => {
                     <p className="text-gray-600 italic mb-6">"{testimonial.content}"</p>
                     
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-custom-blue to-custom-purple text-white flex items-center justify-center font-bold mr-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 text-white flex items-center justify-center font-bold mr-4">
                         {testimonial.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
@@ -588,7 +588,7 @@ const AgenceWeb = () => {
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Questions <span className="text-custom-blue">Fréquentes</span>
+                  Questions <span className="text-blue-600">Fréquentes</span>
                 </h2>
               </div>
 
@@ -634,7 +634,7 @@ const AgenceWeb = () => {
           </section>
 
           {/* CTA */}
-          <section className="py-20 bg-custom-blue text-white">
+          <section className="py-20 bg-blue-600 text-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto">
                 <h2 className="text-3xl lg:text-5xl font-bold mb-6">
@@ -647,7 +647,7 @@ const AgenceWeb = () => {
                   <Button 
                     asChild
                     size="lg" 
-                    className="bg-white text-custom-blue hover:bg-white/90"
+                    className="bg-white text-blue-600 hover:bg-gray-100"
                   >
                     <a href="/contact">
                       Demander un devis gratuit
