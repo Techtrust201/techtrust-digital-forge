@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -131,6 +130,8 @@ function AppContent() {
       {/* Protected dashboard routes */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard/services" element={<Services />} />
+      <Route path="/dashboard/blog" element={<DashboardBlog />} />
+      <Route path="/dashboard/blog/:id" element={<BlogPostView />} />
       <Route path="/dashboard/campaigns" element={<Campaigns />} />
       <Route path="/dashboard/campaigns/email" element={<EmailCampaigns />} />
       <Route path="/dashboard/campaigns/sms" element={<SMSCampaigns />} />
@@ -166,6 +167,7 @@ function AppContent() {
       <Route path="/admin/blog/create" element={<AdminBlogCreatePage />} />
       <Route path="/admin/blog/posts" element={<AdminBlogPostsPage />} />
       <Route path="/admin/blog/edit/:id" element={<AdminBlogEditPage />} />
+      <Route path="/admin/blog/preview/:id" element={<AdminBlogPreviewPage />} />
       <Route path="/admin/blog/categories" element={<AdminBlogCategoriesPage />} />
       <Route path="/admin/blog/comments" element={<AdminBlogCommentsPage />} />
       <Route path="/admin/system" element={<AdminSystemPage />} />
