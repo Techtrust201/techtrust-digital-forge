@@ -24,7 +24,8 @@ import {
   Rocket,
   Crown,
   Diamond,
-  ArrowLeftRight
+  ArrowLeftRight,
+  Lock
 } from 'lucide-react';
 import { 
   DropdownMenu,
@@ -39,6 +40,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
+import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -52,6 +54,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
+  
+  const { 
+    subscriptions, 
+    hasAnalyticsAccess, 
+    hasCampaignsAccess, 
+    hasAdvancedAnalytics,
+    getActivePackages 
+  } = useUserSubscriptions();
 
   useEffect(() => {
     const user = localStorage.getItem('techtrust_user');
@@ -146,7 +156,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       name: 'Tableau de bord',
       icon: Home,
       href: '/dashboard',
-      access: ['admin', 'client', 'manager', 'employee']
+      access: ['admin', 'client', 'manager', 'employee'],
+      requiresSubscription: false
     },
     {
       id: 'analytics',
@@ -154,11 +165,29 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: BarChart3,
       href: '/dashboard/analytics',
       access: ['admin', 'client', 'manager'],
+      requiresSubscription: true,
+      hasAccess: hasAnalyticsAccess(),
       submenu: [
-        { name: 'Performance Site', href: '/dashboard/analytics/website' },
-        { name: 'Réseaux Sociaux', href: '/dashboard/analytics/social' },
-        { name: 'Growth Hacking', href: '/dashboard/analytics/growth' },
-        { name: 'Community Management', href: '/dashboard/analytics/community' }
+        { 
+          name: 'Performance Site', 
+          href: '/dashboard/analytics/website',
+          requiresAdvanced: false
+        },
+        { 
+          name: 'Réseaux Sociaux', 
+          href: '/dashboard/analytics/social',
+          requiresAdvanced: true
+        },
+        { 
+          name: 'Growth Hacking', 
+          href: '/dashboard/analytics/growth',
+          requiresAdvanced: true
+        },
+        { 
+          name: 'Community Management', 
+          href: '/dashboard/analytics/community',
+          requiresAdvanced: true
+        }
       ]
     },
     {
@@ -167,6 +196,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: Zap,
       href: '/dashboard/campaigns',
       access: ['admin', 'client', 'manager'],
+      requiresSubscription: true,
+      hasAccess: hasCampaignsAccess(),
       submenu: [
         { name: 'Email Marketing', href: '/dashboard/campaigns/email' },
         { name: 'SMS Marketing', href: '/dashboard/campaigns/sms' },
@@ -180,6 +211,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: User,
       href: '/dashboard/account',
       access: ['admin', 'client', 'manager', 'employee'],
+      requiresSubscription: false,
       submenu: [
         { name: 'Informations', href: '/dashboard/account/profile' },
         { name: 'Mon Plan', href: '/dashboard/account/plan' },
@@ -193,6 +225,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: HelpCircle,
       href: '/dashboard/help',
       access: ['admin', 'client', 'manager', 'employee'],
+      requiresSubscription: false,
       submenu: [
         { name: 'FAQ', href: '/dashboard/help/faq' },
         { name: 'Support', href: '/dashboard/help/support' },
@@ -201,10 +234,114 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   ];
 
-  // Filtrer selon les permissions
-  const filteredNavigation = navigationItems.filter(item => 
-    userData ? item.access.includes(userData.role) : true
-  );
+  // Filtrer selon les permissions et abonnements
+  const filteredNavigation = navigationItems.filter(item => {
+    const hasRoleAccess = userData ? item.access.includes(userData.role) : true;
+    
+    if (!hasRoleAccess) return false;
+    
+    // Si l'item nécessite un abonnement, vérifier l'accès
+    if (item.requiresSubscription) {
+      return item.hasAccess || userData?.role === 'admin';
+    }
+    
+    return true;
+  });
+
+  const renderNavigationItem = (item: any) => {
+    const ItemIcon = item.icon;
+    const hasAccess = !item.requiresSubscription || item.hasAccess || userData?.role === 'admin';
+    
+    if (item.submenu) {
+      return (
+        <Collapsible 
+          key={item.id} 
+          open={openDropdown === item.id}
+          onOpenChange={() => toggleDropdown(item.id)}
+        >
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              className={`w-full justify-between hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors duration-200 group ${
+                activeTab === item.id ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : ''
+              } ${!hasAccess ? 'opacity-50' : ''}`}
+              disabled={!hasAccess}
+            >
+              <div className="flex items-center gap-3">
+                <ItemIcon className="w-5 h-5" />
+                <span className="font-medium">{item.name}</span>
+                {!hasAccess && <Lock className="w-4 h-4 text-gray-400" />}
+              </div>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                openDropdown === item.id ? 'rotate-180' : ''
+              }`} />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-1 mt-1">
+            <div className="ml-8 space-y-1">
+              {item.submenu.map((subItem: any) => {
+                const subHasAccess = !subItem.requiresAdvanced || hasAdvancedAnalytics() || userData?.role === 'admin';
+                
+                return (
+                  <Button
+                    key={subItem.href}
+                    variant="ghost"
+                    asChild={subHasAccess}
+                    className={`w-full justify-start h-8 px-3 text-sm hover:bg-gray-100 rounded-md transition-colors duration-200 ${
+                      activeSubMenu === subItem.href 
+                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 font-medium' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    } ${!subHasAccess ? 'opacity-50' : ''}`}
+                    disabled={!subHasAccess}
+                  >
+                    {subHasAccess ? (
+                      <a href={subItem.href}>
+                        <span className={`w-2 h-2 rounded-full mr-3 ${
+                          activeSubMenu === subItem.href ? 'bg-blue-500' : 'bg-gray-300'
+                        }`}></span>
+                        {subItem.name}
+                      </a>
+                    ) : (
+                      <div className="flex items-center">
+                        <span className="w-2 h-2 rounded-full mr-3 bg-gray-300"></span>
+                        {subItem.name}
+                        <Lock className="w-3 h-3 ml-auto text-gray-400" />
+                      </div>
+                    )}
+                  </Button>
+                );
+              })}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      );
+    } else {
+      return (
+        <Button
+          key={item.id}
+          variant="ghost"
+          asChild={hasAccess}
+          className={`w-full justify-start hover:bg-gray-100 transition-colors duration-200 ${
+            activeTab === item.id ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : ''
+          } ${!hasAccess ? 'opacity-50' : ''}`}
+          disabled={!hasAccess}
+        >
+          {hasAccess ? (
+            <a href={item.href} onClick={() => setActiveTab(item.id)}>
+              <ItemIcon className="w-5 h-5 mr-3" />
+              {item.name}
+            </a>
+          ) : (
+            <div className="flex items-center">
+              <ItemIcon className="w-5 h-5 mr-3" />
+              {item.name}
+              <Lock className="w-4 h-4 ml-auto text-gray-400" />
+            </div>
+          )}
+        </Button>
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -243,85 +380,24 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <p className="text-sm text-gray-500 truncate">{userData.email}</p>
               </div>
             </div>
-            <Badge className={`${tierInfo.color} bg-opacity-10 border-current`}>
-              <TierIcon className="w-3 h-3 mr-1" />
-              {tierInfo.name}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge className={`${tierInfo.color} bg-opacity-10 border-current`}>
+                <TierIcon className="w-3 h-3 mr-1" />
+                {tierInfo.name}
+              </Badge>
+              {getActivePackages().length > 0 && (
+                <Badge variant="outline" className="text-xs">
+                  {getActivePackages().length} service{getActivePackages().length > 1 ? 's' : ''}
+                </Badge>
+              )}
+            </div>
           </div>
         )}
 
         {/* Navigation */}
         <nav className="p-4 space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
           <div className="w-full space-y-1">
-            {filteredNavigation.map((item) => {
-              const ItemIcon = item.icon;
-              
-              if (item.submenu) {
-                return (
-                  <Collapsible 
-                    key={item.id} 
-                    open={openDropdown === item.id}
-                    onOpenChange={() => toggleDropdown(item.id)}
-                  >
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-between hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors duration-200 group ${
-                          activeTab === item.id ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : ''
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <ItemIcon className="w-5 h-5" />
-                          <span className="font-medium">{item.name}</span>
-                        </div>
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
-                          openDropdown === item.id ? 'rotate-180' : ''
-                        }`} />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-1 mt-1">
-                      <div className="ml-8 space-y-1">
-                        {item.submenu.map((subItem) => (
-                          <Button
-                            key={subItem.href}
-                            variant="ghost"
-                            asChild
-                            className={`w-full justify-start h-8 px-3 text-sm hover:bg-gray-100 rounded-md transition-colors duration-200 ${
-                              activeSubMenu === subItem.href 
-                                ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 font-medium' 
-                                : 'text-gray-600 hover:text-gray-900'
-                            }`}
-                          >
-                            <a href={subItem.href}>
-                              <span className={`w-2 h-2 rounded-full mr-3 ${
-                                activeSubMenu === subItem.href ? 'bg-blue-500' : 'bg-gray-300'
-                              }`}></span>
-                              {subItem.name}
-                            </a>
-                          </Button>
-                        ))}
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                );
-              } else {
-                return (
-                  <Button
-                    key={item.id}
-                    variant="ghost"
-                    asChild
-                    className={`w-full justify-start hover:bg-gray-100 transition-colors duration-200 ${
-                      activeTab === item.id ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : ''
-                    }`}
-                  >
-                    <a href={item.href} onClick={() => setActiveTab(item.id)}>
-                      <ItemIcon className="w-5 h-5 mr-3" />
-                      {item.name}
-                    </a>
-                  </Button>
-                );
-              }
-            })}
+            {filteredNavigation.map(renderNavigationItem)}
           </div>
         </nav>
 

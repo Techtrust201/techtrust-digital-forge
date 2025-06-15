@@ -21,8 +21,11 @@ import {
   Crown,
   Shield,
   Rocket,
-  Diamond
+  Diamond,
+  Lock,
+  Plus
 } from 'lucide-react';
+import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
 
 interface UserData {
   email: string;
@@ -51,6 +54,15 @@ const Dashboard = () => {
       type: 'success'
     }
   ]);
+
+  const { 
+    subscriptions, 
+    loading, 
+    hasAnalyticsAccess, 
+    hasCampaignsAccess,
+    hasAdvancedAnalytics,
+    getActivePackages 
+  } = useUserSubscriptions();
 
   useEffect(() => {
     // Récupérer les données utilisateur
@@ -118,59 +130,60 @@ const Dashboard = () => {
 
   const tierInfo = getTierInfo(userData.tier);
   const TierIcon = tierInfo.icon;
+  const activePackages = getActivePackages();
 
   const quickStats = [
     {
-      title: 'Projets actifs',
-      value: userData.services?.length || 0,
+      title: 'Services actifs',
+      value: activePackages.length || 0,
       icon: Target,
-      change: '+12%',
-      positive: true
+      change: activePackages.length > 0 ? '+12%' : '0%',
+      positive: activePackages.length > 0
     },
     {
-      title: 'Performances',
-      value: '87%',
+      title: 'Analytics',
+      value: hasAnalyticsAccess() ? 'Actif' : 'Limité',
       icon: TrendingUp,
-      change: '+5%',
-      positive: true
+      change: hasAnalyticsAccess() ? '+5%' : 'Bloqué',
+      positive: hasAnalyticsAccess()
     },
     {
-      title: 'Économies',
-      value: '2,340€',
-      icon: Award,
-      change: '+230€',
-      positive: true
+      title: 'Campagnes',
+      value: hasCampaignsAccess() ? 'Disponible' : 'Indisponible',
+      icon: Zap,
+      change: hasCampaignsAccess() ? 'Accès complet' : 'Upgrade requis',
+      positive: hasCampaignsAccess()
     },
     {
       title: 'Score qualité',
-      value: '9.2/10',
+      value: activePackages.length > 0 ? '9.2/10' : '-',
       icon: Star,
-      change: '+0.3',
-      positive: true
+      change: activePackages.length > 0 ? '+0.3' : 'N/A',
+      positive: activePackages.length > 0
     }
   ];
 
   const recentActivity = [
     {
       id: 1,
-      action: 'Rapport mensuel généré',
-      service: 'Growth Hacking IA',
-      time: '2h',
+      action: 'Connexion dashboard',
+      service: 'Système',
+      time: 'Maintenant',
       status: 'completed'
     },
     {
       id: 2,
-      action: 'Sauvegarde automatique',
-      service: 'Site Web',
-      time: '6h',
-      status: 'completed'
+      action: hasAnalyticsAccess() ? 'Analytics consultées' : 'Accès analytics bloqué',
+      service: 'Analytics',
+      time: '1h',
+      status: hasAnalyticsAccess() ? 'completed' : 'blocked'
     },
     {
       id: 3,
-      action: 'Campagne email lancée',
-      service: 'Growth Hacking IA',
-      time: '1d',
-      status: 'running'
+      action: hasCampaignsAccess() ? 'Campagne créée' : 'Fonctionnalité verrouillée',
+      service: 'Campagnes',
+      time: '2h',
+      status: hasCampaignsAccess() ? 'completed' : 'blocked'
     }
   ];
 
@@ -221,7 +234,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats rapides */}
+        {/* Stats rapides avec limitations */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {quickStats.map((stat, index) => {
             const StatIcon = stat.icon;
@@ -229,7 +242,7 @@ const Dashboard = () => {
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <StatIcon className="w-8 h-8 text-blue-500" />
+                    <StatIcon className={`w-8 h-8 ${stat.positive ? 'text-blue-500' : 'text-gray-400'}`} />
                     <Badge 
                       variant="outline" 
                       className={stat.positive ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}
@@ -238,9 +251,17 @@ const Dashboard = () => {
                     </Badge>
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
+                    <h3 className={`text-2xl font-bold ${stat.positive ? 'text-gray-900' : 'text-gray-500'}`}>
+                      {stat.value}
+                    </h3>
                     <p className="text-sm text-gray-600">{stat.title}</p>
                   </div>
+                  {!stat.positive && (
+                    <div className="mt-2 flex items-center text-xs text-gray-500">
+                      <Lock className="w-3 h-3 mr-1" />
+                      Upgrade requis
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -258,25 +279,26 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {userData.services?.map((service, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-blue-500" />
+                {activePackages.length > 0 ? (
+                  activePackages.map((subscription, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Globe className="w-5 h-5 text-blue-500" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {subscription.package_name}
+                          </h4>
+                          <p className="text-sm text-gray-600">{subscription.package_category}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900">
-                          {service.replace('-', ' ').toUpperCase()}
-                        </h4>
-                        <p className="text-sm text-gray-600">Service actif</p>
-                      </div>
+                      <Badge className="bg-green-100 text-green-800">
+                        {subscription.status}
+                      </Badge>
                     </div>
-                    <Button variant="outline" size="sm">
-                      Gérer
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                )) || (
+                  ))
+                ) : (
                   <div className="text-center py-8">
                     <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -286,8 +308,8 @@ const Dashboard = () => {
                       Découvrez nos solutions pour développer votre business
                     </p>
                     <Button>
+                      <Plus className="w-4 h-4 mr-2" />
                       Voir nos services
-                      <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 )}
@@ -307,13 +329,17 @@ const Dashboard = () => {
                   {recentActivity.map((activity) => (
                     <div key={activity.id} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg">
                       <div className={`w-3 h-3 rounded-full ${
-                        activity.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'
+                        activity.status === 'completed' ? 'bg-green-500' : 
+                        activity.status === 'blocked' ? 'bg-red-500' : 'bg-blue-500'
                       }`} />
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{activity.action}</p>
                         <p className="text-sm text-gray-600">{activity.service}</p>
                       </div>
                       <span className="text-sm text-gray-500">{activity.time}</span>
+                      {activity.status === 'blocked' && (
+                        <Lock className="w-4 h-4 text-red-500" />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -323,6 +349,30 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Limitations d'accès */}
+            <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
+              <CardContent className="p-6 text-center">
+                <Lock className="w-8 h-8 text-orange-500 mx-auto mb-4" />
+                <h3 className="font-bold text-gray-900 mb-2">
+                  Fonctionnalités Limitées
+                </h3>
+                <div className="space-y-2 text-sm text-gray-600">
+                  {!hasAnalyticsAccess() && (
+                    <p>• Analytics avancées verrouillées</p>
+                  )}
+                  {!hasCampaignsAccess() && (
+                    <p>• Campagnes marketing indisponibles</p>
+                  )}
+                  {!hasAdvancedAnalytics() && (
+                    <p>• Rapports détaillés restreints</p>
+                  )}
+                </div>
+                <Button className="w-full mt-4 bg-gradient-to-r from-orange-500 to-red-500">
+                  Upgrader mon plan
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* Notifications */}
             <Card>
               <CardHeader>
@@ -343,24 +393,6 @@ const Dashboard = () => {
                 ))}
               </CardContent>
             </Card>
-
-            {/* Upgrade suggestion */}
-            {tierInfo.nextTier && (
-              <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
-                <CardContent className="p-6 text-center">
-                  <Crown className="w-8 h-8 text-blue-500 mx-auto mb-4" />
-                  <h3 className="font-bold text-gray-900 mb-2">
-                    Passez au niveau {tierInfo.nextTier}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Débloquez de nouvelles fonctionnalités et économisez plus
-                  </p>
-                  <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500">
-                    Découvrir
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Support rapide */}
             <Card>
