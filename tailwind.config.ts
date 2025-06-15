@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 const config = {
@@ -56,7 +55,20 @@ const config = {
     "bg-custom-blue/90", 
     "bg-custom-green/90",
     "bg-custom-pink/90",
-    "bg-custom-slate/90"
+    "bg-custom-slate/90",
+    // Job type badge colors
+    "bg-blue-100",
+    "text-blue-800",
+    "border-blue-200",
+    "bg-purple-100",
+    "text-purple-800",
+    "border-purple-200",
+    "bg-green-100",
+    "text-green-800",
+    "border-green-200",
+    "bg-gray-100",
+    "text-gray-800",
+    "border-gray-200"
   ],
   prefix: "",
   theme: {
