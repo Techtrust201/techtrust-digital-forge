@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -102,9 +101,11 @@ const AdminBlogPreviewPage = () => {
           <CardContent className="p-8">
             <div className="max-w-4xl mx-auto">
               <div className="mb-5 flex flex-wrap gap-2">
-                <Badge className="bg-red-50 text-red-700 border-red-200">
-                  {post.category}
-                </Badge>
+                {post.category && post.category.trim() !== '' && (
+                  <Badge className="bg-red-50 text-red-700 border-red-200">
+                    {post.category}
+                  </Badge>
+                )}
               </div>
               
               <h1 className="text-4xl font-bold text-gray-900 mb-6">{post.title}</h1>
