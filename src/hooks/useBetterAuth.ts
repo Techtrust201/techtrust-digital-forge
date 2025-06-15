@@ -58,7 +58,7 @@ export const useBetterAuth = () => {
       if (result?.user) {
         setAuthState({
           user: result.user,
-          session: result.session || null,
+          session: null, // Better-Auth gère les sessions automatiquement
           isLoading: false,
           isAuthenticated: true
         });
