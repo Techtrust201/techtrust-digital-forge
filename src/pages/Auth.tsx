@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 import { toast } from 'sonner';
 
 const Auth = () => {
@@ -16,7 +16,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { signIn, signUp, isAuthenticated } = useBetterAuth();
 
   // Rediriger si déjà connecté
   useEffect(() => {
@@ -35,35 +35,17 @@ const Auth = () => {
     const password = formData.get('password') as string;
 
     try {
-      // Comptes de test disponibles
-      const testAccounts = {
-        'admin@techtrust.fr': { id: 'admin-1', role: 'super_admin', password: 'admin123' },
-        'starter@techtrust.fr': { id: 'client-starter-1', role: 'client', password: 'starter123' },
-        'business@techtrust.fr': { id: 'client-business-1', role: 'client', password: 'business123' },
-        'premium@techtrust.fr': { id: 'client-premium-1', role: 'client', password: 'premium123' },
-        'stagiaire@techtrust.fr': { id: 'employee-1', role: 'employee', password: 'stage123' },
-        'manager@techtrust.fr': { id: 'manager-1', role: 'manager', password: 'manager123' }
-      };
-
-      const account = testAccounts[email as keyof typeof testAccounts];
+      const result = await signIn(email, password);
       
-      if (!account || account.password !== password) {
+      if (result?.user) {
+        toast.success('Connexion réussie !');
+        navigate('/dashboard');
+      } else {
         throw new Error('Email ou mot de passe incorrect');
       }
-
-      // Simuler un délai de connexion
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      login({
-        id: account.id,
-        email,
-        role: account.role
-      });
-
-      toast.success('Connexion réussie !');
-      navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Erreur de connexion');
+      const errorMessage = err.message || 'Erreur de connexion';
+      setError(errorMessage);
       toast.error('Erreur de connexion');
     } finally {
       setIsLoading(false);
@@ -75,13 +57,25 @@ const Auth = () => {
     setIsLoading(true);
     setError('');
 
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const name = formData.get('name') as string;
+
     try {
-      // Simuler l'inscription
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+      const result = await signUp(email, password, name);
+      
+      if (result?.user) {
+        toast.success('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+        // Optionnel : connexion automatique après inscription
+        // navigate('/dashboard');
+      } else {
+        toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
+      }
       setError('');
     } catch (err: any) {
-      setError(err.message || 'Erreur lors de l\'inscription');
+      const errorMessage = err.message || 'Erreur lors de l\'inscription';
+      setError(errorMessage);
       toast.error('Erreur lors de l\'inscription');
     } finally {
       setIsLoading(false);
@@ -159,15 +153,6 @@ const Auth = () => {
                     Se connecter
                   </Button>
                 </form>
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-2">Comptes de test :</h4>
-                  <div className="text-sm text-blue-800 space-y-1">
-                    <div><strong>Admin :</strong> admin@techtrust.fr / admin123</div>
-                    <div><strong>Client :</strong> business@techtrust.fr / business123</div>
-                    <div><strong>Manager :</strong> manager@techtrust.fr / manager123</div>
-                  </div>
-                </div>
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4">

@@ -41,6 +41,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -50,11 +51,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { t } = useTranslation();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   
+  const { user, signOut } = useBetterAuth();
   const { 
     subscriptions, 
     hasAnalyticsAccess, 
@@ -62,13 +63,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     hasAdvancedAnalytics,
     getActivePackages 
   } = useUserSubscriptions();
-
-  useEffect(() => {
-    const user = localStorage.getItem('techtrust_user');
-    if (user) {
-      setUserData(JSON.parse(user));
-    }
-  }, []);
 
   // Déterminer l'onglet actif et le sous-menu actif basé sur l'URL
   useEffect(() => {
@@ -112,8 +106,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('techtrust_user');
+  const handleLogout = async () => {
+    await signOut();
     window.location.href = '/auth';
   };
 
@@ -143,6 +137,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         return { icon: Shield, name: 'Bronze', color: 'text-amber-600' };
     }
   };
+
+  // Utiliser les données utilisateur de Better-Auth
+  const userData = user ? {
+    name: user.name || user.email?.split('@')[0] || 'Utilisateur',
+    email: user.email,
+    role: 'client', // Par défaut, pourrait être récupéré via getUserRole
+    tier: 'bronze'
+  } : null;
 
   const tierInfo = userData ? getTierInfo(userData.tier) : { icon: Shield, name: 'Bronze', color: 'text-amber-600' };
   const TierIcon = tierInfo.icon;
@@ -177,7 +179,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       hasAccess: hasAnalyticsAccess(),
       submenu: [
         { 
-          name: 'Performance Site', 
+          name: 'Performance Site',
           href: '/dashboard/analytics/website',
           requiresAdvanced: false
         },

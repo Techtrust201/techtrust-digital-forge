@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -61,7 +62,7 @@ import AdminBlogCategoriesPage from '@/pages/admin/blog/AdminBlogCategoriesPage'
 import AdminBlogCommentsPage from '@/pages/admin/blog/AdminBlogCommentsPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
 import NotFound from '@/pages/NotFound';
-import { useAuth } from '@/hooks/useAuth';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useIsHydrating } from '@/hooks/useIsHydrating';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -79,7 +80,7 @@ const queryClient = new QueryClient({
 
 // Composant interne pour gérer la logique avec useLocation
 function AppContent() {
-  const { isLoading } = useAuth();
+  const { isLoading } = useBetterAuth();
   const { toast } = useToast();
   const location = useLocation();
   const isHydrating = useIsHydrating();
