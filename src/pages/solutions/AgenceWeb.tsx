@@ -647,7 +647,7 @@ const AgenceWeb = () => {
                   <Button 
                     asChild
                     size="lg" 
-                    className="bg-white text-blue-600 hover:bg-gray-100"
+                    className="bg-white text-blue-600 hover:bg-gray-100 hover:text-blue-600"
                   >
                     <a href="/contact">
                       Demander un devis gratuit
@@ -659,7 +659,7 @@ const AgenceWeb = () => {
                     asChild
                     variant="outline" 
                     size="lg"
-                    className="border-2 border-white text-white hover:bg-white/10"
+                    className="border-2 border-white text-white hover:bg-white hover:text-blue-600"
                   >
                     <a href="/pricing">
                       Voir nos formules
