@@ -303,10 +303,10 @@ export const servicesData = {
     subtitle: "Expertise & accompagnement",
     description: "Audit, stratégie et accompagnement personnalisé pour votre transformation digitale.",
     icon: Lightbulb,
-    color: "slate",
-    bgGradient: "from-slate-500 to-slate-600",
-    lightBg: "bg-slate-50",
-    darkColor: "text-slate-700",
+    color: "orange",
+    bgGradient: "from-orange-500 to-orange-600",
+    lightBg: "bg-orange-50",
+    darkColor: "text-orange-700",
     packages: [
       {
         id: "consulting-audit",
