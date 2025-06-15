@@ -3,13 +3,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, Bot, Users } from 'lucide-react';
+import { ArrowRight, Check, Bot, Users, Globe, TrendingUp, Code, Lightbulb, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const services = [
   {
-    logo: "🌐",
+    icon: Globe,
     title: "Création Site Web",
     subtitle: "Sites professionnels & E-commerce",
     description: "Développement de sites web modernes 2025, optimisés SEO et adaptés à tous les appareils. De la vitrine e-commerce à l'application web complexe.",
@@ -19,7 +19,7 @@ const services = [
     link: "/solutions/agence-web"
   },
   {
-    logo: "🤖",
+    icon: TrendingUp,
     title: "Growth Hacking IA",
     subtitle: "🤖 Automatisation complète + Community IA",
     description: "Nos outils IA propriétaires automatisent votre prospection, acquisition clients ET community management. Remplacez un commercial + community manager par notre IA ultra-performante.",
@@ -29,7 +29,7 @@ const services = [
     link: "/solutions/growth-hacking"
   },
   {
-    logo: "⚡",
+    icon: Code,
     title: "Solutions Sur Mesure",
     subtitle: "Développement personnalisé",
     description: "Logiciels métier, CRM, ERP et applications sur mesure pour optimiser vos processus et booster votre productivité en 2025.",
@@ -39,7 +39,7 @@ const services = [
     link: "/solutions/digitales-sur-mesure"
   },
   {
-    logo: "👥",
+    icon: MessageSquare,
     title: "Community Management Pro",
     subtitle: "Équipe dédiée experte",
     description: "Vous préférez déléguer à des professionnels ? Notre équipe de community managers experts gère vos réseaux avec stratégie personnalisée sur mesure.",
@@ -49,7 +49,7 @@ const services = [
     link: "/solutions/community-management"
   },
   {
-    logo: "💡",
+    icon: Lightbulb,
     title: "Consulting Digital",
     subtitle: "Transformation & Innovation",
     description: "Accompagnement stratégique pour votre transformation digitale 2025. Digitalisation complète comme le Palais des Festivals de Cannes ! Projets d'envergure exceptionnelle.",
@@ -145,15 +145,22 @@ const ServicesSection = () => {
                 ></div>
                 
                 <CardContent className="p-8 relative z-10 flex flex-col h-full">
-                  {/* Logo professionnel */}
+                  {/* Icône professionnelle avec design moderne */}
                   <div 
-                    className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 flex-shrink-0 shadow-lg"
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 flex-shrink-0 relative overflow-hidden"
                     style={{ 
-                      backgroundColor: `${service.color}10`,
-                      border: `2px solid ${service.color}20`
+                      background: `linear-gradient(135deg, ${service.color}15, ${service.color}25)`,
+                      boxShadow: `0 10px 30px ${service.color}20, inset 0 1px 0 rgba(255,255,255,0.2)`
                     }}
                   >
-                    <span className="text-3xl">{service.logo}</span>
+                    {/* Effet de brillance subtil */}
+                    <div 
+                      className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-2xl"
+                    ></div>
+                    <service.icon 
+                      className="w-10 h-10 relative z-10" 
+                      style={{ color: service.color }}
+                    />
                   </div>
 
                   {/* Contenu */}
