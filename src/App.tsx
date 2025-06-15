@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Index from '@/pages/Index';
 import Pricing from '@/pages/Pricing';
 import PricingOptimized from '@/pages/PricingOptimized';
@@ -61,6 +62,16 @@ import { useToast } from '@/hooks/use-toast';
 import { useIsHydrating } from '@/hooks/useIsHydrating';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Toaster } from '@/components/ui/toaster';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 // Composant interne pour gérer la logique avec useLocation
 function AppContent() {
@@ -159,10 +170,12 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AppContent />
-      <Toaster />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AppContent />
+        <Toaster />
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
