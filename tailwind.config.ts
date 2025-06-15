@@ -10,18 +10,53 @@ const config = {
     "./src/**/*.{ts,tsx}",
   ],
   safelist: [
+    // Background colors
     "bg-custom-purple", 
     "bg-custom-blue", 
     "bg-custom-green",
+    "bg-custom-pink",
+    "bg-custom-slate",
+    // Text colors
     "text-custom-purple", 
     "text-custom-blue", 
     "text-custom-green",
+    "text-custom-pink",
+    "text-custom-slate",
+    // Gradient from colors
     "from-custom-purple",
     "from-custom-blue", 
     "from-custom-green",
+    "from-custom-pink",
+    "from-custom-slate",
+    // Gradient to colors
     "to-custom-purple",
     "to-custom-blue", 
-    "to-custom-green"
+    "to-custom-green",
+    "to-custom-pink",
+    "to-custom-slate",
+    // Border colors
+    "border-custom-purple",
+    "border-custom-blue", 
+    "border-custom-green",
+    "border-custom-pink",
+    "border-custom-slate",
+    // Hover variants
+    "hover:bg-custom-purple",
+    "hover:bg-custom-blue", 
+    "hover:bg-custom-green",
+    "hover:bg-custom-pink",
+    "hover:bg-custom-slate",
+    // Background opacity variants
+    "bg-custom-purple/10",
+    "bg-custom-blue/10", 
+    "bg-custom-green/10",
+    "bg-custom-pink/10",
+    "bg-custom-slate/10",
+    "bg-custom-purple/90",
+    "bg-custom-blue/90", 
+    "bg-custom-green/90",
+    "bg-custom-pink/90",
+    "bg-custom-slate/90"
   ],
   prefix: "",
   theme: {
