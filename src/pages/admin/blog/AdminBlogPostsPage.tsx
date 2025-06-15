@@ -1,54 +1,33 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Plus, Edit, Trash2, Eye, Calendar, User } from 'lucide-react';
+import { useBlogPosts, useBlogActions } from '@/hooks/useBlogData';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminBlogPostsPage = () => {
-  const blogPosts = [
-    {
-      id: 1,
-      title: 'Les tendances du Growth Hacking en 2024',
-      author: 'Marie Dubois',
-      category: 'Growth Hacking',
-      status: 'published',
-      views: 2847,
-      publishDate: '2024-01-15',
-      lastModified: '2024-01-16'
-    },
-    {
-      id: 2,
-      title: 'Comment optimiser son référencement naturel',
-      author: 'Pierre Martin',
-      category: 'SEO',
-      status: 'draft',
-      views: 0,
-      publishDate: null,
-      lastModified: '2024-01-14'
-    },
-    {
-      id: 3,
-      title: 'L\'importance du community management',
-      author: 'Sophie Lefebvre',
-      category: 'Community',
-      status: 'published',
-      views: 1923,
-      publishDate: '2024-01-12',
-      lastModified: '2024-01-12'
-    },
-    {
-      id: 4,
-      title: 'Stratégies de marketing digital pour PME',
-      author: 'Thomas Bernard',
-      category: 'Marketing',
-      status: 'scheduled',
-      views: 0,
-      publishDate: '2024-01-20',
-      lastModified: '2024-01-14'
-    }
-  ];
+  const { data: blogPosts, isLoading } = useBlogPosts();
+  const { deletePost, updatePost } = useBlogActions();
+  const [selectedPost, setSelectedPost] = useState<string | null>(null);
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-64" />
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-24" />
+            ))}
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -76,6 +55,24 @@ const AdminBlogPostsPage = () => {
     }
   };
 
+  const handleDeletePost = async (id: string) => {
+    await deletePost.mutateAsync(id);
+    setSelectedPost(null);
+  };
+
+  const handlePublishPost = async (id: string) => {
+    await updatePost.mutateAsync({
+      id,
+      status: 'published',
+      publish_date: new Date().toISOString(),
+    });
+  };
+
+  const publishedPosts = blogPosts?.filter(post => post.status === 'published') || [];
+  const draftPosts = blogPosts?.filter(post => post.status === 'draft') || [];
+  const scheduledPosts = blogPosts?.filter(post => post.status === 'scheduled') || [];
+  const totalViews = blogPosts?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -92,45 +89,45 @@ const AdminBlogPostsPage = () => {
 
         {/* Stats rapides */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <FileText className="w-8 h-8 text-blue-500" />
                 <div>
-                  <p className="text-2xl font-bold">24</p>
+                  <p className="text-2xl font-bold">{blogPosts?.length || 0}</p>
                   <p className="text-sm text-gray-500">Total articles</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <Eye className="w-8 h-8 text-green-500" />
                 <div>
-                  <p className="text-2xl font-bold">45.2K</p>
+                  <p className="text-2xl font-bold">{totalViews.toLocaleString()}</p>
                   <p className="text-sm text-gray-500">Vues totales</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <Calendar className="w-8 h-8 text-purple-500" />
                 <div>
-                  <p className="text-2xl font-bold">3</p>
+                  <p className="text-2xl font-bold">{scheduledPosts.length}</p>
                   <p className="text-sm text-gray-500">Programmés</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <Edit className="w-8 h-8 text-orange-500" />
                 <div>
-                  <p className="text-2xl font-bold">5</p>
+                  <p className="text-2xl font-bold">{draftPosts.length}</p>
                   <p className="text-sm text-gray-500">Brouillons</p>
                 </div>
               </div>
@@ -145,11 +142,11 @@ const AdminBlogPostsPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {blogPosts.map((post) => (
+              {blogPosts?.map((post) => (
                 <div key={post.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-medium text-gray-900">{post.title}</h3>
+                      <h3 className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer">{post.title}</h3>
                       <Badge className={getStatusColor(post.status)}>
                         {getStatusLabel(post.status)}
                       </Badge>
@@ -163,30 +160,61 @@ const AdminBlogPostsPage = () => {
                         <FileText className="w-4 h-4" />
                         {post.category}
                       </div>
-                      {post.publishDate && (
+                      {post.publish_date && (
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {post.publishDate}
+                          {new Date(post.publish_date).toLocaleDateString()}
                         </div>
                       )}
                       {post.status === 'published' && (
                         <div className="flex items-center gap-1">
                           <Eye className="w-4 h-4" />
-                          {post.views.toLocaleString()} vues
+                          {post.views?.toLocaleString() || 0} vues
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="hover:bg-blue-50">
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="hover:bg-green-50">
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    {post.status === 'draft' && (
+                      <Button 
+                        size="sm" 
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        onClick={() => handlePublishPost(post.id)}
+                        disabled={updatePost.isPending}
+                      >
+                        Publier
+                      </Button>
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Supprimer l'article</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir supprimer "{post.title}" ? Cette action est irréversible.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => handleDeletePost(post.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Supprimer
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               ))}

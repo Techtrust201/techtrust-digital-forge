@@ -1,58 +1,41 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, Plus, Send, Users, Clock, CheckCircle, Calendar, Edit } from 'lucide-react';
+import { useSMSCampaigns, useCampaignActions } from '@/hooks/useCampaignData';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminCampaignsSMSPage = () => {
-  const smsCampaigns = [
-    {
-      id: 1,
-      name: 'Promo Flash Weekend',
-      message: 'Flash Sale ! 30% sur tous nos services jusqu\'à dimanche. Code: FLASH30',
-      status: 'sent',
-      recipients: 892,
-      delivered: 875,
-      deliveryRate: 98.1,
-      sentDate: '2024-01-15 10:00',
-      cost: 89.20
-    },
-    {
-      id: 2,
-      name: 'Rappel RDV Consultation',
-      message: 'Rappel: Votre consultation gratuite demain à 14h. Confirmez en répondant OUI.',
-      status: 'scheduled',
-      recipients: 45,
-      delivered: 0,
-      deliveryRate: 0,
-      sentDate: '2024-01-17 09:00',
-      cost: 4.50
-    },
-    {
-      id: 3,
-      name: 'Alerte Nouveau Service',
-      message: 'Nouveau ! Découvrez notre service de Community Management. Plus d\'infos sur notre site.',
-      status: 'sent',
-      recipients: 1247,
-      delivered: 1235,
-      deliveryRate: 99.0,
-      sentDate: '2024-01-12 14:30',
-      cost: 124.70
-    },
-    {
-      id: 4,
-      name: 'Sondage Satisfaction',
-      message: 'Votre avis compte ! Notez notre service sur 5 étoiles en cliquant ici: [lien]',
+  const { data: smsCampaigns, isLoading } = useSMSCampaigns();
+  const { createSMSCampaign, sendSMSCampaign } = useCampaignActions();
+  const [showNewCampaignModal, setShowNewCampaignModal] = useState(false);
+  const [newCampaign, setNewCampaign] = useState({
+    name: '',
+    message: '',
+  });
+
+  const handleCreateCampaign = async () => {
+    await createSMSCampaign.mutateAsync({
+      ...newCampaign,
       status: 'draft',
       recipients: 0,
       delivered: 0,
-      deliveryRate: 0,
-      sentDate: null,
-      cost: 0
-    }
-  ];
+      delivery_rate: 0,
+      cost: 0,
+    });
+    setNewCampaign({ name: '', message: '' });
+    setShowNewCampaignModal(false);
+  };
+
+  const handleSendCampaign = async (id: string) => {
+    await sendSMSCampaign.mutateAsync(id);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -84,11 +67,33 @@ const AdminCampaignsSMSPage = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-64" />
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-32" />
+            ))}
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  const totalCampaigns = smsCampaigns?.length || 0;
+  const totalSent = smsCampaigns?.reduce((sum, campaign) => sum + campaign.recipients, 0) || 0;
+  const avgDeliveryRate = smsCampaigns?.length 
+    ? (smsCampaigns.reduce((sum, campaign) => sum + campaign.delivery_rate, 0) / smsCampaigns.length).toFixed(1)
+    : '0';
+  const totalCost = smsCampaigns?.reduce((sum, campaign) => sum + campaign.cost, 0) || 0;
+
   const statsData = [
-    { label: 'Campagnes SMS', value: smsCampaigns.length, icon: MessageSquare, color: 'text-blue-500' },
-    { label: 'SMS envoyés', value: '2.1K', icon: Send, color: 'text-green-500' },
-    { label: 'Taux de livraison', value: '98.5%', icon: CheckCircle, color: 'text-purple-500' },
-    { label: 'Coût total', value: '€218.40', icon: Clock, color: 'text-orange-500' },
+    { label: 'Campagnes SMS', value: totalCampaigns, icon: MessageSquare, color: 'text-blue-500' },
+    { label: 'SMS envoyés', value: totalSent.toLocaleString(), icon: Send, color: 'text-green-500' },
+    { label: 'Taux de livraison', value: `${avgDeliveryRate}%`, icon: CheckCircle, color: 'text-purple-500' },
+    { label: 'Coût total', value: `€${totalCost.toFixed(2)}`, icon: Clock, color: 'text-orange-500' },
   ];
 
   return (
@@ -99,10 +104,45 @@ const AdminCampaignsSMSPage = () => {
             <h1 className="text-3xl font-bold text-gray-900">SMS Marketing</h1>
             <p className="text-gray-500 mt-2">Gérer et analyser vos campagnes SMS</p>
           </div>
-          <Button className="bg-red-500 hover:bg-red-600">
-            <Plus className="w-4 h-4 mr-2" />
-            Nouvelle campagne SMS
-          </Button>
+          <Dialog open={showNewCampaignModal} onOpenChange={setShowNewCampaignModal}>
+            <DialogTrigger asChild>
+              <Button className="bg-red-500 hover:bg-red-600">
+                <Plus className="w-4 h-4 mr-2" />
+                Nouvelle campagne SMS
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Créer une campagne SMS</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Input
+                  placeholder="Nom de la campagne"
+                  value={newCampaign.name}
+                  onChange={(e) => setNewCampaign({ ...newCampaign, name: e.target.value })}
+                />
+                <div>
+                  <Textarea
+                    placeholder="Message SMS (160 caractères max)"
+                    value={newCampaign.message}
+                    onChange={(e) => setNewCampaign({ ...newCampaign, message: e.target.value.slice(0, 160) })}
+                    rows={4}
+                  />
+                  <div className="text-right text-xs text-gray-500 mt-1">
+                    {newCampaign.message.length}/160 caractères
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleCreateCampaign} 
+                    disabled={createSMSCampaign.isPending || !newCampaign.name || !newCampaign.message}
+                  >
+                    Créer la campagne
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Statistiques */}
@@ -110,7 +150,7 @@ const AdminCampaignsSMSPage = () => {
           {statsData.map((stat) => {
             const IconComponent = stat.icon;
             return (
-              <Card key={stat.label}>
+              <Card key={stat.label} className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <IconComponent className={`w-8 h-8 ${stat.color}`} />
@@ -132,21 +172,26 @@ const AdminCampaignsSMSPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {smsCampaigns.map((campaign) => (
+              {smsCampaigns?.map((campaign) => (
                 <div key={campaign.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-medium text-gray-900">{campaign.name}</h3>
+                      <h3 className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer">{campaign.name}</h3>
                       <Badge className={getStatusColor(campaign.status)}>
                         {getStatusLabel(campaign.status)}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="hover:bg-green-50">
                         <Edit className="w-4 h-4" />
                       </Button>
                       {campaign.status === 'draft' && (
-                        <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white">
+                        <Button 
+                          size="sm" 
+                          className="bg-red-500 hover:bg-red-600 text-white"
+                          onClick={() => handleSendCampaign(campaign.id)}
+                          disabled={sendSMSCampaign.isPending}
+                        >
                           <Send className="w-4 h-4" />
                         </Button>
                       )}
@@ -169,7 +214,7 @@ const AdminCampaignsSMSPage = () => {
                       <>
                         <div className="flex items-center gap-2">
                           <CheckCircle className="w-4 h-4 text-gray-400" />
-                          <span>{campaign.delivered} livrés ({campaign.deliveryRate}%)</span>
+                          <span>{campaign.delivered} livrés ({campaign.delivery_rate.toFixed(1)}%)</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-gray-400" />
@@ -177,10 +222,10 @@ const AdminCampaignsSMSPage = () => {
                         </div>
                       </>
                     )}
-                    {campaign.sentDate && (
+                    {campaign.sent_date && (
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span>{campaign.sentDate}</span>
+                        <span>{new Date(campaign.sent_date).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
@@ -192,11 +237,11 @@ const AdminCampaignsSMSPage = () => {
                         <div className="flex items-center gap-2">
                           <div className="flex-1 bg-gray-200 rounded-full h-2">
                             <div 
-                              className="bg-green-500 h-2 rounded-full" 
-                              style={{ width: `${campaign.deliveryRate}%` }}
+                              className="bg-green-500 h-2 rounded-full transition-all duration-300" 
+                              style={{ width: `${campaign.delivery_rate}%` }}
                             ></div>
                           </div>
-                          <span className="text-sm font-medium">{campaign.deliveryRate}%</span>
+                          <span className="text-sm font-medium">{campaign.delivery_rate.toFixed(1)}%</span>
                         </div>
                         <div className="mt-2 text-xs text-gray-600">
                           {campaign.delivered}/{campaign.recipients} SMS livrés
@@ -217,15 +262,15 @@ const AdminCampaignsSMSPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3 text-sm">
-              <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
                 <h4 className="font-medium text-blue-800 mb-1">Coût par SMS</h4>
                 <p className="text-blue-700">0.10€ par SMS en France, 0.15€ à l'international</p>
               </div>
-              <div className="p-3 bg-yellow-50 rounded-lg">
+              <div className="p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors cursor-pointer">
                 <h4 className="font-medium text-yellow-800 mb-1">Limite de caractères</h4>
                 <p className="text-yellow-700">160 caractères max par SMS. Au-delà, le message sera divisé.</p>
               </div>
-              <div className="p-3 bg-green-50 rounded-lg">
+              <div className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
                 <h4 className="font-medium text-green-800 mb-1">Heures d'envoi</h4>
                 <p className="text-green-700">Envois autorisés de 8h à 20h du lundi au samedi.</p>
               </div>

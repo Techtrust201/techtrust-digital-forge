@@ -5,50 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Check, X, Eye, Flag, User, Calendar } from 'lucide-react';
+import { useBlogComments, useBlogActions } from '@/hooks/useBlogData';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminBlogCommentsPage = () => {
-  const comments = [
-    {
-      id: 1,
-      author: 'Jean Dupont',
-      email: 'jean@example.com',
-      content: 'Excellent article ! Ces techniques de growth hacking sont vraiment efficaces. Merci pour le partage.',
-      article: 'Les tendances du Growth Hacking en 2024',
-      status: 'pending',
-      date: '2024-01-16 14:30',
-      ip: '192.168.1.1'
-    },
-    {
-      id: 2,
-      author: 'Marie Lambert',
-      email: 'marie@example.com',
-      content: 'Je ne suis pas d\'accord avec certains points mentionnés. Avez-vous des sources pour appuyer vos affirmations ?',
-      article: 'Comment optimiser son référencement naturel',
-      status: 'approved',
-      date: '2024-01-15 09:15',
-      ip: '192.168.1.2'
-    },
-    {
-      id: 3,
-      author: 'Spammer Bot',
-      email: 'spam@fake.com',
-      content: 'Cliquez ici pour gagner de l\'argent rapidement !!! www.fake-site.com',
-      article: 'L\'importance du community management',
-      status: 'spam',
-      date: '2024-01-14 23:45',
-      ip: '192.168.1.3'
-    },
-    {
-      id: 4,
-      author: 'Claire Martin',
-      email: 'claire@example.com',
-      content: 'Super article, très informatif. J\'ai appliqué vos conseils et j\'ai déjà vu des résultats positifs !',
-      article: 'Stratégies de marketing digital pour PME',
-      status: 'approved',
-      date: '2024-01-13 16:20',
-      ip: '192.168.1.4'
-    }
-  ];
+  const { data: comments, isLoading } = useBlogComments();
+  const { updateCommentStatus } = useBlogActions();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -80,11 +42,43 @@ const AdminBlogCommentsPage = () => {
     }
   };
 
+  const handleApprove = (id: string) => {
+    updateCommentStatus.mutate({ id, status: 'approved' });
+  };
+
+  const handleReject = (id: string) => {
+    updateCommentStatus.mutate({ id, status: 'rejected' });
+  };
+
+  const handleMarkAsSpam = (id: string) => {
+    updateCommentStatus.mutate({ id, status: 'spam' });
+  };
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-64" />
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-32" />
+            ))}
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  const totalComments = comments?.length || 0;
+  const pendingComments = comments?.filter(c => c.status === 'pending').length || 0;
+  const approvedComments = comments?.filter(c => c.status === 'approved').length || 0;
+  const spamComments = comments?.filter(c => c.status === 'spam').length || 0;
+
   const statsData = [
-    { label: 'Total commentaires', value: comments.length, icon: MessageCircle, color: 'text-blue-500' },
-    { label: 'En attente', value: comments.filter(c => c.status === 'pending').length, icon: Eye, color: 'text-yellow-500' },
-    { label: 'Approuvés', value: comments.filter(c => c.status === 'approved').length, icon: Check, color: 'text-green-500' },
-    { label: 'Spam/Rejetés', value: comments.filter(c => c.status === 'spam').length, icon: Flag, color: 'text-red-500' },
+    { label: 'Total commentaires', value: totalComments, icon: MessageCircle, color: 'text-blue-500' },
+    { label: 'En attente', value: pendingComments, icon: Eye, color: 'text-yellow-500' },
+    { label: 'Approuvés', value: approvedComments, icon: Check, color: 'text-green-500' },
+    { label: 'Spam/Rejetés', value: spamComments, icon: Flag, color: 'text-red-500' },
   ];
 
   return (
@@ -100,7 +94,7 @@ const AdminBlogCommentsPage = () => {
           {statsData.map((stat) => {
             const IconComponent = stat.icon;
             return (
-              <Card key={stat.label}>
+              <Card key={stat.label} className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <IconComponent className={`w-8 h-8 ${stat.color}`} />
@@ -122,16 +116,16 @@ const AdminBlogCommentsPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {comments.map((comment) => (
-                <div key={comment.id} className="p-4 bg-gray-50 rounded-lg">
+              {comments?.map((comment: any) => (
+                <div key={comment.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">{comment.author.charAt(0)}</span>
+                        <span className="text-white font-bold text-sm">{comment.author_name.charAt(0)}</span>
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{comment.author}</h4>
-                        <p className="text-sm text-gray-500">{comment.email}</p>
+                        <h4 className="font-medium text-gray-900">{comment.author_name}</h4>
+                        <p className="text-sm text-gray-500">{comment.author_email}</p>
                       </div>
                       <Badge className={getStatusColor(comment.status)}>
                         {getStatusLabel(comment.status)}
@@ -140,15 +134,33 @@ const AdminBlogCommentsPage = () => {
                     <div className="flex items-center gap-2">
                       {comment.status === 'pending' && (
                         <>
-                          <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                            onClick={() => handleApprove(comment.id)}
+                            disabled={updateCommentStatus.isPending}
+                          >
                             <Check className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleReject(comment.id)}
+                            disabled={updateCommentStatus.isPending}
+                          >
                             <X className="w-4 h-4" />
                           </Button>
                         </>
                       )}
-                      <Button size="sm" variant="outline">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="hover:bg-orange-50"
+                        onClick={() => handleMarkAsSpam(comment.id)}
+                        disabled={updateCommentStatus.isPending}
+                      >
                         <Flag className="w-4 h-4" />
                       </Button>
                     </div>
@@ -160,13 +172,15 @@ const AdminBlogCommentsPage = () => {
                   
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center gap-4">
-                      <span>Article: {comment.article}</span>
+                      <span>Article: {comment.blog_posts?.title || 'Article supprimé'}</span>
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {comment.date}
+                        {new Date(comment.created_at).toLocaleString()}
                       </div>
                     </div>
-                    <span>IP: {comment.ip}</span>
+                    {comment.ip_address && (
+                      <span>IP: {comment.ip_address}</span>
+                    )}
                   </div>
                 </div>
               ))}

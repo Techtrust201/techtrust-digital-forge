@@ -9,6 +9,409 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analytics_data: {
+        Row: {
+          category: string | null
+          created_at: string
+          date: string
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_value: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_value: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_value?: number
+        }
+        Relationships: []
+      }
+      automation_campaigns: {
+        Row: {
+          conversion_rate: number | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          status: string
+          total_completed: number | null
+          total_triggered: number | null
+          trigger_type: string
+        }
+        Insert: {
+          conversion_rate?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          status?: string
+          total_completed?: number | null
+          total_triggered?: number | null
+          trigger_type: string
+        }
+        Update: {
+          conversion_rate?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string
+          total_completed?: number | null
+          total_triggered?: number | null
+          trigger_type?: string
+        }
+        Relationships: []
+      }
+      blog_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      blog_comments: {
+        Row: {
+          author_email: string
+          author_name: string
+          content: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          post_id: string | null
+          status: string
+        }
+        Insert: {
+          author_email: string
+          author_name: string
+          content: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          post_id?: string | null
+          status?: string
+        }
+        Update: {
+          author_email?: string
+          author_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          post_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_posts: {
+        Row: {
+          author: string
+          category: string
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          publish_date: string | null
+          status: string
+          title: string
+          updated_at: string
+          views: number | null
+        }
+        Insert: {
+          author: string
+          category: string
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          publish_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          views?: number | null
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          publish_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
+      email_campaigns: {
+        Row: {
+          click_rate: number | null
+          content: string | null
+          created_at: string
+          id: string
+          name: string
+          open_rate: number | null
+          recipients: number | null
+          sent_date: string | null
+          status: string
+          subject: string
+          type: string
+        }
+        Insert: {
+          click_rate?: number | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          open_rate?: number | null
+          recipients?: number | null
+          sent_date?: string | null
+          status?: string
+          subject: string
+          type?: string
+        }
+        Update: {
+          click_rate?: number | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          open_rate?: number | null
+          recipients?: number | null
+          sent_date?: string | null
+          status?: string
+          subject?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount: number
+          client_email: string
+          client_name: string
+          created_at: string
+          due_date: string
+          id: string
+          paid_date: string | null
+          payment_method: string | null
+          services: string[]
+          status: string
+        }
+        Insert: {
+          amount: number
+          client_email: string
+          client_name: string
+          created_at?: string
+          due_date: string
+          id: string
+          paid_date?: string | null
+          payment_method?: string | null
+          services: string[]
+          status?: string
+        }
+        Update: {
+          amount?: number
+          client_email?: string
+          client_name?: string
+          created_at?: string
+          due_date?: string
+          id?: string
+          paid_date?: string | null
+          payment_method?: string | null
+          services?: string[]
+          status?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          fees: number | null
+          id: string
+          invoice_id: string | null
+          payment_method: string
+          processed_at: string | null
+          status: string
+          transaction_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          fees?: number | null
+          id?: string
+          invoice_id?: string | null
+          payment_method: string
+          processed_at?: string | null
+          status?: string
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          fees?: number | null
+          id?: string
+          invoice_id?: string | null
+          payment_method?: string
+          processed_at?: string | null
+          status?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_metrics: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          metric_type: string
+          page_path: string | null
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          metric_type: string
+          page_path?: string | null
+          value: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          metric_type?: string
+          page_path?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
+      sms_campaigns: {
+        Row: {
+          cost: number | null
+          created_at: string
+          delivered: number | null
+          delivery_rate: number | null
+          id: string
+          message: string
+          name: string
+          recipients: number | null
+          sent_date: string | null
+          status: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          delivered?: number | null
+          delivery_rate?: number | null
+          id?: string
+          message: string
+          name: string
+          recipients?: number | null
+          sent_date?: string | null
+          status?: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          delivered?: number | null
+          delivery_rate?: number | null
+          id?: string
+          message?: string
+          name?: string
+          recipients?: number | null
+          sent_date?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      user_analytics: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device_type: string | null
+          event_type: string
+          id: string
+          location: string | null
+          page_url: string | null
+          session_duration: number | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          event_type: string
+          id?: string
+          location?: string | null
+          page_url?: string | null
+          session_duration?: number | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          event_type?: string
+          id?: string
+          location?: string | null
+          page_url?: string | null
+          session_duration?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_subscriptions: {
         Row: {
           created_at: string
