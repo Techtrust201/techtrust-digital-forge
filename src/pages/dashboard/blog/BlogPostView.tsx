@@ -86,8 +86,10 @@ const BlogPostView = () => {
 
         {/* Contenu de l'article */}
         <Card>
-          <CardContent className="p-8">
-            <div className="max-w-4xl mx-auto">
+          <CardContent
+            className="p-8 md:p-12 bg-white/90 rounded-2xl shadow-xl border border-gray-100 max-w-4xl mx-auto"
+          >
+            <div className="max-w-3xl mx-auto">
               <div className="mb-5 flex flex-wrap gap-2 items-center">
                 <Badge className="bg-red-50 text-red-700 border-red-200">
                   {post.category}
@@ -97,27 +99,27 @@ const BlogPostView = () => {
                   {post.views?.toLocaleString() || 0} vues
                 </Badge>
               </div>
-              
+
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 {post.title}
               </h1>
-              
+
               <div className="flex gap-6 mb-6 text-sm text-gray-500 flex-wrap">
                 <span className="flex items-center gap-2">
                   <User className="w-4 h-4" /> {post.author}
                 </span>
                 <span className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" /> 
+                  <Calendar className="w-4 h-4" />
                   {new Date(post.publish_date || post.created_at).toLocaleDateString('fr-FR')}
                 </span>
               </div>
-              
+
               {post.excerpt && (
                 <blockquote className="italic bg-blue-50 border-l-4 border-blue-300 px-4 py-3 mb-6 text-gray-800 rounded">
                   {post.excerpt}
                 </blockquote>
               )}
-              
+
               <div className="prose prose-neutral max-w-none text-lg break-words whitespace-pre-line leading-relaxed">
                 {post.content}
               </div>
