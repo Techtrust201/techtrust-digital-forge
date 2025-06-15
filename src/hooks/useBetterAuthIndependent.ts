@@ -11,7 +11,7 @@ interface AuthState {
   userRole: string | null;
 }
 
-export const useBetterAuth = () => {
+export const useBetterAuthIndependent = () => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     session: null,
