@@ -1,458 +1,181 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+
+import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   BarChart3, 
   TrendingUp, 
-  DollarSign, 
   Users, 
+  Eye,
+  Clock,
   Globe,
   Smartphone,
   Monitor,
-  Clock,
-  Euro,
+  Download,
+  RefreshCw,
+  Calendar,
   Target,
-  Activity
+  MousePointer,
+  Share2
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { Progress } from '@/components/ui/progress';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 const AdminAnalyticsPage = () => {
-  const location = useLocation();
+  const [selectedPeriod, setSelectedPeriod] = useState('7d');
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path.includes('/revenue')) return 'Analytics Revenus';
-    if (path.includes('/performance')) return 'Analytics Performance';
-    if (path.includes('/users')) return 'Analytics Utilisateurs';
-    return 'Vue d\'ensemble Analytics';
-  };
-
-  const getPageDescription = () => {
-    const path = location.pathname;
-    if (path.includes('/revenue')) return 'Analyse détaillée des revenus et rentabilité';
-    if (path.includes('/performance')) return 'Métriques de performance et conversion';
-    if (path.includes('/users')) return 'Comportement et engagement des utilisateurs';
-    return 'Vue d\'ensemble des performances de votre plateforme';
-  };
-
-  // Données spécifiques aux revenus
-  const revenueData = [
-    { month: 'Jan', revenue: 45000, profit: 15000, clients: 120 },
-    { month: 'Fév', revenue: 52000, profit: 18000, clients: 135 },
-    { month: 'Mar', revenue: 48000, profit: 16000, clients: 128 },
-    { month: 'Avr', revenue: 61000, profit: 22000, clients: 150 },
-    { month: 'Mai', revenue: 55000, profit: 19000, clients: 142 },
-    { month: 'Jun', revenue: 67000, profit: 24000, clients: 165 },
+  // Données mockées
+  const visitorsData = [
+    { date: '2025-01-10', visitors: 320, pageviews: 1240, sessions: 285 },
+    { date: '2025-01-11', visitors: 450, pageviews: 1800, sessions: 420 },
+    { date: '2025-01-12', visitors: 380, pageviews: 1520, sessions: 350 },
+    { date: '2025-01-13', visitors: 520, pageviews: 2100, sessions: 480 },
+    { date: '2025-01-14', visitors: 680, pageviews: 2720, sessions: 620 },
+    { date: '2025-01-15', visitors: 750, pageviews: 3000, sessions: 690 },
+    { date: '2025-01-16', visitors: 620, pageviews: 2480, sessions: 570 }
   ];
 
-  // Données de performance
-  const performanceData = [
-    { day: 'Lun', loadTime: 1.2, conversion: 4.5, engagement: 68 },
-    { day: 'Mar', loadTime: 1.1, conversion: 4.8, engagement: 72 },
-    { day: 'Mer', loadTime: 1.3, conversion: 4.2, engagement: 65 },
-    { day: 'Jeu', loadTime: 1.0, conversion: 5.1, engagement: 74 },
-    { day: 'Ven', loadTime: 1.2, conversion: 4.9, engagement: 71 },
-    { day: 'Sam', loadTime: 1.4, conversion: 3.8, engagement: 63 },
-    { day: 'Dim', loadTime: 1.1, conversion: 4.3, engagement: 67 },
+  const trafficSources = [
+    { name: 'Recherche organique', value: 45, color: '#3B82F6' },
+    { name: 'Réseaux sociaux', value: 25, color: '#10B981' },
+    { name: 'Trafic direct', value: 20, color: '#F59E0B' },
+    { name: 'Publicités', value: 10, color: '#EF4444' }
   ];
 
-  // Données utilisateurs
-  const usersData = [
-    { hour: '00h', active: 120, new: 5 },
-    { hour: '06h', active: 340, new: 12 },
-    { hour: '12h', active: 890, new: 28 },
-    { hour: '18h', active: 1240, new: 35 },
-    { hour: '24h', active: 680, new: 18 },
+  const deviceStats = [
+    { device: 'Desktop', users: 1250, percent: 52 },
+    { device: 'Mobile', users: 980, percent: 41 },
+    { device: 'Tablette', users: 170, percent: 7 }
   ];
 
-  const deviceData = [
-    { name: 'Desktop', value: 45, color: '#3B82F6' },
-    { name: 'Mobile', value: 35, color: '#EF4444' },
-    { name: 'Tablet', value: 20, color: '#10B981' },
+  const topPages = [
+    { page: '/solutions/growth-hacking', views: 2840, percent: 22 },
+    { page: '/pricing', views: 2150, percent: 17 },
+    { page: '/', views: 1980, percent: 15 },
+    { page: '/blog/ia-marketing-2025', views: 1560, percent: 12 },
+    { page: '/contact', views: 1120, percent: 9 }
   ];
 
-  // Page Revenus
-  if (location.pathname.includes('/revenue')) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-          </div>
+  const conversionData = [
+    { step: 'Visiteurs', value: 12500, conversion: 100 },
+    { step: 'Leads', value: 1875, conversion: 15 },
+    { step: 'Prospects qualifiés', value: 750, conversion: 6 },
+    { step: 'Clients', value: 125, conversion: 1 }
+  ];
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">CA Total</CardTitle>
-                <Euro className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">328 000€</div>
-                <p className="text-xs text-green-600">+12.5% ce mois</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Bénéfices</CardTitle>
-                <TrendingUp className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">114 000€</div>
-                <p className="text-xs text-blue-600">+15.2% ce mois</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Marge</CardTitle>
-                <Target className="h-4 w-4 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">34.8%</div>
-                <p className="text-xs text-purple-600">+2.1% vs mois dernier</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Panier Moyen</CardTitle>
-                <DollarSign className="h-4 w-4 text-orange-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">1,988€</div>
-                <p className="text-xs text-orange-600">+8.4% cette semaine</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Évolution du Chiffre d'Affaires</CardTitle>
-                <CardDescription>Revenus et bénéfices sur 6 mois</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="revenue" stackId="1" stroke="#EF4444" fill="#EF4444" fillOpacity={0.6} />
-                    <Area type="monotone" dataKey="profit" stackId="2" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Répartition des Revenus par Plan</CardTitle>
-                <CardDescription>Distribution des revenus par type d'abonnement</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Gold</span>
-                    <span className="text-sm">45% - 147,600€</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '45%' }}></div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Silver</span>
-                    <span className="text-sm">35% - 114,800€</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-gray-500 h-2 rounded-full" style={{ width: '35%' }}></div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Bronze</span>
-                    <span className="text-sm">20% - 65,600€</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-orange-500 h-2 rounded-full" style={{ width: '20%' }}></div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
-
-  // Page Performance
-  if (location.pathname.includes('/performance')) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Temps de Chargement</CardTitle>
-                <Clock className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">1.2s</div>
-                <p className="text-xs text-green-600">-0.3s cette semaine</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Taux de Conversion</CardTitle>
-                <Target className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">4.7%</div>
-                <p className="text-xs text-green-600">+0.5% ce mois</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Engagement</CardTitle>
-                <Activity className="h-4 w-4 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">69%</div>
-                <p className="text-xs text-purple-600">+3% cette semaine</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Taux de Rebond</CardTitle>
-                <BarChart3 className="h-4 w-4 text-orange-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">31%</div>
-                <p className="text-xs text-green-600">-5% vs mois dernier</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance Hebdomadaire</CardTitle>
-              <CardDescription>Métriques clés par jour de la semaine</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={performanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="conversion" stroke="#10B981" strokeWidth={2} name="Conversion %" />
-                  <Line type="monotone" dataKey="engagement" stroke="#3B82F6" strokeWidth={2} name="Engagement %" />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </AdminLayout>
-    );
-  }
-
-  // Page Utilisateurs
-  if (location.pathname.includes('/users')) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
-                <Users className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">8,421</div>
-                <p className="text-xs text-blue-600">+2.1% cette semaine</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Nouveaux Utilisateurs</CardTitle>
-                <TrendingUp className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">234</div>
-                <p className="text-xs text-green-600">+18% cette semaine</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Taux de Rétention</CardTitle>
-                <Activity className="h-4 w-4 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">87%</div>
-                <p className="text-xs text-purple-600">+4% ce mois</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Durée Session</CardTitle>
-                <Clock className="h-4 w-4 text-orange-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">7m 42s</div>
-                <p className="text-xs text-orange-600">+25s cette semaine</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Activité des Utilisateurs</CardTitle>
-                <CardDescription>Utilisateurs actifs et nouveaux par heure</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={usersData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="hour" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="active" fill="#3B82F6" name="Actifs" />
-                    <Bar dataKey="new" fill="#10B981" name="Nouveaux" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Répartition par Appareil</CardTitle>
-                <CardDescription>Types d'appareils utilisés</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={deviceData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {deviceData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex justify-center gap-4 mt-4">
-                  {deviceData.map((item) => (
-                    <div key={item.name} className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-sm">{item.name} ({item.value}%)</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
-
-  // Vue d'ensemble par défaut
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-          <p className="text-gray-500 mt-2">{getPageDescription()}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
+            <p className="text-gray-500 mt-2">Analysez les performances de votre site web</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <select 
+              value={selectedPeriod} 
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="p-2 border rounded-md"
+            >
+              <option value="24h">Dernières 24h</option>
+              <option value="7d">7 derniers jours</option>
+              <option value="30d">30 derniers jours</option>
+              <option value="90d">90 derniers jours</option>
+            </select>
+            <Button variant="outline">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Actualiser
+            </Button>
+            <Button className="bg-red-500 hover:bg-red-600">
+              <Download className="w-4 h-4 mr-2" />
+              Exporter
+            </Button>
+          </div>
         </div>
 
+        {/* Métriques principales */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenus Totaux</CardTitle>
-              <DollarSign className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">328 000€</div>
-              <p className="text-xs text-green-600 flex items-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                +12.5% ce mois
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
+              <CardTitle className="text-sm font-medium">Visiteurs uniques</CardTitle>
               <Users className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">8,421</div>
-              <p className="text-xs text-blue-600">+2.1% cette semaine</p>
+              <div className="text-2xl font-bold">12,543</div>
+              <p className="text-xs text-green-600">+15.2% vs période précédente</p>
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Taux de Conversion</CardTitle>
-              <BarChart3 className="h-4 w-4 text-purple-600" />
+              <CardTitle className="text-sm font-medium">Pages vues</CardTitle>
+              <Eye className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">4.2%</div>
-              <p className="text-xs text-purple-600">+0.3% vs mois dernier</p>
+              <div className="text-2xl font-bold">48,760</div>
+              <p className="text-xs text-green-600">+22.8% vs période précédente</p>
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Temps Moyen</CardTitle>
-              <Clock className="h-4 w-4 text-orange-600" />
+              <CardTitle className="text-sm font-medium">Temps moyen</CardTitle>
+              <Clock className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">4m 32s</div>
-              <p className="text-xs text-orange-600">+15s cette semaine</p>
+              <div className="text-2xl font-bold">3m 24s</div>
+              <p className="text-xs text-red-600">-8.4% vs période précédente</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Taux de rebond</CardTitle>
+              <MousePointer className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">34.2%</div>
+              <p className="text-xs text-green-600">-5.1% vs période précédente</p>
             </CardContent>
           </Card>
         </div>
 
+        {/* Graphiques principaux */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Évolution des Revenus</CardTitle>
-              <CardDescription>Revenus mensuels et nombre de clients</CardDescription>
+              <CardTitle>Évolution du trafic</CardTitle>
+              <CardDescription>Visiteurs, pages vues et sessions sur 7 jours</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={revenueData}>
+                <LineChart data={visitorsData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
+                  <XAxis dataKey="date" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="revenue" stroke="#EF4444" strokeWidth={2} />
+                  <Legend />
+                  <Line type="monotone" dataKey="visitors" stroke="#3B82F6" strokeWidth={2} />
+                  <Line type="monotone" dataKey="pageviews" stroke="#10B981" strokeWidth={2} />
+                  <Line type="monotone" dataKey="sessions" stroke="#F59E0B" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -460,34 +183,194 @@ const AdminAnalyticsPage = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Répartition par Appareil</CardTitle>
-              <CardDescription>Types d'appareils utilisés</CardDescription>
+              <CardTitle>Sources de trafic</CardTitle>
+              <CardDescription>Répartition des visiteurs par canal</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={deviceData}
+                    data={trafficSources}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
+                    label={({ name, percent }) => `${name} ${percent}%`}
                   >
-                    {deviceData.map((entry, index) => (
+                    {trafficSources.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="flex justify-center gap-4 mt-4">
-                {deviceData.map((item) => (
-                  <div key={item.name} className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                    <span className="text-sm">{item.name} ({item.value}%)</span>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Analyses détaillées */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Monitor className="w-5 h-5" />
+                Appareils utilisés
+              </CardTitle>
+              <CardDescription>Répartition par type d'appareil</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {deviceStats.map((device) => (
+                <div key={device.device} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{device.device}</span>
+                    <span className="text-gray-500">{device.users} utilisateurs ({device.percent}%)</span>
                   </div>
-                ))}
+                  <Progress value={device.percent} className="h-2" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5" />
+                Pages les plus visitées
+              </CardTitle>
+              <CardDescription>Top 5 des pages populaires</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {topPages.map((page, index) => (
+                <div key={page.page} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline">{index + 1}</Badge>
+                    <span className="text-sm font-medium truncate">{page.page}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold">{page.views}</div>
+                    <div className="text-xs text-gray-500">{page.percent}%</div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tunnel de conversion */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Tunnel de conversion
+            </CardTitle>
+            <CardDescription>Analyse du parcours utilisateur</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {conversionData.map((step, index) => (
+                <div key={step.step} className="text-center">
+                  <div className="relative">
+                    <div className="w-20 h-20 mx-auto rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-lg">
+                      {step.conversion}%
+                    </div>
+                    {index < conversionData.length - 1 && (
+                      <div className="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gray-300 -z-10" />
+                    )}
+                  </div>
+                  <h4 className="font-semibold mt-3">{step.step}</h4>
+                  <p className="text-2xl font-bold text-gray-900">{step.value.toLocaleString()}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Métriques en temps réel */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                Temps réel
+              </CardTitle>
+              <CardDescription>Activité en cours</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Utilisateurs actifs</span>
+                  <span className="text-2xl font-bold text-green-600">23</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Pages vues/min</span>
+                  <span className="text-lg font-semibold">12</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Nouvelles sessions</span>
+                  <span className="text-lg font-semibold">8</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                Performance
+              </CardTitle>
+              <CardDescription>Indicateurs clés</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Vitesse de chargement</span>
+                    <span>2.1s</span>
+                  </div>
+                  <Progress value={85} className="h-2" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Score SEO</span>
+                    <span>92/100</span>
+                  </div>
+                  <Progress value={92} className="h-2" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Accessibilité</span>
+                    <span>88/100</span>
+                  </div>
+                  <Progress value={88} className="h-2" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Share2 className="w-5 h-5" />
+                Engagement social
+              </CardTitle>
+              <CardDescription>Interactions sociales</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Partages aujourd'hui</span>
+                  <span className="text-xl font-bold">156</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Mentions</span>
+                  <span className="text-lg font-semibold">23</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Nouveaux followers</span>
+                  <span className="text-lg font-semibold">12</span>
+                </div>
               </div>
             </CardContent>
           </Card>

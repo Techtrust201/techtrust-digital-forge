@@ -5,87 +5,80 @@ import { toast } from 'sonner';
 export const useSystemActions = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const saveConfiguration = async (configData: any) => {
+  const backupDatabase = async () => {
     setIsLoading(true);
     try {
-      localStorage.setItem('system_config', JSON.stringify({
-        ...configData,
-        updatedAt: new Date().toISOString()
-      }));
-      
-      toast.success('Configuration sauvegardée');
-    } catch (error) {
-      toast.error('Erreur lors de la sauvegarde');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const refreshLogs = async () => {
-    setIsLoading(true);
-    try {
-      // Simulation de rechargement des logs
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockLogs = [
-        { id: 1, timestamp: new Date().toISOString(), level: 'INFO', message: 'Système démarré avec succès' },
-        { id: 2, timestamp: new Date(Date.now() - 60000).toISOString(), level: 'WARNING', message: 'Utilisation mémoire élevée' },
-        { id: 3, timestamp: new Date(Date.now() - 120000).toISOString(), level: 'ERROR', message: 'Connexion base de données échouée' }
-      ];
-      
-      localStorage.setItem('system_logs', JSON.stringify(mockLogs));
-      toast.success('Logs actualisés');
-      return mockLogs;
-    } catch (error) {
-      toast.error('Erreur lors de l\'actualisation');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const exportLogs = async () => {
-    setIsLoading(true);
-    try {
-      const logs = JSON.parse(localStorage.getItem('system_logs') || '[]');
-      const csvContent = "data:text/csv;charset=utf-8," 
-        + "Timestamp,Level,Message\n"
-        + logs.map((log: any) => `${log.timestamp},${log.level},"${log.message}"`).join("\n");
-      
-      const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", `system-logs-${new Date().toISOString().split('T')[0]}.csv`);
-      link.click();
-      
-      toast.success('Logs exportés');
-    } catch (error) {
-      toast.error('Erreur lors de l\'export');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const createBackup = async () => {
-    setIsLoading(true);
-    try {
-      // Simulation de création de sauvegarde
+      // Simulation de sauvegarde
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      const existingBackups = JSON.parse(localStorage.getItem('system_backups') || '[]');
-      const newBackup = {
+      const backupData = {
         id: Math.random().toString(36).substr(2, 9),
-        name: `Backup-${new Date().toISOString().split('T')[0]}`,
-        createdAt: new Date().toISOString(),
-        size: Math.floor(Math.random() * 1000) + 100 + ' MB',
-        status: 'completed'
+        name: `backup-${new Date().toISOString().split('T')[0]}-full.sql`,
+        type: 'full',
+        size: `${(Math.random() * 5 + 1).toFixed(1)} GB`,
+        status: 'completed',
+        created: new Date().toISOString()
       };
-      
-      const updatedBackups = [newBackup, ...existingBackups];
+
+      const existingBackups = JSON.parse(localStorage.getItem('system_backups') || '[]');
+      const updatedBackups = [backupData, ...existingBackups];
       localStorage.setItem('system_backups', JSON.stringify(updatedBackups));
       
       toast.success('Sauvegarde créée avec succès');
-      return newBackup;
+      return backupData;
     } catch (error) {
       toast.error('Erreur lors de la sauvegarde');
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const restoreBackup = async (backupId: string) => {
+    setIsLoading(true);
+    try {
+      // Simulation de restauration
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      toast.success('Restauration effectuée avec succès');
+    } catch (error) {
+      toast.error('Erreur lors de la restauration');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const clearLogs = async (logType?: string) => {
+    setIsLoading(true);
+    try {
+      // Simulation de nettoyage des logs
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (logType) {
+        toast.success(`Logs ${logType} supprimés`);
+      } else {
+        toast.success('Tous les logs ont été supprimés');
+      }
+    } catch (error) {
+      toast.error('Erreur lors du nettoyage');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateSystemConfig = async (config: any) => {
+    setIsLoading(true);
+    try {
+      // Simulation de mise à jour de configuration
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const existingConfig = JSON.parse(localStorage.getItem('system_config') || '{}');
+      const updatedConfig = { ...existingConfig, ...config, updatedAt: new Date().toISOString() };
+      localStorage.setItem('system_config', JSON.stringify(updatedConfig));
+      
+      toast.success('Configuration mise à jour');
+      return updatedConfig;
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
     } finally {
       setIsLoading(false);
     }
@@ -97,21 +90,21 @@ export const useSystemActions = () => {
       // Simulation d'audit de sécurité
       await new Promise(resolve => setTimeout(resolve, 5000));
       
-      const auditResults = {
-        timestamp: new Date().toISOString(),
-        vulnerabilities: Math.floor(Math.random() * 3),
-        warnings: Math.floor(Math.random() * 5),
-        status: 'completed',
+      const auditResult = {
+        id: Math.random().toString(36).substr(2, 9),
+        score: Math.floor(Math.random() * 20) + 80, // Score entre 80 et 100
+        issues: Math.floor(Math.random() * 3), // 0 à 2 problèmes
         recommendations: [
-          'Mettre à jour les dépendances obsolètes',
-          'Renforcer les mots de passe admin',
-          'Activer l\'authentification à deux facteurs'
-        ]
+          'Mettre à jour les dépendances',
+          'Renforcer la politique de mots de passe',
+          'Activer le monitoring avancé'
+        ].slice(0, Math.floor(Math.random() * 3) + 1),
+        completedAt: new Date().toISOString()
       };
-      
-      localStorage.setItem('security_audit', JSON.stringify(auditResults));
-      toast.success('Audit de sécurité terminé');
-      return auditResults;
+
+      localStorage.setItem('last_security_audit', JSON.stringify(auditResult));
+      toast.success(`Audit terminé - Score: ${auditResult.score}/100`);
+      return auditResult;
     } catch (error) {
       toast.error('Erreur lors de l\'audit');
     } finally {
@@ -119,39 +112,35 @@ export const useSystemActions = () => {
     }
   };
 
-  const generateApiKey = async () => {
+  const optimizeDatabase = async () => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulation d'optimisation
+      await new Promise(resolve => setTimeout(resolve, 4000));
       
-      const newApiKey = 'sk_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      
-      const existingKeys = JSON.parse(localStorage.getItem('api_keys') || '[]');
-      const updatedKeys = [...existingKeys, {
-        id: Math.random().toString(36).substr(2, 9),
-        key: newApiKey,
-        createdAt: new Date().toISOString(),
-        lastUsed: null,
-        status: 'active'
-      }];
-      
-      localStorage.setItem('api_keys', JSON.stringify(updatedKeys));
-      toast.success('Nouvelle clé API générée');
-      return newApiKey;
+      const optimizationResult = {
+        tablesOptimized: Math.floor(Math.random() * 20) + 10,
+        spaceSaved: `${(Math.random() * 500 + 100).toFixed(0)} MB`,
+        performanceGain: `${(Math.random() * 15 + 5).toFixed(1)}%`,
+        completedAt: new Date().toISOString()
+      };
+
+      toast.success(`Optimisation terminée - ${optimizationResult.spaceSaved} libérés`);
+      return optimizationResult;
     } catch (error) {
-      toast.error('Erreur lors de la génération');
+      toast.error('Erreur lors de l\'optimisation');
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
-    saveConfiguration,
-    refreshLogs,
-    exportLogs,
-    createBackup,
+    backupDatabase,
+    restoreBackup,
+    clearLogs,
+    updateSystemConfig,
     runSecurityAudit,
-    generateApiKey,
+    optimizeDatabase,
     isLoading
   };
 };
