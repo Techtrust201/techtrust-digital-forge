@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -36,12 +35,41 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <Button
-          variant="secondary"
-          className="hover-scale bg-secondary text-gray-900 border border-gray-300 shadow-sm rounded-full px-5 py-3 transition-all duration-200 focus:ring-2 focus:ring-blue-300 flex items-center gap-2"
+          type="button"
           onClick={() => navigate('/admin/blog/posts')}
+          className="
+            group
+            relative
+            px-6 py-3
+            bg-white
+            text-blue-700
+            font-semibold
+            rounded-full
+            flex items-center gap-2
+            shadow-md
+            hover:shadow-lg
+            border border-gray-200
+            hover:bg-blue-50
+            transition-all duration-200
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400
+            hover-scale
+            cursor-pointer
+            overflow-hidden
+          "
+          style={{ minHeight: 44 }}
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          <span className="font-semibold">Retour</span>
+          {/* Accent background effect on hover */}
+          <span
+            className="
+              absolute left-0 top-0 w-full h-full rounded-full
+              bg-blue-100 opacity-0 group-hover:opacity-70
+              transition-all duration-300 
+              pointer-events-none
+              z-0
+            "
+          />
+          <ArrowLeft className="w-6 h-6 mr-2 z-10 text-blue-600 group-hover:text-blue-700 transition-all duration-150" />
+          <span className="z-10 relative">Retour</span>
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Modifier l'article</h1>
@@ -106,4 +134,3 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
 };
 
 export default AdminBlogEditHeader;
-
