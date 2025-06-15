@@ -44,7 +44,7 @@ export const useBetterAuthIndependent = () => {
         }
         
         setAuthState({
-          user: result?.user || null,
+          user: result?.user ? { ...result.user, role: userRole || 'client' } as User : null,
           session: result?.session || null,
           isLoading: false,
           isAuthenticated: !!result?.user,
@@ -77,7 +77,7 @@ export const useBetterAuthIndependent = () => {
       if (result?.user) {
         const userRole = await getUserRole(result.user.id);
         setAuthState({
-          user: result.user,
+          user: { ...result.user, role: userRole } as User,
           session: null, // Better Auth signIn doesn't return session directly
           isLoading: false,
           isAuthenticated: true,

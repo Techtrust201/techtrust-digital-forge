@@ -31,7 +31,7 @@ export const useBetterAuth = () => {
           const userRole = (result.user as any).role || 'client';
           
           setAuthState({
-            user: result.user,
+            user: { ...result.user, role: userRole } as User,
             session: result.session,
             isLoading: false,
             isAuthenticated: true,
@@ -74,7 +74,7 @@ export const useBetterAuth = () => {
         const userRole = (result.user as any).role || 'client';
         
         setAuthState({
-          user: result.user,
+          user: { ...result.user, role: userRole } as User,
           session: null, // Better Auth signIn doesn't return session directly
           isLoading: false,
           isAuthenticated: true,
