@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { auth, type Session, type User } from '@/lib/auth';
 
@@ -29,7 +28,7 @@ export const useBetterAuth = () => {
         });
         
         if (result?.session && result?.user) {
-          const userRole = result.user.role || 'client';
+          const userRole = (result.user as any).role || 'client';
           
           setAuthState({
             user: result.user,
@@ -72,7 +71,7 @@ export const useBetterAuth = () => {
       });
       
       if (result?.user) {
-        const userRole = result.user.role || 'client';
+        const userRole = (result.user as any).role || 'client';
         
         setAuthState({
           user: result.user,

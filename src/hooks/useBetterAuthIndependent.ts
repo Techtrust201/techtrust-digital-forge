@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { auth, type Session, type User } from '@/lib/auth';
 
