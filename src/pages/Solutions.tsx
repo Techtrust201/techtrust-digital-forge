@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Globe, TrendingUp, Code, Users, MessageSquare, Lightbulb, ArrowRight } from 'lucide-react';
@@ -53,7 +54,7 @@ const solutions = [
     subtitle: "Stratégie & Transformation",
     description: "Audit digital, stratégie de transformation numérique et accompagnement dans vos projets d'innovation technologique.",
     features: ["Audit digital", "Stratégie", "Innovation", "Formation", "Accompagnement"],
-    color: "slate",
+    color: "orange",
     link: "/solutions/consulting-digital",
     clients: "Grandes entreprises, PME"
   }
