@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -21,9 +20,9 @@ const services = [
   {
     icon: TrendingUp,
     title: "Growth Hacking IA",
-    subtitle: "🤖 Automatisation complète + Community IA",
+    subtitle: "Automatisation complète + Community IA",
     description: "Nos outils IA propriétaires automatisent votre prospection, acquisition clients ET community management. Remplacez un commercial + community manager par notre IA ultra-performante.",
-    features: ["🤖 IA de prospection automatisée", "📱 Community management IA", "📧 Email marketing intelligent", "🎯 Lead generation IA", "📊 Analytics temps réel"],
+    features: ["IA de prospection automatisée", "Community management IA", "Email marketing intelligent", "Lead generation IA", "Analytics temps réel"],
     color: "#8B5CF6", 
     colorClass: "custom-purple",
     link: "/solutions/growth-hacking"
@@ -55,7 +54,7 @@ const services = [
     description: "Accompagnement stratégique pour votre transformation digitale 2025. Digitalisation complète comme le Palais des Festivals de Cannes ! Projets d'envergure exceptionnelle.",
     features: ["Digitalisation complète", "Projets d'envergure", "Innovation technologique", "Accompagnement VIP"],
     color: "#F59E0B",
-    colorClass: "custom-blue", // Utilisation d'une couleur existante
+    colorClass: "custom-blue",
     link: "/solutions/consulting-digital"
   }
 ];
@@ -107,7 +106,7 @@ const ServicesSection = () => {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="text-center">
               <Bot className="w-12 h-12 text-custom-blue mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#374151] mb-2">🤖 Outils IA Automatisés</h3>
+              <h3 className="text-xl font-bold text-[#374151] mb-2">Outils IA Automatisés</h3>
               <p className="text-[#374151]">
                 Parfait si vous voulez garder le contrôle et économiser. Nos IA remplacent un commercial + community manager.
               </p>
@@ -116,7 +115,7 @@ const ServicesSection = () => {
             
             <div className="text-center">
               <Users className="w-12 h-12 text-custom-purple mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-[#374151] mb-2">👨‍💼 Équipe Professionnelle</h3>
+              <h3 className="text-xl font-bold text-[#374151] mb-2">Équipe Professionnelle</h3>
               <p className="text-[#374151]">
                 Idéal si vous préférez déléguer à des experts. Notre équipe gère tout avec une stratégie personnalisée.
               </p>
