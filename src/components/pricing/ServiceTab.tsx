@@ -20,8 +20,8 @@ const ServiceTab: React.FC<ServiceTabProps> = ({ serviceKey, service, isActive }
       }`}
     >
       <service.icon className={`w-6 h-6 ${isActive ? 'text-white' : `text-${service.color}-600`}`} />
-      <span className="hidden lg:inline font-bold">{service.title}</span>
-      <span className="lg:hidden font-bold">{service.title.split(' ')[0]}</span>
+      <span className={`hidden lg:inline font-bold ${isActive ? 'text-white' : ''}`}>{service.title}</span>
+      <span className={`lg:hidden font-bold ${isActive ? 'text-white' : ''}`}>{service.title.split(' ')[0]}</span>
     </TabsTrigger>
   );
 };
