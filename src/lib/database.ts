@@ -28,6 +28,17 @@ class DatabaseClient {
       throw error;
     }
   }
+
+  async execute(sql: string, params: any[] = []): Promise<any> {
+    try {
+      console.log('Database execute:', sql, params);
+      // Simulation d'une exécution réussie
+      return { success: true, affectedRows: 1 };
+    } catch (error) {
+      console.error('Database execute error:', error);
+      throw error;
+    }
+  }
 }
 
 export const db = new DatabaseClient();

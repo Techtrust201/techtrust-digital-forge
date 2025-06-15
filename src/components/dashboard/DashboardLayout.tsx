@@ -41,7 +41,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
-import { useBetterAuth } from '@/hooks/useBetterAuth';
+import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -55,7 +55,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   
-  const { user, signOut } = useBetterAuth();
+  const { user, signOut } = useBetterAuthIndependent();
   const { 
     subscriptions, 
     hasAnalyticsAccess, 
