@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
-import { useBetterAuth } from '@/hooks/useBetterAuthIndependent';
+import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
 import { toast } from 'sonner';
 
 const Auth = () => {
@@ -16,7 +15,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { signIn, signUp, isAuthenticated } = useBetterAuth();
+  const { signIn, signUp, isAuthenticated } = useBetterAuthIndependent();
 
   // Rediriger si déjà connecté
   useEffect(() => {
