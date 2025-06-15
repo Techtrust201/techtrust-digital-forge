@@ -41,20 +41,18 @@ const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
             group
             relative
             px-6 py-3
-            bg-blue-600
-            text-white
+            bg-white
+            text-blue-700
             font-semibold
             rounded-full
             flex items-center gap-2
-            shadow
-            border-none
-            hover:bg-blue-700
+            border border-blue-300
+            hover:bg-blue-50
+            hover:text-blue-800
+            shadow-sm
             active:scale-95
             transition-all duration-200
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300
-            hover-scale
-            cursor-pointer
-            overflow-hidden
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200
           "
           style={{ minHeight: 44 }}
         >
