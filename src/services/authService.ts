@@ -1,5 +1,5 @@
 
-import { db } from '@/lib/database';
+import { supabase } from '@/integrations/supabase/client';
 import type { UserWithAuth } from '@/types/user';
 
 export interface UserRole {
@@ -11,11 +11,18 @@ export interface UserRole {
 
 export const getUserRole = async (userId: string): Promise<string | null> => {
   try {
-    const result = await db.queryOne<UserRole>(
-      'SELECT role FROM public.user_roles WHERE "userId" = $1',
-      [userId]
-    );
-    return result?.role || null;
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('userId', userId)
+      .single();
+    
+    if (error) {
+      console.error('Get user role error:', error);
+      return null;
+    }
+    
+    return data?.role || null;
   } catch (error) {
     console.error('Get user role error:', error);
     return null;
@@ -24,11 +31,18 @@ export const getUserRole = async (userId: string): Promise<string | null> => {
 
 export const isAdmin = async (userId: string): Promise<boolean> => {
   try {
-    const result = await db.queryOne<{ exists: boolean }>(
-      'SELECT EXISTS(SELECT 1 FROM public.user_roles WHERE "userId" = $1 AND role IN ($2, $3)) as exists',
-      [userId, 'super_admin', 'admin']
-    );
-    return result?.exists || false;
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('userId', userId)
+      .in('role', ['super_admin', 'admin']);
+    
+    if (error) {
+      console.error('Is admin check error:', error);
+      return false;
+    }
+    
+    return data && data.length > 0;
   } catch (error) {
     console.error('Is admin check error:', error);
     return false;
@@ -37,11 +51,18 @@ export const isAdmin = async (userId: string): Promise<boolean> => {
 
 export const hasRole = async (userId: string, role: string): Promise<boolean> => {
   try {
-    const result = await db.queryOne<{ exists: boolean }>(
-      'SELECT EXISTS(SELECT 1 FROM public.user_roles WHERE "userId" = $1 AND role = $2) as exists',
-      [userId, role]
-    );
-    return result?.exists || false;
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('userId', userId)
+      .eq('role', role);
+    
+    if (error) {
+      console.error('Has role check error:', error);
+      return false;
+    }
+    
+    return data && data.length > 0;
   } catch (error) {
     console.error('Has role check error:', error);
     return false;

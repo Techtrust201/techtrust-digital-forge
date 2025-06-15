@@ -41,7 +41,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
-import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -55,7 +55,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   
-  const { user, signOut } = useBetterAuthIndependent();
+  const { user, userRole, signOut } = useBetterAuth();
   const { 
     subscriptions, 
     hasAnalyticsAccess, 
@@ -142,7 +142,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const userData = user ? {
     name: user.name || user.email?.split('@')[0] || 'Utilisateur',
     email: user.email,
-    role: 'client', // Par défaut, pourrait être récupéré via getUserRole
+    role: userRole || 'client',
     tier: 'bronze'
   } : null;
 
@@ -150,7 +150,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const TierIcon = tierInfo.icon;
 
   // Vérifier si l'utilisateur est un super admin
-  const isSuperAdmin = userData && userData.role === 'admin';
+  const isSuperAdmin = userData && (userData.role === 'admin' || userData.role === 'super_admin');
 
   const navigationItems = [
     {
@@ -252,7 +252,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     
     // Si l'item nécessite un abonnement, vérifier l'accès
     if (item.requiresSubscription) {
-      return item.hasAccess || userData?.role === 'admin';
+      return item.hasAccess || userData?.role === 'admin' || userData?.role === 'super_admin';
     }
     
     return true;
@@ -260,7 +260,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const renderNavigationItem = (item: any) => {
     const ItemIcon = item.icon;
-    const hasAccess = !item.requiresSubscription || item.hasAccess || userData?.role === 'admin';
+    const hasAccess = !item.requiresSubscription || item.hasAccess || userData?.role === 'admin' || userData?.role === 'super_admin';
     
     if (item.submenu) {
       return (
@@ -290,7 +290,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <CollapsibleContent className="space-y-1 mt-1">
             <div className="ml-8 space-y-1">
               {item.submenu.map((subItem: any) => {
-                const subHasAccess = !subItem.requiresAdvanced || hasAdvancedAnalytics() || userData?.role === 'admin';
+                const subHasAccess = !subItem.requiresAdvanced || hasAdvancedAnalytics() || userData?.role === 'admin' || userData?.role === 'super_admin';
                 
                 return (
                   <Button

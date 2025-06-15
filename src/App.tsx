@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
-import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 
 // Pages
 import Index from './pages/Index';
@@ -36,7 +35,7 @@ import AdminSystemPage from './pages/admin/AdminSystemPage';
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useBetterAuthIndependent();
+  const { isAuthenticated, isLoading } = useBetterAuth();
 
   if (isLoading) {
     return (
@@ -54,7 +53,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, userRole, isLoading } = useBetterAuthIndependent();
+  const { isAuthenticated, userRole, isLoading } = useBetterAuth();
 
   if (isLoading) {
     return (

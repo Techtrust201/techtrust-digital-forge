@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 import { toast } from 'sonner';
 
 const Auth = () => {
@@ -19,7 +18,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signIn, signUp, forgotPassword, resetPassword, resendVerification, isAuthenticated } = useBetterAuthIndependent();
+  const { signIn, signUp, forgotPassword, resetPassword, resendVerification, isAuthenticated } = useBetterAuth();
 
   // Vérifier les paramètres URL pour les différents modes
   useEffect(() => {
