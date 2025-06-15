@@ -465,14 +465,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Button
-              className="bg-green-500 hover:bg-green-600 text-white"
-              size="sm"
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Nouveau client
-            </Button>
           </div>
         </header>
 
