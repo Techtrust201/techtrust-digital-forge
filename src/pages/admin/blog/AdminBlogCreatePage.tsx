@@ -9,8 +9,16 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Save, Eye, Send, Plus, X } from 'lucide-react';
+import { useBlogCategories, useBlogActions } from '@/hooks/useBlogData';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminBlogCreatePage = () => {
+  const navigate = useNavigate();
+  const { data: categories, isLoading: categoriesLoading } = useBlogCategories();
+  const { createPost, updatePost } = useBlogActions();
+  
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
@@ -18,16 +26,11 @@ const AdminBlogCreatePage = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [status, setStatus] = useState('draft');
-
-  const categories = [
-    'Growth Hacking',
-    'SEO',
-    'Community Management',
-    'Marketing Digital',
-    'Développement Web',
-    'E-commerce',
-    'Analytics'
-  ];
+  const [seoTitle, setSeoTitle] = useState('');
+  const [seoDescription, setSeoDescription] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const addTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
@@ -47,6 +50,87 @@ const AdminBlogCreatePage = () => {
     }
   };
 
+  const handleSaveDraft = async () => {
+    if (!title.trim() || !content.trim()) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const postData = {
+        title,
+        content,
+        excerpt: excerpt || title.substring(0, 160),
+        author: 'Admin',
+        category: category || 'Non classé',
+        status: 'draft' as const,
+        views: 0,
+      };
+
+      if (currentPostId) {
+        await updatePost.mutateAsync({ id: currentPostId, ...postData });
+      } else {
+        const newPost = await createPost.mutateAsync(postData);
+        setCurrentPostId(newPost.id);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!title.trim() || !content.trim() || !category) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const postData = {
+        title,
+        content,
+        excerpt: excerpt || title.substring(0, 160),
+        author: 'Admin',
+        category,
+        status: 'published' as const,
+        views: 0,
+        publish_date: new Date().toISOString(),
+      };
+
+      if (currentPostId) {
+        await updatePost.mutateAsync({ id: currentPostId, ...postData });
+      } else {
+        await createPost.mutateAsync(postData);
+      }
+      
+      navigate('/admin/blog/posts');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePreview = () => {
+    setShowPreview(true);
+  };
+
+  if (categoriesLoading) {
+    return (
+      <AdminLayout>
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-64" />
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Skeleton className="h-96" />
+            </div>
+            <div className="space-y-4">
+              <Skeleton className="h-32" />
+              <Skeleton className="h-24" />
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -56,17 +140,21 @@ const AdminBlogCreatePage = () => {
             <p className="text-gray-500 mt-2">Rédiger un nouveau article de blog</p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handlePreview} disabled={!title || !content}>
               <Eye className="w-4 h-4 mr-2" />
               Aperçu
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving || !title || !content}>
               <Save className="w-4 h-4 mr-2" />
-              Sauvegarder
+              {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
             </Button>
-            <Button className="bg-red-500 hover:bg-red-600">
+            <Button 
+              className="bg-red-500 hover:bg-red-600" 
+              onClick={handlePublish}
+              disabled={isSaving || !title || !content || !category}
+            >
               <Send className="w-4 h-4 mr-2" />
-              Publier
+              {isSaving ? 'Publication...' : 'Publier'}
             </Button>
           </div>
         </div>
@@ -84,7 +172,10 @@ const AdminBlogCreatePage = () => {
                   <Input
                     id="title"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                      if (!seoTitle) setSeoTitle(e.target.value);
+                    }}
                     placeholder="Entrez le titre de votre article..."
                     className="mt-2"
                   />
@@ -95,7 +186,10 @@ const AdminBlogCreatePage = () => {
                   <Textarea
                     id="excerpt"
                     value={excerpt}
-                    onChange={(e) => setExcerpt(e.target.value)}
+                    onChange={(e) => {
+                      setExcerpt(e.target.value);
+                      if (!seoDescription) setSeoDescription(e.target.value);
+                    }}
                     placeholder="Un court résumé de votre article..."
                     className="mt-2"
                     rows={3}
@@ -145,9 +239,9 @@ const AdminBlogCreatePage = () => {
                       <SelectValue placeholder="Sélectionner une catégorie" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                          {cat}
+                      {categories?.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.name}>
+                          {cat.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -203,23 +297,58 @@ const AdminBlogCreatePage = () => {
                   <Label htmlFor="seo-title">Titre SEO</Label>
                   <Input
                     id="seo-title"
+                    value={seoTitle}
+                    onChange={(e) => setSeoTitle(e.target.value)}
                     placeholder="Titre pour les moteurs de recherche..."
                     className="mt-2"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {seoTitle.length}/60 caractères recommandés
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="seo-description">Meta description</Label>
                   <Textarea
                     id="seo-description"
+                    value={seoDescription}
+                    onChange={(e) => setSeoDescription(e.target.value)}
                     placeholder="Description pour les moteurs de recherche..."
                     className="mt-2"
                     rows={3}
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {seoDescription.length}/160 caractères recommandés
+                  </p>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Preview Dialog */}
+        <Dialog open={showPreview} onOpenChange={setShowPreview}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Aperçu de l'article</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">{title}</h1>
+                {excerpt && (
+                  <p className="text-xl text-gray-600 mb-6 italic">{excerpt}</p>
+                )}
+                <div className="flex gap-2 mb-4">
+                  {tags.map(tag => (
+                    <Badge key={tag} variant="secondary">{tag}</Badge>
+                  ))}
+                </div>
+                <div className="prose max-w-none">
+                  <div className="whitespace-pre-wrap">{content}</div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
