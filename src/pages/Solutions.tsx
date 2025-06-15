@@ -153,7 +153,7 @@ const Solutions = () => {
                   </a>
                   <a 
                     href="/pricing" 
-                    className="border-2 border-gray-300 bg-white px-8 py-4 rounded-xl font-semibold hover:border-blue-600 transition-all duration-300 inline-flex items-center justify-center"
+                    className="bg-white border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 hover:border-blue-700 transition-all duration-300 inline-flex items-center justify-center"
                   >
                     Voir nos tarifs
                   </a>
