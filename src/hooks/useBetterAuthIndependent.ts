@@ -140,7 +140,7 @@ export const useBetterAuthIndependent = () => {
       const result = await auth.api.sendVerificationEmail({
         body: { 
           email, 
-          redirectTo: `${window.location.origin}/auth?verified=true` 
+          callbackURL: `${window.location.origin}/auth?verified=true` 
         },
         headers: new Headers({
           'Cookie': document.cookie
