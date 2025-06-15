@@ -47,22 +47,15 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
 
   const isSelected = (packageId: string) => selectedPackages.includes(packageId);
 
-  // Get selected package in category
-  const getSelectedInCategory = (categoryKey: string) => {
-    const categoryPackages = packagesByCategory[categoryKey]?.packages || [];
-    return categoryPackages.find(pkg => isSelected(pkg.id));
-  };
-
   const handlePackageClick = (pkg: Package) => {
     if (isSelected(pkg.id)) {
       // Si le package est déjà sélectionné, on le désélectionne
       onRemovePackage(pkg.id);
     } else {
-      // Si un autre package de la même catégorie est sélectionné, on le remplace
-      const selectedInCategory = getSelectedInCategory(pkg.categoryKey);
-      if (selectedInCategory) {
-        onRemovePackage(selectedInCategory.id);
-      }
+      // Désélectionner tous les autres packages avant de sélectionner le nouveau
+      selectedPackages.forEach(packageId => {
+        onRemovePackage(packageId);
+      });
       // Ajouter le nouveau package
       onAddPackage(pkg.id);
     }
@@ -71,21 +64,21 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-2">Sélectionner les formules</h3>
+        <h3 className="text-lg font-semibold mb-2">Sélectionner une formule</h3>
         <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg mb-4">
           <AlertCircle className="w-4 h-4" />
-          <span>Une seule formule par catégorie peut être sélectionnée. Cliquez pour basculer entre les options.</span>
+          <span>Une seule formule peut être sélectionnée à la fois. Cliquez pour changer de sélection.</span>
         </div>
       </div>
 
       {/* Package Selection Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {Object.entries(packagesByCategory).map(([categoryKey, { title, packages }]) => {
-          const selectedPkg = getSelectedInCategory(categoryKey);
+          const hasSelectedInCategory = packages.some(pkg => isSelected(pkg.id));
           
           return (
             <Card key={categoryKey} className={`border-2 transition-all ${
-              selectedPkg ? 'border-red-500 bg-red-50' : 'border-gray-200'
+              hasSelectedInCategory ? 'border-red-500 bg-red-50' : 'border-gray-200'
             }`}>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center justify-between">
@@ -93,9 +86,9 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                     <div className={`w-3 h-3 rounded-full ${getPackageColor(categoryKey).replace('text-', 'bg-').replace('100', '500')}`}></div>
                     {title}
                   </div>
-                  {selectedPkg && (
+                  {hasSelectedInCategory && (
                     <Badge className="bg-red-500 text-white text-xs">
-                      {selectedPkg.name}
+                      Sélectionné
                     </Badge>
                   )}
                 </CardTitle>
@@ -140,14 +133,14 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
         })}
       </div>
 
-      {/* Selected Packages Summary - Simplified */}
+      {/* Selected Package Summary */}
       {selectedPackages.length > 0 && (
         <Card className="bg-gray-50 border-gray-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <span className="font-medium text-gray-900">
-                  {selectedPackages.length} formule{selectedPackages.length > 1 ? 's' : ''} sélectionnée{selectedPackages.length > 1 ? 's' : ''}
+                  Formule sélectionnée
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedPackages.map((packageId) => {
@@ -186,7 +179,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
         <div className="text-center py-8 text-gray-500">
           <div className="text-4xl mb-2">📦</div>
           <p className="text-sm">Aucune formule sélectionnée</p>
-          <p className="text-xs">Choisissez une formule par catégorie</p>
+          <p className="text-xs">Choisissez une formule</p>
         </div>
       )}
     </div>
