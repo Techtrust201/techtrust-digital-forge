@@ -4,7 +4,7 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Phone, Mail, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 
 export default function CTASection() {
   return (
@@ -46,7 +46,7 @@ export default function CTASection() {
                 size="lg"
                 className="bg-white text-custom-blue hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold shadow-lg group"
               >
-                <Link href="/contact">
+                <Link to="/contact">
                   <Calendar className="mr-2 w-5 h-5" />
                   Réserver un appel gratuit
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -64,7 +64,7 @@ export default function CTASection() {
                 variant="outline"
                 className="bg-white/20 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-4 rounded-xl font-semibold transition-all duration-300"
               >
-                <Link href="/pricing">
+                <Link to="/pricing">
                   Voir nos tarifs
                 </Link>
               </Button>
