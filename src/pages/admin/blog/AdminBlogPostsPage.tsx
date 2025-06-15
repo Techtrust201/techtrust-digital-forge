@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +9,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import BlogPostStatsCards from './components/BlogPostStatsCards';
+import BlogPostListItem from './components/BlogPostListItem';
 
 const AdminBlogPostsPage = () => {
   const { data: blogPosts, isLoading } = useBlogPosts();
@@ -112,52 +113,12 @@ const AdminBlogPostsPage = () => {
         </div>
 
         {/* Stats rapides */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <FileText className="w-8 h-8 text-blue-500" />
-                <div>
-                  <p className="text-2xl font-bold">{blogPosts?.length || 0}</p>
-                  <p className="text-sm text-gray-500">Total articles</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Eye className="w-8 h-8 text-green-500" />
-                <div>
-                  <p className="text-2xl font-bold">{totalViews.toLocaleString()}</p>
-                  <p className="text-sm text-gray-500">Vues totales</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Calendar className="w-8 h-8 text-purple-500" />
-                <div>
-                  <p className="text-2xl font-bold">{scheduledPosts.length}</p>
-                  <p className="text-sm text-gray-500">Programmés</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Edit className="w-8 h-8 text-orange-500" />
-                <div>
-                  <p className="text-2xl font-bold">{draftPosts.length}</p>
-                  <p className="text-sm text-gray-500">Brouillons</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <BlogPostStatsCards
+          totalPosts={blogPosts?.length || 0}
+          totalViews={totalViews}
+          scheduledCount={scheduledPosts.length}
+          draftCount={draftPosts.length}
+        />
 
         {/* Liste des articles */}
         <Card>
@@ -167,86 +128,18 @@ const AdminBlogPostsPage = () => {
           <CardContent>
             <div className="space-y-4">
               {blogPosts?.map((post) => (
-                <div key={post.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3
-                        className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer"
-                        onClick={() => handleViewPost(post.id)}
-                      >
-                        {post.title}
-                      </h3>
-                      <Badge className={getStatusColor(post.status)}>
-                        {getStatusLabel(post.status)}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        {post.author}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <FileText className="w-4 h-4" />
-                        {post.category}
-                      </div>
-                      {post.publish_date && (
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(post.publish_date).toLocaleDateString()}
-                        </div>
-                      )}
-                      {post.status === 'published' && (
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-4 h-4" />
-                          {post.views?.toLocaleString() || 0} vues
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="hover:bg-blue-50" onClick={() => handleViewPost(post.id)}>
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="hover:bg-green-50" onClick={() => handleEditPost(post.id)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    {post.status === 'draft' && (
-                      <Button 
-                        size="sm" 
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() => handlePublishPost(post.id)}
-                        disabled={updatePost.isPending}
-                      >
-                        {updatePost.isPending ? 'Publication...' : 'Publier'}
-                      </Button>
-                    )}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" disabled={deletePost.isPending}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Supprimer l'article</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Êtes-vous sûr de vouloir supprimer "{post.title}" ? Cette action est irréversible.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={() => handleDeletePost(post.id)}
-                            className="bg-red-600 hover:bg-red-700"
-                            disabled={deletePost.isPending}
-                          >
-                            {deletePost.isPending ? 'Suppression...' : 'Supprimer'}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
+                <BlogPostListItem
+                  key={post.id}
+                  post={post}
+                  getStatusColor={getStatusColor}
+                  getStatusLabel={getStatusLabel}
+                  handleViewPost={handleViewPost}
+                  handleEditPost={handleEditPost}
+                  handlePublishPost={handlePublishPost}
+                  handleDeletePost={handleDeletePost}
+                  isDeleting={deletePost.isPending}
+                  isPublishing={updatePost.isPending}
+                />
               ))}
             </div>
           </CardContent>
@@ -257,4 +150,3 @@ const AdminBlogPostsPage = () => {
 };
 
 export default AdminBlogPostsPage;
-
