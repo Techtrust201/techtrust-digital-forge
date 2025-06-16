@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Index from '@/pages/Index';
@@ -168,7 +168,8 @@ function AppContent() {
         <Route path="/dashboard/upgrade-plan" element={<ProtectedRoute><UpgradePlan /></ProtectedRoute>} />
 
         {/* Admin routes - protected with adminOnly */}
-        <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute adminOnly><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminUsersPage /></ProtectedRoute>} />
         <Route path="/admin/analytics" element={<ProtectedRoute adminOnly><AdminAnalyticsPage /></ProtectedRoute>} />
         <Route path="/admin/analytics/overview" element={<ProtectedRoute adminOnly><AdminAnalyticsOverviewPage /></ProtectedRoute>} />
