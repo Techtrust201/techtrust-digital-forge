@@ -1,6 +1,22 @@
-
 import { useState, useEffect } from 'react';
-import { auth, type Session, type User } from '@/lib/auth';
+import { auth } from '@/lib/auth';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  role?: string; // Optionnel car il peut être récupéré séparément
+}
+
+interface Session {
+  id: string;
+  userId: string;
+  expiresAt: Date;
+}
 
 interface AuthState {
   user: User | null;
@@ -185,16 +201,18 @@ export const useBetterAuth = () => {
     }
   };
 
+  const getUserRole = () => {
+    // Retourner le rôle depuis Better Auth ou par défaut
+    return authState.user?.role || 'client';
+  };
+
   const isAdmin = () => {
-    return authState.user?.role === 'admin' || authState.user?.role === 'super_admin';
+    const role = getUserRole();
+    return role === 'admin' || role === 'super_admin';
   };
 
   const hasRole = (role: string) => {
-    return authState.user?.role === role;
-  };
-
-  const getUserRole = () => {
-    return authState.user?.role || 'client';
+    return getUserRole() === role;
   };
 
   return {

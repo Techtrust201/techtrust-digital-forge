@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from 'react';
-import { useBetterAuthIndependent } from './useBetterAuthIndependent';
+import { useBetterAuth } from './useBetterAuth';
 
 export const useVisitorTracking = () => {
-  const { user } = useBetterAuthIndependent();
+  const { user } = useBetterAuth();
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
   useEffect(() => {

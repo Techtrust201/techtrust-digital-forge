@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -55,7 +56,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   
-  const { user, userRole, signOut } = useBetterAuth();
+  const { user, signOut, getUserRole } = useBetterAuth();
   const { 
     subscriptions, 
     hasAnalyticsAccess, 
@@ -142,7 +143,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const userData = user ? {
     name: user.name || user.email?.split('@')[0] || 'Utilisateur',
     email: user.email,
-    role: userRole || 'client',
+    role: getUserRole(),
     tier: 'bronze'
   } : null;
 

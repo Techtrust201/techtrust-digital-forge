@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { useBetterAuthIndependent } from '@/hooks/useBetterAuthIndependent';
+import { useBetterAuth } from '@/hooks/useBetterAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -28,7 +27,7 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { user, signOut, userRole } = useBetterAuthIndependent();
+  const { user, signOut, getUserRole } = useBetterAuth();
 
   const menuItems = [
     {
@@ -118,11 +117,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           {user && (
             <div className="mt-3">
               <p className="text-sm text-gray-600">{user.email}</p>
-              {userRole && (
-                <Badge className="mt-1 bg-red-50 text-red-700">
-                  {userRole}
-                </Badge>
-              )}
+              <Badge className="mt-1 bg-red-50 text-red-700">
+                {getUserRole()}
+              </Badge>
             </div>
           )}
         </div>
