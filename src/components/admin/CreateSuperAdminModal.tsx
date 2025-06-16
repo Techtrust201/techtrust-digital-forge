@@ -65,11 +65,11 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
         // Attendre un peu pour que le profil soit créé par le trigger
         setTimeout(async () => {
           try {
-            // Ajouter le rôle admin avec la bonne colonne user_id
+            // Ajouter le rôle admin avec la bonne colonne userId
             const { error: roleError } = await supabase
               .from('user_roles')
               .insert({
-                user_id: authData.user!.id,
+                userId: authData.user!.id,
                 role: formData.role
               });
 

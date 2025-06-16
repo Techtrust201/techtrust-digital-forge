@@ -29,16 +29,16 @@ const NavbarPublic = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/solutions" className="text-gray-700 transition-colors" style={{ '&:hover': { color: '#45C7FF' } }}>
+            <Link to="/solutions" className="text-gray-700 hover:text-blue-500 transition-colors">
               Solutions
             </Link>
-            <Link to="/pricing" className="text-gray-700 transition-colors" style={{ '&:hover': { color: '#45C7FF' } }}>
+            <Link to="/pricing" className="text-gray-700 hover:text-blue-500 transition-colors">
               Tarifs
             </Link>
-            <Link to="/blog" className="text-gray-700 transition-colors" style={{ '&:hover': { color: '#45C7FF' } }}>
+            <Link to="/blog" className="text-gray-700 hover:text-blue-500 transition-colors">
               Blog
             </Link>
-            <Link to="/contact" className="text-gray-700 transition-colors" style={{ '&:hover': { color: '#45C7FF' } }}>
+            <Link to="/contact" className="text-gray-700 hover:text-blue-500 transition-colors">
               Contact
             </Link>
             
@@ -89,8 +89,7 @@ const NavbarPublic = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 focus:outline-none"
-              style={{ '&:hover': { color: '#45C7FF' } }}
+              className="text-gray-700 hover:text-blue-500 focus:outline-none"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
