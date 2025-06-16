@@ -24,6 +24,10 @@ const getBetterAuthURL = () => {
   return 'http://localhost:8080';
 };
 
+console.log('🔧 Better Auth Configuration:');
+console.log('- Base URL:', getBetterAuthURL());
+console.log('- Database URL:', "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres");
+
 export const auth = betterAuth({
   database: {
     provider: "postgresql",
@@ -38,14 +42,12 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false, // Désactivé temporairement pour les tests
     sendResetPassword: async ({ user, url }) => {
-      console.log('Reset password email for:', user.email, 'URL:', url);
-      // Ici vous pourrez intégrer votre service d'email plus tard
+      console.log('📧 Reset password email for:', user.email, 'URL:', url);
     },
     sendVerificationEmail: async ({ user, url }) => {
-      console.log('Verification email for:', user.email, 'URL:', url);
-      // Ici vous pourrez intégrer votre service d'email plus tard
+      console.log('📧 Verification email for:', user.email, 'URL:', url);
     }
   },
   user: {

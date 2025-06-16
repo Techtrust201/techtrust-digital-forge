@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { auth, type Session, type User } from '@/lib/auth';
 
@@ -6,7 +7,6 @@ interface AuthState {
   session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  userRole: string | null;
 }
 
 export const useBetterAuth = () => {
@@ -14,46 +14,44 @@ export const useBetterAuth = () => {
     user: null,
     session: null,
     isLoading: true,
-    isAuthenticated: false,
-    userRole: null
+    isAuthenticated: false
   });
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log('🔍 Checking authentication status...');
+        
         const result = await auth.api.getSession({
           headers: new Headers({
             'Cookie': document.cookie
           })
         });
         
+        console.log('✅ Auth check result:', result);
+        
         if (result?.session && result?.user) {
-          const userRole = (result.user as any).role || 'client';
-          
           setAuthState({
-            user: { ...result.user, role: userRole } as User,
+            user: result.user,
             session: result.session,
             isLoading: false,
-            isAuthenticated: true,
-            userRole
+            isAuthenticated: true
           });
         } else {
           setAuthState({
             user: null,
             session: null,
             isLoading: false,
-            isAuthenticated: false,
-            userRole: null
+            isAuthenticated: false
           });
         }
       } catch (error) {
-        console.error('Auth check error:', error);
+        console.error('❌ Auth check error:', error);
         setAuthState({
           user: null,
           session: null,
           isLoading: false,
-          isAuthenticated: false,
-          userRole: null
+          isAuthenticated: false
         });
       }
     };
@@ -63,6 +61,8 @@ export const useBetterAuth = () => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('🔐 Attempting sign in for:', email);
+      
       const result = await auth.api.signInEmail({
         body: { email, password },
         headers: new Headers({
@@ -70,27 +70,28 @@ export const useBetterAuth = () => {
         })
       });
       
+      console.log('✅ Sign in result:', result);
+      
       if (result?.user) {
-        const userRole = (result.user as any).role || 'client';
-        
         setAuthState({
-          user: { ...result.user, role: userRole } as User,
-          session: null, // Better Auth signIn doesn't return session directly
+          user: result.user,
+          session: null,
           isLoading: false,
-          isAuthenticated: true,
-          userRole
+          isAuthenticated: true
         });
       }
       
       return result;
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error('❌ Sign in error:', error);
       throw error;
     }
   };
 
   const signUp = async (email: string, password: string, name?: string) => {
     try {
+      console.log('📝 Attempting sign up for:', email);
+      
       const result = await auth.api.signUpEmail({
         body: { 
           email, 
@@ -103,9 +104,10 @@ export const useBetterAuth = () => {
         })
       });
       
+      console.log('✅ Sign up result:', result);
       return result;
     } catch (error) {
-      console.error('Sign up error:', error);
+      console.error('❌ Sign up error:', error);
       throw error;
     }
   };
@@ -124,7 +126,7 @@ export const useBetterAuth = () => {
       
       return result;
     } catch (error) {
-      console.error('Forgot password error:', error);
+      console.error('❌ Forgot password error:', error);
       throw error;
     }
   };
@@ -141,7 +143,7 @@ export const useBetterAuth = () => {
       
       return result;
     } catch (error) {
-      console.error('Reset password error:', error);
+      console.error('❌ Reset password error:', error);
       throw error;
     }
   };
@@ -160,7 +162,7 @@ export const useBetterAuth = () => {
       
       return result;
     } catch (error) {
-      console.error('Resend verification error:', error);
+      console.error('❌ Resend verification error:', error);
       throw error;
     }
   };
@@ -176,20 +178,23 @@ export const useBetterAuth = () => {
         user: null,
         session: null,
         isLoading: false,
-        isAuthenticated: false,
-        userRole: null
+        isAuthenticated: false
       });
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('❌ Sign out error:', error);
     }
   };
 
   const isAdmin = () => {
-    return authState.userRole === 'admin' || authState.userRole === 'super_admin';
+    return authState.user?.role === 'admin' || authState.user?.role === 'super_admin';
   };
 
   const hasRole = (role: string) => {
-    return authState.userRole === role;
+    return authState.user?.role === role;
+  };
+
+  const getUserRole = () => {
+    return authState.user?.role || 'client';
   };
 
   return {
@@ -202,6 +207,6 @@ export const useBetterAuth = () => {
     resendVerification,
     isAdmin,
     hasRole,
-    getUserRole: () => authState.userRole
+    getUserRole
   };
 };

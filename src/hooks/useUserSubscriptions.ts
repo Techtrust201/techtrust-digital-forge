@@ -14,34 +14,24 @@ export interface UserSubscription {
   updated_at: string;
 }
 
-// Données de test pour les subscriptions
+// Données de test simplifiées
 const mockSubscriptions: Record<string, UserSubscription[]> = {
-  'user_1': [
+  'admin_test_user': [
     {
-      id: 'sub_1',
-      user_id: 'user_1',
+      id: 'sub_admin_1',
+      user_id: 'admin_test_user',
       package_id: 'growth-pro',
       package_name: 'Growth Pro',
       package_category: 'growth',
       status: 'active',
       created_at: '2024-01-15T10:00:00Z',
       updated_at: '2024-06-15T10:00:00Z'
-    },
-    {
-      id: 'sub_2',
-      user_id: 'user_1',
-      package_id: 'website-premium',
-      package_name: 'Website Premium',
-      package_category: 'website',
-      status: 'active',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2024-06-15T10:00:00Z'
     }
   ],
-  'user_2': [
+  'client_test_user': [
     {
-      id: 'sub_3',
-      user_id: 'user_2',
+      id: 'sub_client_1',
+      user_id: 'client_test_user',
       package_id: 'website-starter',
       package_name: 'Website Starter',
       package_category: 'website',
@@ -78,9 +68,11 @@ export const useUserSubscriptions = () => {
       const userSubscriptions = mockSubscriptions[user.id] || [];
       setSubscriptions(userSubscriptions);
       setError(null);
+      
+      console.log('📦 User subscriptions loaded:', userSubscriptions);
     } catch (err: any) {
       setError(err.message);
-      console.error('Error fetching subscriptions:', err);
+      console.error('❌ Error fetching subscriptions:', err);
     } finally {
       setLoading(false);
     }
