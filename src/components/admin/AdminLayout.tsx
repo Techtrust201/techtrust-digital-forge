@@ -28,6 +28,19 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { user, signOut, getUserRole } = useSupabaseAuth();
+  const [userRole, setUserRole] = useState<string>('client');
+
+  // Fetch user role when component mounts or user changes
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user) {
+        const role = await getUserRole();
+        setUserRole(role);
+      }
+    };
+    
+    fetchUserRole();
+  }, [user, getUserRole]);
 
   const menuItems = [
     {
@@ -118,7 +131,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <div className="mt-3">
               <p className="text-sm text-gray-600">{user.email}</p>
               <Badge className="mt-1 bg-red-50 text-red-700">
-                {getUserRole()}
+                {userRole}
               </Badge>
             </div>
           )}
