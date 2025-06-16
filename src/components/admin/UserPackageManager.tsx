@@ -28,9 +28,11 @@ interface UserPackageManagerProps {
 interface ServicePackage {
   id: string;
   name: string;
-  description: string;
-  price: number;
+  price: number | string;
+  duration: string;
+  popular: boolean;
   features: string[];
+  notIncluded: string[];
   categoryKey: string;
   categoryName: string;
 }
@@ -175,7 +177,8 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
     const allPackages = getAllPackages();
     return selectedPackages.reduce((total, packageId) => {
       const pkg = allPackages.find(p => p.id === packageId);
-      return total + (pkg?.price || 0);
+      const price = typeof pkg?.price === 'string' ? 0 : (pkg?.price || 0);
+      return total + price;
     }, 0);
   };
 
@@ -251,7 +254,7 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
                                 <h4 className="font-medium">{pkg.name}</h4>
                                 <div className="flex items-center gap-2">
                                   <span className="font-bold text-lg">
-                                    {pkg.price}€
+                                    {typeof pkg.price === 'string' ? pkg.price : `${pkg.price}€`}
                                   </span>
                                   {isSelected ? (
                                     <Check className="w-5 h-5 text-green-600" />
@@ -260,7 +263,7 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
                                   )}
                                 </div>
                               </div>
-                              <p className="text-sm text-gray-600 mb-3">{pkg.description}</p>
+                              <p className="text-sm text-gray-600 mb-3">{pkg.duration}</p>
                               <div className="space-y-1">
                                 {pkg.features.slice(0, 3).map((feature: string, index: number) => (
                                   <p key={index} className="text-xs text-gray-500 flex items-center gap-1">
@@ -305,9 +308,9 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-blue-600">Total mensuel</p>
+                      <p className="text-sm text-blue-600">Total</p>
                       <p className="text-2xl font-bold text-blue-900">
-                        {calculateTotalPrice()}€
+                        {calculateTotalPrice() > 0 ? `${calculateTotalPrice()}€` : 'Sur devis'}
                       </p>
                     </div>
                   </div>
