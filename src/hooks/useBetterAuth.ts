@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth } from '@/lib/auth';
+import { testDatabaseConnection } from '@/utils/testDatabaseConnection';
 
 interface User {
   id: string;
@@ -37,6 +38,21 @@ export const useBetterAuth = () => {
     const checkAuth = async () => {
       try {
         console.log('🔍 Checking authentication status...');
+        
+        // Premier test: vérifier la connexion à la base de données
+        const dbTest = await testDatabaseConnection();
+        if (!dbTest.success) {
+          console.error('❌ Database connection failed:', dbTest.error);
+          setAuthState({
+            user: null,
+            session: null,
+            isLoading: false,
+            isAuthenticated: false
+          });
+          return;
+        }
+        
+        console.log('✅ Database connection OK, checking session...');
         
         const result = await auth.api.getSession({
           headers: new Headers({
@@ -79,6 +95,12 @@ export const useBetterAuth = () => {
     try {
       console.log('🔐 Attempting sign in for:', email);
       
+      // Test de connexion avant l'authentification
+      const dbTest = await testDatabaseConnection();
+      if (!dbTest.success) {
+        throw new Error('Database connection failed: ' + dbTest.error);
+      }
+      
       const result = await auth.api.signInEmail({
         body: { email, password },
         headers: new Headers({
@@ -107,6 +129,12 @@ export const useBetterAuth = () => {
   const signUp = async (email: string, password: string, name?: string) => {
     try {
       console.log('📝 Attempting sign up for:', email);
+      
+      // Test de connexion avant l'inscription
+      const dbTest = await testDatabaseConnection();
+      if (!dbTest.success) {
+        throw new Error('Database connection failed: ' + dbTest.error);
+      }
       
       const result = await auth.api.signUpEmail({
         body: { 

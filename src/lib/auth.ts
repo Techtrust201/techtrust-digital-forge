@@ -24,14 +24,20 @@ const getBetterAuthURL = () => {
   return 'http://localhost:8080';
 };
 
+// URL de connexion directe PostgreSQL (sans pooler)
+const getDatabaseURL = () => {
+  // URL directe vers PostgreSQL (port 5432 au lieu de 6543 pooler)
+  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:5432/postgres";
+};
+
 console.log('🔧 Better Auth Configuration:');
 console.log('- Base URL:', getBetterAuthURL());
-console.log('- Database URL:', "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres");
+console.log('- Database URL:', getDatabaseURL());
 
 export const auth = betterAuth({
   database: {
     provider: "postgresql",
-    url: "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres"
+    url: getDatabaseURL()
   },
   baseURL: getBetterAuthURL(),
   trustedOrigins: [
