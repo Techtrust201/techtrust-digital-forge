@@ -25,7 +25,8 @@ const Auth = () => {
     emailVerificationSent,
     isEmailVerified,
     user,
-    profile
+    profile,
+    isAuthenticated
   } = useSupabaseAuth();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -53,8 +54,21 @@ const Auth = () => {
     isLoading, 
     user: user?.email, 
     isEmailVerified, 
-    profileRole: profile?.role 
+    profileRole: profile?.role,
+    isAuthenticated 
   });
+
+  // Redirection automatique après connexion réussie
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      console.log('[AUTH_PAGE] Utilisateur connecté et vérifié - redirection');
+      if (profile?.role === 'super_admin') {
+        setTimeout(() => navigate('/admin/dashboard'), 1500);
+      } else {
+        setTimeout(() => navigate('/dashboard'), 1500);
+      }
+    }
+  }, [isAuthenticated, isLoading, profile?.role, navigate]);
 
   // Gérer les paramètres URL
   useEffect(() => {
@@ -96,7 +110,6 @@ const Auth = () => {
       }
     } else if (data.user) {
       console.log('[AUTH_PAGE] Connexion réussie pour:', data.user.email);
-      // Succès de connexion - laisser ProtectedRoute gérer la redirection
       if (loginForm.email === 'contact@tech-trust.fr') {
         setSuccess('Connexion admin réussie ! Redirection vers l\'interface admin...');
       } else if (!data.user.email_confirmed_at) {
