@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -21,7 +21,7 @@ export const useSupabaseAuth = () => {
   const [lastResendTime, setLastResendTime] = useState<number>(0);
 
   // Charger le profil utilisateur
-  const loadUserProfile = async (userId: string) => {
+  const loadUserProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -30,26 +30,27 @@ export const useSupabaseAuth = () => {
         .single();
 
       if (error) {
-        console.error('Erreur chargement profil:', error);
+        console.error('[AUTH] Erreur chargement profil:', error);
         return;
       }
 
-      console.log('Profil chargé:', data);
+      console.log('[AUTH] Profil chargé:', data);
       setProfile(data);
     } catch (error) {
-      console.error('Erreur profil:', error);
+      console.error('[AUTH] Erreur profil:', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     let mounted = true;
+    console.log('[AUTH] Initialisation hook authentification');
 
     // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
 
-        console.log('Auth state change:', event, session?.user?.email);
+        console.log('[AUTH] Changement état:', event, session?.user?.email);
         
         setSession(session);
         setUser(session?.user ?? null);
@@ -73,6 +74,7 @@ export const useSupabaseAuth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
 
+      console.log('[AUTH] Session existante:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -84,13 +86,14 @@ export const useSupabaseAuth = () => {
     });
 
     return () => {
+      console.log('[AUTH] Nettoyage hook authentification');
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [loadUserProfile]);
 
   // Inscription
-  const signUp = async (email: string, password: string, name: string, companyName?: string) => {
+  const signUp = useCallback(async (email: string, password: string, name: string, companyName?: string) => {
     const redirectUrl = `${window.location.origin}/auth?verified=true`;
     
     const { data, error } = await supabase.auth.signUp({
@@ -111,20 +114,20 @@ export const useSupabaseAuth = () => {
     }
 
     return { data, error };
-  };
+  }, []);
 
   // Connexion
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     return { data, error };
-  };
+  }, []);
 
   // Connexion Google
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     const redirectUrl = `${window.location.origin}/auth?verified=true`;
     
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -135,10 +138,11 @@ export const useSupabaseAuth = () => {
     });
 
     return { data, error };
-  };
+  }, []);
 
   // Déconnexion
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
+    console.log('[AUTH] Déconnexion');
     const { error } = await supabase.auth.signOut();
     if (!error) {
       setUser(null);
@@ -147,10 +151,10 @@ export const useSupabaseAuth = () => {
       setEmailVerificationSent(false);
     }
     return { error };
-  };
+  }, []);
 
   // Renvoyer l'email de vérification
-  const resendVerificationEmail = async () => {
+  const resendVerificationEmail = useCallback(async () => {
     if (!user?.email) return { error: new Error('Aucun email trouvé') };
 
     const now = Date.now();
@@ -171,49 +175,54 @@ export const useSupabaseAuth = () => {
     }
 
     return { error };
-  };
+  }, [user?.email, lastResendTime]);
 
   // Réinitialiser le mot de passe
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth?reset=true`
     });
 
     return { error };
-  };
+  }, []);
 
   // Fonction pour marquer l'email comme vérifié manuellement (pour les admins)
-  const markEmailAsVerified = async () => {
+  const markEmailAsVerified = useCallback(async () => {
     if (user?.email === 'contact@tech-trust.fr') {
       // Pour l'admin, on considère l'email comme vérifié
-      console.log('Admin email marked as verified');
+      console.log('[AUTH] Admin email marked as verified');
       return true;
     }
     return false;
-  };
+  }, [user?.email]);
 
-  // Vérifier si l'email est confirmé (ou si c'est l'admin)
-  const isEmailVerified = user?.email_confirmed_at != null || user?.email === 'contact@tech-trust.fr';
+  // Vérifications des rôles avec useCallback pour éviter les re-créations
+  const hasRole = useCallback((role: string): boolean => {
+    const result = profile?.role === role;
+    console.log('[AUTH] hasRole check:', role, result, 'profile role:', profile?.role);
+    return result;
+  }, [profile?.role]);
 
-  // Vérifier les rôles
-  const hasRole = (role: string): boolean => {
-    return profile?.role === role;
-  };
+  const isAdmin = useCallback((): boolean => {
+    const result = profile?.role === 'super_admin';
+    console.log('[AUTH] isAdmin check:', result, 'profile role:', profile?.role);
+    return result;
+  }, [profile?.role]);
 
-  const isAdmin = (): boolean => {
-    return profile?.role === 'super_admin';
-  };
+  const canAccessAdmin = useCallback((): boolean => {
+    const result = hasRole('super_admin');
+    console.log('[AUTH] canAccessAdmin check:', result);
+    return result;
+  }, [hasRole]);
 
-  const canAccessAdmin = (): boolean => {
-    console.log('Checking admin access, profile role:', profile?.role);
-    return hasRole('super_admin');
-  };
-
-  const getRemainingResendTime = (): number => {
+  const getRemainingResendTime = useCallback((): number => {
     const now = Date.now();
     const remaining = Math.max(0, 60000 - (now - lastResendTime));
     return Math.ceil(remaining / 1000);
-  };
+  }, [lastResendTime]);
+
+  // Vérifier si l'email est confirmé (ou si c'est l'admin)
+  const isEmailVerified = user?.email_confirmed_at != null || user?.email === 'contact@tech-trust.fr';
 
   return {
     user,

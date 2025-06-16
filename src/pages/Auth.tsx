@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import NavbarPublic from '@/components/NavbarPublic';
@@ -37,6 +36,7 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [redirectHandled, setRedirectHandled] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -51,26 +51,32 @@ const Auth = () => {
     companyName: ''
   });
 
-  // Rediriger si déjà connecté et vérifié (ou admin)
+  // Rediriger si déjà connecté et vérifié (ou admin) - une seule fois
   useEffect(() => {
-    if (user && (isEmailVerified || user.email === 'contact@tech-trust.fr') && !isLoading && profile) {
-      console.log('Redirection check - User:', user.email, 'Profile role:', profile.role, 'Can access admin:', canAccessAdmin());
-      
-      // Éviter les redirections infinies
-      const currentPath = window.location.pathname;
-      if (currentPath === '/auth') {
-        setTimeout(() => {
-          if (canAccessAdmin()) {
-            console.log('Redirecting to admin dashboard');
-            navigate('/admin/dashboard', { replace: true });
-          } else {
-            console.log('Redirecting to user dashboard');
-            navigate('/dashboard', { replace: true });
-          }
-        }, 500);
-      }
+    if (redirectHandled || isLoading || !user) {
+      return;
     }
-  }, [user, isEmailVerified, isLoading, profile, navigate, canAccessAdmin]);
+
+    const isVerified = isEmailVerified || user.email === 'contact@tech-trust.fr';
+    
+    if (user && isVerified && profile) {
+      console.log('[AUTH_PAGE] Utilisateur connecté et vérifié - préparation redirection');
+      console.log('[AUTH_PAGE] User:', user.email, 'Profile role:', profile.role, 'Can access admin:', canAccessAdmin());
+      
+      setRedirectHandled(true);
+      
+      // Délai pour éviter les conflits avec ProtectedRoute
+      setTimeout(() => {
+        if (canAccessAdmin()) {
+          console.log('[AUTH_PAGE] Redirection vers admin dashboard');
+          navigate('/admin/dashboard', { replace: true });
+        } else {
+          console.log('[AUTH_PAGE] Redirection vers user dashboard');
+          navigate('/dashboard', { replace: true });
+        }
+      }, 100);
+    }
+  }, [user, isEmailVerified, isLoading, profile, navigate, canAccessAdmin, redirectHandled]);
 
   // Gérer les paramètres URL
   useEffect(() => {
@@ -91,9 +97,12 @@ const Auth = () => {
     setIsSubmitting(true);
     setError(null);
 
+    console.log('[AUTH_PAGE] Tentative de connexion pour:', loginForm.email);
+
     const { data, error } = await signIn(loginForm.email, loginForm.password);
 
     if (error) {
+      console.log('[AUTH_PAGE] Erreur de connexion:', error.message);
       if (error.message.includes('Invalid login credentials')) {
         setError('Email ou mot de passe incorrect. Vérifiez vos informations de connexion.');
       } else if (error.message.includes('Email not confirmed')) {
@@ -108,6 +117,7 @@ const Auth = () => {
         setError('Erreur de connexion. Veuillez réessayer.');
       }
     } else if (data.user) {
+      console.log('[AUTH_PAGE] Connexion réussie pour:', data.user.email);
       // Succès de connexion
       if (loginForm.email === 'contact@tech-trust.fr') {
         setSuccess('Connexion admin réussie ! Redirection vers l\'interface admin...');
