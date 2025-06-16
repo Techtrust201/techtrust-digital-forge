@@ -3,8 +3,8 @@ import { betterAuth } from "better-auth";
 
 // Configuration simplifiée pour Better Auth
 const getDatabaseURL = () => {
-  // URL directe PostgreSQL sans pooler
-  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require";
+  // URL avec le pooler Supabase pour Better Auth
+  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
 };
 
 const getBetterAuthURL = () => {
@@ -16,7 +16,7 @@ const getBetterAuthURL = () => {
 
 console.log('🔧 Better Auth Configuration:');
 console.log('- Base URL:', getBetterAuthURL());
-console.log('- Database URL configured');
+console.log('- Database URL configured with pooler');
 
 export const auth = betterAuth({
   database: {
