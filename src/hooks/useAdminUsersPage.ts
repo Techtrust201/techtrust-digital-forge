@@ -1,7 +1,7 @@
 
-
 import { useState } from 'react';
-import { useUserData } from './useUserData';
+import { useUsersIndependent } from './useUsersIndependent';
+import { UserWithAuth } from '@/types/user';
 
 interface User {
   id: string;
@@ -32,41 +32,33 @@ export const useAdminUsersPage = () => {
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 
   const {
-    getFilteredUsers,
-    getPageTitle,
-    getPageDescription
-  } = useUserData();
+    users: independentUsers,
+    isLoading,
+    updateUserPackages,
+    getUserStats
+  } = useUsersIndependent();
 
-  // Get users from the filtered function and convert to expected format
-  const rawUsers = getFilteredUsers();
-  const users: User[] = rawUsers.map(user => ({
-    id: user.id.toString(),
+  // Convert independent users to the expected User format
+  const users: User[] = independentUsers.map(user => ({
+    id: user.id,
     name: user.name,
     email: user.email,
     role: user.role || 'user',
-    tier: user.tier || 'bronze',
-    status: user.status || 'active',
-    created: user.created || new Date().toISOString().split('T')[0],
-    packages: user.packages || [],
-    subscriptions: [],
-    revenue: 0,
-    joinDate: user.created,
+    tier: user.tier,
+    status: user.status,
+    created: user.created || user.created_at,
+    packages: user.packages,
+    subscriptions: user.subscriptions,
+    revenue: user.revenue,
+    joinDate: user.joinDate,
     lastLogin: user.lastLogin,
-    phone: undefined,
-    company: undefined,
-    position: undefined,
-    industry: undefined,
-    address: undefined,
-    notes: undefined
+    phone: user.phone,
+    company: user.company,
+    position: user.position,
+    industry: user.industry,
+    address: user.address,
+    notes: user.notes
   }));
-
-  // Create mock stats based on users data
-  const stats = {
-    totalUsers: users.length,
-    activeUsers: users.filter(u => u.status === 'active').length,
-    inactiveUsers: users.filter(u => u.status !== 'active').length,
-    totalRevenue: users.reduce((sum, u) => sum + (u.revenue || 0), 0)
-  };
 
   // Filter users based on search criteria
   const filteredUsers = users.filter(user => {
@@ -78,16 +70,19 @@ export const useAdminUsersPage = () => {
     return matchesSearch && matchesStatus && matchesTier;
   });
 
+  const stats = getUserStats();
+
   const openEditDialog = (user: any) => {
     setEditingUser(user);
   };
 
-  const saveUserPackages = async (packages: string[]): Promise<void> => {
+  const saveUserPackages = async (packages: string[]) => {
     if (!editingUser) return;
     
-    console.log('Saving packages for user:', editingUser.id, packages);
-    // Ici vous pourriez implémenter la logique de sauvegarde
-    setEditingUser(null);
+    const result = await updateUserPackages(editingUser.id, packages);
+    if (result.success) {
+      setEditingUser(null);
+    }
   };
 
   const clearFilters = () => {
@@ -107,7 +102,7 @@ export const useAdminUsersPage = () => {
     showCreateUserModal,
     setShowCreateUserModal,
     users: filteredUsers,
-    isLoading: false, // Static data, so never loading
+    isLoading,
     stats,
     openEditDialog,
     saveUserPackages,
@@ -115,4 +110,3 @@ export const useAdminUsersPage = () => {
     closeEditDialog: () => setEditingUser(null)
   };
 };
-

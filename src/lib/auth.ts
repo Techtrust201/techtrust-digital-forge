@@ -1,4 +1,71 @@
 
-// Ce fichier est maintenant remplacé par auth-client.ts
-// L'instance Better Auth est maintenant côté serveur dans server/auth.ts
-export * from './auth-client';
+import { betterAuth } from "better-auth";
+
+// Configuration flexible pour multi-environnements
+const getBetterAuthURL = () => {
+  if (typeof window !== 'undefined') {
+    const origin = window.location.origin;
+    
+    // Production
+    if (origin.includes('tech-trust.fr')) {
+      return 'https://www.tech-trust.fr';
+    }
+    
+    // Lovable staging
+    if (origin.includes('lovable.app')) {
+      return origin;
+    }
+    
+    // Development local
+    return 'http://localhost:8080';
+  }
+  
+  // Fallback pour SSR
+  return 'http://localhost:8080';
+};
+
+console.log('🔧 Better Auth Configuration:');
+console.log('- Base URL:', getBetterAuthURL());
+console.log('- Database URL:', "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres");
+
+export const auth = betterAuth({
+  database: {
+    provider: "postgresql",
+    url: "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres"
+  },
+  baseURL: getBetterAuthURL(),
+  trustedOrigins: [
+    'http://localhost:8080',
+    'https://preview--techtrust-digital-forge.lovable.app',
+    'https://www.tech-trust.fr',
+    'https://lovable.dev'
+  ],
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false, // Désactivé temporairement pour les tests
+    sendResetPassword: async ({ user, url }) => {
+      console.log('📧 Reset password email for:', user.email, 'URL:', url);
+    },
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log('📧 Verification email for:', user.email, 'URL:', url);
+    }
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "client"
+      }
+    }
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 jours
+    updateAge: 60 * 60 * 24, // Mise à jour quotidienne
+  },
+  advanced: {
+    generateId: () => `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }
+});
+
+export type Session = typeof auth.$Infer.Session.session;
+export type User = typeof auth.$Infer.Session.user;

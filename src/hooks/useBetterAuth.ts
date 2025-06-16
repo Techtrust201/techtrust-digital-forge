@@ -1,20 +1,102 @@
+import { useState, useEffect } from 'react';
+import { auth } from '@/lib/auth';
 
-import { authClient } from '@/lib/auth-client';
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  role?: string; // Optionnel car il peut être récupéré séparément
+}
+
+interface Session {
+  id: string;
+  userId: string;
+  expiresAt: Date;
+}
+
+interface AuthState {
+  user: User | null;
+  session: Session | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+}
 
 export const useBetterAuth = () => {
-  const { data: session, isPending: isLoading } = authClient.useSession();
-  
-  const user = session?.user || null;
-  const isAuthenticated = !!session;
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    session: null,
+    isLoading: true,
+    isAuthenticated: false
+  });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        console.log('🔍 Checking authentication status...');
+        
+        const result = await auth.api.getSession({
+          headers: new Headers({
+            'Cookie': document.cookie
+          })
+        });
+        
+        console.log('✅ Auth check result:', result);
+        
+        if (result?.session && result?.user) {
+          setAuthState({
+            user: result.user,
+            session: result.session,
+            isLoading: false,
+            isAuthenticated: true
+          });
+        } else {
+          setAuthState({
+            user: null,
+            session: null,
+            isLoading: false,
+            isAuthenticated: false
+          });
+        }
+      } catch (error) {
+        console.error('❌ Auth check error:', error);
+        setAuthState({
+          user: null,
+          session: null,
+          isLoading: false,
+          isAuthenticated: false
+        });
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
       console.log('🔐 Attempting sign in for:', email);
-      const result = await authClient.signIn.email({
-        email,
-        password
+      
+      const result = await auth.api.signInEmail({
+        body: { email, password },
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
+      
       console.log('✅ Sign in result:', result);
+      
+      if (result?.user) {
+        setAuthState({
+          user: result.user,
+          session: null,
+          isLoading: false,
+          isAuthenticated: true
+        });
+      }
+      
       return result;
     } catch (error) {
       console.error('❌ Sign in error:', error);
@@ -25,12 +107,19 @@ export const useBetterAuth = () => {
   const signUp = async (email: string, password: string, name?: string) => {
     try {
       console.log('📝 Attempting sign up for:', email);
-      const result = await authClient.signUp.email({
-        email,
-        password,
-        name,
-        callbackURL: `${window.location.origin}/auth?verified=true`
+      
+      const result = await auth.api.signUpEmail({
+        body: { 
+          email, 
+          password, 
+          name,
+          callbackURL: `${window.location.origin}/auth?verified=true`
+        },
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
+      
       console.log('✅ Sign up result:', result);
       return result;
     } catch (error) {
@@ -39,20 +128,18 @@ export const useBetterAuth = () => {
     }
   };
 
-  const signOut = async () => {
-    try {
-      await authClient.signOut();
-    } catch (error) {
-      console.error('❌ Sign out error:', error);
-    }
-  };
-
   const forgotPassword = async (email: string) => {
     try {
-      const result = await authClient.forgetPassword({
-        email,
-        redirectTo: `${window.location.origin}/auth?reset=true`
+      const result = await auth.api.forgetPassword({
+        body: { 
+          email, 
+          redirectTo: `${window.location.origin}/auth?reset=true` 
+        },
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
+      
       return result;
     } catch (error) {
       console.error('❌ Forgot password error:', error);
@@ -62,10 +149,14 @@ export const useBetterAuth = () => {
 
   const resetPassword = async (password: string, token: string) => {
     try {
-      const result = await authClient.resetPassword({
-        newPassword: password,
-        token
+      const result = await auth.api.resetPassword({
+        body: { newPassword: password },
+        headers: new Headers({
+          'Cookie': document.cookie,
+          'Authorization': `Bearer ${token}`
+        })
       });
+      
       return result;
     } catch (error) {
       console.error('❌ Reset password error:', error);
@@ -75,10 +166,16 @@ export const useBetterAuth = () => {
 
   const resendVerification = async (email: string) => {
     try {
-      const result = await authClient.sendVerificationEmail({
-        email,
-        callbackURL: `${window.location.origin}/auth?verified=true`
+      const result = await auth.api.sendVerificationEmail({
+        body: { 
+          email, 
+          callbackURL: `${window.location.origin}/auth?verified=true` 
+        },
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
       });
+      
       return result;
     } catch (error) {
       console.error('❌ Resend verification error:', error);
@@ -86,10 +183,27 @@ export const useBetterAuth = () => {
     }
   };
 
+  const signOut = async () => {
+    try {
+      await auth.api.signOut({
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
+      });
+      setAuthState({
+        user: null,
+        session: null,
+        isLoading: false,
+        isAuthenticated: false
+      });
+    } catch (error) {
+      console.error('❌ Sign out error:', error);
+    }
+  };
+
   const getUserRole = () => {
-    // Since role might not be available in the user object initially,
-    // we'll default to 'client' and handle it gracefully
-    return (user as any)?.role || 'client';
+    // Retourner le rôle depuis Better Auth ou par défaut
+    return authState.user?.role || 'client';
   };
 
   const isAdmin = () => {
@@ -102,10 +216,7 @@ export const useBetterAuth = () => {
   };
 
   return {
-    user,
-    session,
-    isLoading,
-    isAuthenticated,
+    ...authState,
     signIn,
     signUp,
     signOut,
