@@ -85,9 +85,14 @@ export const useBetterAuth = () => {
       console.log('✅ Sign in result:', result);
       
       if (result?.user) {
+        // Récupérer la session après connexion
+        const sessionResult = await auth.api.getSession({
+          headers: new Headers()
+        });
+        
         setAuthState({
           user: result.user,
-          session: result.session || null,
+          session: sessionResult?.session || null,
           isLoading: false,
           isAuthenticated: true
         });
@@ -123,7 +128,9 @@ export const useBetterAuth = () => {
 
   const signOut = async () => {
     try {
-      await auth.api.signOut();
+      await auth.api.signOut({
+        headers: new Headers()
+      });
       setAuthState({
         user: null,
         session: null,

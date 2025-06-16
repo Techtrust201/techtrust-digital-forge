@@ -52,10 +52,8 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 jours
     updateAge: 60 * 60 * 24 // Mise à jour quotidienne
-  },
-  advanced: {
-    debugLogs: true // Activer les logs de debug temporairement
   }
+  // Supprimé debugLogs car non supporté dans cette version
 });
 
 export type Session = typeof auth.$Infer.Session.session;
