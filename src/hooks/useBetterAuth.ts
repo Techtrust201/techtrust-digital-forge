@@ -40,9 +40,7 @@ export const useBetterAuth = () => {
         console.log('🔍 Checking authentication status...');
         
         const result = await auth.api.getSession({
-          headers: new Headers({
-            'Cookie': document.cookie
-          })
+          headers: new Headers()
         });
         
         console.log('✅ Auth check result:', result);
@@ -81,10 +79,7 @@ export const useBetterAuth = () => {
       console.log('🔐 Attempting sign in for:', email);
       
       const result = await auth.api.signInEmail({
-        body: { email, password },
-        headers: new Headers({
-          'Cookie': document.cookie
-        })
+        body: { email, password }
       });
       
       console.log('✅ Sign in result:', result);
@@ -92,7 +87,7 @@ export const useBetterAuth = () => {
       if (result?.user) {
         setAuthState({
           user: result.user,
-          session: null,
+          session: result.session || null,
           isLoading: false,
           isAuthenticated: true
         });
@@ -115,10 +110,7 @@ export const useBetterAuth = () => {
           password, 
           name,
           callbackURL: `${window.location.origin}/auth?verified=true`
-        },
-        headers: new Headers({
-          'Cookie': document.cookie
-        })
+        }
       });
       
       console.log('✅ Sign up result:', result);
@@ -131,11 +123,7 @@ export const useBetterAuth = () => {
 
   const signOut = async () => {
     try {
-      await auth.api.signOut({
-        headers: new Headers({
-          'Cookie': document.cookie
-        })
-      });
+      await auth.api.signOut();
       setAuthState({
         user: null,
         session: null,
@@ -153,10 +141,7 @@ export const useBetterAuth = () => {
         body: { 
           email, 
           redirectTo: `${window.location.origin}/auth?reset=true` 
-        },
-        headers: new Headers({
-          'Cookie': document.cookie
-        })
+        }
       });
       
       return result;
@@ -171,7 +156,6 @@ export const useBetterAuth = () => {
       const result = await auth.api.resetPassword({
         body: { newPassword: password },
         headers: new Headers({
-          'Cookie': document.cookie,
           'Authorization': `Bearer ${token}`
         })
       });
@@ -189,10 +173,7 @@ export const useBetterAuth = () => {
         body: { 
           email, 
           callbackURL: `${window.location.origin}/auth?verified=true` 
-        },
-        headers: new Headers({
-          'Cookie': document.cookie
-        })
+        }
       });
       
       return result;

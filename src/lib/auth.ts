@@ -1,10 +1,10 @@
 
 import { betterAuth } from "better-auth";
 
-// Configuration simplifiée pour Better Auth
+// Configuration corrigée pour Better Auth avec pooler Supabase
 const getDatabaseURL = () => {
-  // URL avec le pooler Supabase pour Better Auth
-  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
+  // URL avec le pooler Supabase - port 6543
+  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?sslmode=require";
 };
 
 const getBetterAuthURL = () => {
@@ -16,12 +16,20 @@ const getBetterAuthURL = () => {
 
 console.log('🔧 Better Auth Configuration:');
 console.log('- Base URL:', getBetterAuthURL());
-console.log('- Database URL configured with pooler');
+console.log('- Database URL configured with pooler and SSL');
 
 export const auth = betterAuth({
   database: {
     provider: "postgresql",
-    url: getDatabaseURL()
+    url: getDatabaseURL(),
+    // Configuration pour le pooler Supabase (port 6543)
+    options: {
+      // Désactiver les prepared statements pour le pooler transaction
+      simple_protocol: true,
+      statement_timeout: 0,
+      idle_in_transaction_session_timeout: 0,
+      allowExitOnIdle: true
+    }
   },
   baseURL: getBetterAuthURL(),
   trustedOrigins: [
@@ -44,6 +52,9 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 jours
     updateAge: 60 * 60 * 24 // Mise à jour quotidienne
+  },
+  advanced: {
+    debugLogs: true // Activer les logs de debug temporairement
   }
 });
 
