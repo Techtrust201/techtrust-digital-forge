@@ -21,15 +21,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 interface User {
-  id: string; // Changed from number to string to match the system
-  name?: string;
-  email?: string;
-  role?: string;
-  packages?: string[];
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  packages: string[];
   status: string;
   created: string;
-  lastLogin?: string;
-  tier: string;
+  lastLogin: string;
 }
 
 interface UsersTableProps {
@@ -98,10 +97,10 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium text-sm">{user.name?.charAt(0) || 'U'}</span>
+                      <span className="text-white font-medium text-sm">{user.name.charAt(0)}</span>
                     </div>
                     <div>
-                      <div className="font-medium">{user.name || 'Utilisateur'}</div>
+                      <div className="font-medium">{user.name}</div>
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
@@ -113,7 +112,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
-                    {user.packages?.map((packageId: string) => {
+                    {user.packages.map((packageId: string) => {
                       const pkg = getPackageById(packageId);
                       if (!pkg) return null;
                       return (
@@ -128,7 +127,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell>{user.created}</TableCell>
-                <TableCell>{user.lastLogin || 'Récemment'}</TableCell>
+                <TableCell>{user.lastLogin}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

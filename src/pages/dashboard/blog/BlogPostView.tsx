@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,24 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { useBlogPosts } from '@/hooks/useBlogData';
-import { useVisitorTracking } from '@/hooks/useVisitorTracking';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const BlogPostView = () => {
   const { id } = useParams<{ id: string }>();
   const { data: posts, isLoading, error } = useBlogPosts();
   const navigate = useNavigate();
-  const { trackPageView, trackBlogPostView, cookiesAccepted } = useVisitorTracking();
-
-  const post = posts?.find((p) => p.id === id);
-
-  // Tracker la vue de l'article depuis le dashboard
-  useEffect(() => {
-    if (post && cookiesAccepted) {
-      trackBlogPostView(post.id, post.title);
-      trackPageView(`/dashboard/blog/${post.id}`, `Dashboard - ${post.title}`);
-    }
-  }, [post, cookiesAccepted, trackPageView, trackBlogPostView]);
 
   if (isLoading) {
     return (
@@ -53,6 +42,8 @@ const BlogPostView = () => {
       </DashboardLayout>
     );
   }
+
+  const post = posts?.find((p) => p.id === id);
 
   if (!post) {
     return (

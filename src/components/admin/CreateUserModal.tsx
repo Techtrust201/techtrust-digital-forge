@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { X, UserPlus } from 'lucide-react';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
-import { useSupabaseUsers } from '@/hooks/useSupabaseUsers';
 import { CreateUserModalProps, FormData } from './createUser/types';
 import ProgressBar from './createUser/ProgressBar';
 import PersonalInfoStep from './createUser/PersonalInfoStep';
@@ -34,7 +33,6 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { getPackageById, getTotalPrice } = usePackageUtils();
-  const { createUser } = useSupabaseUsers();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -100,9 +98,21 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     setIsLoading(true);
 
     try {
-      const result = await createUser({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+      // Vérifier si l'utilisateur existe déjà
+      const existingUsers = JSON.parse(localStorage.getItem('admin_users') || '[]');
+      const userExists = existingUsers.some((user: any) => user.email === formData.email);
+      
+      if (userExists) {
+        toast.error('Un utilisateur avec cet email existe déjà');
+        return;
+      }
+
+      // Créer le nouvel utilisateur avec les vrais packages
+      const selectedPackageDetails = formData.selectedPackages.map(id => getPackageById(id)).filter(Boolean);
+      
+      const newUser = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
@@ -114,25 +124,36 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           postalCode: formData.postalCode,
           country: formData.country
         },
+        packages: selectedPackageDetails,
         selectedPackages: formData.selectedPackages,
-        notes: formData.notes
+        notes: formData.notes,
+        status: 'active',
+        joinDate: new Date().toISOString().split('T')[0],
+        revenue: getTotalPrice(formData.selectedPackages)
+      };
+
+      // Sauvegarder localement
+      const updatedUsers = [...existingUsers, newUser];
+      localStorage.setItem('admin_users', JSON.stringify(updatedUsers));
+
+      toast.success(`Client ${formData.firstName} ${formData.lastName} créé avec succès`);
+      onClose();
+      
+      // Reset form
+      setCurrentStep(1);
+      setFormData({
+        firstName: '', lastName: '', email: '', phone: '',
+        company: '', position: '', industry: '',
+        address: '', city: '', postalCode: '', country: 'France',
+        selectedPackages: [], notes: ''
       });
 
-      if (result.success) {
-        onClose();
-        
-        // Reset form
-        setCurrentStep(1);
-        setFormData({
-          firstName: '', lastName: '', email: '', phone: '',
-          company: '', position: '', industry: '',
-          address: '', city: '', postalCode: '', country: 'France',
-          selectedPackages: [], notes: ''
-        });
-      }
+      // Actualiser la page pour voir le nouvel utilisateur
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
 
     } catch (error) {
-      console.error('Erreur lors de la création:', error);
       toast.error('Erreur lors de la création du client');
     } finally {
       setIsLoading(false);

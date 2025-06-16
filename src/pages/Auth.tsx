@@ -1,448 +1,395 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import NavbarPublic from '@/components/NavbarPublic';
+import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { toast } from 'sonner';
+import { Lock, Mail, User, Eye, EyeOff, Shield, Rocket, Crown, Diamond, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
+// Comptes de test disponibles
+const testAccounts = [
+  {
+    email: 'admin@techtrust.fr',
+    password: 'admin123',
+    role: 'admin',
+    tier: 'diamond',
+    name: 'Admin Techtrust',
+    description: 'Accès complet à tous les outils'
+  },
+  {
+    email: 'starter@techtrust.fr', 
+    password: 'starter123',
+    role: 'client',
+    tier: 'bronze',
+    services: ['website-starter'],
+    name: 'Client Starter',
+    description: 'Site web basique'
+  },
+  {
+    email: 'business@techtrust.fr',
+    password: 'business123', 
+    role: 'client',
+    tier: 'silver',
+    services: ['website-business', 'growth-pro'],
+    name: 'Client Business',
+    description: 'Site + Growth Hacking'
+  },
+  {
+    email: 'premium@techtrust.fr',
+    password: 'premium123',
+    role: 'client', 
+    tier: 'gold',
+    services: ['website-premium', 'growth-enterprise', 'community-growth'],
+    name: 'Client Premium',
+    description: 'Formules premium'
+  },
+  {
+    email: 'stagiaire@techtrust.fr',
+    password: 'stage123',
+    role: 'employee',
+    tier: 'bronze',
+    permissions: ['community-management'],
+    name: 'Stagiaire CM',
+    description: 'Community manager stagiaire'
+  },
+  {
+    email: 'manager@techtrust.fr',
+    password: 'manager123',
+    role: 'manager',
+    tier: 'gold', 
+    permissions: ['all-except-admin'],
+    name: 'Manager',
+    description: 'Manager équipe'
+  }
+];
 
 const Auth = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [mode, setMode] = useState<'auth' | 'forgot' | 'reset'>('auth');
-  const [email, setEmail] = useState('');
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { signIn, signUp, forgotPassword, resetPassword, resendVerification, isAuthenticated } = useSupabaseAuth();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    confirmPassword: ''
+  });
+  const [selectedTestAccount, setSelectedTestAccount] = useState<typeof testAccounts[0] | null>(null);
 
-  // Check URL parameters for different modes
-  useEffect(() => {
-    const isReset = searchParams.get('reset');
-    const isVerified = searchParams.get('verified');
-    
-    if (isReset) {
-      setMode('reset');
-    }
-    
-    if (isVerified) {
-      toast.success('Email vérifié avec succès !');
-    }
-  }, [searchParams]);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Connexion Espace Client Techtrust",
+    "description": "Accédez à votre espace client Techtrust pour gérer vos outils IA de growth hacking, community management et solutions digitales.",
+    "url": "https://www.tech-trust.fr/auth"
+  };
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    try {
-      const result = await signIn(email, password);
+    
+    // Vérifier les comptes de test
+    const account = testAccounts.find(acc => 
+      acc.email === formData.email && acc.password === formData.password
+    );
+    
+    if (account) {
+      // Stocker les infos de connexion
+      localStorage.setItem('techtrust_user', JSON.stringify(account));
       
-      if (result?.user) {
-        toast.success('Connexion réussie !');
-        navigate('/dashboard');
+      // Rediriger selon le rôle
+      if (account.role === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/dashboard';
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Email ou mot de passe incorrect';
-      setError(errorMessage);
-      toast.error('Erreur de connexion');
-    } finally {
-      setIsLoading(false);
+    } else {
+      alert('❌ Email ou mot de passe incorrect. Utilisez un compte de test ci-dessous.');
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
+  const handleTestAccountSelect = (account: typeof testAccounts[0]) => {
+    setFormData({
+      ...formData,
+      email: account.email,
+      password: account.password
+    });
+    setSelectedTestAccount(account);
+  };
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const name = formData.get('name') as string;
-
-    try {
-      const result = await signUp(email, password, name);
-      
-      // Supabase requires email confirmation by default
-      toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
-      setError('');
-    } catch (err: any) {
-      const errorMessage = err.message || 'Erreur lors de l\'inscription';
-      setError(errorMessage);
-      toast.error('Erreur lors de l\'inscription');
-    } finally {
-      setIsLoading(false);
+  const getTierIcon = (tier: string) => {
+    switch (tier) {
+      case 'bronze': return Shield;
+      case 'silver': return Rocket;
+      case 'gold': return Crown;
+      case 'diamond': return Diamond;
+      default: return Shield;
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    try {
-      await forgotPassword(email);
-      toast.success('Email de réinitialisation envoyé ! Vérifiez votre boîte mail.');
-      setMode('auth');
-    } catch (err: any) {
-      const errorMessage = err.message || 'Erreur lors de l\'envoi de l\'email';
-      setError(errorMessage);
-      toast.error('Erreur lors de l\'envoi de l\'email');
-    } finally {
-      setIsLoading(false);
+  const getTierColor = (tier: string) => {
+    switch (tier) {
+      case 'bronze': return 'text-amber-600 bg-amber-50';
+      case 'silver': return 'text-gray-600 bg-gray-50';
+      case 'gold': return 'text-yellow-600 bg-yellow-50';
+      case 'diamond': return 'text-purple-600 bg-purple-50';
+      default: return 'text-gray-600 bg-gray-50';
     }
   };
-
-  const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    const formData = new FormData(e.currentTarget);
-    const password = formData.get('password') as string;
-    const confirmPassword = formData.get('confirmPassword') as string;
-
-    if (password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      await resetPassword(password);
-      toast.success('Mot de passe réinitialisé avec succès !');
-      navigate('/dashboard');
-    } catch (err: any) {
-      const errorMessage = err.message || 'Erreur lors de la réinitialisation';
-      setError(errorMessage);
-      toast.error('Erreur lors de la réinitialisation');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    if (!email) {
-      toast.error('Veuillez entrer votre email d\'abord');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await resendVerification(email);
-      toast.success('Email de vérification renvoyé !');
-    } catch (err: any) {
-      toast.error('Erreur lors de l\'envoi de l\'email de vérification');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (mode === 'forgot') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-              Mot de passe oublié
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Entrez votre email pour recevoir un lien de réinitialisation
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <Button
-                variant="ghost"
-                onClick={() => setMode('auth')}
-                className="w-fit p-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Retour
-              </Button>
-              <CardTitle className="text-center">Réinitialiser le mot de passe</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {error && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleForgotPassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="votre@email.com"
-                  />
-                </div>
-
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Envoyer le lien de réinitialisation
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  if (mode === 'reset') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-              Nouveau mot de passe
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Choisissez un nouveau mot de passe sécurisé
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">Réinitialiser le mot de passe</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {error && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="password">Nouveau mot de passe</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="••••••••"
-                      minLength={6}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-                  <div className="relative">
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="••••••••"
-                      minLength={6}
-                    />
-                  </div>
-                </div>
-
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Réinitialiser le mot de passe
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            TechTrust Digital
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Connectez-vous à votre compte ou créez-en un nouveau
-          </p>
-        </div>
+    <>
+      <SEO
+        title="Connexion Espace Client | Dashboard Techtrust 2025"
+        description="🔐 Accédez à votre espace client Techtrust. Gérez vos outils IA growth hacking, community management, analytics et projets digitaux depuis un dashboard unifié."
+        keywords="connexion techtrust, espace client, dashboard, outils ia, growth hacking, community management, analytics"
+        canonicalUrl="https://www.tech-trust.fr/auth"
+        structuredData={structuredData}
+      />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">Authentification</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="signup">Inscription</TabsTrigger>
-              </TabsList>
+      <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-purple-50">
+        <NavbarPublic />
+        
+        <main className="flex-1 flex items-center justify-center px-4 py-20">
+          <div className="w-full max-w-4xl">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <Lock className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                Espace Client <span className="text-blue-500">Techtrust</span>
+              </h1>
+              <p className="text-lg text-gray-600">
+                Accédez à vos outils IA et gérez vos projets digitaux
+              </p>
+            </div>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Formulaire de connexion */}
+              <div className="lg:col-span-2">
+                <Tabs defaultValue="login" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="login" className="text-lg py-3">Se connecter</TabsTrigger>
+                    <TabsTrigger value="register" className="text-lg py-3">S'inscrire</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="login">
+                    <Card className="shadow-xl">
+                      <CardHeader className="text-center pb-4">
+                        <CardTitle className="text-2xl">Connexion</CardTitle>
+                        <CardDescription className="text-lg">
+                          Accédez à votre dashboard personnalisé
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                          <div>
+                            <Label htmlFor="email" className="text-base font-medium">Email</Label>
+                            <div className="relative mt-2">
+                              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                              <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="votre@email.com"
+                                value={formData.email}
+                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                className="pl-10 h-12 text-base"
+                                required
+                              />
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="password" className="text-base font-medium">Mot de passe</Label>
+                            <div className="relative mt-2">
+                              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                              <Input
+                                id="password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                className="pl-10 pr-12 h-12 text-base"
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                              >
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            type="submit" 
+                            className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                          >
+                            Se connecter
+                          </Button>
+                          
+                          <div className="text-center">
+                            <a href="/forgot-password" className="text-blue-500 hover:underline">
+                              Mot de passe oublié ?
+                            </a>
+                          </div>
+                        </form>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="register">
+                    <Card className="shadow-xl">
+                      <CardHeader className="text-center pb-4">
+                        <CardTitle className="text-2xl">Créer un compte</CardTitle>
+                        <CardDescription className="text-lg">
+                          Rejoignez +2000 clients satisfaits
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                          <div>
+                            <Label htmlFor="name" className="text-base font-medium">Nom complet</Label>
+                            <div className="relative mt-2">
+                              <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                              <Input
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="Jean Dupont"
+                                value={formData.name}
+                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                className="pl-10 h-12 text-base"
+                                required
+                              />
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="email-register" className="text-base font-medium">Email professionnel</Label>
+                            <div className="relative mt-2">
+                              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                              <Input
+                                id="email-register"
+                                name="email"
+                                type="email"
+                                placeholder="jean@entreprise.com"
+                                value={formData.email}
+                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                className="pl-10 h-12 text-base"
+                                required
+                              />
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="password-register" className="text-base font-medium">Mot de passe</Label>
+                            <div className="relative mt-2">
+                              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                              <Input
+                                id="password-register"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                className="pl-10 pr-12 h-12 text-base"
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                              >
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            type="submit" 
+                            className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                          >
+                            Créer mon compte
+                          </Button>
+                        </form>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </div>
 
-              <TabsContent value="login" className="space-y-4">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <Input
-                      id="login-email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      placeholder="votre@email.com"
-                    />
-                  </div>
+              {/* Comptes de test */}
+              <div>
+                <Card className="shadow-xl">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="w-5 h-5 text-blue-500" />
+                      Comptes de Test
+                    </CardTitle>
+                    <CardDescription>
+                      Utilisez ces comptes pour tester les différents accès
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {testAccounts.map((account) => {
+                      const TierIcon = getTierIcon(account.tier);
+                      const isSelected = selectedTestAccount?.email === account.email;
+                      
+                      return (
+                        <Card 
+                          key={account.email}
+                          className={`cursor-pointer transition-all hover:shadow-md ${
+                            isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                          }`}
+                          onClick={() => handleTestAccountSelect(account)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <TierIcon className={`w-4 h-4 ${getTierColor(account.tier).split(' ')[0]}`} />
+                                <span className="font-medium text-sm">{account.name}</span>
+                              </div>
+                              <Badge className={`text-xs ${getTierColor(account.tier)}`}>
+                                {account.tier.toUpperCase()}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-gray-600 mb-2">{account.description}</p>
+                            <div className="text-xs space-y-1">
+                              <div><strong>Email:</strong> {account.email}</div>
+                              <div><strong>Mot de passe:</strong> {account.password}</div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password">Mot de passe</Label>
-                    <div className="relative">
-                      <Input
-                        id="login-password"
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="current-password"
-                        required
-                        placeholder="••••••••"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
+                {/* Info demo */}
+                <Card className="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                  <CardContent className="p-4 text-center">
+                    <h4 className="font-medium text-gray-900 mb-2">Mode Démo</h4>
+                    <p className="text-sm text-gray-600">
+                      Cette version de démo vous permet de tester toutes les fonctionnalités selon votre profil utilisateur.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </main>
 
-                  <div className="flex items-center justify-between">
-                    <Button
-                      type="button"
-                      variant="link"
-                      className="px-0 text-sm"
-                      onClick={() => setMode('forgot')}
-                    >
-                      Mot de passe oublié ?
-                    </Button>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Se connecter
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="signup" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Nom complet</Label>
-                    <Input
-                      id="signup-name"
-                      name="name"
-                      type="text"
-                      autoComplete="name"
-                      required
-                      placeholder="Votre nom complet"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      placeholder="votre@email.com"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Mot de passe</Label>
-                    <div className="relative">
-                      <Input
-                        id="signup-password"
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        required
-                        placeholder="••••••••"
-                        minLength={6}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    S'inscrire
-                  </Button>
-
-                  <div className="text-center">
-                    <Button
-                      type="button"
-                      variant="link"
-                      className="text-sm"
-                      onClick={handleResendVerification}
-                      disabled={isLoading}
-                    >
-                      Renvoyer l'email de vérification
-                    </Button>
-                  </div>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+        <Footer />
       </div>
-    </div>
+    </>
   );
 };
 
