@@ -1,6 +1,6 @@
+
 import { useState, useEffect } from 'react';
 import { auth } from '@/lib/auth';
-import { testDatabaseConnection } from '@/utils/testDatabaseConnection';
 
 interface User {
   id: string;
@@ -10,7 +10,7 @@ interface User {
   image?: string;
   createdAt: Date;
   updatedAt: Date;
-  role?: string; // Optionnel car il peut être récupéré séparément
+  role?: string;
 }
 
 interface Session {
@@ -38,21 +38,6 @@ export const useBetterAuth = () => {
     const checkAuth = async () => {
       try {
         console.log('🔍 Checking authentication status...');
-        
-        // Premier test: vérifier la connexion à la base de données
-        const dbTest = await testDatabaseConnection();
-        if (!dbTest.success) {
-          console.error('❌ Database connection failed:', dbTest.error);
-          setAuthState({
-            user: null,
-            session: null,
-            isLoading: false,
-            isAuthenticated: false
-          });
-          return;
-        }
-        
-        console.log('✅ Database connection OK, checking session...');
         
         const result = await auth.api.getSession({
           headers: new Headers({
@@ -95,12 +80,6 @@ export const useBetterAuth = () => {
     try {
       console.log('🔐 Attempting sign in for:', email);
       
-      // Test de connexion avant l'authentification
-      const dbTest = await testDatabaseConnection();
-      if (!dbTest.success) {
-        throw new Error('Database connection failed: ' + dbTest.error);
-      }
-      
       const result = await auth.api.signInEmail({
         body: { email, password },
         headers: new Headers({
@@ -130,12 +109,6 @@ export const useBetterAuth = () => {
     try {
       console.log('📝 Attempting sign up for:', email);
       
-      // Test de connexion avant l'inscription
-      const dbTest = await testDatabaseConnection();
-      if (!dbTest.success) {
-        throw new Error('Database connection failed: ' + dbTest.error);
-      }
-      
       const result = await auth.api.signUpEmail({
         body: { 
           email, 
@@ -153,6 +126,24 @@ export const useBetterAuth = () => {
     } catch (error) {
       console.error('❌ Sign up error:', error);
       throw error;
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await auth.api.signOut({
+        headers: new Headers({
+          'Cookie': document.cookie
+        })
+      });
+      setAuthState({
+        user: null,
+        session: null,
+        isLoading: false,
+        isAuthenticated: false
+      });
+    } catch (error) {
+      console.error('❌ Sign out error:', error);
     }
   };
 
@@ -211,26 +202,7 @@ export const useBetterAuth = () => {
     }
   };
 
-  const signOut = async () => {
-    try {
-      await auth.api.signOut({
-        headers: new Headers({
-          'Cookie': document.cookie
-        })
-      });
-      setAuthState({
-        user: null,
-        session: null,
-        isLoading: false,
-        isAuthenticated: false
-      });
-    } catch (error) {
-      console.error('❌ Sign out error:', error);
-    }
-  };
-
   const getUserRole = () => {
-    // Retourner le rôle depuis Better Auth ou par défaut
     return authState.user?.role || 'client';
   };
 

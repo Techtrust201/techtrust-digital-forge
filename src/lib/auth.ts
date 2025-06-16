@@ -1,38 +1,22 @@
 
 import { betterAuth } from "better-auth";
 
-// Configuration flexible pour multi-environnements
-const getBetterAuthURL = () => {
-  if (typeof window !== 'undefined') {
-    const origin = window.location.origin;
-    
-    // Production
-    if (origin.includes('tech-trust.fr')) {
-      return 'https://www.tech-trust.fr';
-    }
-    
-    // Lovable staging
-    if (origin.includes('lovable.app')) {
-      return origin;
-    }
-    
-    // Development local
-    return 'http://localhost:8080';
-  }
-  
-  // Fallback pour SSR
-  return 'http://localhost:8080';
+// Configuration simplifiée pour Better Auth
+const getDatabaseURL = () => {
+  // URL directe PostgreSQL sans pooler
+  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require";
 };
 
-// URL de connexion directe PostgreSQL (sans pooler)
-const getDatabaseURL = () => {
-  // URL directe vers PostgreSQL (port 5432 au lieu de 6543 pooler)
-  return "postgresql://postgres.psaacanfxpqfhrgmvjjn:V7KhB3zWmJ6nVLN8@aws-0-eu-central-1.pooler.supabase.com:5432/postgres";
+const getBetterAuthURL = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return 'http://localhost:8080';
 };
 
 console.log('🔧 Better Auth Configuration:');
 console.log('- Base URL:', getBetterAuthURL());
-console.log('- Database URL:', getDatabaseURL());
+console.log('- Database URL configured');
 
 export const auth = betterAuth({
   database: {
@@ -43,18 +27,11 @@ export const auth = betterAuth({
   trustedOrigins: [
     'http://localhost:8080',
     'https://preview--techtrust-digital-forge.lovable.app',
-    'https://www.tech-trust.fr',
-    'https://lovable.dev'
+    'https://www.tech-trust.fr'
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // Désactivé temporairement pour les tests
-    sendResetPassword: async ({ user, url }) => {
-      console.log('📧 Reset password email for:', user.email, 'URL:', url);
-    },
-    sendVerificationEmail: async ({ user, url }) => {
-      console.log('📧 Verification email for:', user.email, 'URL:', url);
-    }
+    requireEmailVerification: false
   },
   user: {
     additionalFields: {
@@ -66,10 +43,7 @@ export const auth = betterAuth({
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 jours
-    updateAge: 60 * 60 * 24, // Mise à jour quotidienne
-  },
-  advanced: {
-    generateId: () => `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    updateAge: 60 * 60 * 24 // Mise à jour quotidienne
   }
 });
 
