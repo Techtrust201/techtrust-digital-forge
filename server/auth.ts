@@ -18,6 +18,7 @@ export const auth = betterAuth({
     ? 'https://preview--techtrust-digital-forge.lovable.app' 
     : 'http://localhost:8080',
   trustedOrigins: [
+    'http://localhost:5173',
     'http://localhost:8080',
     'https://preview--techtrust-digital-forge.lovable.app',
     'https://www.tech-trust.fr'
@@ -36,7 +37,18 @@ export const auth = betterAuth({
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 jours
-    updateAge: 60 * 60 * 24 // Mise à jour quotidienne
+    updateAge: 60 * 60 * 24, // Mise à jour quotidienne
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 24 * 7
+    }
+  },
+  // Configuration des cookies pour cross-origin
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: process.env.NODE_ENV === 'production' ? '.lovable.app' : undefined
+    }
   }
 });
 
