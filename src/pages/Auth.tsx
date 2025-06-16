@@ -53,14 +53,21 @@ const Auth = () => {
 
   // Rediriger si déjà connecté et vérifié
   useEffect(() => {
-    if (user && isEmailVerified && !isLoading) {
-      if (canAccessAdmin()) {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+    if (user && isEmailVerified && !isLoading && profile) {
+      console.log('Redirection check - User:', user.email, 'Profile role:', profile.role, 'Can access admin:', canAccessAdmin());
+      
+      // Délai pour s'assurer que le profil est bien chargé
+      setTimeout(() => {
+        if (canAccessAdmin()) {
+          console.log('Redirecting to admin dashboard');
+          navigate('/admin', { replace: true });
+        } else {
+          console.log('Redirecting to user dashboard');
+          navigate('/dashboard', { replace: true });
+        }
+      }, 500);
     }
-  }, [user, isEmailVerified, isLoading, navigate, canAccessAdmin]);
+  }, [user, isEmailVerified, isLoading, profile, navigate, canAccessAdmin]);
 
   // Gérer les paramètres URL
   useEffect(() => {
@@ -214,6 +221,18 @@ const Auth = () => {
           onClose={() => setShowEmailModal(false)}
         />
       </>
+    );
+  }
+
+  // Afficher un spinner si on est en train de charger
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p>Chargement...</p>
+        </div>
+      </div>
     );
   }
 

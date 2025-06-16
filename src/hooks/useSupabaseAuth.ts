@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,6 +34,7 @@ export const useSupabaseAuth = () => {
         return;
       }
 
+      console.log('Profil chargé:', data);
       setProfile(data);
     } catch (error) {
       console.error('Erreur profil:', error);
@@ -40,18 +42,25 @@ export const useSupabaseAuth = () => {
   };
 
   useEffect(() => {
+    let mounted = true;
+
     // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session);
+        if (!mounted) return;
+
+        console.log('Auth state change:', event, session?.user?.email);
+        
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Charger le profil utilisateur après connexion
+          // Charger le profil utilisateur après connexion avec un délai pour éviter les conflits
           setTimeout(() => {
-            loadUserProfile(session.user.id);
-          }, 0);
+            if (mounted) {
+              loadUserProfile(session.user.id);
+            }
+          }, 100);
         } else {
           setProfile(null);
         }
@@ -62,6 +71,8 @@ export const useSupabaseAuth = () => {
 
     // Vérifier la session existante
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -72,7 +83,10 @@ export const useSupabaseAuth = () => {
       setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Inscription
@@ -181,6 +195,7 @@ export const useSupabaseAuth = () => {
   };
 
   const canAccessAdmin = (): boolean => {
+    console.log('Checking admin access, profile role:', profile?.role);
     return hasRole('super_admin');
   };
 

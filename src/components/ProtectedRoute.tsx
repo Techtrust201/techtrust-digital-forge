@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,30 +10,34 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = false }) => {
-  const { user, isLoading, isEmailVerified, canAccessAdmin } = useSupabaseAuth();
+  const { user, isLoading, isEmailVerified, canAccessAdmin, profile } = useSupabaseAuth();
   const navigate = useNavigate();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !hasRedirected) {
       if (!user) {
-        // Pas connecté
-        navigate('/auth');
+        console.log('ProtectedRoute: No user, redirecting to auth');
+        setHasRedirected(true);
+        navigate('/auth', { replace: true });
         return;
       }
 
       if (!isEmailVerified) {
-        // Email non vérifié
-        navigate('/auth');
+        console.log('ProtectedRoute: Email not verified, redirecting to auth');
+        setHasRedirected(true);
+        navigate('/auth', { replace: true });
         return;
       }
 
-      if (adminOnly && !canAccessAdmin()) {
-        // Accès admin requis mais utilisateur non autorisé
-        navigate('/dashboard');
+      if (adminOnly && profile && !canAccessAdmin()) {
+        console.log('ProtectedRoute: Admin access required but user not admin, redirecting to dashboard');
+        setHasRedirected(true);
+        navigate('/dashboard', { replace: true });
         return;
       }
     }
-  }, [user, isLoading, isEmailVerified, adminOnly, canAccessAdmin, navigate]);
+  }, [user, isLoading, isEmailVerified, adminOnly, canAccessAdmin, navigate, hasRedirected, profile]);
 
   if (isLoading) {
     return (
@@ -51,7 +55,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     return null; // La redirection se fait dans useEffect
   }
 
-  if (adminOnly && !canAccessAdmin()) {
+  if (adminOnly && profile && !canAccessAdmin()) {
     return null; // La redirection se fait dans useEffect
   }
 
