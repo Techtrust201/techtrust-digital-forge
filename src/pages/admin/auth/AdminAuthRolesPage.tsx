@@ -9,15 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Shield, Crown, Users, Settings, Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UserRole {
   id: string;
-  userId: string;
+  user_id: string;
   userEmail: string;
   userName: string;
   role: 'super_admin' | 'admin' | 'manager' | 'employee' | 'client';
-  assignedAt: string;
-  assignedBy: string;
+  created_at: string;
 }
 
 const AdminAuthRolesPage = () => {
@@ -35,38 +35,43 @@ const AdminAuthRolesPage = () => {
   const loadUserRoles = async () => {
     setIsLoading(true);
     try {
-      // Simuler des rôles utilisateur pour la démo
-      const mockRoles: UserRole[] = [
-        {
-          id: 'role-1',
-          userId: 'admin-1',
-          userEmail: 'admin@techtrust.fr',
-          userName: 'Admin Techtrust',
-          role: 'super_admin',
-          assignedAt: '2024-01-01T00:00:00Z',
-          assignedBy: 'System'
-        },
-        {
-          id: 'role-2',
-          userId: 'manager-1',
-          userEmail: 'manager@techtrust.fr',
-          userName: 'Manager',
-          role: 'manager',
-          assignedAt: '2024-01-15T00:00:00Z',
-          assignedBy: 'admin@techtrust.fr'
-        },
-        {
-          id: 'role-3',
-          userId: 'client-business-1',
-          userEmail: 'business@techtrust.fr',
-          userName: 'Client Business',
-          role: 'client',
-          assignedAt: '2024-01-20T00:00:00Z',
-          assignedBy: 'admin@techtrust.fr'
-        }
-      ];
-      
-      setUserRoles(mockRoles);
+      // Récupérer les rôles avec les informations utilisateur
+      const { data: roles, error } = await supabase
+        .from('user_roles')
+        .select(`
+          id,
+          user_id,
+          role,
+          created_at
+        `);
+
+      if (error) throw error;
+
+      // Récupérer les profils utilisateur
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, name');
+
+      if (profilesError) throw profilesError;
+
+      // Récupérer les emails depuis auth.users via une fonction edge
+      const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+
+      if (usersError) throw usersError;
+
+      // Combiner les données
+      const combinedRoles = roles?.map(role => {
+        const profile = profiles?.find(p => p.id === role.user_id);
+        const user = users.users?.find(u => u.id === role.user_id);
+        
+        return {
+          ...role,
+          userName: profile?.name || user?.email?.split('@')[0] || 'Utilisateur inconnu',
+          userEmail: user?.email || 'Email inconnu'
+        };
+      }) || [];
+
+      setUserRoles(combinedRoles);
     } catch (error) {
       console.error('Erreur lors du chargement des rôles:', error);
       toast.error('Erreur lors du chargement des rôles');
@@ -77,13 +82,14 @@ const AdminAuthRolesPage = () => {
 
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
-      setUserRoles(prev => 
-        prev.map(ur => 
-          ur.userId === userId 
-            ? { ...ur, role: newRole as any, assignedAt: new Date().toISOString() }
-            : ur
-        )
-      );
+      const { error } = await supabase
+        .from('user_roles')
+        .update({ role: newRole })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      await loadUserRoles(); // Recharger les données
       toast.success('Rôle mis à jour avec succès');
     } catch (error) {
       console.error('Erreur lors de la mise à jour du rôle:', error);
@@ -93,7 +99,14 @@ const AdminAuthRolesPage = () => {
 
   const removeUserRole = async (userId: string) => {
     try {
-      setUserRoles(prev => prev.filter(ur => ur.userId !== userId));
+      const { error } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      await loadUserRoles(); // Recharger les données
       toast.success('Rôle supprimé avec succès');
     } catch (error) {
       console.error('Erreur lors de la suppression du rôle:', error);
@@ -184,7 +197,7 @@ const AdminAuthRolesPage = () => {
                 <Button 
                   className="w-full" 
                   onClick={() => {
-                    // Logique d'assignation
+                    // Logique d'assignation à implémenter
                     toast.success('Rôle assigné avec succès');
                     setNewRoleDialog(false);
                   }}
@@ -228,7 +241,7 @@ const AdminAuthRolesPage = () => {
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-2 text-gray-600">Chargement des rôles...</p>
+                <p className="mt-2 text-gray-600">Chargement des r=les...</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -266,7 +279,7 @@ const AdminAuthRolesPage = () => {
                             variant="outline"
                             size="sm"
                             className="text-red-600 border-red-200 hover:bg-red-50"
-                            onClick={() => removeUserRole(userRole.userId)}
+                            onClick={() => removeUserRole(userRole.user_id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -275,7 +288,7 @@ const AdminAuthRolesPage = () => {
                       
                       <div className="ml-13">
                         <p className="text-xs text-gray-500 mb-2">
-                          Assigné le {new Date(userRole.assignedAt).toLocaleDateString('fr-FR')} par {userRole.assignedBy}
+                          Assigné le {new Date(userRole.created_at).toLocaleDateString('fr-FR')}
                         </p>
                         <div className="flex flex-wrap gap-1">
                           {permissions.map(permission => (
@@ -322,7 +335,7 @@ const AdminAuthRolesPage = () => {
                 className="w-full" 
                 onClick={() => {
                   if (editingRole) {
-                    updateUserRole(editingRole.userId, editingRole.role);
+                    updateUserRole(editingRole.user_id, editingRole.role);
                     setEditingRole(null);
                   }
                 }}

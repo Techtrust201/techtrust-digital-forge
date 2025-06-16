@@ -188,7 +188,7 @@ export const useSupabaseAuth = () => {
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('userId', authState.user.id)
+        .eq('user_id', authState.user.id)
         .single();
       
       if (error) {
@@ -213,6 +213,50 @@ export const useSupabaseAuth = () => {
     return userRole === role;
   };
 
+  // Create super admin account (development only)
+  const createSuperAdmin = async (email: string, password: string, name: string) => {
+    try {
+      console.log('🔑 Creating super admin account...');
+      
+      // First create the user
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        // Wait a bit for the trigger to create the profile
+        setTimeout(async () => {
+          try {
+            // Update the user role to super_admin
+            const { error: roleError } = await supabase
+              .from('user_roles')
+              .update({ role: 'super_admin' })
+              .eq('user_id', data.user.id);
+            
+            if (roleError) {
+              console.error('Error setting super admin role:', roleError);
+            } else {
+              console.log('✅ Super admin role assigned');
+            }
+          } catch (err) {
+            console.error('Error in role assignment:', err);
+          }
+        }, 2000);
+      }
+      
+      return { user: data.user, session: data.session };
+    } catch (error) {
+      console.error('❌ Super admin creation error:', error);
+      throw error;
+    }
+  };
+
   return {
     ...authState,
     signIn,
@@ -223,6 +267,7 @@ export const useSupabaseAuth = () => {
     resendVerification,
     getUserRole,
     isAdmin,
-    hasRole
+    hasRole,
+    createSuperAdmin
   };
 };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -11,6 +10,7 @@ import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
+import SuperAdminSetup from './pages/SuperAdminSetup';
 import NotFound from './pages/NotFound';
 import Blog from './pages/Blog';
 import Pricing from './pages/Pricing';
@@ -32,6 +32,7 @@ import AdminBillingPage from './pages/admin/AdminBillingPage';
 import AdminBlogPage from './pages/admin/AdminBlogPage';
 import AdminCampaignsPage from './pages/admin/AdminCampaignsPage';
 import AdminSystemPage from './pages/admin/AdminSystemPage';
+import AdminAuthRolesPage from './pages/admin/auth/AdminAuthRolesPage';
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ function App() {
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/super-admin-setup" element={<SuperAdminSetup />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/careers" element={<Careers />} />
@@ -160,6 +162,11 @@ function App() {
             <Route path="/admin/system" element={
               <AdminRoute>
                 <AdminSystemPage />
+              </AdminRoute>
+            } />
+            <Route path="/admin/auth/roles" element={
+              <AdminRoute>
+                <AdminAuthRolesPage />
               </AdminRoute>
             } />
 
