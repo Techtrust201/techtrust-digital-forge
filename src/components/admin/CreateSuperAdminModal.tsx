@@ -65,11 +65,11 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
         // Attendre un peu pour que le profil soit créé par le trigger
         setTimeout(async () => {
           try {
-            // Ajouter le rôle admin avec la bonne colonne userId (pas user_id)
+            // Ajouter le rôle admin avec la bonne colonne user_id
             const { error: roleError } = await supabase
               .from('user_roles')
               .insert({
-                userId: authData.user!.id,
+                user_id: authData.user!.id,
                 role: formData.role
               });
 
@@ -132,7 +132,7 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-red-600" />
+            <Shield className="w-5 h-5" style={{ color: '#45C7FF' }} />
             Créer un Admin
           </DialogTitle>
         </DialogHeader>
@@ -188,7 +188,7 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
                     key={role.value}
                     className={`cursor-pointer transition-all ${
                       formData.role === role.value 
-                        ? 'border-red-500 bg-red-50' 
+                        ? 'border-blue-400 bg-blue-50' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     onClick={() => setFormData({ ...formData, role: role.value })}
@@ -202,7 +202,7 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
                         </div>
                         <div className={`w-4 h-4 rounded-full border-2 ${
                           formData.role === role.value 
-                            ? 'border-red-500 bg-red-500' 
+                            ? 'border-blue-400 bg-blue-400' 
                             : 'border-gray-300'
                         }`}>
                           {formData.role === role.value && (
@@ -224,7 +224,8 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
             <Button 
               type="submit" 
               disabled={loading}
-              className="bg-red-600 hover:bg-red-700"
+              className="text-white"
+              style={{ backgroundColor: '#45C7FF' }}
             >
               {loading ? (
                 <>

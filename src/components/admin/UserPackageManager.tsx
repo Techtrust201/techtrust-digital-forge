@@ -187,14 +187,14 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Package className="w-5 h-5 text-red-600" />
+            <Package className="w-5 h-5" style={{ color: '#45C7FF' }} />
             Gérer les packages de {user.name}
           </DialogTitle>
         </DialogHeader>
 
         {loading ? (
           <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
             <p className="mt-2 text-gray-600">Chargement...</p>
           </div>
         ) : (
@@ -328,7 +328,8 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
               <Button 
                 onClick={savePackages}
                 disabled={saving}
-                className="bg-red-600 hover:bg-red-700"
+                className="text-white"
+                style={{ backgroundColor: '#45C7FF' }}
               >
                 {saving ? (
                   <>

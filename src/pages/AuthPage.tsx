@@ -174,7 +174,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-50">
       <NavbarPublic />
       
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12">
@@ -192,7 +192,7 @@ const AuthPage = () => {
               {/* Check Email Mode */}
               {mode === 'check-email' && (
                 <>
-                  <CardHeader className="text-center space-y-4 pb-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+                  <CardHeader className="text-center space-y-4 pb-6 text-white" style={{ background: 'linear-gradient(to right, #45C7FF, #00A8E8)' }}>
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -201,7 +201,7 @@ const AuthPage = () => {
                       <CheckCircle className="w-16 h-16 mx-auto" />
                     </motion.div>
                     <CardTitle className="text-2xl">Vérifiez votre email</CardTitle>
-                    <CardDescription className="text-green-100">
+                    <CardDescription className="text-blue-100">
                       Un lien de confirmation a été envoyé
                     </CardDescription>
                   </CardHeader>
@@ -227,7 +227,8 @@ const AuthPage = () => {
                       </Button>
                       <Button 
                         onClick={() => switchMode('signup')}
-                        className="flex-1 bg-red-600 hover:bg-red-700"
+                        className="flex-1 text-white"
+                        style={{ backgroundColor: '#45C7FF' }}
                       >
                         Renvoyer l'email
                       </Button>
@@ -264,7 +265,8 @@ const AuthPage = () => {
                     </Alert>
                     <Button 
                       onClick={() => switchMode('signup')}
-                      className="w-full bg-red-600 hover:bg-red-700 mt-4"
+                      className="w-full text-white mt-4"
+                      style={{ backgroundColor: '#45C7FF' }}
                     >
                       Nouvelle inscription
                     </Button>
@@ -418,7 +420,8 @@ const AuthPage = () => {
 
                       <Button
                         type="submit"
-                        className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 transition-all duration-200 transform hover:scale-[1.02]"
+                        className="w-full text-white font-medium py-3 transition-all duration-200 transform hover:scale-[1.02]"
+                        style={{ backgroundColor: '#45C7FF' }}
                         disabled={isLoading || authLoading}
                       >
                         {isLoading ? (
@@ -441,7 +444,8 @@ const AuthPage = () => {
                       <Button
                         variant="link"
                         onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
-                        className="text-red-600 hover:text-red-700 font-medium p-0 transition-colors"
+                        className="font-medium p-0 transition-colors"
+                        style={{ color: '#45C7FF' }}
                       >
                         {mode === 'signin' ? 'Créer un compte' : 'Se connecter'}
                       </Button>
@@ -450,9 +454,9 @@ const AuthPage = () => {
                     {mode === 'signup' && (
                       <div className="text-xs text-gray-500 text-center">
                         En créant un compte, vous acceptez nos{' '}
-                        <a href="/terms" className="text-red-600 hover:underline">conditions d'utilisation</a>
+                        <a href="/terms" className="hover:underline" style={{ color: '#45C7FF' }}>conditions d'utilisation</a>
                         {' '}et notre{' '}
-                        <a href="/privacy" className="text-red-600 hover:underline">politique de confidentialité</a>.
+                        <a href="/privacy" className="hover:underline" style={{ color: '#45C7FF' }}>politique de confidentialité</a>.
                       </div>
                     )}
                   </CardContent>
