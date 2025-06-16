@@ -87,7 +87,9 @@ export const useBetterAuth = () => {
   };
 
   const getUserRole = () => {
-    return user?.role || 'client';
+    // Since role might not be available in the user object initially,
+    // we'll default to 'client' and handle it gracefully
+    return (user as any)?.role || 'client';
   };
 
   const isAdmin = () => {

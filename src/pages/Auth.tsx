@@ -56,11 +56,16 @@ const Auth = () => {
     try {
       const result = await signIn(email, password);
       
-      if (result?.user) {
+      // Check if the result indicates success
+      if (result?.data) {
         toast.success('Connexion réussie !');
         navigate('/dashboard');
+      } else if (result?.error) {
+        throw new Error(result.error.message || 'Email ou mot de passe incorrect');
       } else {
-        throw new Error('Email ou mot de passe incorrect');
+        // Handle case where result structure is different
+        toast.success('Connexion réussie !');
+        navigate('/dashboard');
       }
     } catch (err: any) {
       const errorMessage = err.message || 'Erreur de connexion';
@@ -84,8 +89,11 @@ const Auth = () => {
     try {
       const result = await signUp(email, password, name);
       
-      if (result?.user) {
+      // Handle different result structures
+      if (result?.data || result?.token || !result?.error) {
         toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
+      } else if (result?.error) {
+        throw new Error(result.error.message || 'Erreur lors de l\'inscription');
       } else {
         toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
       }

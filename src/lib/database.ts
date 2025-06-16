@@ -1,6 +1,4 @@
 
-import { auth } from './auth';
-
 interface QueryResult<T = any> {
   data?: T[];
   error?: string;
