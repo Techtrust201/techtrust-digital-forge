@@ -1,48 +1,24 @@
 
-import { useState, useEffect } from 'react';
+import { useSupabaseAuth } from './useSupabaseAuth';
 
-interface User {
-  id: string;
-  email: string;
-  role?: string;
-}
-
+// Hook de compatibilité pour maintenir l'interface existante
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate checking for existing auth state
-    const checkAuth = () => {
-      const savedUser = localStorage.getItem('techtrust_user');
-      if (savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-        } catch (error) {
-          console.error('Error parsing saved user:', error);
-        }
-      }
-      setIsLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('techtrust_user', JSON.stringify(userData));
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('techtrust_user');
-  };
-
+  const supabaseAuth = useSupabaseAuth();
+  
   return {
-    user,
-    isLoading,
-    login,
-    logout,
-    isAuthenticated: !!user
+    user: supabaseAuth.user ? {
+      id: supabaseAuth.user.id,
+      email: supabaseAuth.user.email || '',
+      role: supabaseAuth.profile?.role || 'client_bronze'
+    } : null,
+    isLoading: supabaseAuth.isLoading,
+    login: async (userData: any) => {
+      // Cette méthode est maintenant obsolète avec l'auth Supabase
+      console.warn('useAuth.login is deprecated, use useSupabaseAuth instead');
+    },
+    logout: async () => {
+      return supabaseAuth.signOut();
+    },
+    isAuthenticated: supabaseAuth.isAuthenticated
   };
 };

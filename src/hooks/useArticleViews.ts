@@ -25,7 +25,7 @@ export const useArticleViews = () => {
     }
 
     try {
-      // Incrémenter le compteur de vues
+      // Incrémenter le compteur de vues en utilisant la fonction SQL
       const { error } = await supabase.rpc('increment_article_views', {
         article_id: articleId
       });

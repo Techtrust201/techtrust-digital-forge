@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import Index from '@/pages/Index';
 import Pricing from '@/pages/Pricing';
 import PricingOptimized from '@/pages/PricingOptimized';
@@ -62,7 +63,6 @@ import AdminBlogCategoriesPage from '@/pages/admin/blog/AdminBlogCategoriesPage'
 import AdminBlogCommentsPage from '@/pages/admin/blog/AdminBlogCommentsPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
 import NotFound from '@/pages/NotFound';
-import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useIsHydrating } from '@/hooks/useIsHydrating';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -88,7 +88,6 @@ interface CookiePreferences {
 
 // Composant interne pour gérer la logique avec useLocation
 function AppContent() {
-  const { isLoading } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
   const isHydrating = useIsHydrating();
@@ -113,7 +112,7 @@ function AppContent() {
     console.log('Préférences cookies mises à jour:', preferences);
   };
 
-  if (isLoading || isHydrating) {
+  if (isHydrating) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="space-y-3">
@@ -149,49 +148,49 @@ function AppContent() {
         <Route path="/auth" element={<Auth />} />
 
         {/* Protected dashboard routes */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/services" element={<Services />} />
-        <Route path="/dashboard/blog" element={<DashboardBlog />} />
-        <Route path="/dashboard/blog/:id" element={<BlogPostView />} />
-        <Route path="/dashboard/campaigns" element={<Campaigns />} />
-        <Route path="/dashboard/campaigns/email" element={<EmailCampaigns />} />
-        <Route path="/dashboard/campaigns/sms" element={<SMSCampaigns />} />
-        <Route path="/dashboard/campaigns/lead" element={<LeadCampaigns />} />
-        <Route path="/dashboard/campaigns/automation" element={<AutomationCampaigns />} />
-        <Route path="/dashboard/analytics" element={<Analytics />} />
-        <Route path="/dashboard/analytics/website" element={<WebsiteAnalytics />} />
-        <Route path="/dashboard/analytics/social" element={<SocialAnalytics />} />
-        <Route path="/dashboard/analytics/growth" element={<GrowthAnalytics />} />
-        <Route path="/dashboard/analytics/community" element={<CommunityAnalytics />} />
-        <Route path="/dashboard/account" element={<Account />} />
-        <Route path="/dashboard/support" element={<Support />} />
-        <Route path="/dashboard/help" element={<DashboardHelp />} />
-        <Route path="/dashboard/upgrade-plan" element={<UpgradePlan />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
+        <Route path="/dashboard/blog" element={<ProtectedRoute><DashboardBlog /></ProtectedRoute>} />
+        <Route path="/dashboard/blog/:id" element={<ProtectedRoute><BlogPostView /></ProtectedRoute>} />
+        <Route path="/dashboard/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+        <Route path="/dashboard/campaigns/email" element={<ProtectedRoute><EmailCampaigns /></ProtectedRoute>} />
+        <Route path="/dashboard/campaigns/sms" element={<ProtectedRoute><SMSCampaigns /></ProtectedRoute>} />
+        <Route path="/dashboard/campaigns/lead" element={<ProtectedRoute><LeadCampaigns /></ProtectedRoute>} />
+        <Route path="/dashboard/campaigns/automation" element={<ProtectedRoute><AutomationCampaigns /></ProtectedRoute>} />
+        <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+        <Route path="/dashboard/analytics/website" element={<ProtectedRoute><WebsiteAnalytics /></ProtectedRoute>} />
+        <Route path="/dashboard/analytics/social" element={<ProtectedRoute><SocialAnalytics /></ProtectedRoute>} />
+        <Route path="/dashboard/analytics/growth" element={<ProtectedRoute><GrowthAnalytics /></ProtectedRoute>} />
+        <Route path="/dashboard/analytics/community" element={<ProtectedRoute><CommunityAnalytics /></ProtectedRoute>} />
+        <Route path="/dashboard/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+        <Route path="/dashboard/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+        <Route path="/dashboard/help" element={<ProtectedRoute><DashboardHelp /></ProtectedRoute>} />
+        <Route path="/dashboard/upgrade-plan" element={<ProtectedRoute><UpgradePlan /></ProtectedRoute>} />
 
-        {/* Admin routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<AdminUsersPage />} />
-        <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
-        <Route path="/admin/analytics/overview" element={<AdminAnalyticsOverviewPage />} />
-        <Route path="/admin/analytics/users" element={<AdminAnalyticsUsersPage />} />
-        <Route path="/admin/analytics/revenue" element={<AdminAnalyticsRevenuePage />} />
-        <Route path="/admin/analytics/performance" element={<AdminAnalyticsPerformancePage />} />
-        <Route path="/admin/billing" element={<AdminBillingPage />} />
-        <Route path="/admin/billing/subscriptions" element={<AdminBillingSubscriptionsPage />} />
-        <Route path="/admin/billing/invoices" element={<AdminBillingInvoicesPage />} />
-        <Route path="/admin/billing/payments" element={<AdminBillingPaymentsPage />} />
-        <Route path="/admin/campaigns" element={<AdminCampaignsPage />} />
-        <Route path="/admin/campaigns/email" element={<AdminCampaignsEmailPage />} />
-        <Route path="/admin/campaigns/sms" element={<AdminCampaignsSMSPage />} />
-        <Route path="/admin/campaigns/automation" element={<AdminCampaignsAutomationPage />} />
-        <Route path="/admin/blog" element={<AdminBlogPage />} />
-        <Route path="/admin/blog/create" element={<AdminBlogCreatePage />} />
-        <Route path="/admin/blog/posts" element={<AdminBlogPostsPage />} />
-        <Route path="/admin/blog/edit/:id" element={<AdminBlogEditPage />} />
-        <Route path="/admin/blog/preview/:id" element={<AdminBlogPreviewPage />} />
-        <Route path="/admin/blog/categories" element={<AdminBlogCategoriesPage />} />
-        <Route path="/admin/blog/comments" element={<AdminBlogCommentsPage />} />
-        <Route path="/admin/system" element={<AdminSystemPage />} />
+        {/* Admin routes - protected with adminOnly */}
+        <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminUsersPage /></ProtectedRoute>} />
+        <Route path="/admin/analytics" element={<ProtectedRoute adminOnly><AdminAnalyticsPage /></ProtectedRoute>} />
+        <Route path="/admin/analytics/overview" element={<ProtectedRoute adminOnly><AdminAnalyticsOverviewPage /></ProtectedRoute>} />
+        <Route path="/admin/analytics/users" element={<ProtectedRoute adminOnly><AdminAnalyticsUsersPage /></ProtectedRoute>} />
+        <Route path="/admin/analytics/revenue" element={<ProtectedRoute adminOnly><AdminAnalyticsRevenuePage /></ProtectedRoute>} />
+        <Route path="/admin/analytics/performance" element={<ProtectedRoute adminOnly><AdminAnalyticsPerformancePage /></ProtectedRoute>} />
+        <Route path="/admin/billing" element={<ProtectedRoute adminOnly><AdminBillingPage /></ProtectedRoute>} />
+        <Route path="/admin/billing/subscriptions" element={<ProtectedRoute adminOnly><AdminBillingSubscriptionsPage /></ProtectedRoute>} />
+        <Route path="/admin/billing/invoices" element={<ProtectedRoute adminOnly><AdminBillingInvoicesPage /></ProtectedRoute>} />
+        <Route path="/admin/billing/payments" element={<ProtectedRoute adminOnly><AdminBillingPaymentsPage /></ProtectedRoute>} />
+        <Route path="/admin/campaigns" element={<ProtectedRoute adminOnly><AdminCampaignsPage /></ProtectedRoute>} />
+        <Route path="/admin/campaigns/email" element={<ProtectedRoute adminOnly><AdminCampaignsEmailPage /></ProtectedRoute>} />
+        <Route path="/admin/campaigns/sms" element={<ProtectedRoute adminOnly><AdminCampaignsSMSPage /></ProtectedRoute>} />
+        <Route path="/admin/campaigns/automation" element={<ProtectedRoute adminOnly><AdminCampaignsAutomationPage /></ProtectedRoute>} />
+        <Route path="/admin/blog" element={<ProtectedRoute adminOnly><AdminBlogPage /></ProtectedRoute>} />
+        <Route path="/admin/blog/create" element={<ProtectedRoute adminOnly><AdminBlogCreatePage /></ProtectedRoute>} />
+        <Route path="/admin/blog/posts" element={<ProtectedRoute adminOnly><AdminBlogPostsPage /></ProtectedRoute>} />
+        <Route path="/admin/blog/edit/:id" element={<ProtectedRoute adminOnly><AdminBlogEditPage /></ProtectedRoute>} />
+        <Route path="/admin/blog/preview/:id" element={<ProtectedRoute adminOnly><AdminBlogPreviewPage /></ProtectedRoute>} />
+        <Route path="/admin/blog/categories" element={<ProtectedRoute adminOnly><AdminBlogCategoriesPage /></ProtectedRoute>} />
+        <Route path="/admin/blog/comments" element={<ProtectedRoute adminOnly><AdminBlogCommentsPage /></ProtectedRoute>} />
+        <Route path="/admin/system" element={<ProtectedRoute adminOnly><AdminSystemPage /></ProtectedRoute>} />
         
         <Route path="*" element={<NotFound />} />
       </Routes>
