@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -196,24 +196,26 @@ export const useSupabaseAuth = () => {
     return false;
   }, [user?.email]);
 
-  // Vérifications des rôles avec useCallback pour éviter les re-créations
-  const hasRole = useCallback((role: string): boolean => {
-    const result = profile?.role === role;
-    console.log('[AUTH] hasRole check:', role, result, 'profile role:', profile?.role);
-    return result;
+  // Vérifications des rôles avec useMemo pour éviter les re-créations
+  const hasRole = useMemo(() => {
+    return (role: string): boolean => {
+      const result = profile?.role === role;
+      console.log('[AUTH] hasRole check:', role, result, 'profile role:', profile?.role);
+      return result;
+    };
   }, [profile?.role]);
 
-  const isAdmin = useCallback((): boolean => {
+  const isAdmin = useMemo(() => {
     const result = profile?.role === 'super_admin';
     console.log('[AUTH] isAdmin check:', result, 'profile role:', profile?.role);
     return result;
   }, [profile?.role]);
 
-  const canAccessAdmin = useCallback((): boolean => {
-    const result = hasRole('super_admin');
+  const canAccessAdmin = useMemo(() => {
+    const result = profile?.role === 'super_admin';
     console.log('[AUTH] canAccessAdmin check:', result);
     return result;
-  }, [hasRole]);
+  }, [profile?.role]);
 
   const getRemainingResendTime = useCallback((): number => {
     const now = Date.now();

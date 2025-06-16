@@ -25,8 +25,7 @@ const Auth = () => {
     emailVerificationSent,
     isEmailVerified,
     user,
-    profile,
-    canAccessAdmin
+    profile
   } = useSupabaseAuth();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +35,6 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [redirectHandled, setRedirectHandled] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -51,32 +49,12 @@ const Auth = () => {
     companyName: ''
   });
 
-  // Rediriger si déjà connecté et vérifié (ou admin) - une seule fois
-  useEffect(() => {
-    if (redirectHandled || isLoading || !user) {
-      return;
-    }
-
-    const isVerified = isEmailVerified || user.email === 'contact@tech-trust.fr';
-    
-    if (user && isVerified && profile) {
-      console.log('[AUTH_PAGE] Utilisateur connecté et vérifié - préparation redirection');
-      console.log('[AUTH_PAGE] User:', user.email, 'Profile role:', profile.role, 'Can access admin:', canAccessAdmin());
-      
-      setRedirectHandled(true);
-      
-      // Délai pour éviter les conflits avec ProtectedRoute
-      setTimeout(() => {
-        if (canAccessAdmin()) {
-          console.log('[AUTH_PAGE] Redirection vers admin dashboard');
-          navigate('/admin/dashboard', { replace: true });
-        } else {
-          console.log('[AUTH_PAGE] Redirection vers user dashboard');
-          navigate('/dashboard', { replace: true });
-        }
-      }, 100);
-    }
-  }, [user, isEmailVerified, isLoading, profile, navigate, canAccessAdmin, redirectHandled]);
+  console.log('[AUTH_PAGE] État:', { 
+    isLoading, 
+    user: user?.email, 
+    isEmailVerified, 
+    profileRole: profile?.role 
+  });
 
   // Gérer les paramètres URL
   useEffect(() => {
@@ -118,7 +96,7 @@ const Auth = () => {
       }
     } else if (data.user) {
       console.log('[AUTH_PAGE] Connexion réussie pour:', data.user.email);
-      // Succès de connexion
+      // Succès de connexion - laisser ProtectedRoute gérer la redirection
       if (loginForm.email === 'contact@tech-trust.fr') {
         setSuccess('Connexion admin réussie ! Redirection vers l\'interface admin...');
       } else if (!data.user.email_confirmed_at) {
