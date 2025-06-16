@@ -105,9 +105,11 @@ export const useUserPackages = (userId?: string) => {
 
     if (!communityPackage) return 0;
 
-    const packageData = servicesData.find(service => 
-      service.id === 'community'
-    )?.packages.find(pkg => pkg.id === communityPackage.package_id);
+    // Accéder au service community dans servicesData
+    const communityService = servicesData.community;
+    if (!communityService) return 0;
+
+    const packageData = communityService.packages.find(pkg => pkg.id === communityPackage.package_id);
 
     // Extraire la limite depuis les features
     const socialFeature = packageData?.features.find(f => 
