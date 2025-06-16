@@ -1,47 +1,19 @@
 
-import { useState, useEffect } from 'react';
-import { auth } from '@/lib/auth';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified: boolean;
-  image?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  role?: string;
-}
-
-interface Session {
-  id: string;
-  userId: string;
-  expiresAt: Date;
-}
-
-interface AuthState {
-  user: User | null;
-  session: Session | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-}
+import { useEffect } from 'react';
+import { authService } from './auth/authService';
+import { useAuthState } from './auth/useAuthState';
+import { useRoleUtils } from './auth/useRoleUtils';
 
 export const useBetterAuth = () => {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    session: null,
-    isLoading: true,
-    isAuthenticated: false
-  });
+  const { authState, setAuthState } = useAuthState();
+  const roleUtils = useRoleUtils(authState.user);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         console.log('🔍 Checking authentication status...');
         
-        const result = await auth.api.getSession({
-          headers: new Headers()
-        });
+        const result = await authService.getSession();
         
         console.log('✅ Auth check result:', result);
         
@@ -72,23 +44,19 @@ export const useBetterAuth = () => {
     };
 
     checkAuth();
-  }, []);
+  }, [setAuthState]);
 
   const signIn = async (email: string, password: string) => {
     try {
       console.log('🔐 Attempting sign in for:', email);
       
-      const result = await auth.api.signInEmail({
-        body: { email, password }
-      });
+      const result = await authService.signIn(email, password);
       
       console.log('✅ Sign in result:', result);
       
       if (result?.user) {
-        // Récupérer la session après connexion
-        const sessionResult = await auth.api.getSession({
-          headers: new Headers()
-        });
+        // Get session after login
+        const sessionResult = await authService.getSession();
         
         setAuthState({
           user: result.user,
@@ -109,14 +77,7 @@ export const useBetterAuth = () => {
     try {
       console.log('📝 Attempting sign up for:', email);
       
-      const result = await auth.api.signUpEmail({
-        body: { 
-          email, 
-          password, 
-          name,
-          callbackURL: `${window.location.origin}/auth?verified=true`
-        }
-      });
+      const result = await authService.signUp(email, password, name);
       
       console.log('✅ Sign up result:', result);
       return result;
@@ -128,9 +89,7 @@ export const useBetterAuth = () => {
 
   const signOut = async () => {
     try {
-      await auth.api.signOut({
-        headers: new Headers()
-      });
+      await authService.signOut();
       setAuthState({
         user: null,
         session: null,
@@ -144,13 +103,7 @@ export const useBetterAuth = () => {
 
   const forgotPassword = async (email: string) => {
     try {
-      const result = await auth.api.forgetPassword({
-        body: { 
-          email, 
-          redirectTo: `${window.location.origin}/auth?reset=true` 
-        }
-      });
-      
+      const result = await authService.forgotPassword(email);
       return result;
     } catch (error) {
       console.error('❌ Forgot password error:', error);
@@ -160,13 +113,7 @@ export const useBetterAuth = () => {
 
   const resetPassword = async (password: string, token: string) => {
     try {
-      const result = await auth.api.resetPassword({
-        body: { newPassword: password },
-        headers: new Headers({
-          'Authorization': `Bearer ${token}`
-        })
-      });
-      
+      const result = await authService.resetPassword(password, token);
       return result;
     } catch (error) {
       console.error('❌ Reset password error:', error);
@@ -176,31 +123,12 @@ export const useBetterAuth = () => {
 
   const resendVerification = async (email: string) => {
     try {
-      const result = await auth.api.sendVerificationEmail({
-        body: { 
-          email, 
-          callbackURL: `${window.location.origin}/auth?verified=true` 
-        }
-      });
-      
+      const result = await authService.resendVerification(email);
       return result;
     } catch (error) {
       console.error('❌ Resend verification error:', error);
       throw error;
     }
-  };
-
-  const getUserRole = () => {
-    return authState.user?.role || 'client';
-  };
-
-  const isAdmin = () => {
-    const role = getUserRole();
-    return role === 'admin' || role === 'super_admin';
-  };
-
-  const hasRole = (role: string) => {
-    return getUserRole() === role;
   };
 
   return {
@@ -211,8 +139,6 @@ export const useBetterAuth = () => {
     forgotPassword,
     resetPassword,
     resendVerification,
-    isAdmin,
-    hasRole,
-    getUserRole
+    ...roleUtils
   };
 };
