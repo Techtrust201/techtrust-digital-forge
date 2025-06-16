@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
-import { useBetterAuth } from '@/hooks/useBetterAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 // Pages
 import Index from './pages/Index';
@@ -36,7 +36,7 @@ import AdminSystemPage from './pages/admin/AdminSystemPage';
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useBetterAuth();
+  const { isAuthenticated, isLoading } = useSupabaseAuth();
 
   if (isLoading) {
     return (
@@ -54,9 +54,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isAdmin, isLoading } = useBetterAuth();
+  const { isAuthenticated, isAdmin, isLoading } = useSupabaseAuth();
+  const [isAdminUser, setIsAdminUser] = React.useState(false);
+  const [adminCheckLoading, setAdminCheckLoading] = React.useState(true);
 
-  if (isLoading) {
+  React.useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (isAuthenticated) {
+        const adminStatus = await isAdmin();
+        setIsAdminUser(adminStatus);
+      }
+      setAdminCheckLoading(false);
+    };
+
+    if (!isLoading) {
+      checkAdminStatus();
+    }
+  }, [isAuthenticated, isAdmin, isLoading]);
+
+  if (isLoading || adminCheckLo) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
@@ -68,7 +84,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/auth" replace />;
   }
 
-  if (!isAdmin()) {
+  if (!isAdminUser) {
     return <Navigate to="/dashboard" replace />;
   }
 

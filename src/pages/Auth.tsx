@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { useBetterAuth } from '@/hooks/useBetterAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { toast } from 'sonner';
 
 const Auth = () => {
@@ -18,18 +18,15 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signIn, signUp, forgotPassword, resetPassword, resendVerification, isAuthenticated } = useBetterAuth();
+  const { signIn, signUp, forgotPassword, resetPassword, resendVerification, isAuthenticated } = useSupabaseAuth();
 
-  // Vérifier les paramètres URL pour les différents modes
+  // Check URL parameters for different modes
   useEffect(() => {
-    const resetToken = searchParams.get('token');
     const isReset = searchParams.get('reset');
     const isVerified = searchParams.get('verified');
     
-    if (resetToken) {
+    if (isReset) {
       setMode('reset');
-    } else if (isReset) {
-      setMode('forgot');
     }
     
     if (isVerified) {
@@ -37,7 +34,7 @@ const Auth = () => {
     }
   }, [searchParams]);
 
-  // Rediriger si déjà connecté
+  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
@@ -59,11 +56,9 @@ const Auth = () => {
       if (result?.user) {
         toast.success('Connexion réussie !');
         navigate('/dashboard');
-      } else {
-        throw new Error('Email ou mot de passe incorrect');
       }
     } catch (err: any) {
-      const errorMessage = err.message || 'Erreur de connexion';
+      const errorMessage = err.message || 'Email ou mot de passe incorrect';
       setError(errorMessage);
       toast.error('Erreur de connexion');
     } finally {
@@ -84,11 +79,8 @@ const Auth = () => {
     try {
       const result = await signUp(email, password, name);
       
-      if (result?.user) {
-        toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
-      } else {
-        toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
-      }
+      // Supabase requires email confirmation by default
+      toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
       setError('');
     } catch (err: any) {
       const errorMessage = err.message || 'Erreur lors de l\'inscription';
@@ -125,7 +117,6 @@ const Auth = () => {
     const formData = new FormData(e.currentTarget);
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
-    const token = searchParams.get('token') || '';
 
     if (password !== confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
@@ -134,9 +125,9 @@ const Auth = () => {
     }
 
     try {
-      await resetPassword(password, token);
+      await resetPassword(password);
       toast.success('Mot de passe réinitialisé avec succès !');
-      navigate('/auth');
+      navigate('/dashboard');
     } catch (err: any) {
       const errorMessage = err.message || 'Erreur lors de la réinitialisation';
       setError(errorMessage);
