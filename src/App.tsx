@@ -8,10 +8,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import CookieBanner from "@/components/CookieBanner";
 import { useVisitorTracking } from "@/hooks/useVisitorTracking";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
-import Auth from "./pages/Auth";
+import AuthPage from "./pages/AuthPage";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
@@ -44,8 +46,23 @@ const App = () => {
             <CookieBanner />
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/super-admin" 
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <SuperAdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
