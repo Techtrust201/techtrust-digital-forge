@@ -9,6 +9,56 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      account: {
+        Row: {
+          accessToken: string | null
+          accountId: string
+          createdAt: string
+          expiresAt: string | null
+          id: string
+          idToken: string | null
+          password: string | null
+          providerId: string
+          refreshToken: string | null
+          updatedAt: string
+          userId: string
+        }
+        Insert: {
+          accessToken?: string | null
+          accountId: string
+          createdAt?: string
+          expiresAt?: string | null
+          id: string
+          idToken?: string | null
+          password?: string | null
+          providerId: string
+          refreshToken?: string | null
+          updatedAt?: string
+          userId: string
+        }
+        Update: {
+          accessToken?: string | null
+          accountId?: string
+          createdAt?: string
+          expiresAt?: string | null
+          id?: string
+          idToken?: string | null
+          password?: string | null
+          providerId?: string
+          refreshToken?: string | null
+          updatedAt?: string
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_data: {
         Row: {
           category: string | null
@@ -337,6 +387,89 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          address: Json | null
+          company: string | null
+          created_at: string | null
+          id: string
+          industry: string | null
+          name: string | null
+          notes: string | null
+          phone: string | null
+          position: string | null
+          status: string | null
+          tier: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: Json | null
+          company?: string | null
+          created_at?: string | null
+          id: string
+          industry?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          status?: string | null
+          tier?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: Json | null
+          company?: string | null
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          status?: string | null
+          tier?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      session: {
+        Row: {
+          createdAt: string
+          expiresAt: string
+          id: string
+          ipAddress: string | null
+          updatedAt: string
+          userAgent: string | null
+          userId: string
+        }
+        Insert: {
+          createdAt?: string
+          expiresAt: string
+          id: string
+          ipAddress?: string | null
+          updatedAt?: string
+          userAgent?: string | null
+          userId: string
+        }
+        Update: {
+          createdAt?: string
+          expiresAt?: string
+          id?: string
+          ipAddress?: string | null
+          updatedAt?: string
+          userAgent?: string | null
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sms_campaigns: {
         Row: {
           cost: number | null
@@ -376,6 +509,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user: {
+        Row: {
+          createdAt: string
+          email: string
+          emailVerified: boolean
+          id: string
+          image: string | null
+          name: string | null
+          updatedAt: string
+        }
+        Insert: {
+          createdAt?: string
+          email: string
+          emailVerified?: boolean
+          id: string
+          image?: string | null
+          name?: string | null
+          updatedAt?: string
+        }
+        Update: {
+          createdAt?: string
+          email?: string
+          emailVerified?: boolean
+          id?: string
+          image?: string | null
+          name?: string | null
+          updatedAt?: string
+        }
+        Relationships: []
+      }
       user_analytics: {
         Row: {
           browser: string | null
@@ -412,6 +575,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          createdAt: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          userId: string
+        }
+        Insert: {
+          createdAt?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          userId: string
+        }
+        Update: {
+          createdAt?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_subscriptions: {
         Row: {
           created_at: string
@@ -446,6 +638,41 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification: {
+        Row: {
+          createdAt: string
+          expiresAt: string
+          id: string
+          identifier: string
+          updatedAt: string
+          value: string
+        }
+        Insert: {
+          createdAt?: string
+          expiresAt: string
+          id: string
+          identifier: string
+          updatedAt?: string
+          value: string
+        }
+        Update: {
+          createdAt?: string
+          expiresAt?: string
+          id?: string
+          identifier?: string
+          updatedAt?: string
+          value?: string
+        }
         Relationships: []
       }
     }
@@ -453,10 +680,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
+      is_admin: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "admin" | "manager" | "employee" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -571,6 +808,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "admin", "manager", "employee", "client"],
+    },
   },
 } as const

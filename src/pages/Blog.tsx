@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
@@ -7,24 +8,29 @@ import { Button } from '@/components/ui/button';
 import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useBlogPosts, useBlogCategories } from '@/hooks/useBlogData';
-import { useVisitorTracking } from '@/hooks/useVisitorTracking';
+import { useArticleViews } from '@/hooks/useArticleViews';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+
+interface CookiePreferences {
+  essential: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  functional: boolean;
+}
 
 const Blog = () => {
   const { data: blogPosts, isLoading: postsLoading } = useBlogPosts();
   const { data: categories, isLoading: categoriesLoading } = useBlogCategories();
+  const { trackArticleView } = useArticleViews();
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  
-  const { cookiesAccepted, acceptCookies, declineCookies, trackPageView, trackBlogPostView } = useVisitorTracking();
-
-  // Tracker la page vue
-  useEffect(() => {
-    if (cookiesAccepted) {
-      trackPageView('/blog', 'Blog Techtrust 2025');
-    }
-  }, [cookiesAccepted, trackPageView]);
+  const [cookiePreferences, setCookiePreferences] = useState<CookiePreferences>({
+    essential: true,
+    analytics: false,
+    marketing: false,
+    functional: false
+  });
 
   // Filtrer les articles publiés
   const publishedPosts = blogPosts?.filter(post => post.status === 'published') || [];
@@ -34,9 +40,15 @@ const Blog = () => {
 
   const handlePostClick = async (post: any) => {
     setSelectedPost(post);
-    if (cookiesAccepted) {
-      await trackBlogPostView(post.id, post.title);
+    
+    // Tracker la vue uniquement si les cookies analytics sont acceptés
+    if (cookiePreferences.analytics) {
+      await trackArticleView(post.id);
     }
+  };
+
+  const handleCookiePreferences = (preferences: CookiePreferences) => {
+    setCookiePreferences(preferences);
   };
 
   if (postsLoading || categoriesLoading) {
@@ -44,7 +56,7 @@ const Blog = () => {
       <>
         <NavbarPublic />
         <main>
-          <section className="py-20 lg:py-32 bg-gradient-to-br from-red-50 to-gray-50">
+          <section className="py-20 lg:py-32 bg-gradient-to-br from-blue-50 to-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-4xl mx-auto">
                 <Skeleton className="h-16 w-96 mx-auto mb-6" />
@@ -63,7 +75,7 @@ const Blog = () => {
           </section>
         </main>
         <Footer />
-        <CookieBanner onAccept={acceptCookies} onDecline={declineCookies} />
+        <CookieBanner onPreferencesChange={handleCookiePreferences} />
       </>
     );
   }
@@ -112,11 +124,11 @@ const Blog = () => {
         
         <main>
           {/* Hero Section */}
-          <section className="py-20 lg:py-32 bg-gradient-to-br from-red-50 to-gray-50">
+          <section className="py-20 lg:py-32 bg-gradient-to-br from-blue-50 to-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-4xl mx-auto">
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-                  Blog <span className="text-red-600">Techtrust</span> 2025
+                  Blog <span className="text-blue-600">Techtrust</span> 2025
                 </h1>
                 <p className="text-xl text-gray-600 mb-8">
                   Découvrez nos {filteredPosts.length} guides exclusifs, cas clients et stratégies avancées pour dominer votre marché avec l'IA et le growth hacking.
@@ -132,7 +144,7 @@ const Blog = () => {
                 <Button
                   variant={selectedCategory === '' ? 'default' : 'outline'}
                   onClick={() => setSelectedCategory('')}
-                  className={selectedCategory === '' ? 'bg-red-600 hover:bg-red-700' : ''}
+                  className={selectedCategory === '' ? 'bg-blue-600 hover:bg-blue-700' : ''}
                 >
                   Tous ({publishedPosts.length})
                 </Button>
@@ -143,7 +155,7 @@ const Blog = () => {
                       key={category.id}
                       variant={selectedCategory === category.name ? 'default' : 'outline'}
                       onClick={() => setSelectedCategory(category.name)}
-                      className={selectedCategory === category.name ? 'bg-red-600 hover:bg-red-700' : ''}
+                      className={selectedCategory === category.name ? 'bg-blue-600 hover:bg-blue-700' : ''}
                     >
                       {category.name} ({count})
                     </Button>
@@ -171,9 +183,9 @@ const Blog = () => {
                   {filteredPosts.map((post) => (
                     <article key={post.id} className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all group">
                       <div className="relative">
-                        <div className="w-full h-48 bg-gradient-to-br from-red-100 to-gray-100 flex items-center justify-center">
+                        <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-gray-100 flex items-center justify-center">
                           <div className="text-center">
-                            <Tag className="w-12 h-12 text-red-500 mx-auto mb-2" />
+                            <Tag className="w-12 h-12 text-blue-500 mx-auto mb-2" />
                             <p className="text-sm text-gray-600">{post.category}</p>
                           </div>
                         </div>
@@ -181,11 +193,8 @@ const Blog = () => {
                       
                       <div className="p-6">
                         <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge className="bg-red-50 text-red-700 border-red-200">
+                          <Badge className="bg-blue-50 text-blue-700 border-blue-200">
                             {post.category}
-                          </Badge>
-                          <Badge variant="outline" className="text-gray-600">
-                            {post.views} vues
                           </Badge>
                         </div>
                         
@@ -211,7 +220,7 @@ const Blog = () => {
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button 
-                              className="w-full bg-red-600 hover:bg-red-700 text-white hover:text-white group/btn"
+                              className="w-full bg-blue-600 hover:bg-blue-700 text-white hover:text-white group/btn"
                               onClick={() => handlePostClick(post)}
                             >
                               Lire l'article
@@ -234,7 +243,7 @@ const Blog = () => {
                                   <Calendar className="w-4 h-4" />
                                   {selectedPost && new Date(selectedPost.publish_date || selectedPost.created_at).toLocaleDateString('fr-FR')}
                                 </div>
-                                <Badge className="bg-red-50 text-red-700">
+                                <Badge className="bg-blue-50 text-blue-700">
                                   {selectedPost?.category}
                                 </Badge>
                               </div>
@@ -272,7 +281,7 @@ const Blog = () => {
         </main>
 
         <Footer />
-        <CookieBanner onAccept={acceptCookies} onDecline={declineCookies} />
+        <CookieBanner onPreferencesChange={handleCookiePreferences} />
       </div>
     </>
   );

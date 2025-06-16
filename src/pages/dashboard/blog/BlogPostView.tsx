@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,12 +7,34 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import { useBlogPosts } from '@/hooks/useBlogData';
+import { useArticleViews } from '@/hooks/useArticleViews';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const BlogPostView = () => {
   const { id } = useParams<{ id: string }>();
   const { data: posts, isLoading, error } = useBlogPosts();
+  const { trackArticleView } = useArticleViews();
   const navigate = useNavigate();
+
+  const post = posts?.find((p) => p.id === id);
+
+  // Tracker la vue quand le post est chargé
+  useEffect(() => {
+    if (post?.id) {
+      // Vérifier si les cookies analytics sont acceptés
+      const cookieConsent = localStorage.getItem('techtrust_cookie_consent');
+      if (cookieConsent) {
+        try {
+          const preferences = JSON.parse(cookieConsent);
+          if (preferences.analytics) {
+            trackArticleView(post.id);
+          }
+        } catch (error) {
+          console.error('Erreur parsing cookie consent:', error);
+        }
+      }
+    }
+  }, [post?.id, trackArticleView]);
 
   if (isLoading) {
     return (
@@ -42,8 +64,6 @@ const BlogPostView = () => {
       </DashboardLayout>
     );
   }
-
-  const post = posts?.find((p) => p.id === id);
 
   if (!post) {
     return (
