@@ -8,16 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { 
   Package, 
-  Plus, 
-  Trash2, 
   Check, 
-  X, 
   Crown,
   Zap,
   Globe,
   Users as UsersIcon,
-  MessageSquare,
-  BarChart3
+  MessageSquare
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { servicesData } from '@/data/servicesData';
@@ -27,6 +23,21 @@ interface UserPackageManagerProps {
   user: any;
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface ServicePackage {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  features: string[];
+  categoryKey: string;
+  categoryName: string;
+}
+
+interface ServiceCategory {
+  name: string;
+  packages: ServicePackage[];
 }
 
 const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, onClose }) => {
@@ -61,8 +72,8 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
     }
   };
 
-  const getAllPackages = () => {
-    const packages: any[] = [];
+  const getAllPackages = (): ServicePackage[] => {
+    const packages: ServicePackage[] = [];
     Object.entries(servicesData).forEach(([categoryKey, service]) => {
       service.packages.forEach(pkg => {
         packages.push({
@@ -148,16 +159,17 @@ const UserPackageManager: React.FC<UserPackageManagerProps> = ({ user, isOpen, o
     }
   };
 
-  const groupedPackages = getAllPackages().reduce((acc, pkg) => {
-    if (!acc[pkg.categoryKey]) {
-      acc[pkg.categoryKey] = {
-        name: pkg.categoryName,
-        packages: []
-      };
-    }
-    acc[pkg.categoryKey].packages.push(pkg);
+  const groupedPackages: Record<string, ServiceCategory> = Object.entries(servicesData).reduce((acc, [categoryKey, service]) => {
+    acc[categoryKey] = {
+      name: service.title,
+      packages: service.packages.map(pkg => ({
+        ...pkg,
+        categoryKey,
+        categoryName: service.title
+      }))
+    };
     return acc;
-  }, {} as Record<string, { name: string; packages: any[] }>);
+  }, {} as Record<string, ServiceCategory>);
 
   const calculateTotalPrice = () => {
     const allPackages = getAllPackages();

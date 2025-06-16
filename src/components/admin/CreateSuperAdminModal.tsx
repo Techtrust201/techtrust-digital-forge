@@ -4,9 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Crown, Settings, User } from 'lucide-react';
+import { Shield, Crown, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -21,7 +20,7 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
     email: '',
     password: '',
     name: '',
-    role: 'admin'
+    role: 'admin' as 'admin' | 'super_admin'
   });
   const [loading, setLoading] = useState(false);
 
@@ -66,7 +65,7 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
         // Attendre un peu pour que le profil soit créé par le trigger
         setTimeout(async () => {
           try {
-            // Ajouter le rôle admin
+            // Ajouter le rôle admin avec la bonne colonne userId (pas user_id)
             const { error: roleError } = await supabase
               .from('user_roles')
               .insert({
@@ -113,14 +112,14 @@ const CreateSuperAdminModal: React.FC<CreateSuperAdminModalProps> = ({ isOpen, o
 
   const roles = [
     {
-      value: 'admin',
+      value: 'admin' as const,
       label: 'Admin',
       description: 'Peut gérer les utilisateurs et packages',
       icon: Settings,
       color: 'text-blue-600'
     },
     {
-      value: 'super_admin',
+      value: 'super_admin' as const,
       label: 'Super Admin',
       description: 'Accès complet à tous les paramètres',
       icon: Crown,
