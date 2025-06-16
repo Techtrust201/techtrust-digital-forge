@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Lock, Mail, User, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { Lock, Mail, User, Eye, EyeOff, AlertCircle, CheckCircle, Shield } from 'lucide-react';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 const Auth = () => {
@@ -51,21 +51,24 @@ const Auth = () => {
     companyName: ''
   });
 
-  // Rediriger si déjà connecté et vérifié
+  // Rediriger si déjà connecté et vérifié (ou admin)
   useEffect(() => {
-    if (user && isEmailVerified && !isLoading && profile) {
+    if (user && (isEmailVerified || user.email === 'contact@tech-trust.fr') && !isLoading && profile) {
       console.log('Redirection check - User:', user.email, 'Profile role:', profile.role, 'Can access admin:', canAccessAdmin());
       
-      // Délai pour s'assurer que le profil est bien chargé
-      setTimeout(() => {
-        if (canAccessAdmin()) {
-          console.log('Redirecting to admin dashboard');
-          navigate('/admin', { replace: true });
-        } else {
-          console.log('Redirecting to user dashboard');
-          navigate('/dashboard', { replace: true });
-        }
-      }, 500);
+      // Éviter les redirections infinies
+      const currentPath = window.location.pathname;
+      if (currentPath === '/auth') {
+        setTimeout(() => {
+          if (canAccessAdmin()) {
+            console.log('Redirecting to admin dashboard');
+            navigate('/admin/dashboard', { replace: true });
+          } else {
+            console.log('Redirecting to user dashboard');
+            navigate('/dashboard', { replace: true });
+          }
+        }, 500);
+      }
     }
   }, [user, isEmailVerified, isLoading, profile, navigate, canAccessAdmin]);
 
@@ -83,13 +86,6 @@ const Auth = () => {
     }
   }, [searchParams]);
 
-  // Gérer l'affichage du modal de vérification
-  useEffect(() => {
-    if (emailVerificationSent && user && !isEmailVerified) {
-      setShowEmailModal(true);
-    }
-  }, [emailVerificationSent, user, isEmailVerified]);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -101,14 +97,26 @@ const Auth = () => {
       if (error.message.includes('Invalid login credentials')) {
         setError('Email ou mot de passe incorrect. Vérifiez vos informations de connexion.');
       } else if (error.message.includes('Email not confirmed')) {
-        setError('Votre email n\'est pas encore vérifié. Vérifiez votre boîte email.');
-        setShowEmailModal(true);
+        // Exception pour l'admin
+        if (loginForm.email === 'contact@tech-trust.fr') {
+          setSuccess('Connexion admin réussie ! Redirection en cours...');
+        } else {
+          setError('Votre email n\'est pas encore vérifié. Vérifiez votre boîte email.');
+          setShowEmailModal(true);
+        }
       } else {
         setError('Erreur de connexion. Veuillez réessayer.');
       }
-    } else if (data.user && !data.user.email_confirmed_at) {
-      setError('Veuillez vérifier votre email avant de vous connecter.');
-      setShowEmailModal(true);
+    } else if (data.user) {
+      // Succès de connexion
+      if (loginForm.email === 'contact@tech-trust.fr') {
+        setSuccess('Connexion admin réussie ! Redirection vers l\'interface admin...');
+      } else if (!data.user.email_confirmed_at) {
+        setError('Veuillez vérifier votre email avant de vous connecter.');
+        setShowEmailModal(true);
+      } else {
+        setSuccess('Connexion réussie ! Redirection en cours...');
+      }
     }
 
     setIsSubmitting(false);
@@ -145,7 +153,12 @@ const Auth = () => {
         setError('Erreur lors de l\'inscription. Veuillez réessayer.');
       }
     } else {
-      setSuccess('Inscription réussie ! Vérifiez votre email pour activer votre compte.');
+      if (registerForm.email === 'contact@tech-trust.fr') {
+        setSuccess('Compte admin créé ! Vous pouvez maintenant vous connecter.');
+        setActiveTab('login');
+      } else {
+        setSuccess('Inscription réussie ! Vérifiez votre email pour activer votre compte.');
+      }
     }
 
     setIsSubmitting(false);
@@ -168,8 +181,8 @@ const Auth = () => {
     "url": "https://www.tech-trust.fr/auth"
   };
 
-  // Afficher l'état de vérification si l'utilisateur est connecté mais pas vérifié
-  if (user && !isEmailVerified && !isLoading) {
+  // Afficher l'état de vérification si l'utilisateur est connecté mais pas vérifié (sauf admin)
+  if (user && !isEmailVerified && user.email !== 'contact@tech-trust.fr' && !isLoading) {
     return (
       <>
         <SEO
@@ -263,6 +276,17 @@ const Auth = () => {
                 Accédez à vos outils IA et gérez vos projets digitaux
               </p>
             </div>
+
+            {/* Message spécial pour l'admin */}
+            {(loginForm.email === 'contact@tech-trust.fr' || registerForm.email === 'contact@tech-trust.fr') && (
+              <Alert className="mb-4 border-orange-200 bg-orange-50">
+                <Shield className="w-4 h-4" />
+                <AlertDescription className="text-orange-800">
+                  <strong>Compte Administrateur détecté</strong><br />
+                  Accès direct aux fonctionnalités d'administration après connexion.
+                </AlertDescription>
+              </Alert>
+            )}
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">

@@ -55,7 +55,7 @@ export const useSupabaseAuth = () => {
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Charger le profil utilisateur après connexion avec un délai pour éviter les conflits
+          // Charger le profil utilisateur
           setTimeout(() => {
             if (mounted) {
               loadUserProfile(session.user.id);
@@ -182,8 +182,18 @@ export const useSupabaseAuth = () => {
     return { error };
   };
 
-  // Vérifier si l'email est confirmé
-  const isEmailVerified = user?.email_confirmed_at != null;
+  // Fonction pour marquer l'email comme vérifié manuellement (pour les admins)
+  const markEmailAsVerified = async () => {
+    if (user?.email === 'contact@tech-trust.fr') {
+      // Pour l'admin, on considère l'email comme vérifié
+      console.log('Admin email marked as verified');
+      return true;
+    }
+    return false;
+  };
+
+  // Vérifier si l'email est confirmé (ou si c'est l'admin)
+  const isEmailVerified = user?.email_confirmed_at != null || user?.email === 'contact@tech-trust.fr';
 
   // Vérifier les rôles
   const hasRole = (role: string): boolean => {
@@ -222,6 +232,7 @@ export const useSupabaseAuth = () => {
     isAdmin,
     canAccessAdmin,
     getRemainingResendTime,
+    markEmailAsVerified,
     isAuthenticated: !!user && isEmailVerified
   };
 };
