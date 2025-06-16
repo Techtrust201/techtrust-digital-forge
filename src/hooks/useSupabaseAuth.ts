@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface UserProfile {
   id: string;
   name: string | null;
-  company_name: string | null;
+  company: string | null;
   role: string;
   created_at: string;
   updated_at: string;

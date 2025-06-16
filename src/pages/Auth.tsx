@@ -168,6 +168,7 @@ const Auth = () => {
         <SEO
           title="Vérification Email | Techtrust"
           description="Vérifiez votre adresse email pour accéder à votre espace client Techtrust."
+          keywords="vérification email, techtrust, activation compte"
           canonicalUrl="https://www.tech-trust.fr/auth"
           structuredData={structuredData}
         />
