@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -17,11 +17,21 @@ export const useSupabaseAuth = () => {
     isLoading: true,
     isAuthenticated: false
   });
+  
+  const initialized = useRef(false);
 
   useEffect(() => {
-    // Set up auth state listener first
+    // Éviter les initialisations multiples
+    if (initialized.current) return;
+    initialized.current = true;
+
+    let mounted = true;
+
+    // Configuration de l'écoute des changements d'état
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!mounted) return;
+        
         console.log('🔄 Auth state change:', event, session?.user?.email);
         
         setAuthState({
@@ -33,19 +43,35 @@ export const useSupabaseAuth = () => {
       }
     );
 
-    // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('📱 Initial session check:', session?.user?.email);
-      
-      setAuthState({
-        user: session?.user ?? null,
-        session: session,
-        isLoading: false,
-        isAuthenticated: !!session
-      });
-    });
+    // Vérification de session existante une seule fois
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
+        console.log('📱 Initial session check:', session?.user?.email);
+        
+        setAuthState({
+          user: session?.user ?? null,
+          session: session,
+          isLoading: false,
+          isAuthenticated: !!session
+        });
+      } catch (error) {
+        console.error('Error checking session:', error);
+        if (mounted) {
+          setAuthState(prev => ({ ...prev, isLoading: false }));
+        }
+      }
+    };
 
-    return () => subscription.unsubscribe();
+    checkSession();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {

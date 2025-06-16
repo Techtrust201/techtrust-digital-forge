@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -36,8 +37,18 @@ import AdminAuthRolesPage from './pages/admin/auth/AdminAuthRolesPage';
 
 const queryClient = new QueryClient();
 
+// Composant singleton pour l'authentification
+let authHookInstance: ReturnType<typeof useSupabaseAuth> | null = null;
+
+function useAuthSingleton() {
+  if (!authHookInstance) {
+    authHookInstance = useSupabaseAuth();
+  }
+  return authHookInstance;
+}
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useSupabaseAuth();
+  const { isAuthenticated, isLoading } = useAuthSingleton();
 
   if (isLoading) {
     return (
@@ -55,22 +66,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isAdmin, isLoading } = useSupabaseAuth();
+  const { isAuthenticated, isAdmin, isLoading } = useAuthSingleton();
   const [isAdminUser, setIsAdminUser] = React.useState(false);
   const [adminCheckLoading, setAdminCheckLoading] = React.useState(true);
 
   React.useEffect(() => {
     const checkAdminStatus = async () => {
-      if (isAuthenticated) {
-        const adminStatus = await isAdmin();
-        setIsAdminUser(adminStatus);
+      if (isAuthenticated && !isLoading) {
+        try {
+          const adminStatus = await isAdmin();
+          setIsAdminUser(adminStatus);
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdminUser(false);
+        }
       }
       setAdminCheckLoading(false);
     };
 
-    if (!isLoading) {
-      checkAdminStatus();
-    }
+    checkAdminStatus();
   }, [isAuthenticated, isAdmin, isLoading]);
 
   if (isLoading || adminCheckLoading) {
