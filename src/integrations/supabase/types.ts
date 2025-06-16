@@ -398,6 +398,7 @@ export type Database = {
           notes: string | null
           phone: string | null
           position: string | null
+          role: string
           status: string | null
           tier: string | null
           updated_at: string | null
@@ -412,6 +413,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           position?: string | null
+          role?: string
           status?: string | null
           tier?: string | null
           updated_at?: string | null
@@ -426,6 +428,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           position?: string | null
+          role?: string
           status?: string | null
           tier?: string | null
           updated_at?: string | null
