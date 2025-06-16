@@ -90,7 +90,7 @@ const Auth = () => {
       const result = await signUp(email, password, name);
       
       // Handle different result structures
-      if (result?.data || result?.token || !result?.error) {
+      if (result?.data || !result?.error) {
         toast.success('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
       } else if (result?.error) {
         throw new Error(result.error.message || 'Erreur lors de l\'inscription');
