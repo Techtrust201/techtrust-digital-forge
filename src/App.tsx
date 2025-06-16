@@ -1,191 +1,75 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Index from '@/pages/Index';
-import Pricing from '@/pages/Pricing';
-import PricingOptimized from '@/pages/PricingOptimized';
-import Contact from '@/pages/Contact';
-import Help from '@/pages/Help';
-import Blog from '@/pages/Blog';
-import BlogPostPage from '@/pages/blog/BlogPostPage';
-import Careers from '@/pages/Careers';
-import Solutions from '@/pages/Solutions';
-import AgenceWeb from '@/pages/solutions/AgenceWeb';
-import GrowthHacking from '@/pages/solutions/GrowthHacking';
-import CommunityManagement from '@/pages/solutions/CommunityManagement';
-import ConsultingDigital from '@/pages/solutions/ConsultingDigital';
-import SolutionsDigitales from '@/pages/solutions/SolutionsDigitales';
-import LegalMentions from '@/pages/LegalMentions';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import Terms from '@/pages/Terms';
-import Auth from '@/pages/Auth';
-import Dashboard from '@/pages/Dashboard';
-import Services from '@/pages/dashboard/Services';
-import DashboardBlog from '@/pages/dashboard/Blog';
-import BlogPostView from '@/pages/dashboard/blog/BlogPostView';
-import Campaigns from '@/pages/dashboard/Campaigns';
-import EmailCampaigns from '@/pages/dashboard/campaigns/EmailCampaigns';
-import SMSCampaigns from '@/pages/dashboard/campaigns/SMSCampaigns';
-import LeadCampaigns from '@/pages/dashboard/campaigns/LeadCampaigns';
-import AutomationCampaigns from '@/pages/dashboard/campaigns/AutomationCampaigns';
-import Analytics from '@/pages/dashboard/Analytics';
-import WebsiteAnalytics from '@/pages/dashboard/analytics/WebsiteAnalytics';
-import SocialAnalytics from '@/pages/dashboard/analytics/SocialAnalytics';
-import GrowthAnalytics from '@/pages/dashboard/analytics/GrowthAnalytics';
-import CommunityAnalytics from '@/pages/dashboard/analytics/CommunityAnalytics';
-import Account from '@/pages/dashboard/Account';
-import Support from '@/pages/dashboard/Support';
-import DashboardHelp from '@/pages/dashboard/Help';
-import UpgradePlan from '@/pages/dashboard/UpgradePlan';
-import AdminDashboard from '@/pages/AdminDashboard';
-import AdminUsersPage from '@/pages/admin/AdminUsersPage';
-import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
-import AdminAnalyticsOverviewPage from '@/pages/admin/analytics/AdminAnalyticsOverviewPage';
-import AdminAnalyticsUsersPage from '@/pages/admin/analytics/AdminAnalyticsUsersPage';
-import AdminAnalyticsRevenuePage from '@/pages/admin/analytics/AdminAnalyticsRevenuePage';
-import AdminAnalyticsPerformancePage from '@/pages/admin/analytics/AdminAnalyticsPerformancePage';
-import AdminBillingPage from '@/pages/admin/AdminBillingPage';
-import AdminBillingSubscriptionsPage from '@/pages/admin/billing/AdminBillingSubscriptionsPage';
-import AdminBillingInvoicesPage from '@/pages/admin/billing/AdminBillingInvoicesPage';
-import AdminBillingPaymentsPage from '@/pages/admin/billing/AdminBillingPaymentsPage';
-import AdminCampaignsPage from '@/pages/admin/AdminCampaignsPage';
-import AdminCampaignsEmailPage from '@/pages/admin/campaigns/AdminCampaignsEmailPage';
-import AdminCampaignsSMSPage from '@/pages/admin/campaigns/AdminCampaignsSMSPage';
-import AdminCampaignsAutomationPage from '@/pages/admin/campaigns/AdminCampaignsAutomationPage';
-import AdminBlogPage from '@/pages/admin/AdminBlogPage';
-import AdminBlogCreatePage from '@/pages/admin/blog/AdminBlogCreatePage';
-import AdminBlogPostsPage from '@/pages/admin/blog/AdminBlogPostsPage';
-import AdminBlogEditPage from '@/pages/admin/blog/AdminBlogEditPage';
-import AdminBlogPreviewPage from '@/pages/admin/blog/AdminBlogPreviewPage';
-import AdminBlogCategoriesPage from '@/pages/admin/blog/AdminBlogCategoriesPage';
-import AdminBlogCommentsPage from '@/pages/admin/blog/AdminBlogCommentsPage';
-import AdminSystemPage from '@/pages/admin/AdminSystemPage';
-import NotFound from '@/pages/NotFound';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
-import { useIsHydrating } from '@/hooks/useIsHydrating';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Toaster } from '@/components/ui/toaster';
+import { Suspense, useEffect } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
+import CookieBanner from "@/components/CookieBanner";
+import { useVisitorTracking } from "@/hooks/useVisitorTracking";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Auth from "./pages/Auth";
+import Services from "./pages/Services";
+import Pricing from "./pages/Pricing";
+import Contact from "./pages/Contact";
+import Blog from "./pages/Blog";
+import BlogPostView from "./pages/dashboard/blog/BlogPostView";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminBlogPostsPage from "./pages/admin/blog/AdminBlogPostsPage";
+import AdminBlogPostCreatePage from "./pages/admin/blog/AdminBlogPostCreatePage";
+import AdminBlogPostEditPage from "./pages/admin/blog/AdminBlogPostEditPage";
+import AdminBlogPostPreviewPage from "./pages/admin/blog/AdminBlogPostPreviewPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-// Composant interne pour gérer la logique avec useLocation
-function AppContent() {
-  const { isLoading } = useAuth();
-  const { toast } = useToast();
-  const location = useLocation();
-  const isHydrating = useIsHydrating();
+const App = () => {
+  const { trackPageView, isInitialized, cookiesAccepted } = useVisitorTracking();
 
+  // Tracker les changements de page
   useEffect(() => {
-    if (location.pathname === '/dashboard' || location.pathname === '/admin') {
-      toast({
-        title: 'Bienvenue !',
-        description: 'Vous êtes connecté.',
-      });
+    if (isInitialized && cookiesAccepted) {
+      trackPageView(window.location.pathname);
     }
-  }, [location.pathname, toast]);
+  }, [window.location.pathname, isInitialized, cookiesAccepted, trackPageView]);
 
-  if (isLoading || isHydrating) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="space-y-3">
-          <Skeleton className="w-[300px] h-[80px] rounded-md" />
-          <Skeleton className="w-[200px] h-[40px] rounded-md" />
-          <Skeleton className="w-[400px] h-[20px] rounded-md" />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Index />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/pricing-optimized" element={<PricingOptimized />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/help" element={<Help />} />
-      <Route path="/blog" element={<Blog />} />
-      <Route path="/blog/:id" element={<BlogPostPage />} />
-      <Route path="/careers" element={<Careers />} />
-      <Route path="/solutions" element={<Solutions />} />
-      <Route path="/solutions/agence-web" element={<AgenceWeb />} />
-      <Route path="/solutions/growth-hacking" element={<GrowthHacking />} />
-      <Route path="/solutions/community-management" element={<CommunityManagement />} />
-      <Route path="/solutions/consulting-digital" element={<ConsultingDigital />} />
-      <Route path="/solutions/solutions-digitales" element={<SolutionsDigitales />} />
-      <Route path="/legal-mentions" element={<LegalMentions />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/terms" element={<Terms />} />
-      <Route path="/auth" element={<Auth />} />
-
-      {/* Protected dashboard routes */}
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/dashboard/services" element={<Services />} />
-      <Route path="/dashboard/blog" element={<DashboardBlog />} />
-      <Route path="/dashboard/blog/:id" element={<BlogPostView />} />
-      <Route path="/dashboard/campaigns" element={<Campaigns />} />
-      <Route path="/dashboard/campaigns/email" element={<EmailCampaigns />} />
-      <Route path="/dashboard/campaigns/sms" element={<SMSCampaigns />} />
-      <Route path="/dashboard/campaigns/lead" element={<LeadCampaigns />} />
-      <Route path="/dashboard/campaigns/automation" element={<AutomationCampaigns />} />
-      <Route path="/dashboard/analytics" element={<Analytics />} />
-      <Route path="/dashboard/analytics/website" element={<WebsiteAnalytics />} />
-      <Route path="/dashboard/analytics/social" element={<SocialAnalytics />} />
-      <Route path="/dashboard/analytics/growth" element={<GrowthAnalytics />} />
-      <Route path="/dashboard/analytics/community" element={<CommunityAnalytics />} />
-      <Route path="/dashboard/account" element={<Account />} />
-      <Route path="/dashboard/support" element={<Support />} />
-      <Route path="/dashboard/help" element={<DashboardHelp />} />
-      <Route path="/dashboard/upgrade-plan" element={<UpgradePlan />} />
-
-      {/* Admin routes */}
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/admin/users" element={<AdminUsersPage />} />
-      <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
-      <Route path="/admin/analytics/overview" element={<AdminAnalyticsOverviewPage />} />
-      <Route path="/admin/analytics/users" element={<AdminAnalyticsUsersPage />} />
-      <Route path="/admin/analytics/revenue" element={<AdminAnalyticsRevenuePage />} />
-      <Route path="/admin/analytics/performance" element={<AdminAnalyticsPerformancePage />} />
-      <Route path="/admin/billing" element={<AdminBillingPage />} />
-      <Route path="/admin/billing/subscriptions" element={<AdminBillingSubscriptionsPage />} />
-      <Route path="/admin/billing/invoices" element={<AdminBillingInvoicesPage />} />
-      <Route path="/admin/billing/payments" element={<AdminBillingPaymentsPage />} />
-      <Route path="/admin/campaigns" element={<AdminCampaignsPage />} />
-      <Route path="/admin/campaigns/email" element={<AdminCampaignsEmailPage />} />
-      <Route path="/admin/campaigns/sms" element={<AdminCampaignsSMSPage />} />
-      <Route path="/admin/campaigns/automation" element={<AdminCampaignsAutomationPage />} />
-      <Route path="/admin/blog" element={<AdminBlogPage />} />
-      <Route path="/admin/blog/create" element={<AdminBlogCreatePage />} />
-      <Route path="/admin/blog/posts" element={<AdminBlogPostsPage />} />
-      <Route path="/admin/blog/edit/:id" element={<AdminBlogEditPage />} />
-      <Route path="/admin/blog/preview/:id" element={<AdminBlogPreviewPage />} />
-      <Route path="/admin/blog/categories" element={<AdminBlogCategoriesPage />} />
-      <Route path="/admin/blog/comments" element={<AdminBlogCommentsPage />} />
-      <Route path="/admin/system" element={<AdminSystemPage />} />
-      
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-}
-
-function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AppContent />
-        <Toaster />
-      </BrowserRouter>
+      <HelmetProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <CookieBanner />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPostView />} />
+
+              {/* Admin Routes */}
+              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} />
+              <Route path="/admin/users/create" element={<AdminUsersPage />} />
+              <Route path="/admin/blog" element={<AdminBlogPostsPage />} />
+              <Route path="/admin/blog/create" element={<AdminBlogPostCreatePage />} />
+              <Route path="/admin/blog/edit/:id" element={<AdminBlogPostEditPage />} />
+              <Route path="/admin/blog/preview/:id" element={<AdminBlogPostPreviewPage />} />
+              <Route path="/admin/settings" element={<AdminSettingsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </HelmetProvider>
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

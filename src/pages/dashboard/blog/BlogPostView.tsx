@@ -1,18 +1,29 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { useBlogPosts } from '@/hooks/useBlogData';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useVisitorTracking } from '@/hooks/useVisitorTracking';
 
 const BlogPostView = () => {
   const { id } = useParams<{ id: string }>();
   const { data: posts, isLoading, error } = useBlogPosts();
   const navigate = useNavigate();
+  const { trackBlogPostView, isInitialized } = useVisitorTracking();
+
+  const post = posts?.find((p) => p.id === id);
+
+  // Tracker la vue de l'article quand il est chargé
+  useEffect(() => {
+    if (post && id && isInitialized) {
+      trackBlogPostView(id, post.title);
+    }
+  }, [post, id, isInitialized, trackBlogPostView]);
 
   if (isLoading) {
     return (
@@ -42,8 +53,6 @@ const BlogPostView = () => {
       </DashboardLayout>
     );
   }
-
-  const post = posts?.find((p) => p.id === id);
 
   if (!post) {
     return (
@@ -93,6 +102,10 @@ const BlogPostView = () => {
                   <span className="text-gray-600">
                     {new Date(post.publish_date || post.created_at).toLocaleDateString('fr-FR')}
                   </span>
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <Eye className="w-4 h-4" />
+                    <span>{post.views || 0} vues</span>
+                  </div>
                 </div>
                 {post.excerpt && (
                   <p className="text-lg text-gray-700 italic border-l-4 border-blue-300 pl-4">

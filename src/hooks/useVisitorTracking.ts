@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useBlogActions } from '@/hooks/useBlogData';
 
 interface VisitorData {
   sessionId: string;
@@ -21,34 +20,45 @@ interface VisitorData {
 export const useVisitorTracking = () => {
   const [cookiesAccepted, setCookiesAccepted] = useState<boolean>(false);
   const [visitorData, setVisitorData] = useState<VisitorData | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Vérifier si les cookies ont été acceptés
   useEffect(() => {
     const accepted = localStorage.getItem('techtrust_cookies_accepted');
-    if (accepted === 'true') {
-      setCookiesAccepted(true);
+    const cookieStatus = accepted === 'true';
+    setCookiesAccepted(cookieStatus);
+    
+    if (cookieStatus) {
       initializeTracking();
     }
+    setIsInitialized(true);
   }, []);
 
-  const acceptCookies = () => {
+  const acceptCookies = async () => {
     localStorage.setItem('techtrust_cookies_accepted', 'true');
     setCookiesAccepted(true);
-    initializeTracking();
+    await initializeTracking();
   };
 
   const declineCookies = () => {
     localStorage.setItem('techtrust_cookies_accepted', 'false');
     setCookiesAccepted(false);
+    // Nettoyer les données existantes
+    sessionStorage.removeItem('techtrust_session_id');
+    setVisitorData(null);
   };
 
   const initializeTracking = async () => {
-    const sessionId = getOrCreateSessionId();
-    const data = await collectVisitorData(sessionId);
-    setVisitorData(data);
-    
-    // Sauvegarder les données initiales
-    await saveVisitorData(data);
+    try {
+      const sessionId = getOrCreateSessionId();
+      const data = await collectVisitorData(sessionId);
+      setVisitorData(data);
+      
+      // Sauvegarder les données initiales
+      await saveVisitorData(data);
+    } catch (error) {
+      console.error('Erreur initialisation tracking:', error);
+    }
   };
 
   const getOrCreateSessionId = (): string => {
@@ -62,27 +72,30 @@ export const useVisitorTracking = () => {
 
   const detectDeviceType = (): string => {
     const userAgent = navigator.userAgent.toLowerCase();
-    if (/mobile|android|iphone|ipad|tablet/.test(userAgent)) {
-      return /tablet|ipad/.test(userAgent) ? 'tablet' : 'mobile';
+    if (/mobile|android|iphone/.test(userAgent)) {
+      return 'mobile';
+    }
+    if (/tablet|ipad/.test(userAgent)) {
+      return 'tablet';
     }
     return 'desktop';
   };
 
   const detectBrowser = (): string => {
     const userAgent = navigator.userAgent;
-    if (userAgent.includes('Chrome')) return 'Chrome';
+    if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) return 'Chrome';
     if (userAgent.includes('Firefox')) return 'Firefox';
-    if (userAgent.includes('Safari')) return 'Safari';
-    if (userAgent.includes('Edge')) return 'Edge';
+    if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari';
+    if (userAgent.includes('Edg')) return 'Edge';
     return 'Other';
   };
 
   const getApproximateLocation = async (): Promise<string> => {
     try {
-      // Utiliser une API gratuite pour obtenir la localisation approximative
       const response = await fetch('https://ipapi.co/json/');
+      if (!response.ok) throw new Error('Location API failed');
       const data = await response.json();
-      return `${data.city}, ${data.country_name}` || 'Unknown';
+      return `${data.city || 'Unknown'}, ${data.country_name || 'Unknown'}`;
     } catch {
       return 'Unknown';
     }
@@ -108,7 +121,10 @@ export const useVisitorTracking = () => {
   };
 
   const trackPageView = async (pagePath: string, pageTitle?: string) => {
-    if (!cookiesAccepted || !visitorData) return;
+    if (!cookiesAccepted || !visitorData || !isInitialized) {
+      console.log('Tracking non autorisé ou non initialisé');
+      return;
+    }
 
     try {
       // Mettre à jour les pages visitées
@@ -120,7 +136,7 @@ export const useVisitorTracking = () => {
       setVisitorData(updatedVisitorData);
 
       // Sauvegarder l'événement de page vue
-      await supabase.from('user_analytics').insert({
+      const { error } = await supabase.from('user_analytics').insert({
         user_id: visitorData.sessionId,
         event_type: 'page_view',
         page_url: pagePath,
@@ -130,34 +146,61 @@ export const useVisitorTracking = () => {
         session_duration: Math.floor((Date.now() - new Date(visitorData.sessionStart).getTime()) / 1000),
       });
 
-      console.log(`Page vue trackée: ${pagePath}`);
+      if (error) {
+        console.error('Erreur sauvegarde page vue:', error);
+      } else {
+        console.log(`Page vue trackée: ${pagePath}`);
+      }
     } catch (error) {
       console.error('Erreur tracking page vue:', error);
     }
   };
 
   const trackBlogPostView = async (postId: string, postTitle: string) => {
-    if (!cookiesAccepted) return;
+    if (!cookiesAccepted || !isInitialized) {
+      console.log('Tracking blog non autorisé');
+      return;
+    }
 
     try {
+      // Vérifier si on a déjà vu cet article dans cette session
+      const viewedKey = `blog_viewed_${postId}`;
+      const alreadyViewed = sessionStorage.getItem(viewedKey);
+      
+      if (alreadyViewed) {
+        console.log('Article déjà vu dans cette session');
+        return;
+      }
+
+      // Marquer comme vu dans cette session
+      sessionStorage.setItem(viewedKey, 'true');
+
       // Incrémenter les vues dans la base de données
-      const { data: currentPost } = await supabase
+      const { data: currentPost, error: fetchError } = await supabase
         .from('blog_posts')
         .select('views')
         .eq('id', postId)
         .single();
 
-      if (currentPost) {
-        await supabase
-          .from('blog_posts')
-          .update({ views: (currentPost.views || 0) + 1 })
-          .eq('id', postId);
+      if (fetchError) {
+        console.error('Erreur récupération article:', fetchError);
+        return;
+      }
+
+      const { error: updateError } = await supabase
+        .from('blog_posts')
+        .update({ views: (currentPost?.views || 0) + 1 })
+        .eq('id', postId);
+
+      if (updateError) {
+        console.error('Erreur incrémentation vues:', updateError);
+        return;
       }
 
       // Tracker l'événement
       await trackPageView(`/blog/${postId}`, postTitle);
 
-      console.log(`Vue article trackée: ${postTitle}`);
+      console.log(`Vue article trackée: ${postTitle} (nouvelles vues: ${(currentPost?.views || 0) + 1})`);
     } catch (error) {
       console.error('Erreur tracking article:', error);
     }
@@ -165,7 +208,7 @@ export const useVisitorTracking = () => {
 
   const saveVisitorData = async (data: VisitorData) => {
     try {
-      await supabase.from('user_analytics').insert({
+      const { error } = await supabase.from('user_analytics').insert({
         user_id: data.sessionId,
         event_type: 'session_start',
         device_type: data.deviceType,
@@ -173,6 +216,10 @@ export const useVisitorTracking = () => {
         location: data.location,
         session_duration: 0,
       });
+
+      if (error) {
+        console.error('Erreur sauvegarde données visiteur:', error);
+      }
     } catch (error) {
       console.error('Erreur sauvegarde données visiteur:', error);
     }
@@ -181,6 +228,7 @@ export const useVisitorTracking = () => {
   return {
     cookiesAccepted,
     visitorData,
+    isInitialized,
     acceptCookies,
     declineCookies,
     trackPageView,
