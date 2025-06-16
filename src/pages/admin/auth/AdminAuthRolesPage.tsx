@@ -11,13 +11,15 @@ import { Shield, Crown, Users, Settings, Plus, Edit, Trash2 } from 'lucide-react
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
+type RoleType = 'super_admin' | 'admin' | 'manager' | 'employee' | 'client';
+
 interface UserRole {
   id: string;
-  user_id: string;
+  userId: string;
   userEmail: string;
   userName: string;
-  role: 'super_admin' | 'admin' | 'manager' | 'employee' | 'client';
-  created_at: string;
+  role: RoleType;
+  createdAt: string;
 }
 
 const AdminAuthRolesPage = () => {
@@ -26,7 +28,7 @@ const AdminAuthRolesPage = () => {
   const [editingRole, setEditingRole] = useState<UserRole | null>(null);
   const [newRoleDialog, setNewRoleDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRole, setSelectedRole] = useState<RoleType>('client');
 
   useEffect(() => {
     loadUserRoles();
@@ -40,9 +42,9 @@ const AdminAuthRolesPage = () => {
         .from('user_roles')
         .select(`
           id,
-          user_id,
+          userId,
           role,
-          created_at
+          createdAt
         `);
 
       if (error) throw error;
@@ -54,20 +56,15 @@ const AdminAuthRolesPage = () => {
 
       if (profilesError) throw profilesError;
 
-      // Récupérer les emails depuis auth.users via une fonction edge
-      const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
-
-      if (usersError) throw usersError;
-
-      // Combiner les données
+      // Pour les emails, nous devrons utiliser une approche différente car auth.users n'est pas accessible
+      // Nous utiliserons le nom du profil pour l'instant
       const combinedRoles = roles?.map(role => {
-        const profile = profiles?.find(p => p.id === role.user_id);
-        const user = users.users?.find(u => u.id === role.user_id);
+        const profile = profiles?.find(p => p.id === role.userId);
         
         return {
           ...role,
-          userName: profile?.name || user?.email?.split('@')[0] || 'Utilisateur inconnu',
-          userEmail: user?.email || 'Email inconnu'
+          userName: profile?.name || 'Utilisateur inconnu',
+          userEmail: profile?.name || 'Email non disponible' // Temporaire
         };
       }) || [];
 
@@ -80,12 +77,12 @@ const AdminAuthRolesPage = () => {
     }
   };
 
-  const updateUserRole = async (userId: string, newRole: string) => {
+  const updateUserRole = async (userId: string, newRole: RoleType) => {
     try {
       const { error } = await supabase
         .from('user_roles')
         .update({ role: newRole })
-        .eq('user_id', userId);
+        .eq('userId', userId);
 
       if (error) throw error;
 
@@ -102,7 +99,7 @@ const AdminAuthRolesPage = () => {
       const { error } = await supabase
         .from('user_roles')
         .delete()
-        .eq('user_id', userId);
+        .eq('userId', userId);
 
       if (error) throw error;
 
@@ -114,7 +111,7 @@ const AdminAuthRolesPage = () => {
     }
   };
 
-  const getRoleInfo = (role: string) => {
+  const getRoleInfo = (role: RoleType) => {
     switch (role) {
       case 'super_admin':
         return { label: 'Super Admin', color: 'bg-red-100 text-red-800', icon: Crown };
@@ -131,7 +128,7 @@ const AdminAuthRolesPage = () => {
     }
   };
 
-  const getRolePermissions = (role: string) => {
+  const getRolePermissions = (role: RoleType) => {
     switch (role) {
       case 'super_admin':
         return ['Accès complet', 'Gestion utilisateurs', 'Configuration système', 'Données sensibles'];
@@ -181,7 +178,7 @@ const AdminAuthRolesPage = () => {
                 </div>
                 <div>
                   <label className="text-sm font-medium">Rôle</label>
-                  <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <Select value={selectedRole} onValueChange={(value: RoleType) => setSelectedRole(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner un rôle" />
                     </SelectTrigger>
@@ -211,7 +208,7 @@ const AdminAuthRolesPage = () => {
 
         {/* Stats des rôles */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {['super_admin', 'admin', 'manager', 'employee', 'client'].map(role => {
+          {(['super_admin', 'admin', 'manager', 'employee', 'client'] as RoleType[]).map(role => {
             const count = userRoles.filter(ur => ur.role === role).length;
             const roleInfo = getRoleInfo(role);
             const RoleIcon = roleInfo.icon;
@@ -241,7 +238,7 @@ const AdminAuthRolesPage = () => {
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-2 text-gray-600">Chargement des r=les...</p>
+                <p className="mt-2 text-gray-600">Chargement des rôles...</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -279,7 +276,7 @@ const AdminAuthRolesPage = () => {
                             variant="outline"
                             size="sm"
                             className="text-red-600 border-red-200 hover:bg-red-50"
-                            onClick={() => removeUserRole(userRole.user_id)}
+                            onClick={() => removeUserRole(userRole.userId)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -288,7 +285,7 @@ const AdminAuthRolesPage = () => {
                       
                       <div className="ml-13">
                         <p className="text-xs text-gray-500 mb-2">
-                          Assigné le {new Date(userRole.created_at).toLocaleDateString('fr-FR')}
+                          Assigné le {new Date(userRole.createdAt).toLocaleDateString('fr-FR')}
                         </p>
                         <div className="flex flex-wrap gap-1">
                           {permissions.map(permission => (
@@ -317,7 +314,7 @@ const AdminAuthRolesPage = () => {
                 <label className="text-sm font-medium">Nouveau rôle</label>
                 <Select 
                   value={editingRole?.role} 
-                  onValueChange={(value) => setEditingRole(prev => prev ? {...prev, role: value as any} : null)}
+                  onValueChange={(value: RoleType) => setEditingRole(prev => prev ? {...prev, role: value} : null)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -335,7 +332,7 @@ const AdminAuthRolesPage = () => {
                 className="w-full" 
                 onClick={() => {
                   if (editingRole) {
-                    updateUserRole(editingRole.user_id, editingRole.role);
+                    updateUserRole(editingRole.userId, editingRole.role);
                     setEditingRole(null);
                   }
                 }}

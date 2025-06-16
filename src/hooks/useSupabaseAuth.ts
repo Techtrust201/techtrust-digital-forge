@@ -188,7 +188,7 @@ export const useSupabaseAuth = () => {
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', authState.user.id)
+        .eq('userId', authState.user.id)
         .single();
       
       if (error) {
@@ -237,7 +237,7 @@ export const useSupabaseAuth = () => {
             const { error: roleError } = await supabase
               .from('user_roles')
               .update({ role: 'super_admin' })
-              .eq('user_id', data.user.id);
+              .eq('userId', data.user.id);
             
             if (roleError) {
               console.error('Error setting super admin role:', roleError);
