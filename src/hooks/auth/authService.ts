@@ -30,7 +30,7 @@ export const authService = {
 
   async signOut() {
     await auth.api.signOut({
-      body: {}
+      headers: new Headers()
     });
   },
 
