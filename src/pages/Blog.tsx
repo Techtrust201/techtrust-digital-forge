@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
@@ -18,7 +17,7 @@ const Blog = () => {
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   
-  const { cookiesAccepted, trackPageView, trackBlogPostView } = useVisitorTracking();
+  const { cookiesAccepted, acceptCookies, declineCookies, trackPageView, trackBlogPostView } = useVisitorTracking();
 
   // Tracker la page vue
   useEffect(() => {
@@ -64,7 +63,7 @@ const Blog = () => {
           </section>
         </main>
         <Footer />
-        <CookieBanner />
+        <CookieBanner onAccept={acceptCookies} onDecline={declineCookies} />
       </>
     );
   }
@@ -273,7 +272,7 @@ const Blog = () => {
         </main>
 
         <Footer />
-        <CookieBanner />
+        <CookieBanner onAccept={acceptCookies} onDecline={declineCookies} />
       </div>
     </>
   );

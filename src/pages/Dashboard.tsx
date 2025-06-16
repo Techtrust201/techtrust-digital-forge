@@ -1,231 +1,421 @@
-
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { useUserPackages } from '@/hooks/useUserPackages';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { 
-  BarChart3, 
-  Mail, 
-  MessageSquare, 
-  Users, 
+  Bell, 
   TrendingUp, 
-  Lock, 
-  Crown,
+  Users, 
+  Globe, 
+  Star, 
+  ArrowRight, 
+  Calendar,
+  Award,
   Zap,
-  Globe,
-  Heart
+  Target,
+  Gift,
+  Crown,
+  Shield,
+  Rocket,
+  Diamond,
+  Lock,
+  Plus
 } from 'lucide-react';
+import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
+
+interface UserData {
+  email: string;
+  role: string;
+  tier: string;
+  services?: string[];
+  name: string;
+}
 
 const Dashboard = () => {
-  const { isAuthenticated, isLoading: authLoading, user, profile } = useSupabaseAuth();
+  const { t } = useTranslation();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [notifications] = useState([
+    {
+      id: 1,
+      title: 'Nouveau rapport mensuel disponible',
+      message: 'Vos performances du mois de janvier sont prêtes',
+      time: '2h',
+      type: 'info'
+    },
+    {
+      id: 2, 
+      title: 'Mise à jour outil IA',
+      message: 'Nouvelles fonctionnalités de prospection ajoutées',
+      time: '1d',
+      type: 'success'
+    }
+  ]);
+
   const { 
     subscriptions, 
-    loading: packagesLoading, 
-    canAccessFeature, 
-    getUpgradeMessage,
-    getSocialNetworksLimit,
-    getEmailLimit
-  } = useUserPackages(user?.id);
+    loading, 
+    hasAnalyticsAccess, 
+    hasCampaignsAccess,
+    hasAdvancedAnalytics,
+    getActivePackages 
+  } = useUserSubscriptions();
 
-  if (authLoading || packagesLoading) {
-    return (
-      <DashboardLayout>
-        <div className="space-y-6">
-          <Skeleton className="h-8 w-64" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-32" />
-            ))}
-          </div>
-          <Skeleton className="h-64" />
-        </div>
-      </DashboardLayout>
-    );
+  useEffect(() => {
+    // Récupérer les données utilisateur
+    const user = localStorage.getItem('techtrust_user');
+    if (user) {
+      setUserData(JSON.parse(user));
+    } else {
+      window.location.href = '/auth';
+    }
+  }, []);
+
+  if (!userData) {
+    return <div>Chargement...</div>;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
+  const getTierInfo = (tier: string) => {
+    switch (tier) {
+      case 'bronze':
+        return {
+          icon: Shield,
+          name: 'Bronze',
+          color: 'text-amber-600',
+          bgColor: 'bg-amber-50',
+          progress: 25,
+          nextTier: 'Silver'
+        };
+      case 'silver':
+        return {
+          icon: Rocket,
+          name: 'Silver', 
+          color: 'text-gray-600',
+          bgColor: 'bg-gray-50',
+          progress: 50,
+          nextTier: 'Gold'
+        };
+      case 'gold':
+        return {
+          icon: Crown,
+          name: 'Gold',
+          color: 'text-yellow-600',
+          bgColor: 'bg-yellow-50', 
+          progress: 75,
+          nextTier: 'Diamond'
+        };
+      case 'diamond':
+        return {
+          icon: Diamond,
+          name: 'Diamond',
+          color: 'text-purple-600',
+          bgColor: 'bg-purple-50',
+          progress: 100,
+          nextTier: null
+        };
+      default:
+        return {
+          icon: Shield,
+          name: 'Bronze',
+          color: 'text-amber-600', 
+          bgColor: 'bg-amber-50',
+          progress: 25,
+          nextTier: 'Silver'
+        };
+    }
+  };
 
-  const stats = [
+  const tierInfo = getTierInfo(userData.tier);
+  const TierIcon = tierInfo.icon;
+  const activePackages = getActivePackages();
+
+  const quickStats = [
+    {
+      title: 'Services actifs',
+      value: activePackages.length || 0,
+      icon: Target,
+      change: activePackages.length > 0 ? '+12%' : '0%',
+      positive: activePackages.length > 0
+    },
     {
       title: 'Analytics',
-      value: canAccessFeature('analytics') ? '12.5K' : '--',
-      description: 'Visiteurs ce mois',
-      icon: BarChart3,
-      color: 'bg-blue-500',
-      locked: !canAccessFeature('analytics')
-    },
-    {
-      title: 'Emails envoyés',
-      value: canAccessFeature('email-campaigns') ? '2,847' : '--',
-      description: `Limite: ${getEmailLimit() === -1 ? 'Illimité' : getEmailLimit().toLocaleString()}`,
-      icon: Mail,
-      color: 'bg-green-500',
-      locked: !canAccessFeature('email-campaigns')
-    },
-    {
-      title: 'Réseaux sociaux',
-      value: getSocialNetworksLimit() > 0 ? getSocialNetworksLimit() : '--',
-      description: getSocialNetworksLimit() === -1 ? 'Illimité' : `${getSocialNetworksLimit()} réseaux max`,
-      icon: MessageSquare,
-      color: 'bg-purple-500',
-      locked: getSocialNetworksLimit() === 0
-    },
-    {
-      title: 'Conversions',
-      value: canAccessFeature('advanced-analytics') ? '3.2%' : '--',
-      description: 'Taux de conversion',
+      value: hasAnalyticsAccess() ? 'Actif' : 'Limité',
       icon: TrendingUp,
-      color: 'bg-orange-500',
-      locked: !canAccessFeature('advanced-analytics')
+      change: hasAnalyticsAccess() ? '+5%' : 'Bloqué',
+      positive: hasAnalyticsAccess()
+    },
+    {
+      title: 'Campagnes',
+      value: hasCampaignsAccess() ? 'Disponible' : 'Indisponible',
+      icon: Zap,
+      change: hasCampaignsAccess() ? 'Accès complet' : 'Upgrade requis',
+      positive: hasCampaignsAccess()
+    },
+    {
+      title: 'Score qualité',
+      value: activePackages.length > 0 ? '9.2/10' : '-',
+      icon: Star,
+      change: activePackages.length > 0 ? '+0.3' : 'N/A',
+      positive: activePackages.length > 0
     }
   ];
 
-  const features = [
+  const recentActivity = [
     {
-      title: 'Analytics Avancées',
-      description: 'Tableaux de bord détaillés et insights avancés',
-      icon: BarChart3,
-      available: canAccessFeature('advanced-analytics'),
-      upgradeMessage: getUpgradeMessage('advanced-analytics')
+      id: 1,
+      action: 'Connexion dashboard',
+      service: 'Système',
+      time: 'Maintenant',
+      status: 'completed'
     },
     {
-      title: 'Campagnes Email',
-      description: 'Création et gestion de campagnes email marketing',
-      icon: Mail,
-      available: canAccessFeature('email-campaigns'),
-      upgradeMessage: getUpgradeMessage('email-campaigns')
+      id: 2,
+      action: hasAnalyticsAccess() ? 'Analytics consultées' : 'Accès analytics bloqué',
+      service: 'Analytics',
+      time: '1h',
+      status: hasAnalyticsAccess() ? 'completed' : 'blocked'
     },
     {
-      title: 'Campagnes SMS',
-      description: 'Envoi de campagnes SMS personnalisées',
-      icon: MessageSquare,
-      available: canAccessFeature('sms-campaigns'),
-      upgradeMessage: getUpgradeMessage('sms-campaigns')
-    },
-    {
-      title: 'Automatisation',
-      description: 'Workflows automatisés et lead nurturing',
-      icon: Zap,
-      available: canAccessFeature('automation'),
-      upgradeMessage: getUpgradeMessage('automation')
+      id: 3,
+      action: hasCampaignsAccess() ? 'Campagne créée' : 'Fonctionnalité verrouillée',
+      service: 'Campagnes',
+      time: '2h',
+      status: hasCampaignsAccess() ? 'completed' : 'blocked'
     }
   ];
 
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* En-tête de bienvenue */}
-        <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-lg p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">
-                Bienvenue {profile?.name || user?.email} !
-              </h1>
-              <p className="text-red-100 mt-1">
-                Voici un aperçu de vos performances et outils disponibles
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {subscriptions.map((sub) => (
-                <Badge key={sub.id} variant="outline" className="bg-white/20 text-white border-white/30">
-                  {sub.package_name}
-                </Badge>
-              ))}
-              {subscriptions.length === 0 && (
-                <Badge variant="outline" className="bg-white/20 text-white border-white/30">
-                  Aucun package actif
+        {/* Header avec badge tier */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Bonjour {userData.name} 👋
+            </h1>
+            <p className="text-gray-600">
+              Bienvenue sur votre dashboard Techtrust
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Card className={`${tierInfo.bgColor} border-0`}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <TierIcon className={`w-6 h-6 ${tierInfo.color}`} />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-gray-900">Niveau {tierInfo.name}</span>
+                    {tierInfo.progress === 100 && <Crown className="w-4 h-4 text-yellow-500" />}
+                  </div>
+                  {tierInfo.nextTier && (
+                    <div className="space-y-1 mt-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600">Prochain: {tierInfo.nextTier}</span>
+                        <span className="text-gray-600">{tierInfo.progress}%</span>
+                      </div>
+                      <Progress value={tierInfo.progress} className="h-2 w-32" />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Button variant="outline" size="icon" className="relative">
+              <Bell className="w-5 h-5" />
+              {notifications.length > 0 && (
+                <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center bg-red-500">
+                  {notifications.length}
                 </Badge>
               )}
-            </div>
+            </Button>
           </div>
         </div>
 
-        {/* Statistiques */}
+        {/* Stats rapides avec limitations */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card key={index} className={`relative ${stat.locked ? 'opacity-60' : ''}`}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <div className={`${stat.color} p-2 rounded-md`}>
-                  <stat.icon className="h-4 w-4 text-white" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold flex items-center gap-2">
-                  {stat.value}
-                  {stat.locked && <Lock className="h-4 w-4 text-gray-400" />}
-                </div>
-                <p className="text-xs text-muted-foreground">{stat.description}</p>
-              </CardContent>
-            </Card>
-          ))}
+          {quickStats.map((stat, index) => {
+            const StatIcon = stat.icon;
+            return (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <StatIcon className={`w-8 h-8 ${stat.positive ? 'text-blue-500' : 'text-gray-400'}`} />
+                    <Badge 
+                      variant="outline" 
+                      className={stat.positive ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}
+                    >
+                      {stat.change}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className={`text-2xl font-bold ${stat.positive ? 'text-gray-900' : 'text-gray-500'}`}>
+                      {stat.value}
+                    </h3>
+                    <p className="text-sm text-gray-600">{stat.title}</p>
+                  </div>
+                  {!stat.positive && (
+                    <div className="mt-2 flex items-center text-xs text-gray-500">
+                      <Lock className="w-3 h-3 mr-1" />
+                      Upgrade requis
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Fonctionnalités disponibles */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {features.map((feature, index) => (
-            <Card key={index} className={`${!feature.available ? 'border-dashed border-gray-300' : ''}`}>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Services actifs */}
+          <div className="lg:col-span-2">
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className={`p-2 rounded-md ${feature.available ? 'bg-green-100' : 'bg-gray-100'}`}>
-                    <feature.icon className={`h-5 w-5 ${feature.available ? 'text-green-600' : 'text-gray-400'}`} />
-                  </div>
-                  {feature.title}
-                  {!feature.available && <Lock className="h-4 w-4 text-gray-400" />}
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-blue-500" />
+                  Vos Services Actifs
                 </CardTitle>
-                <CardDescription>{feature.description}</CardDescription>
               </CardHeader>
-              <CardContent>
-                {feature.available ? (
-                  <Button className="w-full bg-green-600 hover:bg-green-700">
-                    Accéder
-                  </Button>
+              <CardContent className="space-y-4">
+                {activePackages.length > 0 ? (
+                  activePackages.map((subscription, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Globe className="w-5 h-5 text-blue-500" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {subscription.package_name}
+                          </h4>
+                          <p className="text-sm text-gray-600">{subscription.package_category}</p>
+                        </div>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800">
+                        {subscription.status}
+                      </Badge>
+                    </div>
+                  ))
                 ) : (
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">{feature.upgradeMessage}</p>
-                    <Button variant="outline" className="w-full" asChild>
-                      <a href="/pricing">
-                        <Crown className="h-4 w-4 mr-2" />
-                        Mettre à niveau
+                  <div className="text-center py-8">
+                    <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Aucun service actif
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Découvrez nos solutions pour développer votre business
+                    </p>
+                    <Button asChild>
+                      <a href="/dashboard/services">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Voir nos services
                       </a>
                     </Button>
                   </div>
                 )}
               </CardContent>
             </Card>
-          ))}
-        </div>
 
-        {/* Message d'encouragement si aucun package */}
-        {subscriptions.length === 0 && (
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-            <CardHeader className="text-center">
-              <div className="mx-auto bg-blue-100 p-3 rounded-full w-fit mb-4">
-                <Heart className="h-8 w-8 text-blue-600" />
-              </div>
-              <CardTitle className="text-blue-900">Boostez votre croissance !</CardTitle>
-              <CardDescription className="text-blue-700">
-                Choisissez un package pour débloquer tous les outils de growth hacking, 
-                community management et analytics avancées.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                <a href="/pricing">
-                  <Globe className="h-4 w-4 mr-2" />
-                  Découvrir nos packages
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+            {/* Activité récente */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-500" />
+                  Activité Récente
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentActivity.map((activity) => (
+                    <div key={activity.id} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg">
+                      <div className={`w-3 h-3 rounded-full ${
+                        activity.status === 'completed' ? 'bg-green-500' : 
+                        activity.status === 'blocked' ? 'bg-red-500' : 'bg-blue-500'
+                      }`} />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{activity.action}</p>
+                        <p className="text-sm text-gray-600">{activity.service}</p>
+                      </div>
+                      <span className="text-sm text-gray-500">{activity.time}</span>
+                      {activity.status === 'blocked' && (
+                        <Lock className="w-4 h-4 text-red-500" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Limitations d'accès */}
+            <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
+              <CardContent className="p-6 text-center">
+                <Lock className="w-8 h-8 text-orange-500 mx-auto mb-4" />
+                <h3 className="font-bold text-gray-900 mb-2">
+                  Fonctionnalités Limitées
+                </h3>
+                <div className="space-y-2 text-sm text-gray-600">
+                  {!hasAnalyticsAccess() && (
+                    <p>• Analytics avancées verrouillées</p>
+                  )}
+                  {!hasCampaignsAccess() && (
+                    <p>• Campagnes marketing indisponibles</p>
+                  )}
+                  {!hasAdvancedAnalytics() && (
+                    <p>• Rapports détaillés restreints</p>
+                  )}
+                </div>
+                <Button asChild className="w-full mt-4 bg-gradient-to-r from-orange-500 to-red-500">
+                  <a href="/dashboard/upgrade">
+                    Upgrader mon plan
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Notifications */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-blue-500" />
+                  Notifications
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {notifications.map((notif) => (
+                  <div key={notif.id} className="p-3 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium text-sm text-gray-900 mb-1">
+                      {notif.title}
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-2">{notif.message}</p>
+                    <span className="text-xs text-gray-500">Il y a {notif.time}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Support rapide */}
+            <Card>
+              <CardContent className="p-6 text-center">
+                <Users className="w-8 h-8 text-green-500 mx-auto mb-4" />
+                <h3 className="font-bold text-gray-900 mb-2">
+                  Besoin d'aide ?
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Notre équipe est là pour vous accompagner
+                </p>
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="/dashboard/support">
+                    Contacter le support
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );
