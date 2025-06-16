@@ -29,16 +29,16 @@ const NavbarPublic = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/solutions" className="text-gray-700 hover:text-blue-500 transition-colors">
+            <Link to="/solutions" className="text-gray-700 transition-colors hover:text-[#45C7FF]">
               Solutions
             </Link>
-            <Link to="/pricing" className="text-gray-700 hover:text-blue-500 transition-colors">
+            <Link to="/pricing" className="text-gray-700 transition-colors hover:text-[#45C7FF]">
               Tarifs
             </Link>
-            <Link to="/blog" className="text-gray-700 hover:text-blue-500 transition-colors">
+            <Link to="/blog" className="text-gray-700 transition-colors hover:text-[#45C7FF]">
               Blog
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-blue-500 transition-colors">
+            <Link to="/contact" className="text-gray-700 transition-colors hover:text-[#45C7FF]">
               Contact
             </Link>
             
@@ -46,7 +46,7 @@ const NavbarPublic = () => {
               <div className="flex items-center space-x-4">
                 <Link 
                   to="/dashboard" 
-                  className="text-gray-700 transition-colors hover:text-blue-500"
+                  className="text-gray-700 transition-colors hover:text-[#45C7FF]"
                 >
                   Dashboard
                 </Link>
@@ -61,7 +61,7 @@ const NavbarPublic = () => {
                 <Button
                   variant="outline"
                   onClick={handleSignOut}
-                  className="border-blue-500 hover:bg-blue-50"
+                  className="border-[#45C7FF] hover:bg-blue-50"
                   style={{ color: '#45C7FF' }}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
@@ -70,7 +70,7 @@ const NavbarPublic = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link to="/auth" className="text-gray-700 transition-colors hover:text-blue-500">
+                <Link to="/auth" className="text-gray-700 transition-colors hover:text-[#45C7FF]">
                   Connexion
                 </Link>
                 <Link to="/auth">
@@ -89,7 +89,7 @@ const NavbarPublic = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-500 focus:outline-none"
+              className="text-gray-700 hover:text-[#45C7FF] focus:outline-none"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -103,28 +103,28 @@ const NavbarPublic = () => {
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link
               to="/solutions"
-              className="block px-3 py-2 text-gray-700 hover:text-blue-500"
+              className="block px-3 py-2 text-gray-700 hover:text-[#45C7FF]"
               onClick={() => setIsOpen(false)}
             >
               Solutions
             </Link>
             <Link
               to="/pricing"
-              className="block px-3 py-2 text-gray-700 hover:text-blue-500"
+              className="block px-3 py-2 text-gray-700 hover:text-[#45C7FF]"
               onClick={() => setIsOpen(false)}
             >
               Tarifs
             </Link>
             <Link
               to="/blog"
-              className="block px-3 py-2 text-gray-700 hover:text-blue-500"
+              className="block px-3 py-2 text-gray-700 hover:text-[#45C7FF]"
               onClick={() => setIsOpen(false)}
             >
               Blog
             </Link>
             <Link
               to="/contact"
-              className="block px-3 py-2 text-gray-700 hover:text-blue-500"
+              className="block px-3 py-2 text-gray-700 hover:text-[#45C7FF]"
               onClick={() => setIsOpen(false)}
             >
               Contact
@@ -134,7 +134,7 @@ const NavbarPublic = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-500"
+                  className="block px-3 py-2 text-gray-700 hover:text-[#45C7FF]"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
@@ -153,7 +153,7 @@ const NavbarPublic = () => {
                     handleSignOut();
                     setIsOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 hover:text-blue-600"
+                  className="block w-full text-left px-3 py-2 hover:text-[#45C7FF]"
                   style={{ color: '#45C7FF' }}
                 >
                   Déconnexion
@@ -163,7 +163,7 @@ const NavbarPublic = () => {
               <>
                 <Link
                   to="/auth"
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-500"
+                  className="block px-3 py-2 text-gray-700 hover:text-[#45C7FF]"
                   onClick={() => setIsOpen(false)}
                 >
                   Connexion
