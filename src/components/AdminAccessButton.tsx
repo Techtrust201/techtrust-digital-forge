@@ -9,7 +9,7 @@ const AdminAccessButton: React.FC = () => {
   const { canAccessAdmin } = useSupabaseAuth();
   const navigate = useNavigate();
 
-  if (!canAccessAdmin()) {
+  if (!canAccessAdmin) {
     return null;
   }
 
