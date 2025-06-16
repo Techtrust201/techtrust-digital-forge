@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { useBetterAuth } from './useBetterAuth';
+import { useSupabaseAuth } from './useSupabaseAuth';
 
 export interface UserSubscription {
   id: string;
@@ -46,7 +45,7 @@ export const useUserSubscriptions = () => {
   const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useBetterAuth();
+  const { user } = useSupabaseAuth();
 
   useEffect(() => {
     if (user) {
