@@ -1,395 +1,253 @@
 
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import NavbarPublic from '@/components/NavbarPublic';
-import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import React, { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Lock, Mail, User, Eye, EyeOff, Shield, Rocket, Crown, Diamond, AlertCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-
-// Comptes de test disponibles
-const testAccounts = [
-  {
-    email: 'admin@techtrust.fr',
-    password: 'admin123',
-    role: 'admin',
-    tier: 'diamond',
-    name: 'Admin Techtrust',
-    description: 'Accès complet à tous les outils'
-  },
-  {
-    email: 'starter@techtrust.fr', 
-    password: 'starter123',
-    role: 'client',
-    tier: 'bronze',
-    services: ['website-starter'],
-    name: 'Client Starter',
-    description: 'Site web basique'
-  },
-  {
-    email: 'business@techtrust.fr',
-    password: 'business123', 
-    role: 'client',
-    tier: 'silver',
-    services: ['website-business', 'growth-pro'],
-    name: 'Client Business',
-    description: 'Site + Growth Hacking'
-  },
-  {
-    email: 'premium@techtrust.fr',
-    password: 'premium123',
-    role: 'client', 
-    tier: 'gold',
-    services: ['website-premium', 'growth-enterprise', 'community-growth'],
-    name: 'Client Premium',
-    description: 'Formules premium'
-  },
-  {
-    email: 'stagiaire@techtrust.fr',
-    password: 'stage123',
-    role: 'employee',
-    tier: 'bronze',
-    permissions: ['community-management'],
-    name: 'Stagiaire CM',
-    description: 'Community manager stagiaire'
-  },
-  {
-    email: 'manager@techtrust.fr',
-    password: 'manager123',
-    role: 'manager',
-    tier: 'gold', 
-    permissions: ['all-except-admin'],
-    name: 'Manager',
-    description: 'Manager équipe'
-  }
-];
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Eye, EyeOff, Mail, Lock, User, Building } from 'lucide-react';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import NavbarPublic from '@/components/NavbarPublic';
+import Footer from '@/components/Footer';
 
 const Auth = () => {
-  const { t } = useTranslation();
+  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     name: '',
-    confirmPassword: ''
+    company: ''
   });
-  const [selectedTestAccount, setSelectedTestAccount] = useState<typeof testAccounts[0] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Connexion Espace Client Techtrust",
-    "description": "Accédez à votre espace client Techtrust pour gérer vos outils IA de growth hacking, community management et solutions digitales.",
-    "url": "https://www.tech-trust.fr/auth"
-  };
+  const { isAuthenticated, signIn, signUp, isLoading: authLoading } = useSupabaseAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Vérifier les comptes de test
-    const account = testAccounts.find(acc => 
-      acc.email === formData.email && acc.password === formData.password
-    );
-    
-    if (account) {
-      // Stocker les infos de connexion
-      localStorage.setItem('techtrust_user', JSON.stringify(account));
-      
-      // Rediriger selon le rôle
-      if (account.role === 'admin') {
-        window.location.href = '/admin';
-      } else {
-        window.location.href = '/dashboard';
-      }
-    } else {
-      alert('❌ Email ou mot de passe incorrect. Utilisez un compte de test ci-dessous.');
-    }
-  };
+  // Rediriger si déjà connecté
+  if (isAuthenticated && !authLoading) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
-  const handleTestAccountSelect = (account: typeof testAccounts[0]) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      email: account.email,
-      password: account.password
+      [e.target.name]: e.target.value
     });
-    setSelectedTestAccount(account);
   };
 
-  const getTierIcon = (tier: string) => {
-    switch (tier) {
-      case 'bronze': return Shield;
-      case 'silver': return Rocket;
-      case 'gold': return Crown;
-      case 'diamond': return Diamond;
-      default: return Shield;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      if (isLogin) {
+        await signIn(formData.email, formData.password);
+      } else {
+        // Validation pour l'inscription
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Les mots de passe ne correspondent pas');
+        }
+        if (formData.password.length < 6) {
+          throw new Error('Le mot de passe doit contenir au moins 6 caractères');
+        }
+
+        const userData = {
+          name: formData.name,
+          company: formData.company
+        };
+
+        await signUp(formData.email, formData.password, userData);
+      }
+    } catch (error: any) {
+      console.error('Auth error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case 'bronze': return 'text-amber-600 bg-amber-50';
-      case 'silver': return 'text-gray-600 bg-gray-50';
-      case 'gold': return 'text-yellow-600 bg-yellow-50';
-      case 'diamond': return 'text-purple-600 bg-purple-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
+  const resetForm = () => {
+    setFormData({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      name: '',
+      company: ''
+    });
+  };
+
+  const toggleAuthMode = () => {
+    setIsLogin(!isLogin);
+    resetForm();
   };
 
   return (
-    <>
-      <SEO
-        title="Connexion Espace Client | Dashboard Techtrust 2025"
-        description="🔐 Accédez à votre espace client Techtrust. Gérez vos outils IA growth hacking, community management, analytics et projets digitaux depuis un dashboard unifié."
-        keywords="connexion techtrust, espace client, dashboard, outils ia, growth hacking, community management, analytics"
-        canonicalUrl="https://www.tech-trust.fr/auth"
-        structuredData={structuredData}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50">
+      <NavbarPublic />
+      
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12">
+        <Card className="w-full max-w-md shadow-2xl border-0">
+          <CardHeader className="space-y-1 pb-6">
+            <CardTitle className="text-2xl font-bold text-center text-gray-900">
+              {isLogin ? 'Connexion' : 'Créer un compte'}
+            </CardTitle>
+            <CardDescription className="text-center text-gray-600">
+              {isLogin 
+                ? 'Connectez-vous à votre espace Techtrust' 
+                : 'Rejoignez Techtrust et boostez votre croissance'
+              }
+            </CardDescription>
+          </CardHeader>
 
-      <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-purple-50">
-        <NavbarPublic />
-        
-        <main className="flex-1 flex items-center justify-center px-4 py-20">
-          <div className="w-full max-w-4xl">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                <Lock className="w-10 h-10 text-white" />
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Champs inscription seulement */}
+              {!isLogin && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                      Nom complet
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        placeholder="Votre nom complet"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="pl-10"
+                        required={!isLogin}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="text-sm font-medium text-gray-700">
+                      Entreprise (optionnel)
+                    </Label>
+                    <div className="relative">
+                      <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="company"
+                        name="company"
+                        type="text"
+                        placeholder="Nom de votre entreprise"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="votre@email.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Espace Client <span className="text-blue-500">Techtrust</span>
-              </h1>
-              <p className="text-lg text-gray-600">
-                Accédez à vos outils IA et gérez vos projets digitaux
+
+              {/* Mot de passe */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                  Mot de passe
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirmation mot de passe (inscription seulement) */}
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                    Confirmer le mot de passe
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className="pl-10"
+                      required={!isLogin}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3"
+                disabled={isLoading || authLoading}
+              >
+                {isLoading ? 'Chargement...' : (isLogin ? 'Se connecter' : 'Créer le compte')}
+              </Button>
+            </form>
+
+            <Separator />
+
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}
               </p>
+              <Button
+                variant="link"
+                onClick={toggleAuthMode}
+                className="text-red-600 hover:text-red-700 font-medium p-0"
+              >
+                {isLogin ? 'Créer un compte' : 'Se connecter'}
+              </Button>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Formulaire de connexion */}
-              <div className="lg:col-span-2">
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="login" className="text-lg py-3">Se connecter</TabsTrigger>
-                    <TabsTrigger value="register" className="text-lg py-3">S'inscrire</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="login">
-                    <Card className="shadow-xl">
-                      <CardHeader className="text-center pb-4">
-                        <CardTitle className="text-2xl">Connexion</CardTitle>
-                        <CardDescription className="text-lg">
-                          Accédez à votre dashboard personnalisé
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                          <div>
-                            <Label htmlFor="email" className="text-base font-medium">Email</Label>
-                            <div className="relative mt-2">
-                              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                              <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="votre@email.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                className="pl-10 h-12 text-base"
-                                required
-                              />
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="password" className="text-base font-medium">Mot de passe</Label>
-                            <div className="relative mt-2">
-                              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                              <Input
-                                id="password"
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                                className="pl-10 pr-12 h-12 text-base"
-                                required
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                              >
-                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                              </button>
-                            </div>
-                          </div>
-                          
-                          <Button 
-                            type="submit" 
-                            className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                          >
-                            Se connecter
-                          </Button>
-                          
-                          <div className="text-center">
-                            <a href="/forgot-password" className="text-blue-500 hover:underline">
-                              Mot de passe oublié ?
-                            </a>
-                          </div>
-                        </form>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  
-                  <TabsContent value="register">
-                    <Card className="shadow-xl">
-                      <CardHeader className="text-center pb-4">
-                        <CardTitle className="text-2xl">Créer un compte</CardTitle>
-                        <CardDescription className="text-lg">
-                          Rejoignez +2000 clients satisfaits
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                          <div>
-                            <Label htmlFor="name" className="text-base font-medium">Nom complet</Label>
-                            <div className="relative mt-2">
-                              <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                              <Input
-                                id="name"
-                                name="name"
-                                type="text"
-                                placeholder="Jean Dupont"
-                                value={formData.name}
-                                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                className="pl-10 h-12 text-base"
-                                required
-                              />
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="email-register" className="text-base font-medium">Email professionnel</Label>
-                            <div className="relative mt-2">
-                              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                              <Input
-                                id="email-register"
-                                name="email"
-                                type="email"
-                                placeholder="jean@entreprise.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                className="pl-10 h-12 text-base"
-                                required
-                              />
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="password-register" className="text-base font-medium">Mot de passe</Label>
-                            <div className="relative mt-2">
-                              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                              <Input
-                                id="password-register"
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                                className="pl-10 pr-12 h-12 text-base"
-                                required
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                              >
-                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                              </button>
-                            </div>
-                          </div>
-                          
-                          <Button 
-                            type="submit" 
-                            className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                          >
-                            Créer mon compte
-                          </Button>
-                        </form>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                </Tabs>
+            {!isLogin && (
+              <div className="text-xs text-gray-500 text-center">
+                En créant un compte, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.
               </div>
-
-              {/* Comptes de test */}
-              <div>
-                <Card className="shadow-xl">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5 text-blue-500" />
-                      Comptes de Test
-                    </CardTitle>
-                    <CardDescription>
-                      Utilisez ces comptes pour tester les différents accès
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {testAccounts.map((account) => {
-                      const TierIcon = getTierIcon(account.tier);
-                      const isSelected = selectedTestAccount?.email === account.email;
-                      
-                      return (
-                        <Card 
-                          key={account.email}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                          }`}
-                          onClick={() => handleTestAccountSelect(account)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <TierIcon className={`w-4 h-4 ${getTierColor(account.tier).split(' ')[0]}`} />
-                                <span className="font-medium text-sm">{account.name}</span>
-                              </div>
-                              <Badge className={`text-xs ${getTierColor(account.tier)}`}>
-                                {account.tier.toUpperCase()}
-                              </Badge>
-                            </div>
-                            <p className="text-xs text-gray-600 mb-2">{account.description}</p>
-                            <div className="text-xs space-y-1">
-                              <div><strong>Email:</strong> {account.email}</div>
-                              <div><strong>Mot de passe:</strong> {account.password}</div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-
-                {/* Info demo */}
-                <Card className="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                  <CardContent className="p-4 text-center">
-                    <h4 className="font-medium text-gray-900 mb-2">Mode Démo</h4>
-                    <p className="text-sm text-gray-600">
-                      Cette version de démo vous permet de tester toutes les fonctionnalités selon votre profil utilisateur.
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </main>
-
-        <Footer />
+            )}
+          </CardContent>
+        </Card>
       </div>
-    </>
+
+      <Footer />
+    </div>
   );
 };
 

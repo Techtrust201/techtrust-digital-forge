@@ -1,290 +1,240 @@
-"use client"
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, Globe, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-
-const solutions = [
-  { name: "Agence Web", href: "/solutions/agence-web", description: "Création de sites web professionnels, e-commerce et applications web" },
-  { name: "Growth Hacking", href: "/solutions/growth-hacking", description: "Stratégies de croissance et acquisition clients via l'IA" },
-  { name: "Solutions Sur Mesure", href: "/solutions/digitales-sur-mesure", description: "Développement logiciel personnalisé pour votre entreprise" },
-  { name: "Community Management", href: "/solutions/community-management", description: "Gestion professionnelle de vos réseaux sociaux" },
-  { name: "Consulting Digital", href: "/solutions/consulting-digital", description: "Conseil et stratégie pour votre transformation numérique" },
-];
 
 const NavbarPublic = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
-  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>('fr');
+  const location = useLocation();
+  const { isAuthenticated, user, profile, signOut, isLoading } = useSupabaseAuth();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
+  const navigation = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Solutions', href: '/solutions' },
+    { name: 'Tarifs', href: '/pricing' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Contact', href: '/contact' }
+  ];
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navbarClasses = `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-    scrolled ? 'bg-white/95 backdrop-blur-md shadow-md py-2' : 'bg-transparent py-4'
-  }`;
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-    if (dropdownOpen) setDropdownOpen(null);
-  };
-
-  const toggleDropdown = (name: string) => {
-    if (dropdownOpen === name) {
-      setDropdownOpen(null);
-    } else {
-      setDropdownOpen(name);
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return location.pathname === '/';
     }
+    return location.pathname.startsWith(href);
   };
 
-  const changeLanguage = (language: 'fr' | 'en') => {
-    setCurrentLanguage(language);
-    // Ici, vous intégrerez plus tard la logique de changement de langue
+  const getUserInitials = () => {
+    if (profile?.name) {
+      return profile.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    }
+    if (user?.email) {
+      return user.email.slice(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
-    <nav className={navbarClasses}>
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center">
+    <nav className="bg-white shadow-lg sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center space-x-3">
-            <span className={`font-bold text-2xl ${scrolled ? 'text-custom-blue' : 'text-custom-blue'}`}>
-              Techtrust
-            </span>
-          </a>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {/* Solutions Dropdown */}
-            <div className="relative group">
-              <button 
-                className={`flex items-center space-x-1 ${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}
-                onClick={() => toggleDropdown('solutions')}
-              >
-                <span>Solutions</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-
-              <div className="absolute left-0 mt-2 w-80 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left">
-                <div className="p-4 grid gap-2">
-                  {solutions.map((solution) => (
-                    <a
-                      key={solution.name}
-                      href={solution.href}
-                      className="block p-3 hover:bg-gray-50 rounded-lg transition-colors"
-                    >
-                      <div className="font-medium text-gray-900">{solution.name}</div>
-                      <div className="text-sm text-gray-500 mt-1">{solution.description}</div>
-                    </a>
-                  ))}
-                  <div className="border-t border-gray-100 mt-2 pt-2">
-                    <a
-                      href="/solutions"
-                      className="flex items-center p-3 text-sm font-medium text-custom-blue hover:bg-gray-50 rounded-lg transition-colors"
-                    >
-                      Voir toutes nos solutions
-                      <ChevronDown className="w-4 h-4 ml-1 rotate-270" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <a href="/pricing" className={`${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}>
-              Tarifs
-            </a>
-            
-            <a href="/blog" className={`${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}>
-              Blog
-            </a>
-            
-            <a href="/careers" className={`${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}>
-              Carrières
-            </a>
-            
-            <a href="/help" className={`${scrolled ? 'text-gray-800' : 'text-gray-800'} hover:text-custom-blue transition-colors`}>
-              Aide
-            </a>
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0">
+              <span className="text-2xl font-bold text-red-600">Techtrust</span>
+            </Link>
           </div>
 
-          {/* Right side - Contact / Sign In / Language */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <Button asChild variant="outline" className="border-2 border-gray-300 hover:border-custom-blue">
-              <a href="/contact">
-                Nous contacter
-              </a>
-            </Button>
-            
-            <Button asChild className="bg-custom-blue hover:bg-custom-blue/90">
-              <a href="/auth">
-                Connexion
-              </a>
-            </Button>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'text-red-600 border-b-2 border-red-600'
+                    : 'text-gray-700 hover:text-red-600'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
 
-            {/* Language switch */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center">
-                  <Globe className="w-5 h-5 text-gray-600" />
-                  <span className="ml-1 text-sm font-medium">{currentLanguage === 'fr' ? 'FR' : 'EN'}</span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onClick={() => changeLanguage('fr')} className="flex items-center">
-                  <img src="/flags/fr.svg" alt="Français" className="w-5 h-5 mr-2" />
-                  <span>Français</span>
-                  {currentLanguage === 'fr' && <Check className="w-4 h-4 ml-auto" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLanguage('en')} className="flex items-center">
-                  <img src="/flags/en.svg" alt="English" className="w-5 h-5 mr-2" />
-                  <span>English</span>
-                  {currentLanguage === 'en' && <Check className="w-4 h-4 ml-auto" />}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* Auth Section */}
+          <div className="hidden md:flex items-center space-x-4">
+            {!isLoading && (
+              <>
+                {isAuthenticated ? (
+                  <div className="flex items-center space-x-4">
+                    <Button asChild variant="outline">
+                      <Link to="/dashboard">Dashboard</Link>
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="p-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-red-100 text-red-600 text-sm">
+                              {getUserInitials()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <div className="px-3 py-2">
+                          <p className="text-sm font-medium">
+                            {profile?.name || user?.email}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {profile?.company || 'Client Techtrust'}
+                          </p>
+                        </div>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/dashboard">
+                            <User className="mr-2 h-4 w-4" />
+                            Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/dashboard/account">
+                            <User className="mr-2 h-4 w-4" />
+                            Mon profil
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Se déconnecter
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-3">
+                    <Button asChild variant="outline">
+                      <Link to="/auth">Connexion</Link>
+                    </Button>
+                    <Button asChild className="bg-red-600 hover:bg-red-700">
+                      <Link to="/auth">Démarrer gratuitement</Link>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden">
-            <button 
-              onClick={toggleMenu}
-              className="p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          <div className="md:hidden flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-expanded="false"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-t border-gray-100 overflow-hidden"
-          >
-            <div className="container mx-auto px-4 py-4 space-y-4">
-              <div>
-                <button 
-                  onClick={() => toggleDropdown('solutions')}
-                  className="flex items-center justify-between w-full p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <span>Solutions</span>
-                  <ChevronDown className={`w-5 h-5 transition-transform ${dropdownOpen === 'solutions' ? 'transform rotate-180' : ''}`} />
-                </button>
-
-                <AnimatePresence>
-                  {dropdownOpen === 'solutions' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mt-2 ml-4 space-y-2"
-                    >
-                      {solutions.map((solution) => (
-                        <a
-                          key={solution.name}
-                          href={solution.href}
-                          className="block p-2 text-gray-700 hover:text-custom-blue hover:bg-gray-50 rounded-lg transition-colors"
-                        >
-                          <div>{solution.name}</div>
-                          <div className="text-xs text-gray-500">{solution.description}</div>
-                        </a>
-                      ))}
-                      <a
-                        href="/solutions"
-                        className="flex items-center p-2 text-sm font-medium text-custom-blue hover:bg-gray-50 rounded-lg transition-colors"
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-t">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`block px-3 py-2 text-base font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'text-red-600 bg-red-50'
+                    : 'text-gray-700 hover:text-red-600 hover:bg-gray-50'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+            
+            {/* Mobile Auth */}
+            <div className="border-t pt-4 mt-4">
+              {!isLoading && (
+                <>
+                  {isAuthenticated ? (
+                    <div className="space-y-2">
+                      <div className="px-3 py-2">
+                        <div className="flex items-center">
+                          <Avatar className="h-8 w-8 mr-3">
+                            <AvatarFallback className="bg-red-100 text-red-600 text-sm">
+                              {getUserInitials()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {profile?.name || user?.email}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {profile?.company || 'Client Techtrust'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setIsOpen(false)}
+                        className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50"
                       >
-                        Voir toutes nos solutions
-                        <ChevronDown className="w-4 h-4 ml-1 rotate-270" />
-                      </a>
-                    </motion.div>
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={() => {
+                          handleSignOut();
+                          setIsOpen(false);
+                        }}
+                        className="block w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50"
+                      >
+                        Se déconnecter
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Link
+                        to="/auth"
+                        onClick={() => setIsOpen(false)}
+                        className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50"
+                      >
+                        Connexion
+                      </Link>
+                      <Link
+                        to="/auth"
+                        onClick={() => setIsOpen(false)}
+                        className="block px-3 py-2 text-base font-medium bg-red-600 text-white rounded-md hover:bg-red-700"
+                      >
+                        Démarrer gratuitement
+                      </Link>
+                    </div>
                   )}
-                </AnimatePresence>
-              </div>
-
-              <a 
-                href="/pricing"
-                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Tarifs
-              </a>
-              
-              <a 
-                href="/blog"
-                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Blog
-              </a>
-              
-              <a 
-                href="/careers"
-                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Carrières
-              </a>
-              
-              <a 
-                href="/help"
-                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Aide
-              </a>
-
-              <div className="border-t border-gray-100 pt-4 flex flex-col space-y-3">
-                <Button asChild variant="outline" className="w-full justify-center">
-                  <a href="/contact">
-                    Nous contacter
-                  </a>
-                </Button>
-                
-                <Button asChild className="w-full justify-center bg-custom-blue">
-                  <a href="/auth">
-                    Connexion
-                  </a>
-                </Button>
-
-                <div className="flex justify-center gap-4 pt-2">
-                  <button 
-                    className={`p-2 rounded-full transition-colors flex items-center ${currentLanguage === 'fr' ? 'bg-gray-100' : ''}`}
-                    onClick={() => changeLanguage('fr')}
-                  >
-                    <img src="/flags/fr.svg" alt="Français" className="w-5 h-5" />
-                    <span className="ml-1 text-sm font-medium">FR</span>
-                  </button>
-                  <button 
-                    className={`p-2 rounded-full transition-colors flex items-center ${currentLanguage === 'en' ? 'bg-gray-100' : ''}`}
-                    onClick={() => changeLanguage('en')}
-                  >
-                    <img src="/flags/en.svg" alt="English" className="w-5 h-5" />
-                    <span className="ml-1 text-sm font-medium">EN</span>
-                  </button>
-                </div>
-              </div>
+                </>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

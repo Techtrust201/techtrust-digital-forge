@@ -16,6 +16,11 @@ import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPostView from "./pages/dashboard/blog/BlogPostView";
+import Solutions from "./pages/Solutions";
+import Help from "./pages/Help";
+import LegalMentions from "./pages/LegalMentions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +50,11 @@ const App = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPostView />} />
+              <Route path="/solutions" element={<Solutions />} />
+              <Route path="/help" element={<Help />} />
+              <Route path="/legal" element={<LegalMentions />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
