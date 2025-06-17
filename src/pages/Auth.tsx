@@ -58,17 +58,13 @@ const Auth = () => {
     isAuthenticated 
   });
 
-  // Redirection automatique après connexion réussie
+  // Si l'utilisateur est déjà connecté et vérifié, lui proposer d'aller au dashboard
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
-      console.log('[AUTH_PAGE] Utilisateur connecté et vérifié - redirection');
-      if (profile?.role === 'super_admin') {
-        setTimeout(() => navigate('/admin/dashboard'), 1500);
-      } else {
-        setTimeout(() => navigate('/dashboard'), 1500);
-      }
+      console.log('[AUTH_PAGE] Utilisateur déjà connecté - affichage message');
+      setSuccess('Vous êtes déjà connecté ! Cliquez ci-dessous pour accéder à votre dashboard.');
     }
-  }, [isAuthenticated, isLoading, profile?.role, navigate]);
+  }, [isAuthenticated, isLoading]);
 
   // Gérer les paramètres URL
   useEffect(() => {
@@ -100,7 +96,7 @@ const Auth = () => {
       } else if (error.message.includes('Email not confirmed')) {
         // Exception pour l'admin
         if (loginForm.email === 'contact@tech-trust.fr') {
-          setSuccess('Connexion admin réussie ! Redirection en cours...');
+          setSuccess('Connexion admin réussie ! Redirection automatique vers l\'interface admin...');
         } else {
           setError('Votre email n\'est pas encore vérifié. Vérifiez votre boîte email.');
           setShowEmailModal(true);
@@ -111,12 +107,12 @@ const Auth = () => {
     } else if (data.user) {
       console.log('[AUTH_PAGE] Connexion réussie pour:', data.user.email);
       if (loginForm.email === 'contact@tech-trust.fr') {
-        setSuccess('Connexion admin réussie ! Redirection vers l\'interface admin...');
+        setSuccess('Connexion admin réussie ! Vous allez être redirigé automatiquement...');
       } else if (!data.user.email_confirmed_at) {
         setError('Veuillez vérifier votre email avant de vous connecter.');
         setShowEmailModal(true);
       } else {
-        setSuccess('Connexion réussie ! Redirection en cours...');
+        setSuccess('Connexion réussie ! Vous allez être redirigé automatiquement...');
       }
     }
 
@@ -180,6 +176,15 @@ const Auth = () => {
     "name": "Connexion Espace Client Techtrust",
     "description": "Accédez à votre espace client Techtrust pour gérer vos outils IA de growth hacking, community management et solutions digitales.",
     "url": "https://www.tech-trust.fr/auth"
+  };
+
+  // Fonction pour naviguer manuellement vers le dashboard
+  const goToDashboard = () => {
+    if (profile?.role === 'super_admin') {
+      navigate('/admin/dashboard');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   // Afficher l'état de vérification si l'utilisateur est connecté mais pas vérifié (sauf admin)
@@ -287,6 +292,18 @@ const Auth = () => {
                   Accès direct aux fonctionnalités d'administration après connexion.
                 </AlertDescription>
               </Alert>
+            )}
+
+            {/* Bouton pour aller au dashboard si déjà connecté */}
+            {isAuthenticated && (
+              <div className="mb-6">
+                <Button 
+                  onClick={goToDashboard}
+                  className="w-full h-12 text-base bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+                >
+                  Accéder au Dashboard
+                </Button>
+              </div>
             )}
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
