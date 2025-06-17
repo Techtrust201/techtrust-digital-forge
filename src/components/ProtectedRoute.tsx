@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = false }) => {
-  const { user, isLoading, isEmailVerified, profile, isAuthenticated } = useSupabaseAuth();
+  const { user, isLoading, isEmailVerified, profile } = useSupabaseAuth();
   const navigate = useNavigate();
 
   console.log('[PROTECTED] État:', { 
@@ -18,40 +18,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     user: user?.email, 
     isEmailVerified, 
     profileRole: profile?.role, 
-    adminOnly,
-    isAuthenticated
+    adminOnly 
   });
-
-  useEffect(() => {
-    // Ne rien faire pendant le chargement
-    if (isLoading) {
-      console.log('[PROTECTED] En cours de chargement...');
-      return;
-    }
-
-    // Si pas d'utilisateur connecté, rediriger vers auth
-    if (!user) {
-      console.log('[PROTECTED] Pas d\'utilisateur - redirection vers /auth');
-      navigate('/auth', { replace: true });
-      return;
-    }
-
-    // Si l'email n'est pas vérifié (sauf pour l'admin), rediriger vers auth
-    if (!isEmailVerified && user.email !== 'contact@tech-trust.fr') {
-      console.log('[PROTECTED] Email non vérifié - redirection vers /auth');
-      navigate('/auth', { replace: true });
-      return;
-    }
-
-    // Si accès admin requis mais utilisateur pas admin, rediriger vers dashboard normal
-    if (adminOnly && profile && profile.role !== 'super_admin') {
-      console.log('[PROTECTED] Accès admin refusé - redirection vers /dashboard');
-      navigate('/dashboard', { replace: true });
-      return;
-    }
-
-    console.log('[PROTECTED] Accès autorisé');
-  }, [isLoading, user, isEmailVerified, profile, adminOnly, navigate]);
 
   // Pendant le chargement, afficher un skeleton
   if (isLoading) {
@@ -67,20 +35,28 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     );
   }
 
-  // Vérifications finales avant de rendre les enfants
+  // Si pas d'utilisateur connecté
   if (!user) {
-    return null; // La redirection se fait dans useEffect
+    console.log('[PROTECTED] Pas d\'utilisateur - redirection vers /auth');
+    navigate('/auth', { replace: true });
+    return null;
   }
 
+  // Si l'email n'est pas vérifié (sauf pour l'admin)
   if (!isEmailVerified && user.email !== 'contact@tech-trust.fr') {
-    return null; // La redirection se fait dans useEffect
+    console.log('[PROTECTED] Email non vérifié - redirection vers /auth');
+    navigate('/auth', { replace: true });
+    return null;
   }
 
+  // Si accès admin requis mais utilisateur pas admin
   if (adminOnly && profile && profile.role !== 'super_admin') {
-    return null; // La redirection se fait dans useEffect
+    console.log('[PROTECTED] Accès admin refusé - redirection vers /dashboard');
+    navigate('/dashboard', { replace: true });
+    return null;
   }
 
-  console.log('[PROTECTED] Rendu des enfants autorisé');
+  console.log('[PROTECTED] Accès autorisé - rendu des enfants');
   return <>{children}</>;
 };
 
