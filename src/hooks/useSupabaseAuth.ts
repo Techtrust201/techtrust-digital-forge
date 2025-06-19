@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +7,7 @@ interface UserProfile {
   name: string | null;
   company: string | null;
   role: string;
+  tier: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -25,7 +25,7 @@ export const useSupabaseAuth = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, name, company, role, created_at, updated_at')
+        .select('id, name, company, role, tier, created_at, updated_at')
         .eq('id', userId)
         .single();
 

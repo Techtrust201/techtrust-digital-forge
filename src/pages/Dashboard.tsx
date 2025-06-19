@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +25,8 @@ import {
   Plus
 } from 'lucide-react';
 import { useUserSubscriptions } from '@/hooks/useUserSubscriptions';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 interface UserData {
   email: string;
@@ -34,9 +36,14 @@ interface UserData {
   name: string;
 }
 
+const Loading = () => (
+  <div className="flex min-h-screen items-center justify-center">
+    <Skeleton className="w-[300px] h-[80px] rounded-md" />
+  </div>
+);
+
 const Dashboard = () => {
   const { t } = useTranslation();
-  const [userData, setUserData] = useState<UserData | null>(null);
   const [notifications] = useState([
     {
       id: 1,
@@ -54,24 +61,25 @@ const Dashboard = () => {
     }
   ]);
 
-  const { 
-    subscriptions, 
-    loading, 
-    hasAnalyticsAccess, 
+  const { user, profile, isLoading } = useSupabaseAuth();
+  const {
+    subscriptions,
+    loading: subsLoading,
+    hasAnalyticsAccess,
     hasCampaignsAccess,
     hasAdvancedAnalytics,
-    getActivePackages 
+    getActivePackages
   } = useUserSubscriptions();
+  const loadingOverall = isLoading || subsLoading || !user;
 
-  useEffect(() => {
-    // Récupérer les données utilisateur
-    const user = localStorage.getItem('techtrust_user');
-    if (user) {
-      setUserData(JSON.parse(user));
-    } else {
-      window.location.href = '/auth';
-    }
-  }, []);
+  if (loadingOverall) return <Loading />;
+
+  const userData = {
+    email: user.email,
+    name: profile?.name ?? user.email.split('@')[0],
+    role: profile?.role ?? 'client',
+    tier: (profile as { tier?: string })?.tier ?? 'bronze',
+  };
 
   if (!userData) {
     return <div>Chargement...</div>;

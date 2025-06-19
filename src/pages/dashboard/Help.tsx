@@ -1,20 +1,20 @@
-
-import React, { useState } from 'react';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  HelpCircle, 
-  Search, 
-  MessageCircle, 
-  Phone, 
-  Mail, 
-  Book, 
-  Video, 
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  HelpCircle,
+  Search,
+  MessageCircle,
+  Phone,
+  Mail,
+  Book,
+  Video,
   FileText,
   ChevronRight,
   ChevronDown,
@@ -22,137 +22,179 @@ import {
   Send,
   Clock,
   CheckCircle,
-  Star
-} from 'lucide-react';
+  Star,
+} from "lucide-react";
 
 const Help = () => {
-  const [activeTab, setActiveTab] = useState('faq');
-  const [searchQuery, setSearchQuery] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("faq");
+  const [searchQuery, setSearchQuery] = useState("");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [supportForm, setSupportForm] = useState({
-    subject: '',
-    category: 'general',
-    priority: 'normal',
-    message: ''
+    subject: "",
+    category: "general",
+    priority: "normal",
+    message: "",
   });
+
+  useEffect(() => {
+    if (location.pathname.includes("/help/support")) setActiveTab("support");
+    else if (location.pathname.includes("/help/tutorials"))
+      setActiveTab("tutorials");
+    else setActiveTab("faq");
+  }, [location.pathname]);
+
+  const changeTab = (tab: string) => {
+    setActiveTab(tab);
+    const base = "/dashboard/help";
+    switch (tab) {
+      case "support":
+        navigate(base + "/support");
+        break;
+      case "tutorials":
+        navigate(base + "/tutorials");
+        break;
+      default:
+        navigate(base + "/faq");
+    }
+  };
 
   const faqData = [
     {
       id: 1,
-      category: 'Général',
-      question: 'Comment puis-je changer mon plan d\'abonnement ?',
-      answer: 'Vous pouvez modifier votre plan à tout moment depuis la section "Mon Compte > Mon Plan". Les changements prennent effet immédiatement et vous ne payez que la différence au prorata.'
+      category: "Général",
+      question: "Comment puis-je changer mon plan d'abonnement ?",
+      answer:
+        'Vous pouvez modifier votre plan à tout moment depuis la section "Mon Compte > Mon Plan". Les changements prennent effet immédiatement et vous ne payez que la différence au prorata.',
     },
     {
       id: 2,
-      category: 'Growth Hacking',
-      question: 'Comment fonctionne l\'IA de prospection automatisée ?',
-      answer: 'Notre IA analyse votre marché cible, identifie les prospects qualifiés et lance automatiquement des séquences personnalisées. Elle apprend de vos interactions pour améliorer continuellement les performances.'
+      category: "Growth Hacking",
+      question: "Comment fonctionne l'IA de prospection automatisée ?",
+      answer:
+        "Notre IA analyse votre marché cible, identifie les prospects qualifiés et lance automatiquement des séquences personnalisées. Elle apprend de vos interactions pour améliorer continuellement les performances.",
     },
     {
       id: 3,
-      category: 'Site Web',
-      question: 'Combien de temps faut-il pour créer mon site web ?',
-      answer: 'Un site Starter prend 5-7 jours, un site Business 10-15 jours, et un site Premium E-commerce 20-30 jours. Ces délais incluent les révisions et la mise en ligne.'
+      category: "Site Web",
+      question: "Combien de temps faut-il pour créer mon site web ?",
+      answer:
+        "Un site Starter prend 5-7 jours, un site Business 10-15 jours, et un site Premium E-commerce 20-30 jours. Ces délais incluent les révisions et la mise en ligne.",
     },
     {
       id: 4,
-      category: 'Community Management',
-      question: 'Puis-je voir le contenu avant publication ?',
-      answer: 'Absolument ! Tous les contenus sont soumis à votre validation avant publication. Vous recevez un planning éditorial chaque semaine avec aperçu de tous les posts.'
+      category: "Community Management",
+      question: "Puis-je voir le contenu avant publication ?",
+      answer:
+        "Absolument ! Tous les contenus sont soumis à votre validation avant publication. Vous recevez un planning éditorial chaque semaine avec aperçu de tous les posts.",
     },
     {
       id: 5,
-      category: 'Facturation',
-      question: 'Comment puis-je télécharger mes factures ?',
-      answer: 'Toutes vos factures sont disponibles dans la section "Mon Compte > Facturation". Vous pouvez les télécharger en PDF et les recevoir par email automatiquement.'
+      category: "Facturation",
+      question: "Comment puis-je télécharger mes factures ?",
+      answer:
+        'Toutes vos factures sont disponibles dans la section "Mon Compte > Facturation". Vous pouvez les télécharger en PDF et les recevoir par email automatiquement.',
     },
     {
       id: 6,
-      category: 'Technique',
-      question: 'Que faire si j\'ai un problème technique ?',
-      answer: 'Contactez notre support technique via le chat en direct (clients Gold/Diamond) ou par email. Nous garantissons une réponse sous 2h pour les urgences.'
-    }
+      category: "Technique",
+      question: "Que faire si j'ai un problème technique ?",
+      answer:
+        "Contactez notre support technique via le chat en direct (clients Gold/Diamond) ou par email. Nous garantissons une réponse sous 2h pour les urgences.",
+    },
   ];
 
   const tutorialsData = [
     {
-      title: 'Premiers pas avec Techtrust',
-      duration: '10 min',
-      type: 'video',
-      description: 'Découvrez votre dashboard et configurez vos premiers outils',
-      level: 'Débutant'
+      title: "Premiers pas avec Techtrust",
+      duration: "10 min",
+      type: "video",
+      description:
+        "Découvrez votre dashboard et configurez vos premiers outils",
+      level: "Débutant",
     },
     {
-      title: 'Créer sa première campagne email',
-      duration: '15 min',
-      type: 'video',
-      description: 'Guide complet pour lancer votre première campagne marketing',
-      level: 'Débutant'
+      title: "Créer sa première campagne email",
+      duration: "15 min",
+      type: "video",
+      description:
+        "Guide complet pour lancer votre première campagne marketing",
+      level: "Débutant",
     },
     {
-      title: 'Optimiser ses conversions avec l\'IA',
-      duration: '25 min',
-      type: 'video',
-      description: 'Techniques avancées pour maximiser vos taux de conversion',
-      level: 'Avancé'
+      title: "Optimiser ses conversions avec l'IA",
+      duration: "25 min",
+      type: "video",
+      description: "Techniques avancées pour maximiser vos taux de conversion",
+      level: "Avancé",
     },
     {
-      title: 'Automatiser sa prospection',
-      duration: '20 min',
-      type: 'guide',
-      description: 'Configurez des séquences automatisées pour générer des leads',
-      level: 'Intermédiaire'
+      title: "Automatiser sa prospection",
+      duration: "20 min",
+      type: "guide",
+      description:
+        "Configurez des séquences automatisées pour générer des leads",
+      level: "Intermédiaire",
     },
     {
-      title: 'Analyser ses performances',
-      duration: '12 min',
-      type: 'guide',
-      description: 'Comprendre et utiliser les analytics pour améliorer vos résultats',
-      level: 'Intermédiaire'
-    }
+      title: "Analyser ses performances",
+      duration: "12 min",
+      type: "guide",
+      description:
+        "Comprendre et utiliser les analytics pour améliorer vos résultats",
+      level: "Intermédiaire",
+    },
   ];
 
   const supportChannels = [
     {
-      name: 'Chat en direct',
-      description: 'Support instantané pour les clients Gold et Diamond',
+      name: "Chat en direct",
+      description: "Support instantané pour les clients Gold et Diamond",
       icon: MessageCircle,
-      availability: '9h-18h, Lundi-Vendredi',
-      responseTime: 'Immédiat',
-      color: 'text-green-500',
-      available: true
+      availability: "9h-18h, Lundi-Vendredi",
+      responseTime: "Immédiat",
+      color: "text-green-500",
+      available: true,
     },
     {
-      name: 'Support par email',
-      description: 'Pour toutes vos questions et demandes',
+      name: "Support par email",
+      description: "Pour toutes vos questions et demandes",
       icon: Mail,
-      availability: '24h/24, 7j/7',
-      responseTime: '< 2h (urgences), < 24h (standard)',
-      color: 'text-blue-500',
-      available: true
+      availability: "24h/24, 7j/7",
+      responseTime: "< 2h (urgences), < 24h (standard)",
+      color: "text-blue-500",
+      available: true,
     },
     {
-      name: 'Support téléphonique',
-      description: 'Assistance directe pour les clients Diamond',
+      name: "Support téléphonique",
+      description: "Assistance directe pour les clients Diamond",
       icon: Phone,
-      availability: '9h-18h, Lundi-Vendredi',
-      responseTime: 'Immédiat',
-      color: 'text-purple-500',
-      available: false
-    }
+      availability: "9h-18h, Lundi-Vendredi",
+      responseTime: "Immédiat",
+      color: "text-purple-500",
+      available: false,
+    },
   ];
 
-  const filteredFaq = faqData.filter(item =>
-    item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFaq = faqData.filter(
+    (item) =>
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleSupportSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('🎫 Ticket de support créé ! Nous vous répondrons sous 24h à l\'adresse email de votre compte.');
-    setSupportForm({ subject: '', category: 'general', priority: 'normal', message: '' });
+    alert(
+      "🎫 Ticket de support créé ! Nous vous répondrons sous 24h à l'adresse email de votre compte."
+    );
+    setSupportForm({
+      subject: "",
+      category: "general",
+      priority: "normal",
+      message: "",
+    });
   };
 
   const renderFAQ = () => (
@@ -182,19 +224,24 @@ const Help = () => {
             {filteredFaq.map((item) => (
               <div key={item.id} className="border rounded-lg">
                 <button
-                  onClick={() => setExpandedFaq(expandedFaq === item.id ? null : item.id)}
+                  onClick={() =>
+                    setExpandedFaq(expandedFaq === item.id ? null : item.id)
+                  }
                   className="w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <Badge variant="outline" className="text-xs">
                       {item.category}
                     </Badge>
-                    <span className="font-medium text-gray-900">{item.question}</span>
+                    <span className="font-medium text-gray-900">
+                      {item.question}
+                    </span>
                   </div>
-                  {expandedFaq === item.id ? 
-                    <ChevronDown className="w-5 h-5 text-gray-400" /> : 
+                  {expandedFaq === item.id ? (
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                  ) : (
                     <ChevronRight className="w-5 h-5 text-gray-400" />
-                  }
+                  )}
                 </button>
                 {expandedFaq === item.id && (
                   <div className="px-4 pb-4">
@@ -220,14 +267,18 @@ const Help = () => {
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6">
             {tutorialsData.map((tutorial, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card
+                key={index}
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      {tutorial.type === 'video' ? 
-                        <Video className="w-6 h-6 text-red-500" /> : 
+                      {tutorial.type === "video" ? (
+                        <Video className="w-6 h-6 text-red-500" />
+                      ) : (
                         <FileText className="w-6 h-6 text-blue-500" />
-                      }
+                      )}
                       <Badge variant="outline" className="text-xs">
                         {tutorial.level}
                       </Badge>
@@ -237,16 +288,14 @@ const Help = () => {
                       {tutorial.duration}
                     </div>
                   </div>
-                  
+
                   <h3 className="font-bold text-lg text-gray-900 mb-2">
                     {tutorial.title}
                   </h3>
-                  <p className="text-gray-600 mb-4">
-                    {tutorial.description}
-                  </p>
-                  
+                  <p className="text-gray-600 mb-4">{tutorial.description}</p>
+
                   <Button className="w-full" variant="outline">
-                    {tutorial.type === 'video' ? 'Regarder' : 'Lire'}
+                    {tutorial.type === "video" ? "Regarder" : "Lire"}
                     <ExternalLink className="w-4 h-4 ml-2" />
                   </Button>
                 </CardContent>
@@ -293,9 +342,16 @@ const Help = () => {
             {supportChannels.map((channel) => {
               const ChannelIcon = channel.icon;
               return (
-                <Card key={channel.name} className={`${channel.available ? 'hover:shadow-lg' : 'opacity-60'} transition-shadow`}>
+                <Card
+                  key={channel.name}
+                  className={`${
+                    channel.available ? "hover:shadow-lg" : "opacity-60"
+                  } transition-shadow`}
+                >
                   <CardContent className="p-6 text-center">
-                    <ChannelIcon className={`w-12 h-12 ${channel.color} mx-auto mb-4`} />
+                    <ChannelIcon
+                      className={`w-12 h-12 ${channel.color} mx-auto mb-4`}
+                    />
                     <h3 className="font-bold text-lg text-gray-900 mb-2">
                       {channel.name}
                     </h3>
@@ -305,18 +361,24 @@ const Help = () => {
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-500">Disponibilité:</span>
-                        <span className="font-medium">{channel.availability}</span>
+                        <span className="font-medium">
+                          {channel.availability}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-gray-500">Réponse:</span>
-                        <span className="font-medium">{channel.responseTime}</span>
+                        <span className="font-medium">
+                          {channel.responseTime}
+                        </span>
                       </div>
                     </div>
-                    <Button 
-                      className={`w-full mt-4 ${channel.available ? '' : 'opacity-50 cursor-not-allowed'}`}
+                    <Button
+                      className={`w-full mt-4 ${
+                        channel.available ? "" : "opacity-50 cursor-not-allowed"
+                      }`}
                       disabled={!channel.available}
                     >
-                      {channel.available ? 'Contacter' : 'Non disponible'}
+                      {channel.available ? "Contacter" : "Non disponible"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -339,7 +401,9 @@ const Help = () => {
                 <Input
                   id="subject"
                   value={supportForm.subject}
-                  onChange={(e) => setSupportForm({...supportForm, subject: e.target.value})}
+                  onChange={(e) =>
+                    setSupportForm({ ...supportForm, subject: e.target.value })
+                  }
                   placeholder="Décrivez brièvement votre problème"
                   className="mt-1"
                   required
@@ -350,7 +414,9 @@ const Help = () => {
                 <select
                   id="category"
                   value={supportForm.category}
-                  onChange={(e) => setSupportForm({...supportForm, category: e.target.value})}
+                  onChange={(e) =>
+                    setSupportForm({ ...supportForm, category: e.target.value })
+                  }
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="general">Question générale</option>
@@ -367,7 +433,9 @@ const Help = () => {
               <select
                 id="priority"
                 value={supportForm.priority}
-                onChange={(e) => setSupportForm({...supportForm, priority: e.target.value})}
+                onChange={(e) =>
+                  setSupportForm({ ...supportForm, priority: e.target.value })
+                }
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="low">Faible - Question générale</option>
@@ -382,15 +450,17 @@ const Help = () => {
               <Textarea
                 id="message"
                 value={supportForm.message}
-                onChange={(e) => setSupportForm({...supportForm, message: e.target.value})}
+                onChange={(e) =>
+                  setSupportForm({ ...supportForm, message: e.target.value })
+                }
                 placeholder="Décrivez votre problème en détail. Incluez les étapes pour reproduire le problème si applicable."
                 className="mt-1 min-h-32"
                 required
               />
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600"
               disabled={!supportForm.subject || !supportForm.message}
             >
@@ -409,15 +479,16 @@ const Help = () => {
         <CardContent className="text-center">
           <div className="flex justify-center gap-2 mb-4">
             {[1, 2, 3, 4, 5].map((star) => (
-              <Star key={star} className="w-8 h-8 text-yellow-500 fill-current cursor-pointer hover:scale-110 transition-transform" />
+              <Star
+                key={star}
+                className="w-8 h-8 text-yellow-500 fill-current cursor-pointer hover:scale-110 transition-transform"
+              />
             ))}
           </div>
           <p className="text-gray-600 mb-4">
             Comment évaluez-vous notre support client ?
           </p>
-          <Button variant="outline">
-            Laisser un avis
-          </Button>
+          <Button variant="outline">Laisser un avis</Button>
         </CardContent>
       </Card>
     </div>
@@ -429,10 +500,14 @@ const Help = () => {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Centre d'aide 🆘</h1>
-            <p className="text-gray-600">Trouvez des réponses et obtenez de l'aide</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Centre d'aide 🆘
+            </h1>
+            <p className="text-gray-600">
+              Trouvez des réponses et obtenez de l'aide
+            </p>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Badge className="bg-green-100 text-green-800">
               <CheckCircle className="w-4 h-4 mr-1" />
@@ -441,38 +516,12 @@ const Help = () => {
           </div>
         </div>
 
-        {/* Navigation */}
-        <div className="flex flex-wrap gap-2 border-b border-gray-200">
-          <Button
-            variant={activeTab === 'faq' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('faq')}
-            className="flex items-center gap-2"
-          >
-            <HelpCircle className="w-4 h-4" />
-            FAQ
-          </Button>
-          <Button
-            variant={activeTab === 'tutorials' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('tutorials')}
-            className="flex items-center gap-2"
-          >
-            <Book className="w-4 h-4" />
-            Tutoriels
-          </Button>
-          <Button
-            variant={activeTab === 'support' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('support')}
-            className="flex items-center gap-2"
-          >
-            <MessageCircle className="w-4 h-4" />
-            Support
-          </Button>
-        </div>
+        {/* Navigation interne retirée - utilisation exclusive de la sidebar */}
 
         {/* Contenu */}
-        {activeTab === 'faq' && renderFAQ()}
-        {activeTab === 'tutorials' && renderTutorials()}
-        {activeTab === 'support' && renderSupport()}
+        {activeTab === "faq" && renderFAQ()}
+        {activeTab === "tutorials" && renderTutorials()}
+        {activeTab === "support" && renderSupport()}
       </div>
     </DashboardLayout>
   );

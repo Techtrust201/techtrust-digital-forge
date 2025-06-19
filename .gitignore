@@ -22,3 +22,35 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Supabase
+.env
+.env.local
+.env.development
+.env.production
+
+# Build et cache
+.cache
+build/
+coverage/
+
+# Fichiers de configuration spécifiques
+*.config.local.js
+*.config.dev.js
+
+# Dossiers de dépendances spécifiques
+.pnp/
+.pnp.js
+
+# Fichiers de test
+/coverage
+.nyc_output
+
+# Fichiers temporaires
+.temp
+.tmp
+*.swp
+*~
+
+# Dossiers de déploiement
+.vercel
+.netlify
