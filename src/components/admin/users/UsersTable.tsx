@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Filter, MoreHorizontal, Edit, Mail, Ban } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Edit, Mail, Ban, Clock, X } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -19,9 +19,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useUserInvitations } from '@/hooks/useUserInvitations';
+import { toast } from 'sonner';
 
 interface User {
-  id: number;
+  id: number | string;
   name: string;
   email: string;
   role: string;
@@ -29,6 +31,7 @@ interface User {
   status: string;
   created: string;
   lastLogin: string;
+  type?: 'user' | 'invitation';
 }
 
 interface UsersTableProps {
@@ -58,6 +61,19 @@ const UsersTable: React.FC<UsersTableProps> = ({
   getStatusLabel,
   onEditUser
 }) => {
+  const { cancelInvitation } = useUserInvitations();
+
+  const handleCancelInvitation = async (userId: string) => {
+    if (userId.startsWith('invitation_')) {
+      const invitationId = userId.replace('invitation_', '');
+      const result = await cancelInvitation(invitationId);
+      if (result.success) {
+        // Recharger la page ou actualiser les données
+        window.location.reload();
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -120,6 +136,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
           <TableHeader>
             <TableRow>
               <TableHead>Utilisateur</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Statut</TableHead>
               <TableHead>Formules</TableHead>
               <TableHead>Création</TableHead>
@@ -140,6 +157,18 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                  <Badge className={user.type === 'invitation' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}>
+                    {user.type === 'invitation' ? (
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        Invitation
+                      </div>
+                    ) : (
+                      'Compte actif'
+                    )}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge className={getStatusColor(user.status)}>
@@ -172,18 +201,36 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEditUser(user)}>
-                        <Edit className="w-4 h-4 mr-2" />
-                        Modifier les formules
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Mail className="w-4 h-4 mr-2" />
-                        Contacter
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
-                        <Ban className="w-4 h-4 mr-2" />
-                        Suspendre
-                      </DropdownMenuItem>
+                      {user.type === 'user' ? (
+                        <>
+                          <DropdownMenuItem onClick={() => onEditUser(user)}>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Modifier les formules
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Mail className="w-4 h-4 mr-2" />
+                            Contacter
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600">
+                            <Ban className="w-4 h-4 mr-2" />
+                            Suspendre
+                          </DropdownMenuItem>
+                        </>
+                      ) : (
+                        <>
+                          <DropdownMenuItem>
+                            <Mail className="w-4 h-4 mr-2" />
+                            Renvoyer l'invitation
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => handleCancelInvitation(user.id.toString())}
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Annuler l'invitation
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

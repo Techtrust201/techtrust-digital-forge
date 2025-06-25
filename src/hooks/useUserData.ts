@@ -6,11 +6,14 @@ import { supabase } from '@/integrations/supabase/client';
 export const useUserData = () => {
   const location = useLocation();
 
-  // Récupérer les données réelles des utilisateurs avec leurs subscriptions
+  // Récupérer les données des utilisateurs avec une requête qui combine profiles et invitations
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['admin-users', location.pathname],
     queryFn: async () => {
-      let query = supabase
+      console.log('[USER_DATA] Fetching users for path:', location.pathname);
+
+      // Requête pour récupérer les utilisateurs réels (avec profils créés)
+      const { data: profileUsers, error: profileError } = await supabase
         .from('profiles')
         .select(`
           id,
@@ -27,34 +30,97 @@ export const useUserData = () => {
           )
         `);
 
-      // Filtrer selon la route
+      if (profileError) {
+        console.error('[USER_DATA] Error fetching profiles:', profileError);
+        throw profileError;
+      }
+
+      // Requête pour récupérer les invitations en attente
+      const { data: pendingInvitations, error: invitationError } = await supabase
+        .from('user_invitations')
+        .select('*')
+        .eq('status', 'pending');
+
+      if (invitationError) {
+        console.error('[USER_DATA] Error fetching invitations:', invitationError);
+        // Ne pas bloquer si les invitations échouent
+      }
+
+      console.log('[USER_DATA] Profile users:', profileUsers?.length || 0);
+      console.log('[USER_DATA] Pending invitations:', pendingInvitations?.length || 0);
+
+      // Combiner les données selon la route
+      let combinedUsers: any[] = [];
+
       if (location.pathname.includes('/new')) {
+        // Page "nouveaux comptes" : utilisateurs récents + invitations en attente
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        query = query.gte('created_at', sevenDaysAgo.toISOString());
+        
+        const recentUsers = profileUsers?.filter(user => 
+          new Date(user.created_at) >= sevenDaysAgo
+        ) || [];
+
+        combinedUsers = [
+          ...recentUsers.map((user: any, index: number) => ({
+            id: `profile_${user.id}`,
+            name: user.name || 'Utilisateur sans nom',
+            email: `user-${user.id}@example.com`, // Placeholder
+            role: 'client',
+            packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+            status: user.status || 'active',
+            tier: user.tier || 'bronze',
+            created: new Date(user.created_at).toLocaleDateString('fr-FR'),
+            lastLogin: 'Récent',
+            type: 'user'
+          })),
+          ...(pendingInvitations?.map((invitation: any, index: number) => ({
+            id: `invitation_${invitation.id}`,
+            name: invitation.name,
+            email: invitation.email,
+            role: 'client',
+            packages: invitation.selected_packages || [],
+            status: 'pending',
+            tier: 'bronze',
+            created: new Date(invitation.created_at).toLocaleDateString('fr-FR'),
+            lastLogin: 'En attente d\'activation',
+            type: 'invitation'
+          })) || [])
+        ];
       } else if (location.pathname.includes('/suspended')) {
-        query = query.eq('status', 'suspended');
+        // Page "comptes suspendus" : uniquement les profils suspendus
+        combinedUsers = profileUsers?.filter(user => user.status === 'suspended')
+          .map((user: any, index: number) => ({
+            id: `profile_${user.id}`,
+            name: user.name || 'Utilisateur sans nom',
+            email: `user-${user.id}@example.com`,
+            role: 'client',
+            packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+            status: user.status || 'suspended',
+            tier: user.tier || 'bronze',
+            created: new Date(user.created_at).toLocaleDateString('fr-FR'),
+            lastLogin: 'Suspendu',
+            type: 'user'
+          })) || [];
+      } else {
+        // Page "tous les utilisateurs" : profils actifs uniquement
+        combinedUsers = profileUsers?.filter(user => user.status !== 'suspended')
+          .map((user: any, index: number) => ({
+            id: `profile_${user.id}`,
+            name: user.name || 'Utilisateur sans nom',
+            email: `user-${user.id}@example.com`,
+            role: 'client',
+            packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+            status: user.status || 'active',
+            tier: user.tier || 'bronze',
+            created: new Date(user.created_at).toLocaleDateString('fr-FR'),
+            lastLogin: 'Récent',
+            type: 'user'
+          })) || [];
       }
 
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching users:', error);
-        throw error;
-      }
-
-      // Transformer les données pour correspondre au format attendu
-      return data?.map((user: any, index: number) => ({
-        id: index + 1,
-        name: user.name || 'Utilisateur sans nom',
-        email: `user-${user.id}@example.com`, // Placeholder car nous n'avons pas l'email dans profiles
-        role: 'client',
-        packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
-        status: user.status || 'active',
-        tier: user.tier || 'bronze',
-        created: new Date(user.created_at).toLocaleDateString('fr-FR'),
-        lastLogin: 'Récent'
-      })) || [];
+      console.log('[USER_DATA] Combined users:', combinedUsers.length);
+      return combinedUsers;
     },
   });
 
@@ -68,7 +134,7 @@ export const useUserData = () => {
 
   const getPageDescription = () => {
     const path = location.pathname;
-    if (path.includes('/new')) return 'Comptes créés récemment en attente de validation';
+    if (path.includes('/new')) return 'Comptes créés récemment et invitations en attente de validation';
     if (path.includes('/suspended')) return 'Comptes suspendus temporairement ou définitivement';
     if (path.includes('/create')) return 'Créer un nouveau compte utilisateur';
     return 'Gérez tous vos utilisateurs et leurs accès aux packages';
