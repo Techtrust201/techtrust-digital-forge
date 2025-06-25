@@ -76,6 +76,23 @@ export const useUserSubscriptions = () => {
     );
   };
 
+  const getUserTier = () => {
+    // Calculer le tier basé sur les packages actifs
+    const packageIds = subscriptions
+      .filter(sub => sub.status === 'active')
+      .map(sub => sub.package_id);
+    
+    // Logique simplifiée - devrait idéalement utiliser la fonction SQL
+    if (packageIds.some(id => ['growth-enterprise', 'custom-enterprise'].includes(id))) {
+      return 'diamond';
+    } else if (packageIds.some(id => ['website-premium', 'community-premium', 'custom-app'].includes(id))) {
+      return 'gold';
+    } else if (packageIds.some(id => ['website-business', 'growth-pro', 'community-growth'].includes(id))) {
+      return 'silver';
+    }
+    return 'bronze';
+  };
+
   return {
     subscriptions,
     loading,
@@ -86,6 +103,7 @@ export const useUserSubscriptions = () => {
     hasAnalyticsAccess,
     hasCampaignsAccess,
     hasAdvancedAnalytics,
+    getUserTier,
     refetch: fetchSubscriptions
   };
 };

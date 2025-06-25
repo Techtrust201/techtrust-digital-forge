@@ -316,6 +316,45 @@ export type Database = {
         }
         Relationships: []
       }
+      packages: {
+        Row: {
+          category_key: string
+          category_name: string
+          created_at: string | null
+          duration: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price: number
+          tier: string
+        }
+        Insert: {
+          category_key: string
+          category_name: string
+          created_at?: string | null
+          duration?: string | null
+          features?: Json | null
+          id: string
+          is_active?: boolean | null
+          name: string
+          price: number
+          tier: string
+        }
+        Update: {
+          category_key?: string
+          category_name?: string
+          created_at?: string | null
+          duration?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price?: number
+          tier?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -743,6 +782,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_user_tier: {
+        Args: { user_packages: string[] }
+        Returns: string
+      }
       cleanup_expired_invitations: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -765,6 +808,10 @@ export type Database = {
       is_admin: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      sync_user_subscriptions_from_invitation: {
+        Args: { invitation_id: string; new_user_id: string }
+        Returns: undefined
       }
       update_user_role_by_email: {
         Args: { _email: string; _role: string }

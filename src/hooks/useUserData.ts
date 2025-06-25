@@ -1,102 +1,62 @@
 
 import { useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useUserData = () => {
   const location = useLocation();
 
-  const getFilteredUsers = () => {
-    const path = location.pathname;
-    
-    if (path.includes('/new')) {
-      return [
-        {
-          id: 1,
-          name: 'Marie Dubois',
-          email: 'marie.dubois@email.com',
-          role: 'client',
-          packages: ['website-business', 'growth-pro'],
-          status: 'pending',
-          tier: 'gold',
-          created: '2024-01-20',
-          lastLogin: 'Jamais'
-        },
-        {
-          id: 2,
-          name: 'Jean Durand',
-          email: 'jean.durand@email.com',
-          role: 'client',
-          packages: ['community-starter'],
-          status: 'pending',
-          tier: 'bronze',
-          created: '2024-01-19',
-          lastLogin: 'Jamais'
-        }
-      ];
-    }
-    
-    if (path.includes('/suspended')) {
-      return [
-        {
-          id: 3,
-          name: 'Sophie Laurent',
-          email: 'sophie.laurent@email.com',
-          role: 'client',
-          packages: ['community-starter', 'custom-audit'],
-          status: 'suspended',
-          tier: 'silver',
-          created: '2024-01-05',
-          lastLogin: '2024-01-18'
-        },
-        {
-          id: 4,
-          name: 'Paul Moreau',
-          email: 'paul.moreau@email.com',
-          role: 'client',
-          packages: ['website-starter'],
-          status: 'suspended',
-          tier: 'bronze',
-          created: '2023-12-15',
-          lastLogin: '2024-01-10'
-        }
-      ];
-    }
-    
-    return [
-      {
-        id: 1,
-        name: 'Marie Dubois',
-        email: 'marie.dubois@email.com',
-        role: 'client',
-        packages: ['website-business', 'growth-pro'],
-        status: 'active',
-        tier: 'gold',
-        created: '2024-01-15',
-        lastLogin: '2024-01-20'
-      },
-      {
-        id: 2,
-        name: 'Pierre Martin',
-        email: 'pierre.martin@email.com',
-        role: 'client',
-        packages: ['growth-pro', 'community-premium'],
-        status: 'active',
-        tier: 'diamond',
-        created: '2024-01-10',
-        lastLogin: '2024-01-19'
-      },
-      {
-        id: 3,
-        name: 'Sophie Laurent',
-        email: 'sophie.laurent@email.com',
-        role: 'client',
-        packages: ['community-premium'],
-        status: 'suspended',
-        tier: 'silver',
-        created: '2024-01-05',
-        lastLogin: '2024-01-18'
+  // Récupérer les données réelles des utilisateurs avec leurs subscriptions
+  const { data: users = [], isLoading, error } = useQuery({
+    queryKey: ['admin-users', location.pathname],
+    queryFn: async () => {
+      let query = supabase
+        .from('profiles')
+        .select(`
+          id,
+          name,
+          role,
+          status,
+          tier,
+          created_at,
+          user_subscriptions (
+            package_id,
+            package_name,
+            package_category,
+            status
+          )
+        `);
+
+      // Filtrer selon la route
+      if (location.pathname.includes('/new')) {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        query = query.gte('created_at', sevenDaysAgo.toISOString());
+      } else if (location.pathname.includes('/suspended')) {
+        query = query.eq('status', 'suspended');
       }
-    ];
-  };
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+
+      // Transformer les données pour correspondre au format attendu
+      return data?.map((user: any, index: number) => ({
+        id: index + 1,
+        name: user.name || 'Utilisateur sans nom',
+        email: `user-${user.id}@example.com`, // Placeholder car nous n'avons pas l'email dans profiles
+        role: 'client',
+        packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+        status: user.status || 'active',
+        tier: user.tier || 'bronze',
+        created: new Date(user.created_at).toLocaleDateString('fr-FR'),
+        lastLogin: 'Récent'
+      })) || [];
+    },
+  });
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -111,7 +71,7 @@ export const useUserData = () => {
     if (path.includes('/new')) return 'Comptes créés récemment en attente de validation';
     if (path.includes('/suspended')) return 'Comptes suspendus temporairement ou définitivement';
     if (path.includes('/create')) return 'Créer un nouveau compte utilisateur';
-    return 'Gérez tous vos utilisateurs et leurs accès';
+    return 'Gérez tous vos utilisateurs et leurs accès aux packages';
   };
 
   const getStatusColor = (status: string) => {
@@ -132,16 +92,10 @@ export const useUserData = () => {
     }
   };
 
-  // Retourner les propriétés attendues par AdminUsersPage
-  const users = getFilteredUsers();
-  const isLoading = false;
-  const error = null;
-
   return {
     users,
     isLoading,
     error,
-    getFilteredUsers,
     getPageTitle,
     getPageDescription,
     getStatusColor,
