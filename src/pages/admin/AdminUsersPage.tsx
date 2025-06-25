@@ -22,7 +22,9 @@ const AdminUsersPage = () => {
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 
   const {
-    getFilteredUsers,
+    users,
+    isLoading,
+    error,
     getPageTitle,
     getPageDescription,
     getStatusColor,
@@ -32,8 +34,7 @@ const AdminUsersPage = () => {
   const { getPackageById, getPackageColor } = usePackageUtils();
 
   // Filtrer les utilisateurs selon les critères
-  const allUsers = getFilteredUsers();
-  const filteredUsers = allUsers.filter(user => {
+  const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
@@ -103,6 +104,8 @@ const AdminUsersPage = () => {
 
         <UsersTable
           users={filteredUsers}
+          isLoading={isLoading}
+          error={error}
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           getPageDescription={getPageDescription}

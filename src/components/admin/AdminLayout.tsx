@@ -204,7 +204,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: Users,
       href: "/admin/users",
       submenu: [
-        { name: "Tous les utilisateurs", href: "/admin/users/all" },
+        { name: "Tous les utilisateurs", href: "/admin/users" },
         { name: "Nouveaux comptes", href: "/admin/users/new" },
         { name: "Comptes suspendus", href: "/admin/users/suspended" },
         { name: "Créer un compte", href: "/admin/users/create" },
@@ -272,7 +272,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
+      {/* Sidebar - This is the ONLY sidebar that should be rendered */}
       <aside
         className={`${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} ${
           isSidebarCollapsed ? "w-16" : "w-64"
