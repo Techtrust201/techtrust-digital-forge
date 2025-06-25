@@ -18,25 +18,25 @@ const CreateUserForm = () => {
     email: ''
   });
   
-  const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
+  const { getAllPackages } = usePackageUtils();
   const { sendInvitation, isLoading } = useUserInvitations();
 
-  const addPackage = (packageId: string) => {
-    const packageToAdd = getPackageById(packageId);
+  const handlePackageToggle = (packageId: string) => {
+    const packageToAdd = getAllPackages().find(pkg => pkg.id === packageId);
     if (!packageToAdd) return;
 
     // Supprimer tout package existant de la même catégorie
     const updatedPackages = selectedPackages.filter(id => {
-      const existingPackage = getPackageById(id);
+      const existingPackage = getAllPackages().find(pkg => pkg.id === id);
       return existingPackage?.categoryKey !== packageToAdd.categoryKey;
     });
 
-    // Ajouter le nouveau package
-    setSelectedPackages([...updatedPackages, packageId]);
-  };
-
-  const removePackage = (packageId: string) => {
-    setSelectedPackages(selectedPackages.filter(id => id !== packageId));
+    // Ajouter ou retirer le package
+    if (selectedPackages.includes(packageId)) {
+      setSelectedPackages(selectedPackages.filter(id => id !== packageId));
+    } else {
+      setSelectedPackages([...updatedPackages, packageId]);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -172,12 +172,8 @@ const CreateUserForm = () => {
             <CardContent className="p-6">
               <PackageSelector
                 selectedPackages={selectedPackages}
-                allPackages={getAllPackages()}
-                onAddPackage={addPackage}
-                onRemovePackage={removePackage}
-                getPackageById={getPackageById}
-                getPackageColor={getPackageColor}
-                getTotalPrice={getTotalPrice}
+                onPackageToggle={handlePackageToggle}
+                availablePackages={getAllPackages()}
               />
             </CardContent>
           </Card>
