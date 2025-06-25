@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -73,7 +72,9 @@ const ActivateAccount = () => {
         email: data.email,
         name: data.name,
         company: data.company || '',
-        selected_packages: Array.isArray(data.selected_packages) ? data.selected_packages : [],
+        selected_packages: Array.isArray(data.selected_packages) 
+          ? data.selected_packages.map(pkg => String(pkg))
+          : [],
         status: data.status,
       };
       
