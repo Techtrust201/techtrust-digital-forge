@@ -132,7 +132,15 @@ export const useUserData = () => {
     }
   };
 
+  // Return the expected properties
+  const users = getFilteredUsers();
+  const isLoading = false;
+  const error = null;
+
   return {
+    users,
+    isLoading,
+    error,
     getFilteredUsers,
     getPageTitle,
     getPageDescription,
