@@ -23,11 +23,11 @@ function App() {
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
-          {/* Routes Admin */}
-          <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminLayout><AdminUsersPage /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly={true}><AdminLayout><AdminUsersPage /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/users" element={<ProtectedRoute adminOnly={true}><AdminLayout><AdminUsersPage /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/users/create" element={<ProtectedRoute adminOnly={true}><AdminLayout><AdminUsersPage /></AdminLayout></ProtectedRoute>} />
+          {/* Routes Admin - retirer AdminLayout car il est déjà dans AdminUsersPage */}
+          <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminUsersPage /></ProtectedRoute>} />
+          <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly={true}><AdminUsersPage /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute adminOnly={true}><AdminUsersPage /></ProtectedRoute>} />
+          <Route path="/admin/users/create" element={<ProtectedRoute adminOnly={true}><AdminUsersPage /></ProtectedRoute>} />
 
           {/* Nouvelle route pour l'activation de compte */}
           <Route path="/activate-account" element={<ActivateAccount />} />

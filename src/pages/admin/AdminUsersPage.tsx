@@ -1,96 +1,108 @@
 
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { UserPlus } from 'lucide-react';
-import UserStatsCards from '@/components/admin/users/UserStatsCards';
-import CreateUserForm from '@/components/admin/users/CreateUserForm';
-import UsersTable from '@/components/admin/users/UsersTable';
-import EditUserDialog from '@/components/admin/users/EditUserDialog';
-import SearchFilters from '@/components/admin/SearchFilters';
-import CreateUserModal from '@/components/admin/CreateUserModal';
-import { useUserData } from '@/hooks/useUserData';
-import { usePackageUtils } from '@/hooks/usePackageUtils';
+import React, { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Navigate } from "react-router-dom";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import CreateUserModal from "@/components/admin/CreateUserModal";
+import SearchFilters from "@/components/admin/SearchFilters";
+import UserStatsCards from "@/components/admin/users/UserStatsCards";
+import UsersTable from "@/components/admin/users/UsersTable";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { useUserData } from "@/hooks/useUserData";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Users,
+  UserPlus,
+  Shield,
+  Crown,
+  Diamond,
+  Rocket,
+} from "lucide-react";
 
 const AdminUsersPage = () => {
-  const location = useLocation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [tierFilter, setTierFilter] = useState('all');
-  const [editingUser, setEditingUser] = useState<any>(null);
+  const { t } = useTranslation();
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [tierFilter, setTierFilter] = useState("all");
 
   const {
-    getFilteredUsers,
-    getPageTitle,
-    getPageDescription,
-    getStatusColor,
-    getStatusLabel
-  } = useUserData();
+    user,
+    profile,
+    isLoading: authLoading,
+    canAccessAdmin,
+  } = useSupabaseAuth();
 
-  const { getPackageById, getPackageColor } = usePackageUtils();
+  const { users, isLoading: usersLoading, error } = useUserData();
 
-  // Filtrer les utilisateurs selon les critères
-  const allUsers = getFilteredUsers();
-  const filteredUsers = allUsers.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-    const matchesTier = tierFilter === 'all' || user.tier === tierFilter;
-    
-    return matchesSearch && matchesStatus && matchesTier;
-  });
+  const isSuperAdmin =
+    canAccessAdmin || user?.email === "contact@tech-trust.fr";
 
-  const openEditDialog = (user: any) => {
-    setEditingUser(user);
-  };
+  // Filtrage des utilisateurs
+  const filteredUsers = useMemo(() => {
+    if (!users) return [];
 
-  const saveUserPackages = (packages: string[]) => {
-    console.log('Sauvegarde des formules pour', editingUser?.name, ':', packages);
-    setEditingUser(null);
-  };
+    return users.filter((user) => {
+      const matchesSearch =
+        user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || user.status === statusFilter;
+
+      const matchesTier = tierFilter === "all" || user.tier === tierFilter;
+
+      return matchesSearch && matchesStatus && matchesTier;
+    });
+  }, [users, searchTerm, statusFilter, tierFilter]);
 
   const clearFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('all');
-    setTierFilter('all');
+    setSearchTerm("");
+    setStatusFilter("all");
+    setTierFilter("all");
   };
 
-  // Si on est sur la page de création
-  if (location.pathname.includes('/create')) {
+  if (authLoading) {
     return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
-          </div>
-          <CreateUserForm />
-        </div>
-      </AdminLayout>
+      <div className="flex min-h-screen items-center justify-center">
+        <Skeleton className="w-[300px] h-[80px] rounded-md" />
+      </div>
     );
   }
 
+  if (!user) return <Navigate to="/auth" replace />;
+  if (!isSuperAdmin) return <Navigate to="/dashboard" replace />;
+
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{getPageTitle()}</h1>
-            <p className="text-gray-500 mt-2">{getPageDescription()}</p>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Users className="w-8 h-8 text-blue-500" />
+              Tous les utilisateurs
+            </h1>
+            <p className="text-gray-600">
+              Gérez tous vos utilisateurs et leurs accès
+            </p>
           </div>
-          <Button 
-            className="bg-red-500 hover:bg-red-600"
+          <Button
             onClick={() => setShowCreateUserModal(true)}
+            className="bg-blue-600 hover:bg-blue-700"
           >
             <UserPlus className="w-4 h-4 mr-2" />
-            Inviter un client
+            Créer un utilisateur
           </Button>
         </div>
 
-        <UserStatsCards />
+        {/* Stats Cards */}
+        <UserStatsCards users={users} />
 
+        {/* Filtres de recherche */}
         <SearchFilters
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -101,30 +113,18 @@ const AdminUsersPage = () => {
           onClearFilters={clearFilters}
         />
 
+        {/* Table des utilisateurs */}
         <UsersTable
           users={filteredUsers}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          getPageDescription={getPageDescription}
-          getPackageById={getPackageById}
-          getPackageColor={getPackageColor}
-          getStatusColor={getStatusColor}
-          getStatusLabel={getStatusLabel}
-          onEditUser={openEditDialog}
-        />
-
-        <EditUserDialog
-          user={editingUser}
-          isOpen={!!editingUser}
-          onClose={() => setEditingUser(null)}
-          onSave={saveUserPackages}
-        />
-
-        <CreateUserModal 
-          isOpen={showCreateUserModal}
-          onClose={() => setShowCreateUserModal(false)}
+          isLoading={usersLoading}
+          error={error}
         />
       </div>
+
+      <CreateUserModal
+        isOpen={showCreateUserModal}
+        onClose={() => setShowCreateUserModal(false)}
+      />
     </AdminLayout>
   );
 };
