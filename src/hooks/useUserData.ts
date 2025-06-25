@@ -6,36 +6,21 @@ import { supabase } from '@/integrations/supabase/client';
 export const useUserData = () => {
   const location = useLocation();
 
-  // Récupérer les données des utilisateurs avec une requête qui combine profiles et invitations
+  // Récupérer les données des utilisateurs avec la nouvelle fonction RPC
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['admin-users', location.pathname],
     queryFn: async () => {
       console.log('[USER_DATA] Fetching users for path:', location.pathname);
 
-      // Requête pour récupérer les utilisateurs réels (avec profils créés)
-      const { data: profileUsers, error: profileError } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          name,
-          role,
-          status,
-          tier,
-          created_at,
-          user_subscriptions (
-            package_id,
-            package_name,
-            package_category,
-            status
-          )
-        `);
+      // Utiliser la nouvelle fonction RPC pour récupérer les vraies données
+      const { data: completeUsers, error: rpcError } = await supabase.rpc('get_complete_user_data');
 
-      if (profileError) {
-        console.error('[USER_DATA] Error fetching profiles:', profileError);
-        throw profileError;
+      if (rpcError) {
+        console.error('[USER_DATA] Error fetching complete user data:', rpcError);
+        throw rpcError;
       }
 
-      // Requête pour récupérer les invitations en attente
+      // Récupérer les invitations en attente
       const { data: pendingInvitations, error: invitationError } = await supabase
         .from('user_invitations')
         .select('*')
@@ -43,10 +28,9 @@ export const useUserData = () => {
 
       if (invitationError) {
         console.error('[USER_DATA] Error fetching invitations:', invitationError);
-        // Ne pas bloquer si les invitations échouent
       }
 
-      console.log('[USER_DATA] Profile users:', profileUsers?.length || 0);
+      console.log('[USER_DATA] Complete users:', completeUsers?.length || 0);
       console.log('[USER_DATA] Pending invitations:', pendingInvitations?.length || 0);
 
       // Combiner les données selon la route
@@ -57,24 +41,29 @@ export const useUserData = () => {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         
-        const recentUsers = profileUsers?.filter(user => 
+        const recentUsers = completeUsers?.filter(user => 
           new Date(user.created_at) >= sevenDaysAgo
         ) || [];
 
         combinedUsers = [
-          ...recentUsers.map((user: any, index: number) => ({
-            id: `profile_${user.id}`,
+          ...recentUsers.map((user: any) => ({
+            id: `profile_${user.user_id}`,
             name: user.name || 'Utilisateur sans nom',
-            email: `user-${user.id}@example.com`, // Placeholder
+            email: user.email,
             role: 'client',
-            packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+            packages: user.packages?.map((pkg: any) => pkg.id) || [],
             status: user.status || 'active',
             tier: user.tier || 'bronze',
             created: new Date(user.created_at).toLocaleDateString('fr-FR'),
             lastLogin: 'Récent',
-            type: 'user'
+            type: 'user',
+            company: user.company,
+            phone: user.phone,
+            position: user.user_position,
+            industry: user.industry,
+            address: user.address
           })),
-          ...(pendingInvitations?.map((invitation: any, index: number) => ({
+          ...(pendingInvitations?.map((invitation: any) => ({
             id: `invitation_${invitation.id}`,
             name: invitation.name,
             email: invitation.email,
@@ -84,38 +73,53 @@ export const useUserData = () => {
             tier: 'bronze',
             created: new Date(invitation.created_at).toLocaleDateString('fr-FR'),
             lastLogin: 'En attente d\'activation',
-            type: 'invitation'
+            type: 'invitation',
+            company: invitation.company,
+            phone: invitation.phone,
+            position: invitation.position,
+            industry: invitation.industry,
+            address: invitation.address
           })) || [])
         ];
       } else if (location.pathname.includes('/suspended')) {
         // Page "comptes suspendus" : uniquement les profils suspendus
-        combinedUsers = profileUsers?.filter(user => user.status === 'suspended')
-          .map((user: any, index: number) => ({
-            id: `profile_${user.id}`,
+        combinedUsers = completeUsers?.filter(user => user.status === 'suspended')
+          .map((user: any) => ({
+            id: `profile_${user.user_id}`,
             name: user.name || 'Utilisateur sans nom',
-            email: `user-${user.id}@example.com`,
+            email: user.email,
             role: 'client',
-            packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+            packages: user.packages?.map((pkg: any) => pkg.id) || [],
             status: user.status || 'suspended',
             tier: user.tier || 'bronze',
             created: new Date(user.created_at).toLocaleDateString('fr-FR'),
             lastLogin: 'Suspendu',
-            type: 'user'
+            type: 'user',
+            company: user.company,
+            phone: user.phone,
+            position: user.user_position,
+            industry: user.industry,
+            address: user.address
           })) || [];
       } else {
-        // Page "tous les utilisateurs" : profils actifs uniquement
-        combinedUsers = profileUsers?.filter(user => user.status !== 'suspended')
-          .map((user: any, index: number) => ({
-            id: `profile_${user.id}`,
+        // Page "tous les utilisateurs" : tous les profils actifs
+        combinedUsers = completeUsers?.filter(user => user.status !== 'suspended')
+          .map((user: any) => ({
+            id: `profile_${user.user_id}`,
             name: user.name || 'Utilisateur sans nom',
-            email: `user-${user.id}@example.com`,
+            email: user.email,
             role: 'client',
-            packages: user.user_subscriptions?.map((sub: any) => sub.package_id) || [],
+            packages: user.packages?.map((pkg: any) => pkg.id) || [],
             status: user.status || 'active',
             tier: user.tier || 'bronze',
             created: new Date(user.created_at).toLocaleDateString('fr-FR'),
             lastLogin: 'Récent',
-            type: 'user'
+            type: 'user',
+            company: user.company,
+            phone: user.phone,
+            position: user.user_position,
+            industry: user.industry,
+            address: user.address
           })) || [];
       }
 

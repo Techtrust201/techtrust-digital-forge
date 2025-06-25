@@ -794,6 +794,45 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_complete_user_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          email: string
+          name: string
+          company: string
+          phone: string
+          user_position: string
+          industry: string
+          address: Json
+          role: string
+          status: string
+          tier: string
+          created_at: string
+          packages: Json
+        }[]
+      }
+      get_user_details: {
+        Args: { target_user_id: string }
+        Returns: {
+          user_id: string
+          email: string
+          name: string
+          company: string
+          phone: string
+          user_position: string
+          industry: string
+          address: Json
+          role: string
+          status: string
+          tier: string
+          created_at: string
+          last_sign_in_at: string
+          packages: Json
+          subscription_count: number
+          total_revenue: number
+        }[]
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -811,6 +850,10 @@ export type Database = {
       }
       sync_user_subscriptions_from_invitation: {
         Args: { invitation_id: string; new_user_id: string }
+        Returns: undefined
+      }
+      update_user_packages: {
+        Args: { target_user_id: string; new_package_ids: string[] }
         Returns: undefined
       }
       update_user_role_by_email: {

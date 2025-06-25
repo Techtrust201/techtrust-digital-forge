@@ -36,7 +36,9 @@ const AdminUsersPage = () => {
   // Filtrer les utilisateurs selon les critères
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (user.company && user.company.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                         (user.phone && user.phone.includes(searchTerm));
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
     const matchesTier = tierFilter === 'all' || user.tier === tierFilter;
     

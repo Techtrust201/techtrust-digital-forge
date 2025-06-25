@@ -1,30 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import PackageSelector from './PackageSelector';
+import { Button } from '@/components/ui/button';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
-import { Save, X } from 'lucide-react';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  packages: string[];
-  status: string;
-  created: string;
-  lastLogin: string;
-}
+import { useUserPackages } from '@/hooks/useUserPackages';
+import PackageSelector from './PackageSelector';
 
 interface EditUserDialogProps {
-  user: User | null;
+  user: any;
   isOpen: boolean;
   onClose: () => void;
   onSave: (packages: string[]) => void;
@@ -36,87 +26,87 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
   onClose,
   onSave
 }) => {
-  const [editingPackages, setEditingPackages] = useState<string[]>([]);
-  const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
+  const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
+  const { getAllPackages, getTotalPrice } = usePackageUtils();
+  const { updateUserPackages, isLoading } = useUserPackages();
 
   useEffect(() => {
-    if (user) {
-      setEditingPackages([...user.packages]);
+    if (user?.packages) {
+      setSelectedPackages(user.packages);
     }
   }, [user]);
 
-  const addPackage = (packageId: string) => {
-    if (!editingPackages.includes(packageId)) {
-      setEditingPackages([...editingPackages, packageId]);
+  const handleSave = async () => {
+    if (!user?.id) return;
+
+    const result = await updateUserPackages(user.id, selectedPackages);
+    
+    if (result.success) {
+      onSave(selectedPackages);
+      onClose();
+      // Forcer le rechargement pour voir les changements
+      window.location.reload();
     }
   };
 
-  const removePackage = (packageId: string) => {
-    setEditingPackages(editingPackages.filter(id => id !== packageId));
-  };
-
-  const handleSave = () => {
-    onSave(editingPackages);
-    onClose();
-  };
-
-  const hasChanges = () => {
-    if (!user) return false;
-    return JSON.stringify(editingPackages.sort()) !== JSON.stringify(user.packages.sort());
-  };
+  const totalPrice = getTotalPrice(selectedPackages);
 
   if (!user) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-medium text-sm">{user.name.charAt(0)}</span>
-            </div>
-            Modifier les formules - {user.name}
+          <DialogTitle>
+            Modifier les formules de {user.name}
           </DialogTitle>
           <DialogDescription>
-            Ajoutez ou supprimez des formules pour ce client. Les changements seront appliqués immédiatement.
+            Gérez les packages et formules attribués à cet utilisateur.
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="py-4">
+
+        <div className="space-y-6">
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">{user.name}</h3>
+                <p className="text-sm text-gray-500">{user.email}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Total mensuel</p>
+                <p className="text-lg font-bold text-green-600">{totalPrice}€</p>
+              </div>
+            </div>
+          </div>
+
           <PackageSelector
-            selectedPackages={editingPackages}
-            allPackages={getAllPackages()}
-            onAddPackage={addPackage}
-            onRemovePackage={removePackage}
-            getPackageById={getPackageById}
-            getPackageColor={getPackageColor}
-            getTotalPrice={getTotalPrice}
+            selectedPackages={selectedPackages}
+            onPackageToggle={(packageId) => {
+              setSelectedPackages(prev =>
+                prev.includes(packageId)
+                  ? prev.filter(id => id !== packageId)
+                  : [...prev, packageId]
+              );
+            }}
+            availablePackages={getAllPackages()}
           />
         </div>
 
-        <div className="flex justify-between items-center pt-4 border-t">
-          <div className="text-sm text-gray-600">
-            {hasChanges() ? (
-              <span className="text-orange-600 font-medium">⚠️ Modifications non sauvegardées</span>
-            ) : (
-              <span className="text-green-600">✓ Aucune modification</span>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose}>
-              <X className="w-4 h-4 mr-2" />
-              Annuler
-            </Button>
-            <Button 
-              className="bg-red-500 hover:bg-red-600" 
-              onClick={handleSave}
-              disabled={!hasChanges()}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Sauvegarder
-            </Button>
-          </div>
-        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+          >
+            Annuler
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Sauvegarde...' : 'Sauvegarder'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
