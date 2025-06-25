@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PackageSelector from './PackageSelector';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
+import { useUserInvitations } from '@/hooks/useUserInvitations';
 import { UserPlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 const CreateUserForm = () => {
-  const [selectedPackages, setSelectedPackages] = useState<string[]>([]); // Retour à un tableau pour plusieurs packages
+  const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -17,6 +19,7 @@ const CreateUserForm = () => {
   });
   
   const { getAllPackages, getPackageById, getPackageColor, getTotalPrice } = usePackageUtils();
+  const { sendInvitation, isLoading } = useUserInvitations();
 
   const addPackage = (packageId: string) => {
     const packageToAdd = getPackageById(packageId);
@@ -47,10 +50,48 @@ const CreateUserForm = () => {
            selectedPackages.length > 0;
   };
 
-  const handleSubmit = () => {
-    if (isFormValid()) {
-      console.log('Création du compte:', { ...formData, packages: selectedPackages });
-      // Handle form submission
+  const handleSubmit = async () => {
+    if (!isFormValid()) {
+      toast.error('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    console.log('Création du compte:', { ...formData, packages: selectedPackages });
+
+    const invitationData = {
+      email: formData.email,
+      name: `${formData.firstName} ${formData.lastName}`,
+      company: '', // Optionnel pour cette interface simplifiée
+      phone: '',
+      position: '',
+      industry: '',
+      address: {
+        street: '',
+        city: '',
+        postalCode: '',
+        country: 'France'
+      },
+      selectedPackages: selectedPackages,
+      notes: `Compte créé depuis l'interface admin pour ${formData.firstName} ${formData.lastName}`,
+    };
+
+    const result = await sendInvitation(invitationData);
+    
+    if (result.success) {
+      toast.success(
+        `Invitation envoyée à ${formData.firstName} ${formData.lastName}`, 
+        {
+          description: "L'utilisateur recevra un email pour activer son compte"
+        }
+      );
+
+      // Reset form après succès
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: ''
+      });
+      setSelectedPackages([]);
     }
   };
 
@@ -106,11 +147,20 @@ const CreateUserForm = () => {
             <div className="pt-4 border-t space-y-2">
               <Button 
                 className="w-full bg-red-500 hover:bg-red-600" 
-                disabled={!isFormValid()}
+                disabled={!isFormValid() || isLoading}
                 onClick={handleSubmit}
               >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Créer le compte
+                {isLoading ? (
+                  <>
+                    <UserPlus className="w-4 h-4 mr-2 animate-spin" />
+                    Envoi en cours...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Créer le compte
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
