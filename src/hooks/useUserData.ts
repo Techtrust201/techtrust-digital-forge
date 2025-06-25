@@ -102,9 +102,10 @@ export const useUserData = () => {
             address: user.address
           })) || [];
       } else {
-        // Page "tous les utilisateurs" : tous les profils actifs
-        combinedUsers = completeUsers?.filter(user => user.status !== 'suspended')
-          .map((user: any) => ({
+        // Page "tous les utilisateurs" : TOUS les profils + invitations en attente
+        combinedUsers = [
+          // Tous les utilisateurs (y compris suspendus)
+          ...(completeUsers?.map((user: any) => ({
             id: `profile_${user.user_id}`,
             name: user.name || 'Utilisateur sans nom',
             email: user.email,
@@ -113,14 +114,33 @@ export const useUserData = () => {
             status: user.status || 'active',
             tier: user.tier || 'bronze',
             created: new Date(user.created_at).toLocaleDateString('fr-FR'),
-            lastLogin: 'Récent',
+            lastLogin: user.status === 'suspended' ? 'Suspendu' : 'Récent',
             type: 'user',
             company: user.company,
             phone: user.phone,
             position: user.user_position,
             industry: user.industry,
             address: user.address
-          })) || [];
+          })) || []),
+          // Toutes les invitations en attente
+          ...(pendingInvitations?.map((invitation: any) => ({
+            id: `invitation_${invitation.id}`,
+            name: invitation.name,
+            email: invitation.email,
+            role: 'client',
+            packages: invitation.selected_packages || [],
+            status: 'pending',
+            tier: 'bronze',
+            created: new Date(invitation.created_at).toLocaleDateString('fr-FR'),
+            lastLogin: 'En attente d\'activation',
+            type: 'invitation',
+            company: invitation.company,
+            phone: invitation.phone,
+            position: invitation.position,
+            industry: invitation.industry,
+            address: invitation.address
+          })) || [])
+        ];
       }
 
       console.log('[USER_DATA] Combined users:', combinedUsers.length);
