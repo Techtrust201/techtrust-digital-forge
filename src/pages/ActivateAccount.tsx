@@ -66,7 +66,18 @@ const ActivateAccount = () => {
       }
 
       console.log('[ACTIVATION] Invitation loaded:', data);
-      setInvitation(data);
+      
+      // Convertir les données pour correspondre à notre interface
+      const invitationData: InvitationData = {
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        company: data.company || '',
+        selected_packages: Array.isArray(data.selected_packages) ? data.selected_packages : [],
+        status: data.status,
+      };
+      
+      setInvitation(invitationData);
     } catch (error) {
       console.error('[ACTIVATION] Error loading invitation:', error);
       toast.error('Erreur lors du chargement de l\'invitation');
