@@ -49,6 +49,14 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
     }
   };
 
+  const handlePackageToggle = (packageId: string) => {
+    setSelectedPackages(prev =>
+      prev.includes(packageId)
+        ? prev.filter(id => id !== packageId)
+        : [...prev, packageId]
+    );
+  };
+
   const totalPrice = getTotalPrice(selectedPackages);
 
   if (!user) return null;
@@ -81,13 +89,7 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
 
           <PackageSelector
             selectedPackages={selectedPackages}
-            onPackageToggle={(packageId) => {
-              setSelectedPackages(prev =>
-                prev.includes(packageId)
-                  ? prev.filter(id => id !== packageId)
-                  : [...prev, packageId]
-              );
-            }}
+            onPackageToggle={handlePackageToggle}
             availablePackages={getAllPackages()}
           />
         </div>

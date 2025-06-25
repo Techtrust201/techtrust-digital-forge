@@ -39,6 +39,22 @@ interface UserDetailsModalProps {
   onEditUser?: (user: any) => void;
 }
 
+interface AddressData {
+  street?: string;
+  city?: string;
+  zipCode?: string;
+  country?: string;
+}
+
+interface PackageData {
+  id: string;
+  name: string;
+  category: string;
+  status: string;
+  created_at?: string;
+  expires_at?: string;
+}
+
 const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   isOpen,
   onClose,
@@ -66,6 +82,18 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       case 'diamond': return 'text-purple-600 bg-purple-50';
       default: return 'text-gray-600 bg-gray-50';
     }
+  };
+
+  // Type guard for address data
+  const parseAddress = (address: any): AddressData | null => {
+    if (!address || typeof address !== 'object') return null;
+    return address as AddressData;
+  };
+
+  // Type guard for packages data
+  const parsePackages = (packages: any): PackageData[] => {
+    if (!packages || !Array.isArray(packages)) return [];
+    return packages as PackageData[];
   };
 
   if (isLoading) {
@@ -98,6 +126,8 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   }
 
   const TierIcon = getTierIcon(userDetails.tier);
+  const addressData = parseAddress(userDetails.address);
+  const packagesData = parsePackages(userDetails.packages);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -224,7 +254,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
               </Card>
             </div>
 
-            {userDetails.address && (
+            {addressData && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -234,13 +264,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">
-                    {userDetails.address.street && <p>{userDetails.address.street}</p>}
-                    {userDetails.address.city && (
+                    {addressData.street && <p>{addressData.street}</p>}
+                    {addressData.city && (
                       <p>
-                        {userDetails.address.zipCode} {userDetails.address.city}
+                        {addressData.zipCode} {addressData.city}
                       </p>
                     )}
-                    {userDetails.address.country && <p>{userDetails.address.country}</p>}
+                    {addressData.country && <p>{addressData.country}</p>}
                   </div>
                 </CardContent>
               </Card>
@@ -257,7 +287,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {userDetails.packages?.map((pkg: any) => {
+                  {packagesData.map((pkg: PackageData) => {
                     const packageDetails = getPackageById(pkg.id);
                     return (
                       <div
@@ -292,7 +322,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                       </div>
                     );
                   })}
-                  {(!userDetails.packages || userDetails.packages.length === 0) && (
+                  {packagesData.length === 0 && (
                     <p className="text-gray-500 text-center py-4">
                       Aucun package actif
                     </p>

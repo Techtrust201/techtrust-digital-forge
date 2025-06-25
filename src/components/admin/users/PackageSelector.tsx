@@ -16,25 +16,17 @@ interface Package {
 
 interface PackageSelectorProps {
   selectedPackages: string[];
-  allPackages: Package[];
-  onAddPackage: (packageId: string) => void;
-  onRemovePackage: (packageId: string) => void;
-  getPackageById: (packageId: string) => Package | undefined;
-  getPackageColor: (categoryKey: string) => string;
-  getTotalPrice: (packageIds: string[]) => number;
+  onPackageToggle: (packageId: string) => void;
+  availablePackages: Package[];
 }
 
 const PackageSelector: React.FC<PackageSelectorProps> = ({
   selectedPackages,
-  allPackages,
-  onAddPackage,
-  onRemovePackage,
-  getPackageById,
-  getPackageColor,
-  getTotalPrice
+  onPackageToggle,
+  availablePackages
 }) => {
   // Group packages by category
-  const packagesByCategory = allPackages.reduce((acc, pkg) => {
+  const packagesByCategory = availablePackages.reduce((acc, pkg) => {
     if (!acc[pkg.categoryKey]) {
       acc[pkg.categoryKey] = {
         title: pkg.category,
@@ -47,14 +39,21 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
 
   const isSelected = (packageId: string) => selectedPackages.includes(packageId);
 
-  const handlePackageClick = (pkg: Package) => {
-    if (isSelected(pkg.id)) {
-      // Si le package est déjà sélectionné, on le désélectionne
-      onRemovePackage(pkg.id);
-    } else {
-      // Sélectionner le nouveau package (cela remplacera automatiquement l'ancien de la même catégorie)
-      onAddPackage(pkg.id);
+  const getPackageColor = (categoryKey: string) => {
+    switch (categoryKey) {
+      case 'website': return 'bg-blue-100 text-blue-800';
+      case 'growth': return 'bg-green-100 text-green-800';
+      case 'community': return 'bg-orange-100 text-orange-800';
+      case 'custom': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const getTotalPrice = (packageIds: string[]) => {
+    return packageIds.reduce((total, packageId) => {
+      const pkg = availablePackages.find(p => p.id === packageId);
+      return total + (pkg?.price || 0);
+    }, 0);
   };
 
   return (
@@ -101,7 +100,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                           ? 'border-red-500 bg-red-100 shadow-md'
                           : 'border-gray-200 hover:border-red-300 hover:bg-red-50 hover:shadow-sm'
                       }`}
-                      onClick={() => handlePackageClick(pkg)}
+                      onClick={() => onPackageToggle(pkg.id)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -140,7 +139,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedPackages.map(packageId => {
-                    const pkg = getPackageById(packageId);
+                    const pkg = availablePackages.find(p => p.id === packageId);
                     if (!pkg) return null;
                     return (
                       <Badge 
@@ -152,7 +151,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({
                           size="sm"
                           variant="ghost"
                           className="h-4 w-4 p-0 hover:bg-transparent"
-                          onClick={() => onRemovePackage(packageId)}
+                          onClick={() => onPackageToggle(packageId)}
                         >
                           <X className="w-3 h-3" />
                         </Button>
