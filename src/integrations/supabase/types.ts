@@ -578,6 +578,66 @@ export type Database = {
         }
         Relationships: []
       }
+      user_invitations: {
+        Row: {
+          activated_at: string | null
+          address: Json | null
+          company: string | null
+          created_at: string
+          created_by: string | null
+          email: string
+          expires_at: string
+          id: string
+          industry: string | null
+          invitation_token: string
+          name: string
+          notes: string | null
+          phone: string | null
+          position: string | null
+          selected_packages: Json
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          address?: Json | null
+          company?: string | null
+          created_at?: string
+          created_by?: string | null
+          email: string
+          expires_at?: string
+          id?: string
+          industry?: string | null
+          invitation_token: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          selected_packages?: Json
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          address?: Json | null
+          company?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          industry?: string | null
+          invitation_token?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          selected_packages?: Json
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           createdAt: string
@@ -683,6 +743,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_invitations: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      generate_invitation_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       has_role: {
         Args: {
           _user_id: string

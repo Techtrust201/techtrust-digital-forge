@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { X, UserPlus } from 'lucide-react';
+import { X, UserPlus, Mail } from 'lucide-react';
 import { usePackageUtils } from '@/hooks/usePackageUtils';
+import { useUserInvitations } from '@/hooks/useUserInvitations';
 import { CreateUserModalProps, FormData } from './createUser/types';
 import ProgressBar from './createUser/ProgressBar';
 import PersonalInfoStep from './createUser/PersonalInfoStep';
@@ -30,9 +31,9 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
     selectedPackages: [],
     notes: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const { getPackageById, getTotalPrice } = usePackageUtils();
+  const { sendInvitation, isLoading } = useUserInvitations();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -95,48 +96,26 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
       return;
     }
 
-    setIsLoading(true);
+    const invitationData = {
+      email: formData.email,
+      name: `${formData.firstName} ${formData.lastName}`,
+      company: formData.company,
+      phone: formData.phone,
+      position: formData.position,
+      industry: formData.industry,
+      address: {
+        street: formData.address,
+        city: formData.city,
+        postalCode: formData.postalCode,
+        country: formData.country
+      },
+      selectedPackages: formData.selectedPackages,
+      notes: formData.notes,
+    };
 
-    try {
-      // Vérifier si l'utilisateur existe déjà
-      const existingUsers = JSON.parse(localStorage.getItem('admin_users') || '[]');
-      const userExists = existingUsers.some((user: any) => user.email === formData.email);
-      
-      if (userExists) {
-        toast.error('Un utilisateur avec cet email existe déjà');
-        return;
-      }
-
-      // Créer le nouvel utilisateur avec les vrais packages
-      const selectedPackageDetails = formData.selectedPackages.map(id => getPackageById(id)).filter(Boolean);
-      
-      const newUser = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        position: formData.position,
-        industry: formData.industry,
-        address: {
-          street: formData.address,
-          city: formData.city,
-          postalCode: formData.postalCode,
-          country: formData.country
-        },
-        packages: selectedPackageDetails,
-        selectedPackages: formData.selectedPackages,
-        notes: formData.notes,
-        status: 'active',
-        joinDate: new Date().toISOString().split('T')[0],
-        revenue: getTotalPrice(formData.selectedPackages)
-      };
-
-      // Sauvegarder localement
-      const updatedUsers = [...existingUsers, newUser];
-      localStorage.setItem('admin_users', JSON.stringify(updatedUsers));
-
-      toast.success(`Client ${formData.firstName} ${formData.lastName} créé avec succès`);
+    const result = await sendInvitation(invitationData);
+    
+    if (result.success) {
       onClose();
       
       // Reset form
@@ -148,15 +127,12 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         selectedPackages: [], notes: ''
       });
 
-      // Actualiser la page pour voir le nouvel utilisateur
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-
-    } catch (error) {
-      toast.error('Erreur lors de la création du client');
-    } finally {
-      setIsLoading(false);
+      toast.success(
+        `Invitation envoyée à ${formData.firstName} ${formData.lastName}`, 
+        {
+          description: "L'utilisateur recevra un email pour activer son compte"
+        }
+      );
     }
   };
 
@@ -188,8 +164,8 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between text-xl">
             <div className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-red-500" />
-              Créer un nouveau client
+              <Mail className="w-5 h-5 text-red-500" />
+              Inviter un nouveau client
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="w-4 h-4" />
@@ -227,13 +203,31 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
               disabled={isLoading || !isStepValid(1) || !isStepValid(2) || !isStepValid(4)}
               className="bg-red-500 hover:bg-red-600"
             >
-              {isLoading ? 'Création...' : 'Créer le client'}
+              {isLoading ? (
+                <>
+                  <Mail className="w-4 h-4 mr-2 animate-spin" />
+                  Envoi en cours...
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Envoyer l'invitation
+                </>
+              )}
             </Button>
           )}
         </div>
 
         {/* Récapitulatif en dernière étape */}
-        {currentStep === 4 && <Summary formData={formData} />}
+        {currentStep === 4 && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h3 className="font-medium text-gray-900 mb-2">Récapitulatif de l'invitation</h3>
+            <p className="text-sm text-gray-600">
+              Un email d'invitation sera envoyé à <strong>{formData.email}</strong> avec 
+              les instructions pour créer son compte et accéder aux services sélectionnés.
+            </p>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

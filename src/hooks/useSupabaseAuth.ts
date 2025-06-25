@@ -56,12 +56,12 @@ export const useSupabaseAuth = () => {
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Charger le profil utilisateur
+          // Charger le profil utilisateur avec un délai pour permettre au trigger de s'exécuter
           setTimeout(() => {
             if (mounted) {
               loadUserProfile(session.user.id);
             }
-          }, 100);
+          }, 500); // Augmenté à 500ms pour les nouveaux utilisateurs
         } else {
           setProfile(null);
         }

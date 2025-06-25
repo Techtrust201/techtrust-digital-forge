@@ -85,7 +85,7 @@ const AdminUsersPage = () => {
             onClick={() => setShowCreateUserModal(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" />
-            Nouveau client
+            Inviter un client
           </Button>
         </div>
 
