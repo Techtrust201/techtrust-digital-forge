@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -76,53 +77,55 @@ const AdminUsersPage = () => {
   if (!isSuperAdmin) return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Users className="w-8 h-8 text-blue-500" />
-            Tous les utilisateurs
-          </h1>
-          <p className="text-gray-600">
-            Gérez tous vos utilisateurs et leurs accès
-          </p>
+    <AdminLayout>
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Users className="w-8 h-8 text-blue-500" />
+              Tous les utilisateurs
+            </h1>
+            <p className="text-gray-600">
+              Gérez tous vos utilisateurs et leurs accès
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowCreateUserModal(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <UserPlus className="w-4 h-4 mr-2" />
+            Créer un utilisateur
+          </Button>
         </div>
-        <Button
-          onClick={() => setShowCreateUserModal(true)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <UserPlus className="w-4 h-4 mr-2" />
-          Créer un utilisateur
-        </Button>
+
+        {/* Stats Cards */}
+        <UserStatsCards users={users} />
+
+        {/* Filtres de recherche */}
+        <SearchFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          tierFilter={tierFilter}
+          onTierFilterChange={setTierFilter}
+          onClearFilters={clearFilters}
+        />
+
+        {/* Table des utilisateurs */}
+        <UsersTable
+          users={filteredUsers}
+          isLoading={usersLoading}
+          error={error}
+        />
       </div>
-
-      {/* Stats Cards */}
-      <UserStatsCards />
-
-      {/* Filtres de recherche */}
-      <SearchFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        tierFilter={tierFilter}
-        onTierFilterChange={setTierFilter}
-        onClearFilters={clearFilters}
-      />
-
-      {/* Table des utilisateurs */}
-      <UsersTable
-        users={filteredUsers}
-        isLoading={usersLoading}
-        error={error}
-      />
 
       <CreateUserModal
         isOpen={showCreateUserModal}
         onClose={() => setShowCreateUserModal(false)}
       />
-    </div>
+    </AdminLayout>
   );
 };
 
