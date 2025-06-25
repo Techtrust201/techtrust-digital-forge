@@ -27,7 +27,18 @@ const ActivateAccount = () => {
   }
 
   if (!invitation) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl text-red-600">Invitation invalide</CardTitle>
+            <CardDescription>
+              Ce lien d'invitation n'est pas valide ou a expiré.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
   }
 
   return (

@@ -37,6 +37,11 @@ export const useAccountCreation = () => {
           data: {
             name: invitation.name,
             company: invitation.company,
+            phone: invitation.phone,
+            position: invitation.position,
+            industry: invitation.industry,
+            address: invitation.address,
+            role: 'client'
           }
         }
       });
@@ -53,6 +58,20 @@ export const useAccountCreation = () => {
       }
 
       console.log('[ACTIVATION] Account created:', authData.user.id);
+
+      // Utiliser la nouvelle fonction pour synchroniser les subscriptions
+      const { error: syncError } = await supabase.rpc('sync_user_subscriptions_from_invitation', {
+        invitation_id: invitation.id,
+        new_user_id: authData.user.id
+      });
+
+      if (syncError) {
+        console.error('[ACTIVATION] Subscription sync error:', syncError);
+        toast.error('Erreur lors de la synchronisation des packages');
+        return;
+      }
+
+      console.log('[ACTIVATION] Subscriptions synchronized successfully');
 
       // Marquer l'invitation comme acceptée
       const { error: updateError } = await supabase
