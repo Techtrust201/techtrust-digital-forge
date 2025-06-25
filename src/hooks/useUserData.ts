@@ -132,7 +132,15 @@ export const useUserData = () => {
     }
   };
 
+  // Retourner les propriétés attendues par AdminUsersPage
+  const users = getFilteredUsers();
+  const isLoading = false;
+  const error = null;
+
   return {
+    users,
+    isLoading,
+    error,
     getFilteredUsers,
     getPageTitle,
     getPageDescription,

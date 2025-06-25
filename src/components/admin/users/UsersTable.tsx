@@ -33,6 +33,8 @@ interface User {
 
 interface UsersTableProps {
   users: User[];
+  isLoading: boolean;
+  error: any;
   searchTerm: string;
   onSearchChange: (term: string) => void;
   getPageDescription: () => string;
@@ -45,6 +47,8 @@ interface UsersTableProps {
 
 const UsersTable: React.FC<UsersTableProps> = ({
   users,
+  isLoading,
+  error,
   searchTerm,
   onSearchChange,
   getPageDescription,
@@ -54,6 +58,38 @@ const UsersTable: React.FC<UsersTableProps> = ({
   getStatusLabel,
   onEditUser
 }) => {
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Liste des utilisateurs</CardTitle>
+          <CardDescription>Chargement...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center p-8">
+            <div className="text-gray-500">Chargement des utilisateurs...</div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Liste des utilisateurs</CardTitle>
+          <CardDescription>Erreur lors du chargement</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center p-8">
+            <div className="text-red-500">Erreur: {error.message || 'Une erreur est survenue'}</div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
