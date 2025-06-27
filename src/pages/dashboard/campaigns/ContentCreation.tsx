@@ -245,7 +245,7 @@ const ContentCreation = () => {
 
                     <div>
                       <Label htmlFor="model">Modèle Seedance</Label>
-                      <Select value={selectedModel} onValueChange={setSelectedModel}>
+                      <Select value={selectedModel} onValueChange={(value) => setSelectedModel(value as 'seedance-1-lite' | 'seedance-1-pro')}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
