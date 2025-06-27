@@ -13,91 +13,91 @@ import {
 export const adminNavigationItems = [
   {
     id: 'dashboard',
-    label: 'Tableau de bord',
+    name: 'Tableau de bord',
     icon: LayoutDashboard,
     href: '/admin/dashboard',
     badge: null
   },
   {
     id: 'users',
-    label: 'Utilisateurs',
+    name: 'Utilisateurs',
     icon: Users,
     href: '/admin/users',
     badge: null,
     submenu: [
-      { label: 'Tous les utilisateurs', href: '/admin/users' },
-      { label: 'Utilisateurs suspendus', href: '/admin/users/suspended' },
-      { label: 'Créer un utilisateur', href: '/admin/users/create' }
+      { name: 'Tous les utilisateurs', href: '/admin/users' },
+      { name: 'Utilisateurs suspendus', href: '/admin/users/suspended' },
+      { name: 'Créer un utilisateur', href: '/admin/users/create' }
     ]
   },
   {
     id: 'analytics',
-    label: 'Analytics',
+    name: 'Analytics',
     icon: BarChart3,
     href: '/admin/analytics',
     badge: null,
     submenu: [
-      { label: 'Vue d\'ensemble', href: '/admin/analytics/overview' },
-      { label: 'Revenus', href: '/admin/analytics/revenue' },
-      { label: 'Performance', href: '/admin/analytics/performance' },
-      { label: 'Utilisateurs', href: '/admin/analytics/users' }
+      { name: 'Vue d\'ensemble', href: '/admin/analytics/overview' },
+      { name: 'Revenus', href: '/admin/analytics/revenue' },
+      { name: 'Performance', href: '/admin/analytics/performance' },
+      { name: 'Utilisateurs', href: '/admin/analytics/users' }
     ]
   },
   {
     id: 'blog',
-    label: 'Blog',
+    name: 'Blog',
     icon: FileText,
     href: '/admin/blog',
     badge: null,
     submenu: [
-      { label: 'Articles', href: '/admin/blog/posts' },
-      { label: 'Créer un article', href: '/admin/blog/create' },
-      { label: 'Catégories', href: '/admin/blog/categories' },
-      { label: 'Commentaires', href: '/admin/blog/comments' }
+      { name: 'Articles', href: '/admin/blog/posts' },
+      { name: 'Créer un article', href: '/admin/blog/create' },
+      { name: 'Catégories', href: '/admin/blog/categories' },
+      { name: 'Commentaires', href: '/admin/blog/comments' }
     ]
   },
   {
     id: 'campaigns',
-    label: 'Campagnes',
+    name: 'Campagnes',
     icon: Zap,
     href: '/admin/campaigns',
     badge: null,
     submenu: [
-      { label: 'Email Marketing', href: '/admin/campaigns/email' },
-      { label: 'SMS Marketing', href: '/admin/campaigns/sms' },
-      { label: 'Automation', href: '/admin/campaigns/automation' }
+      { name: 'Email Marketing', href: '/admin/campaigns/email' },
+      { name: 'SMS Marketing', href: '/admin/campaigns/sms' },
+      { name: 'Automation', href: '/admin/campaigns/automation' }
     ]
   },
   {
     id: 'content-creation',
-    label: 'Création de Contenu IA',
+    name: 'Création de Contenu IA',
     icon: Wand2,
     href: '/admin/content-creation',
     badge: 'Nouveau'
   },
   {
     id: 'billing',
-    label: 'Facturation',
+    name: 'Facturation',
     icon: CreditCard,
     href: '/admin/billing',
     badge: null,
     submenu: [
-      { label: 'Factures', href: '/admin/billing/invoices' },
-      { label: 'Paiements', href: '/admin/billing/payments' },
-      { label: 'Abonnements', href: '/admin/billing/subscriptions' }
+      { name: 'Factures', href: '/admin/billing/invoices' },
+      { name: 'Paiements', href: '/admin/billing/payments' },
+      { name: 'Abonnements', href: '/admin/billing/subscriptions' }
     ]
   },
   {
     id: 'system',
-    label: 'Système',
+    name: 'Système',
     icon: Settings,
     href: '/admin/system',
     badge: null,
     submenu: [
-      { label: 'Configuration', href: '/admin/system/config' },
-      { label: 'Logs', href: '/admin/system/logs' },
-      { label: 'Sauvegardes', href: '/admin/system/backups' },
-      { label: 'Sécurité', href: '/admin/system/security' }
+      { name: 'Configuration', href: '/admin/system/config' },
+      { name: 'Logs', href: '/admin/system/logs' },
+      { name: 'Sauvegardes', href: '/admin/system/backups' },
+      { name: 'Sécurité', href: '/admin/system/security' }
     ]
   }
 ];
