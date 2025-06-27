@@ -1,20 +1,9 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Eye, Trash2 } from 'lucide-react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { ArrowLeft, Trash2, Eye, Calendar, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { BlogPost } from '@/hooks/useBlogData';
 
 interface AdminBlogEditHeaderProps {
@@ -24,98 +13,75 @@ interface AdminBlogEditHeaderProps {
   isDeleting: boolean;
 }
 
-const AdminBlogEditHeader: React.FC<AdminBlogEditHeaderProps> = ({
+const AdminBlogEditHeader = ({
   post,
   onDelete,
   onPreview,
-  isDeleting,
-}) => {
+  isDeleting
+}: AdminBlogEditHeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full bg-gradient-to-tr from-white via-blue-50 to-blue-100 shadow-md rounded-2xl px-6 py-4 flex items-center justify-between mb-4 border border-blue-100">
-      <div className="flex items-center gap-5">
-        <Button
-          type="button"
-          onClick={() => navigate('/admin/blog/posts')}
-          // On passe par les variants Shadcn pour la couleur principale
-          variant="default"
-          className="
-            px-6 py-3
-            font-semibold
-            rounded-full
-            flex items-center gap-2
-            shadow-sm
-            active:scale-95
-            transition-all duration-200
-            text-base
-          "
-          style={{ minHeight: 44 }}
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          <span>Retour</span>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Modifier l'article</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <Badge className={
-              post.status === 'published' ? 'bg-green-100 text-green-800' :
-              post.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-              'bg-gray-100 text-gray-800'
-            }>
-              {post.status === 'published' ? 'Publié' : 
-              post.status === 'scheduled' ? 'Programmé' : 'Brouillon'}
-            </Badge>
-            <span className="text-sm text-gray-500">
-              {post.views} vues • Créé le {new Date(post.created_at).toLocaleDateString('fr-FR')}
-            </span>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/admin/blog/posts')}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Retour
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Modifier l'article</h1>
+            <p className="text-gray-500 mt-1">Éditez les détails de votre article</p>
           </div>
         </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={onPreview}
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            Aperçu
+          </Button>
+          <Button
+            variant="outline"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={onDelete}
+            disabled={isDeleting}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            {isDeleting ? 'Suppression...' : 'Supprimer'}
+          </Button>
+        </div>
       </div>
-      
-      <div className="flex items-center gap-2">
-        <Button 
-          variant="outline" 
-          onClick={onPreview}
-        >
-          <Eye className="w-4 h-4 mr-2" />
-          Aperçu
-        </Button>
-        
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="text-red-600 hover:text-red-700"
-              disabled={isDeleting}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Supprimer
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Supprimer l'article</AlertDialogTitle>
-              <AlertDialogDescription>
-                Êtes-vous sûr de vouloir supprimer "{post.title}" ? Cette action est irréversible.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={onDelete}
-                className="bg-red-600 hover:bg-red-700"
-                disabled={isDeleting}
-              >
-                {isDeleting ? 'Suppression...' : 'Supprimer'}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+
+      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+        <Badge className={
+          post.status === 'published' ? 'bg-green-100 text-green-800' :
+          post.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+          'bg-gray-100 text-gray-800'
+        }>
+          {post.status === 'published' ? 'Publié' : 
+           post.status === 'scheduled' ? 'Programmé' : 'Brouillon'}
+        </Badge>
+        <div className="flex items-center gap-1 text-sm text-gray-500">
+          <User className="w-4 h-4" />
+          {post.author}
+        </div>
+        <div className="flex items-center gap-1 text-sm text-gray-500">
+          <Calendar className="w-4 h-4" />
+          Créé le {new Date(post.created_at).toLocaleDateString('fr-FR')}
+        </div>
+        <div className="flex items-center gap-1 text-sm text-gray-500">
+          <Eye className="w-4 h-4" />
+          {post.views} vues
+        </div>
       </div>
     </div>
   );
 };
 
 export default AdminBlogEditHeader;
-

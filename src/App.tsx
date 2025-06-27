@@ -11,6 +11,12 @@ import AdminUsersPage from '@/pages/admin/AdminUsersPage';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
 import AdminBlogPage from '@/pages/admin/AdminBlogPage';
+import AdminBlogPostsPage from '@/pages/admin/blog/AdminBlogPostsPage';
+import AdminBlogCreatePage from '@/pages/admin/blog/AdminBlogCreatePage';
+import AdminBlogCategoriesPage from '@/pages/admin/blog/AdminBlogCategoriesPage';
+import AdminBlogCommentsPage from '@/pages/admin/blog/AdminBlogCommentsPage';
+import AdminBlogEditPage from '@/pages/admin/blog/AdminBlogEditPage';
+import AdminBlogPreviewPage from '@/pages/admin/blog/AdminBlogPreviewPage';
 import AdminCampaignsPage from '@/pages/admin/AdminCampaignsPage';
 import AdminBillingPage from '@/pages/admin/AdminBillingPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
@@ -45,12 +51,14 @@ function App() {
           <Route path="/admin/analytics/performance" element={<ProtectedRoute adminOnly={true}><AdminAnalyticsPage /></ProtectedRoute>} />
           <Route path="/admin/analytics/users" element={<ProtectedRoute adminOnly={true}><AdminAnalyticsPage /></ProtectedRoute>} />
 
-          {/* Blog */}
+          {/* Blog - Routes mises à jour */}
           <Route path="/admin/blog" element={<ProtectedRoute adminOnly={true}><AdminBlogPage /></ProtectedRoute>} />
-          <Route path="/admin/blog/posts" element={<ProtectedRoute adminOnly={true}><AdminBlogPage /></ProtectedRoute>} />
-          <Route path="/admin/blog/create" element={<ProtectedRoute adminOnly={true}><AdminBlogPage /></ProtectedRoute>} />
-          <Route path="/admin/blog/categories" element={<ProtectedRoute adminOnly={true}><AdminBlogPage /></ProtectedRoute>} />
-          <Route path="/admin/blog/comments" element={<ProtectedRoute adminOnly={true}><AdminBlogPage /></ProtectedRoute>} />
+          <Route path="/admin/blog/posts" element={<ProtectedRoute adminOnly={true}><AdminBlogPostsPage /></ProtectedRoute>} />
+          <Route path="/admin/blog/create" element={<ProtectedRoute adminOnly={true}><AdminBlogCreatePage /></ProtectedRoute>} />
+          <Route path="/admin/blog/categories" element={<ProtectedRoute adminOnly={true}><AdminBlogCategoriesPage /></ProtectedRoute>} />
+          <Route path="/admin/blog/comments" element={<ProtectedRoute adminOnly={true}><AdminBlogCommentsPage /></ProtectedRoute>} />
+          <Route path="/admin/blog/edit/:id" element={<ProtectedRoute adminOnly={true}><AdminBlogEditPage /></ProtectedRoute>} />
+          <Route path="/admin/blog/preview/:id" element={<ProtectedRoute adminOnly={true}><AdminBlogPreviewPage /></ProtectedRoute>} />
 
           {/* Campagnes */}
           <Route path="/admin/campaigns" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />

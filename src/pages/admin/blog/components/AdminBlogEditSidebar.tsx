@@ -2,38 +2,41 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save } from 'lucide-react';
+import { Save, Send } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { BlogCategory } from '@/hooks/useBlogData';
 
-interface FormData {
-  title: string;
-  content: string;
-  excerpt: string;
-  category: string;
-  status: 'draft' | 'published' | 'scheduled';
-  author: string;
-}
-
 interface AdminBlogEditSidebarProps {
-  formData: FormData;
-  categories: BlogCategory[] | undefined;
-  onChange: (field: keyof FormData, value: string) => void;
+  formData: {
+    title: string;
+    content: string;
+    excerpt: string;
+    category: string;
+    status: string;
+    author: string;
+  };
+  categories?: BlogCategory[];
+  onChange: (field: string, value: string) => void;
   onSubmit: () => void;
   onPublish: () => void;
   isUpdating: boolean;
 }
 
-const AdminBlogEditSidebar: React.FC<AdminBlogEditSidebarProps> = ({
+const AdminBlogEditSidebar = ({
   formData,
   categories,
   onChange,
   onSubmit,
   onPublish,
-  isUpdating,
-}) => {
+  isUpdating
+}: AdminBlogEditSidebarProps) => {
   return (
     <div className="space-y-6">
       <Card>
@@ -42,13 +45,8 @@ const AdminBlogEditSidebar: React.FC<AdminBlogEditSidebarProps> = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="status">Statut</Label>
-            <Select 
-              value={formData.status} 
-              onValueChange={(value: 'draft' | 'published' | 'scheduled') => 
-                onChange('status', value)
-              }
-            >
+            <Label>Statut</Label>
+            <Select value={formData.status} onValueChange={(value) => onChange('status', value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -59,64 +57,48 @@ const AdminBlogEditSidebar: React.FC<AdminBlogEditSidebarProps> = ({
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              onClick={onSubmit}
-              className="flex-1"
-              disabled={isUpdating}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {isUpdating ? 'Sauvegarde...' : 'Sauvegarder'}
-            </Button>
-            
-            {formData.status === 'draft' && (
-              <Button 
-                type="button"
-                onClick={onPublish}
-                className="bg-green-600 hover:bg-green-700"
-                disabled={isUpdating}
-              >
-                Publier
-              </Button>
-            )}
+
+          <div>
+            <Label>Catégorie</Label>
+            <Select value={formData.category} onValueChange={(value) => onChange('category', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner une catégorie" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories?.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Métadonnées</CardTitle>
+          <CardTitle>Actions</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="category">Catégorie *</Label>
-            <Select 
-              value={formData.category} 
-              onValueChange={(value) => onChange('category', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner une catégorie" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories?.map(category => (
-                  <SelectItem key={category.id} value={category.name}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <CardContent className="space-y-3">
+          <Button
+            onClick={onSubmit}
+            disabled={isUpdating}
+            className="w-full"
+            variant="outline"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {isUpdating ? 'Sauvegarde...' : 'Sauvegarder'}
+          </Button>
           
-          <div>
-            <Label htmlFor="author">Auteur</Label>
-            <Input
-              id="author"
-              value={formData.author}
-              onChange={(e) => onChange('author', e.target.value)}
-              placeholder="Nom de l'auteur"
-            />
-          </div>
+          <Button
+            onClick={onPublish}
+            disabled={isUpdating}
+            className="w-full bg-red-500 hover:bg-red-600"
+          >
+            <Send className="w-4 h-4 mr-2" />
+            {formData.status === 'published' ? 'Republier' : 'Publier'}
+          </Button>
         </CardContent>
       </Card>
     </div>
