@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import { useAdminLayout } from '@/hooks/useAdminLayout';
-import { navigationItems } from '@/data/adminNavigation';
+import { adminNavigationItems } from '@/data/adminNavigation';
 import { AdminLayoutProps } from '@/types/admin';
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
@@ -30,7 +30,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         isSidebarOpen={isSidebarOpen}
         isSidebarCollapsed={isSidebarCollapsed}
         userData={userData}
-        navigationItems={navigationItems}
+        navigationItems={adminNavigationItems}
         activeTab={activeTab}
         openDropdown={openDropdown}
         activeSubMenu={activeSubMenu}
