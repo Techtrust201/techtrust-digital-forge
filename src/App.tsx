@@ -1,6 +1,6 @@
 
 import "./App.css";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -73,10 +73,27 @@ const AdminCampaignsAutomationPage = lazy(() => import("./pages/admin/campaigns/
 const queryClient = new QueryClient();
 
 function App() {
+  const [cookiePreferences, setCookiePreferences] = useState({
+    essential: true,
+    analytics: false,
+    marketing: false,
+    functional: false
+  });
+
+  const handlePreferencesChange = (preferences: typeof cookiePreferences) => {
+    setCookiePreferences(preferences);
+    console.log('Cookie preferences updated:', preferences);
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <SEO />
+        <SEO 
+          title="Techtrust - Agence Web & Growth Hacking"
+          description="Agence digitale française spécialisée en création de sites web, growth hacking et solutions digitales sur mesure."
+          keywords="agence web, growth hacking, création site web, solutions digitales"
+          canonicalUrl="https://www.tech-trust.fr"
+        />
         <div className="min-h-screen bg-background font-sans antialiased">
           <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-500"></div>
@@ -154,7 +171,7 @@ function App() {
             </Routes>
           </Suspense>
           <Toaster />
-          <CookieBanner />
+          <CookieBanner onPreferencesChange={handlePreferencesChange} />
         </div>
       </Router>
     </QueryClientProvider>
