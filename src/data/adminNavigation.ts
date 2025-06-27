@@ -1,90 +1,103 @@
 
-import {
-  Home,
-  Users,
-  BarChart3,
+import { 
+  LayoutDashboard, 
+  Users, 
+  BarChart3, 
+  FileText, 
+  Zap, 
+  CreditCard, 
   Settings,
-  FileText,
-  Zap,
-  CreditCard,
-} from "lucide-react";
-import { NavItem } from "@/types/admin";
+  Wand2
+} from 'lucide-react';
 
-export const navigationItems: NavItem[] = [
+export const adminNavigationItems = [
   {
-    id: "dashboard",
-    name: "Dashboard Admin",
-    icon: Home,
-    href: "/admin/dashboard",
+    id: 'dashboard',
+    label: 'Tableau de bord',
+    icon: LayoutDashboard,
+    href: '/admin/dashboard',
+    badge: null
   },
   {
-    id: "users",
-    name: "Gestion Utilisateurs",
+    id: 'users',
+    label: 'Utilisateurs',
     icon: Users,
-    href: "/admin/users",
+    href: '/admin/users',
+    badge: null,
     submenu: [
-      { name: "Tous les utilisateurs", href: "/admin/users" },
-      { name: "Nouveaux comptes", href: "/admin/users/new" },
-      { name: "Comptes suspendus", href: "/admin/users/suspended" },
-      { name: "Créer un compte", href: "/admin/users/create" },
-    ],
+      { label: 'Tous les utilisateurs', href: '/admin/users' },
+      { label: 'Utilisateurs suspendus', href: '/admin/users/suspended' },
+      { label: 'Créer un utilisateur', href: '/admin/users/create' }
+    ]
   },
   {
-    id: "analytics",
-    name: "Analytics Global",
+    id: 'analytics',
+    label: 'Analytics',
     icon: BarChart3,
-    href: "/admin/analytics",
+    href: '/admin/analytics',
+    badge: null,
     submenu: [
-      { name: "Vue d'ensemble", href: "/admin/analytics/overview" },
-      { name: "Revenus", href: "/admin/analytics/revenue" },
-      { name: "Performance", href: "/admin/analytics/performance" },
-      { name: "Utilisateurs", href: "/admin/analytics/users" },
-    ],
+      { label: 'Vue d\'ensemble', href: '/admin/analytics/overview' },
+      { label: 'Revenus', href: '/admin/analytics/revenue' },
+      { label: 'Performance', href: '/admin/analytics/performance' },
+      { label: 'Utilisateurs', href: '/admin/analytics/users' }
+    ]
   },
   {
-    id: "blog",
-    name: "Gestion Blog",
+    id: 'blog',
+    label: 'Blog',
     icon: FileText,
-    href: "/admin/blog",
+    href: '/admin/blog',
+    badge: null,
     submenu: [
-      { name: "Articles", href: "/admin/blog/posts" },
-      { name: "Créer un article", href: "/admin/blog/create" },
-      { name: "Catégories", href: "/admin/blog/categories" },
-      { name: "Commentaires", href: "/admin/blog/comments" },
-    ],
+      { label: 'Articles', href: '/admin/blog/posts' },
+      { label: 'Créer un article', href: '/admin/blog/create' },
+      { label: 'Catégories', href: '/admin/blog/categories' },
+      { label: 'Commentaires', href: '/admin/blog/comments' }
+    ]
   },
   {
-    id: "campaigns",
-    name: "Campagnes Marketing",
+    id: 'campaigns',
+    label: 'Campagnes',
     icon: Zap,
-    href: "/admin/campaigns",
+    href: '/admin/campaigns',
+    badge: null,
     submenu: [
-      { name: "Email Marketing", href: "/admin/campaigns/email" },
-      { name: "SMS Marketing", href: "/admin/campaigns/sms" },
-      { name: "Automatisation", href: "/admin/campaigns/automation" },
-    ],
+      { label: 'Email Marketing', href: '/admin/campaigns/email' },
+      { label: 'SMS Marketing', href: '/admin/campaigns/sms' },
+      { label: 'Automation', href: '/admin/campaigns/automation' }
+    ]
   },
   {
-    id: "billing",
-    name: "Facturation",
+    id: 'content-creation',
+    label: 'Création de Contenu IA',
+    icon: Wand2,
+    href: '/admin/content-creation',
+    badge: 'Nouveau'
+  },
+  {
+    id: 'billing',
+    label: 'Facturation',
     icon: CreditCard,
-    href: "/admin/billing",
+    href: '/admin/billing',
+    badge: null,
     submenu: [
-      { name: "Factures", href: "/admin/billing/invoices" },
-      { name: "Paiements", href: "/admin/billing/payments" },
-      { name: "Abonnements", href: "/admin/billing/subscriptions" },
-    ],
+      { label: 'Factures', href: '/admin/billing/invoices' },
+      { label: 'Paiements', href: '/admin/billing/payments' },
+      { label: 'Abonnements', href: '/admin/billing/subscriptions' }
+    ]
   },
   {
-    id: "system",
-    name: "Système",
+    id: 'system',
+    label: 'Système',
     icon: Settings,
-    href: "/admin/system",
+    href: '/admin/system',
+    badge: null,
     submenu: [
-      { name: "Configuration", href: "/admin/system/config" },
-      { name: "Logs", href: "/admin/system/logs" },
-      { name: "Sauvegrades", href: "/admin/system/backups" },
-      { name: "Sécurité", href: "/admin/system/security" },
-    ],
-  },
+      { label: 'Configuration', href: '/admin/system/config' },
+      { label: 'Logs', href: '/admin/system/logs' },
+      { label: 'Sauvegardes', href: '/admin/system/backups' },
+      { label: 'Sécurité', href: '/admin/system/security' }
+    ]
+  }
 ];

@@ -20,6 +20,7 @@ import AdminBlogPreviewPage from '@/pages/admin/blog/AdminBlogPreviewPage';
 import AdminCampaignsPage from '@/pages/admin/AdminCampaignsPage';
 import AdminBillingPage from '@/pages/admin/AdminBillingPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
+import AdminContentCreationPage from '@/pages/admin/AdminContentCreationPage';
 import ActivateAccount from "@/pages/ActivateAccount";
 
 const queryClient = new QueryClient();
@@ -40,7 +41,6 @@ function App() {
           <Route path="/dashboard/campaigns/sms" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dashboard/campaigns/leads" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dashboard/campaigns/automation" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard/campaigns/content" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
           {/* Routes Admin */}
           <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
@@ -73,6 +73,9 @@ function App() {
           <Route path="/admin/campaigns/email" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />
           <Route path="/admin/campaigns/sms" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />
           <Route path="/admin/campaigns/automation" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />
+          
+          {/* Création de Contenu IA - NOUVEAU */}
+          <Route path="/admin/content-creation" element={<ProtectedRoute adminOnly={true}><AdminContentCreationPage /></ProtectedRoute>} />
 
           {/* Facturation */}
           <Route path="/admin/billing" element={<ProtectedRoute adminOnly={true}><AdminBillingPage /></ProtectedRoute>} />
