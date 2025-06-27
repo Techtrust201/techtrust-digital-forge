@@ -5,6 +5,7 @@ import EmailCampaigns from './campaigns/EmailCampaigns';
 import SMSCampaigns from './campaigns/SMSCampaigns';
 import LeadCampaigns from './campaigns/LeadCampaigns';
 import AutomationCampaigns from './campaigns/AutomationCampaigns';
+import ContentCreation from './campaigns/ContentCreation';
 
 const Campaigns = () => {
   const location = useLocation();
@@ -18,6 +19,9 @@ const Campaigns = () => {
   }
   if (location.pathname.includes('/dashboard/campaigns/automation')) {
     return <AutomationCampaigns />;
+  }
+  if (location.pathname.includes('/dashboard/campaigns/content')) {
+    return <ContentCreation />;
   }
   
   // Par défaut, afficher les campagnes email
