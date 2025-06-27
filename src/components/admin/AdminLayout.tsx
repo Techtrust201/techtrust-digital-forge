@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Home,
@@ -98,7 +99,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         setActiveSubMenu("/admin/users/suspended");
       else if (path.includes("/admin/users/create"))
         setActiveSubMenu("/admin/users/create");
-      else setActiveSubMenu("/admin/users/all");
+      else setActiveSubMenu("/admin/users");
     } else if (path.includes("/admin/analytics")) {
       setActiveTab("analytics");
       setOpenDropdown("analytics");
@@ -408,7 +409,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                                   : "text-gray-600 hover:text-gray-900"
                               }`}
                             >
-                              <a href={subItem.href}>
+                              <Link to={subItem.href}>
                                 <span
                                   className={`w-2 h-2 rounded-full mr-3 ${
                                     activeSubMenu === subItem.href
@@ -417,7 +418,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                                   }`}
                                 ></span>
                                 {subItem.name}
-                              </a>
+                              </Link>
                             </Button>
                           ))}
                         </div>
@@ -436,10 +437,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                           : ""
                       }`}
                     >
-                      <a href={item.href} onClick={() => setActiveTab(item.id)}>
+                      <Link to={item.href} onClick={() => setActiveTab(item.id)}>
                         <ItemIcon className="w-5 h-5 mr-3" />
                         {item.name}
-                      </a>
+                      </Link>
                     </Button>
                   );
                 }
@@ -460,9 +461,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     }`}
                     title={item.name}
                   >
-                    <a href={item.href} onClick={() => setActiveTab(item.id)}>
+                    <Link to={item.href} onClick={() => setActiveTab(item.id)}>
                       <ItemIcon className="w-5 h-5" />
-                    </a>
+                    </Link>
                   </Button>
                 );
               })}
