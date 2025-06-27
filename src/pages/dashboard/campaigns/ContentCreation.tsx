@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Progress } from '@/components/ui/progress';
 import { 
   Video, 
   Image as ImageIcon, 
@@ -24,45 +24,75 @@ import {
   Clock,
   Save,
   Trash2,
-  Eye
+  Eye,
+  Zap,
+  TrendingUp,
+  Users,
+  DollarSign,
+  Link,
+  Sparkles,
+  FilmIcon,
+  Settings,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAdvancedContentCreation } from '@/hooks/useAdvancedContentCreation';
 
 const ContentCreation = () => {
   const [contentType, setContentType] = useState<'video' | 'image'>('video');
   const [prompt, setPrompt] = useState('');
   const [description, setDescription] = useState('');
   const [hashtags, setHashtags] = useState('');
-  const [duration, setDuration] = useState('30');
-  const [style, setStyle] = useState('modern');
+  const [duration, setDuration] = useState('10');
+  const [style, setStyle] = useState('realistic');
   const [platforms, setPlatforms] = useState<string[]>([]);
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState<string | null>(null);
-  const [drafts, setDrafts] = useState<any[]>([]);
+  
+  // Nouvelles fonctionnalités
+  const [selectedModel, setSelectedModel] = useState<'seedance-1-lite' | 'seedance-1-pro'>('seedance-1-lite');
+  const [clipCount, setClipCount] = useState(6); // Pour vidéo de 1 minute
+  const [currentTab, setCurrentTab] = useState('generate');
+  const [showRecommendations, setShowRecommendations] = useState(false);
+
+  const {
+    generateVideoClip,
+    composeFullVideo,
+    isGenerating,
+    isComposing,
+    videoClips,
+    socialConnections,
+    connectSocialPlatform,
+    getPostingRecommendations,
+    schedulePost,
+    scheduledPosts,
+    saveDraft,
+    loadDrafts,
+    drafts
+  } = useAdvancedContentCreation();
+
+  useEffect(() => {
+    loadDrafts();
+  }, [loadDrafts]);
 
   const videoStyles = [
-    { value: 'modern', label: 'Moderne' },
-    { value: 'cinematic', label: 'Cinématique' },
-    { value: 'cartoon', label: 'Cartoon' },
     { value: 'realistic', label: 'Réaliste' },
-    { value: 'artistic', label: 'Artistique' }
-  ];
-
-  const imageStyles = [
-    { value: 'photo', label: 'Photo réaliste' },
-    { value: 'illustration', label: 'Illustration' },
-    { value: 'digital-art', label: 'Art numérique' },
-    { value: 'minimalist', label: 'Minimaliste' },
-    { value: 'vintage', label: 'Vintage' }
+    { value: 'lego', label: 'LEGO Stop-Motion' },
+    { value: 'anime', label: 'Anime/Manga' },
+    { value: 'cartoon', label: 'Cartoon 3D' },
+    { value: 'cinematic', label: 'Cinématique' },
+    { value: 'cyberpunk', label: 'Cyberpunk' },
+    { value: 'vintage', label: 'Vintage/Retro' },
+    { value: 'minimalist', label: 'Minimaliste' }
   ];
 
   const socialPlatforms = [
-    { id: 'tiktok', name: 'TikTok', icon: Video },
-    { id: 'instagram', name: 'Instagram', icon: Instagram },
-    { id: 'facebook', name: 'Facebook', icon: Facebook },
-    { id: 'twitter', name: 'Twitter', icon: Twitter }
+    { id: 'tiktok', name: 'TikTok', icon: Video, color: 'bg-pink-500' },
+    { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
+    { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'bg-blue-600' },
+    { id: 'twitter', name: 'Twitter/X', icon: Twitter, color: 'bg-black' },
+    { id: 'youtube', name: 'YouTube', icon: Play, color: 'bg-red-600' }
   ];
 
   const handlePlatformToggle = (platformId: string) => {
@@ -73,345 +103,545 @@ const ContentCreation = () => {
     );
   };
 
-  const generateContent = async () => {
+  const generateMultipleClips = async () => {
     if (!prompt.trim()) {
-      toast.error('Veuillez saisir une description pour votre contenu');
+      toast.error('Veuillez saisir une description pour vos vidéos');
       return;
     }
 
-    setIsGenerating(true);
-    try {
-      // Simulation de génération IA
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      if (contentType === 'video') {
-        setGeneratedContent('video_generated_' + Date.now() + '.mp4');
+    const clips = [];
+    const totalCost = clipCount * (selectedModel === 'seedance-1-pro' ? 0.60 : 0.40);
+    
+    if (!confirm(`Générer ${clipCount} clips de 10s ? Coût estimé: $${totalCost.toFixed(2)}`)) {
+      return;
+    }
+
+    for (let i = 0; i < clipCount; i++) {
+      const clipPrompt = `${prompt} - Partie ${i + 1}/${clipCount}`;
+      const clip = await generateVideoClip(clipPrompt, style, 10, selectedModel);
+      if (clip) {
+        clips.push(clip);
       } else {
-        setGeneratedContent('image_generated_' + Date.now() + '.jpg');
+        toast.error(`Erreur lors de la génération du clip ${i + 1}`);
+        break;
       }
-      
-      toast.success(`${contentType === 'video' ? 'Vidéo' : 'Image'} générée avec succès !`);
-    } catch (error) {
-      toast.error('Erreur lors de la génération');
-    } finally {
-      setIsGenerating(false);
+    }
+
+    if (clips.length === clipCount) {
+      toast.success(`${clipCount} clips générés avec succès ! Prêt pour la composition.`);
     }
   };
 
-  const generateDescription = async () => {
-    if (!prompt.trim()) {
-      toast.error('Veuillez d\'abord saisir une description du contenu');
+  const handleComposeVideo = async () => {
+    if (videoClips.length === 0) {
+      toast.error('Aucun clip vidéo disponible pour la composition');
       return;
     }
 
-    try {
-      // Simulation de génération IA de description
-      const generatedDesc = `Découvrez ${prompt.toLowerCase()} ! Une expérience unique qui va vous surprendre. Ne manquez pas cette opportunité incroyable de découvrir quelque chose d'exceptionnel.`;
-      const generatedTags = '#viral #trending #amazing #discover #unique #content #video #creative #inspiration #motivation';
-      
-      setDescription(generatedDesc);
-      setHashtags(generatedTags);
-      
-      toast.success('Description et hashtags générés !');
-    } catch (error) {
-      toast.error('Erreur lors de la génération de la description');
+    const renderId = await composeFullVideo(videoClips, {
+      subtitles: description ? [{ text: description, start: 0, duration: videoClips.length * 10 }] : undefined,
+      music: { url: 'https://example.com/royalty-free-music.mp3', title: 'Background Music' }
+    });
+
+    if (renderId) {
+      toast.success('Composition démarrée ! Vous recevrez le résultat sous peu.');
     }
   };
 
-  const saveDraft = () => {
-    const draft = {
-      id: Date.now(),
-      type: contentType,
-      prompt,
-      description,
-      hashtags,
-      duration,
-      style,
-      platforms,
-      createdAt: new Date().toISOString()
-    };
-    
-    setDrafts(prev => [...prev, draft]);
-    toast.success('Brouillon sauvegardé !');
-  };
-
-  const schedulePost = () => {
-    if (!generatedContent) {
-      toast.error('Veuillez d\'abord générer le contenu');
-      return;
-    }
-    
+  const handleShowRecommendations = async () => {
     if (platforms.length === 0) {
-      toast.error('Veuillez sélectionner au moins une plateforme');
+      toast.error('Sélectionnez d\'abord des plateformes');
       return;
     }
 
-    if (!scheduledDate || !scheduledTime) {
-      toast.error('Veuillez définir une date et heure de publication');
-      return;
-    }
-
-    toast.success(`Publication programmée pour le ${scheduledDate} à ${scheduledTime} sur ${platforms.join(', ')}`);
-  };
-
-  const publishNow = () => {
-    if (!generatedContent) {
-      toast.error('Veuillez d\'abord générer le contenu');
-      return;
-    }
+    const recommendations = await getPostingRecommendations(platforms);
+    setShowRecommendations(true);
     
-    if (platforms.length === 0) {
-      toast.error('Veuillez sélectionner au moins une plateforme');
-      return;
-    }
-
-    toast.success(`Contenu publié immédiatement sur ${platforms.join(', ')} !`);
+    // Afficher les recommandations dans une modal ou section
+    console.log('Recommandations:', recommendations);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Création de Contenu IA</h2>
-          <p className="text-gray-500 mt-1">Créez des vidéos et images avec l'intelligence artificielle</p>
+          <h2 className="text-2xl font-bold text-gray-900">Studio IA Avancé</h2>
+          <p className="text-gray-500 mt-1">Génération vidéo avec Replicate + Seedance & publication multi-plateformes</p>
         </div>
-        <Button onClick={saveDraft} variant="outline">
-          <Save className="w-4 h-4 mr-2" />
-          Sauvegarder
-        </Button>
+        <div className="flex gap-2">
+          <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <DollarSign className="w-3 h-3 mr-1" />
+            Seedance: $0.40-0.60/clip
+          </Badge>
+          <Button onClick={() => saveDraft({ prompt, description, hashtags, style, platforms })} variant="outline">
+            <Save className="w-4 h-4 mr-2" />
+            Sauvegarder
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Panneau de création principal */}
-        <div className="lg:col-span-2 space-y-6">
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="generate">
+            <Wand2 className="w-4 h-4 mr-2" />
+            Générer
+          </TabsTrigger>
+          <TabsTrigger value="compose">
+            <FilmIcon className="w-4 h-4 mr-2" />
+            Composer
+          </TabsTrigger>
+          <TabsTrigger value="social">
+            <Link className="w-4 h-4 mr-2" />
+            Réseaux
+          </TabsTrigger>
+          <TabsTrigger value="schedule">
+            <Calendar className="w-4 h-4 mr-2" />
+            Programmer
+          </TabsTrigger>
+          <TabsTrigger value="drafts">
+            <Save className="w-4 h-4 mr-2" />
+            Brouillons
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="generate" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-500" />
+                    Génération Seedance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="prompt">Prompt créatif *</Label>
+                    <Textarea
+                      id="prompt"
+                      placeholder="Ex: Un chat ninja LEGO qui fait du parkour sur des gratte-ciels la nuit, style stop-motion..."
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="style">Style visuel</Label>
+                      <Select value={style} onValueChange={setStyle}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {videoStyles.map((s) => (
+                            <SelectItem key={s.value} value={s.value}>
+                              {s.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="model">Modèle Seedance</Label>
+                      <Select value={selectedModel} onValueChange={setSelectedModel}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="seedance-1-lite">
+                            Seedance 1 Lite ($0.40)
+                          </SelectItem>
+                          <SelectItem value="seedance-1-pro">
+                            Seedance 1 Pro ($0.60)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Clips pour vidéo 1 minute: {clipCount} × 10s</Label>
+                    <div className="flex items-center gap-4 mt-2">
+                      <input
+                        type="range"
+                        min="3"
+                        max="12"
+                        value={clipCount}
+                        onChange={(e) => setClipCount(parseInt(e.target.value))}
+                        className="flex-1"
+                      />
+                      <Badge variant="outline">
+                        Coût: ${(clipCount * (selectedModel === 'seedance-1-pro' ? 0.60 : 0.40)).toFixed(2)}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <Button 
+                    onClick={generateMultipleClips} 
+                    disabled={isGenerating || !prompt.trim()}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                        Génération en cours... ({videoClips.length}/{clipCount})
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="w-4 h-4 mr-2" />
+                        Générer {clipCount} clips Seedance
+                      </>
+                    )}
+                  </Button>
+
+                  {isGenerating && (
+                    <Progress value={(videoClips.length / clipCount) * 100} className="w-full" />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Clips générés ({videoClips.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {videoClips.length === 0 ? (
+                    <p className="text-gray-500 text-sm">Aucun clip encore généré</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {videoClips.slice(-5).map((clip, index) => (
+                        <div key={clip.id} className="p-2 bg-green-50 rounded border border-green-200">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium">Clip {index + 1}</p>
+                              <p className="text-xs text-gray-500">{clip.style} • ${clip.cost}</p>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button size="sm" variant="outline">
+                                <Eye className="w-3 h-3" />
+                              </Button>
+                              <Button size="sm" variant="outline">
+                                <Download className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="compose" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                {contentType === 'video' ? <Video className="w-5 h-5" /> : <ImageIcon className="w-5 h-5" />}
-                Paramètres de création
+                <FilmIcon className="w-5 h-5 text-blue-500" />
+                Composition vidéo finale (Shotstack)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-4">
-                <Button 
-                  variant={contentType === 'video' ? 'default' : 'outline'}
-                  onClick={() => setContentType('video')}
-                  className="flex-1"
-                >
-                  <Video className="w-4 h-4 mr-2" />
-                  Vidéo
-                </Button>
-                <Button 
-                  variant={contentType === 'image' ? 'default' : 'outline'}
-                  onClick={() => setContentType('image')}
-                  className="flex-1"
-                >
-                  <ImageIcon className="w-4 h-4 mr-2" />
-                  Image
-                </Button>
-              </div>
-
-              <div>
-                <Label htmlFor="prompt">Description du contenu *</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder={`Décrivez votre ${contentType === 'video' ? 'vidéo' : 'image'}... Par exemple: "Une vidéo sur les bienfaits du sport"`}
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              {contentType === 'video' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="duration">Durée (secondes)</Label>
-                  <Select value={duration} onValueChange={setDuration}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="15">15 secondes</SelectItem>
-                      <SelectItem value="30">30 secondes</SelectItem>
-                      <SelectItem value="60">1 minute</SelectItem>
-                      <SelectItem value="90">1 minute 30</SelectItem>
-                      <SelectItem value="120">2 minutes</SelectItem>
-                      <SelectItem value="180">3 minutes</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="description">Description pour sous-titres</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Texte qui apparaîtra en sous-titres..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                  />
                 </div>
-              )}
 
-              <div>
-                <Label htmlFor="style">Style</Label>
-                <Select value={style} onValueChange={setStyle}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(contentType === 'video' ? videoStyles : imageStyles).map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Options audio</Label>
+                    <div className="space-y-2 mt-2">
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" />
+                        <span className="text-sm">Musique de fond</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" />
+                        <span className="text-sm">Voix off (TTS)</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" />
+                        <span className="text-sm">Effets sonores</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <Badge variant="outline" className="w-full justify-center">
+                    Coût composition: $0.30/minute
+                  </Badge>
+                </div>
               </div>
 
               <Button 
-                onClick={generateContent} 
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full bg-purple-600 hover:bg-purple-700"
+                onClick={handleComposeVideo}
+                disabled={isComposing || videoClips.length === 0}
+                className="w-full bg-blue-600 hover:bg-blue-700"
               >
-                <Wand2 className="w-4 h-4 mr-2" />
-                {isGenerating ? 'Génération en cours...' : `Générer ${contentType === 'video' ? 'la vidéo' : 'l\'image'}`}
+                {isComposing ? (
+                  <>
+                    <Settings className="w-4 h-4 mr-2 animate-spin" />
+                    Composition en cours...
+                  </>
+                ) : (
+                  <>
+                    <FilmIcon className="w-4 h-4 mr-2" />
+                    Composer vidéo finale ({videoClips.length} clips)
+                  </>
+                )}
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-              {generatedContent && (
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {contentType === 'video' ? <Video className="w-5 h-5 text-green-600" /> : <ImageIcon className="w-5 h-5 text-green-600" />}
-                      <span className="text-green-800 font-medium">
-                        {contentType === 'video' ? 'Vidéo générée' : 'Image générée'}
-                      </span>
+        <TabsContent value="social" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Link className="w-5 h-5 text-green-500" />
+                  Connexions réseaux sociaux
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {socialConnections.map((connection) => {
+                  const platform = socialPlatforms.find(p => p.id === connection.platform);
+                  const Icon = platform?.icon || Link;
+                  
+                  return (
+                    <div key={connection.platform} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded ${platform?.color || 'bg-gray-500'}`}>
+                          <Icon className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{platform?.name}</p>
+                          {connection.connected && (
+                            <p className="text-sm text-green-600">@{connection.username}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        {connection.connected ? (
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <Button 
+                            size="sm"
+                            onClick={() => connectSocialPlatform(connection.platform)}
+                          >
+                            Connecter
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Download className="w-4 h-4" />
-                      </Button>
+                  );
+                })}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-purple-500" />
+                  Recommandations IA
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  {socialPlatforms.slice(0, 3).map((platform) => (
+                    <div key={platform.id} className="p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <platform.icon className="w-4 h-4" />
+                        <span className="font-medium">{platform.name}</span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <p>🕐 Meilleur moment: 18h-20h</p>
+                        <p>📅 Meilleurs jours: Mar, Jeu, Ven</p>
+                        <p>📊 Engagement: +18% en soirée</p>
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                <Button onClick={handleShowRecommendations} variant="outline" className="w-full">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Analyse personnalisée
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="schedule" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-orange-500" />
+                Programmation intelligente
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="hashtags">Hashtags optimisés</Label>
+                  <Textarea
+                    id="hashtags"
+                    placeholder="#viral #trending #ai #video #content..."
+                    value={hashtags}
+                    onChange={(e) => setHashtags(e.target.value)}
+                    rows={2}
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="date">Date de publication</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                    />
                   </div>
+
+                  <div>
+                    <Label htmlFor="time">Heure optimale</Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label>Plateformes sélectionnées</Label>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
+                  {socialPlatforms.map((platform) => (
+                    <Button
+                      key={platform.id}
+                      variant={platforms.includes(platform.id) ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => handlePlatformToggle(platform.id)}
+                      className="flex items-center gap-2"
+                    >
+                      <platform.icon className="w-3 h-3" />
+                      {platform.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => {
+                    if (videoClips.length > 0) {
+                      schedulePost(videoClips[0], {
+                        description,
+                        hashtags,
+                        platforms,
+                        scheduledDate,
+                        scheduledTime
+                      });
+                    } else {
+                      toast.error('Générez d\'abord du contenu');
+                    }
+                  }}
+                  className="flex-1" 
+                  variant="outline"
+                >
+                  <Clock className="w-4 h-4 mr-2" />
+                  Programmer
+                </Button>
+                
+                <Button className="flex-1">
+                  <Send className="w-4 h-4 mr-2" />
+                  Publier maintenant
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {scheduledPosts.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Publications programmées ({scheduledPosts.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {scheduledPosts.slice(-5).map((post) => (
+                    <div key={post.id} className="p-3 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{post.scheduledDate} à {post.scheduledTime}</p>
+                          <p className="text-sm text-gray-500">{post.platforms.join(', ')}</p>
+                        </div>
+                        <Badge variant={post.status === 'scheduled' ? 'secondary' : 'default'}>
+                          {post.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="drafts" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Brouillons sauvegardés ({drafts.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {drafts.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">Aucun brouillon sauvegardé</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {drafts.map((draft) => (
+                    <div key={draft.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium truncate">{draft.prompt}</p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {new Date(draft.createdAt).toLocaleDateString()}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-2">
+                            Style: {draft.style} • Plateformes: {draft.platforms?.length || 0}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline">
+                            <Eye className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Description et Hashtags
-                <Button onClick={generateDescription} size="sm" variant="outline">
-                  <Wand2 className="w-4 h-4 mr-2" />
-                  Générer IA
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Description qui accompagnera votre publication..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="hashtags">Hashtags</Label>
-                <Textarea
-                  id="hashtags"
-                  placeholder="#hashtag1 #hashtag2 #hashtag3..."
-                  value={hashtags}
-                  onChange={(e) => setHashtags(e.target.value)}
-                  rows={2}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Panneau latéral */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Plateformes</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {socialPlatforms.map((platform) => (
-                <div key={platform.id} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <platform.icon className="w-5 h-5" />
-                    <span>{platform.name}</span>
-                  </div>
-                  <Switch
-                    checked={platforms.includes(platform.id)}
-                    onCheckedChange={() => handlePlatformToggle(platform.id)}
-                  />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Programmation
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="time">Heure</Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Button onClick={schedulePost} className="flex-1" variant="outline">
-                  <Clock className="w-4 h-4 mr-2" />
-                  Programmer
-                </Button>
-                <Button onClick={publishNow} className="flex-1">
-                  <Send className="w-4 h-4 mr-2" />
-                  Publier
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {drafts.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Brouillons ({drafts.length})</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {drafts.slice(-3).map((draft) => (
-                  <div key={draft.id} className="p-2 bg-gray-50 rounded flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium truncate">{draft.prompt}</p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(draft.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <Button size="sm" variant="outline">
-                      <Eye className="w-3 h-3" />
-                    </Button>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
