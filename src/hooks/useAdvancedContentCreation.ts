@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +9,15 @@ export interface VideoClip {
   style: string;
   prompt: string;
   cost: number;
+}
+
+export interface GeneratedImage {
+  id: string;
+  url: string;
+  style: string;
+  prompt: string;
+  cost: number;
+  dimensions?: { width: number; height: number };
 }
 
 export interface SocialConnection {
@@ -29,7 +37,7 @@ export interface PostingRecommendation {
 
 export interface ScheduledPost {
   id: string;
-  content: VideoClip;
+  content: VideoClip | GeneratedImage;
   description: string;
   hashtags: string;
   platforms: string[];
@@ -43,6 +51,7 @@ export const useAdvancedContentCreation = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
   const [videoClips, setVideoClips] = useState<VideoClip[]>([]);
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [socialConnections, setSocialConnections] = useState<SocialConnection[]>([
     { platform: 'tiktok', connected: false },
     { platform: 'instagram', connected: false },
@@ -52,6 +61,51 @@ export const useAdvancedContentCreation = () => {
   ]);
   const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
   const [drafts, setDrafts] = useState<any[]>([]);
+
+  const generateImage = useCallback(async (
+    prompt: string,
+    style: string = 'realistic'
+  ): Promise<GeneratedImage | null> => {
+    if (!prompt.trim()) {
+      toast.error('Veuillez saisir une description pour votre image');
+      return null;
+    }
+
+    setIsGenerating(true);
+    
+    try {
+      console.log('Generating image with Replicate FLUX...');
+      
+      const { data, error } = await supabase.functions.invoke('generate-image', {
+        body: { 
+          prompt: `${style} style: ${prompt}`,
+          style
+        }
+      });
+
+      if (error) throw error;
+
+      const generatedImage: GeneratedImage = {
+        id: Date.now().toString(),
+        url: data.imageUrl,
+        style,
+        prompt,
+        cost: 0.003, // FLUX coût approximatif
+        dimensions: { width: 1024, height: 1024 }
+      };
+
+      setGeneratedImages(prev => [...prev, generatedImage]);
+      toast.success(`Image générée avec succès ! Coût: $${generatedImage.cost}`);
+      return generatedImage;
+
+    } catch (error) {
+      console.error('Error generating image:', error);
+      toast.error(`Erreur lors de la génération: ${error.message}`);
+      return null;
+    } finally {
+      setIsGenerating(false);
+    }
+  }, []);
 
   const generateVideoClip = useCallback(async (
     prompt: string,
@@ -175,9 +229,7 @@ export const useAdvancedContentCreation = () => {
   }, []);
 
   const connectSocialPlatform = useCallback(async (platform: string) => {
-    // Simulation de connexion OAuth - à implémenter avec les vraies APIs
     try {
-      // Ici on implémenterait la vraie connexion OAuth pour chaque plateforme
       toast.success(`Connexion à ${platform} simulée avec succès`);
       
       setSocialConnections(prev => 
@@ -193,7 +245,6 @@ export const useAdvancedContentCreation = () => {
   }, []);
 
   const getPostingRecommendations = useCallback(async (platforms: string[]): Promise<PostingRecommendation[]> => {
-    // Recommandations basées sur les données d'engagement
     const recommendations: PostingRecommendation[] = platforms.map(platform => {
       switch (platform) {
         case 'tiktok':
@@ -243,7 +294,7 @@ export const useAdvancedContentCreation = () => {
   }, []);
 
   const schedulePost = useCallback(async (
-    content: VideoClip,
+    content: VideoClip | GeneratedImage,
     postData: {
       description: string;
       hashtags: string;
@@ -274,7 +325,6 @@ export const useAdvancedContentCreation = () => {
 
     setScheduledPosts(prev => [...prev, scheduledPost]);
     
-    // Sauvegarder en localStorage
     const existingScheduled = JSON.parse(localStorage.getItem('advanced_scheduled_posts') || '[]');
     const updatedScheduled = [...existingScheduled, scheduledPost];
     localStorage.setItem('advanced_scheduled_posts', JSON.stringify(updatedScheduled));
@@ -297,12 +347,11 @@ export const useAdvancedContentCreation = () => {
     
     setDrafts(prev => [...prev, draft]);
     
-    // Sauvegarder dans localStorage
     const existingDrafts = JSON.parse(localStorage.getItem('advanced_content_drafts') || '[]');
     const updatedDrafts = [...existingDrafts, draft];
     localStorage.setItem('advanced_content_drafts', JSON.stringify(updatedDrafts));
     
-    toast.success('Brouillon sauvegardé avec les nouvelles fonctionnalités !');
+    toast.success('Brouillon sauvegardé !');
     return draft.id;
   }, []);
 
@@ -319,12 +368,14 @@ export const useAdvancedContentCreation = () => {
   }, []);
 
   return {
-    // Génération vidéo
+    // Génération contenu
     generateVideoClip,
+    generateImage,
     composeFullVideo,
     isGenerating,
     isComposing,
     videoClips,
+    generatedImages,
     
     // Réseaux sociaux
     socialConnections,

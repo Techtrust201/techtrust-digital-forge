@@ -36,6 +36,9 @@ s3_max_age = 3600
 [functions.generate-video]
 verify_jwt = true
 
+[functions.generate-image]
+verify_jwt = true
+
 [functions.compose-video]
 verify_jwt = true
 
