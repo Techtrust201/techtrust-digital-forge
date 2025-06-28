@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useContentPersistence } from './useContentPersistence';
 
 export interface VideoClip {
   id: string;
@@ -9,6 +10,7 @@ export interface VideoClip {
   style: string;
   prompt: string;
   cost: number;
+  status?: string;
 }
 
 export interface GeneratedImage {
@@ -62,6 +64,8 @@ export const useAdvancedContentCreation = () => {
   const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
   const [drafts, setDrafts] = useState<any[]>([]);
 
+  const { saveContent } = useContentPersistence();
+
   const generateImage = useCallback(async (
     prompt: string,
     style: string = 'realistic'
@@ -95,6 +99,15 @@ export const useAdvancedContentCreation = () => {
       };
 
       setGeneratedImages(prev => [...prev, generatedImage]);
+      
+      // Save to persistence
+      saveContent({
+        type: 'image',
+        content: generatedImage,
+        prompt,
+        style
+      });
+      
       toast.success(`🖼️ Image générée avec succès ! Coût: $${generatedImage.cost}`);
       return generatedImage;
 
@@ -105,7 +118,7 @@ export const useAdvancedContentCreation = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, []);
+  }, [saveContent]);
 
   const generateVideoClip = useCallback(async (
     prompt: string,
@@ -128,11 +141,6 @@ export const useAdvancedContentCreation = () => {
     try {
       console.log(`Generating video with Replicate/Seedance: ${duration}s...`);
       
-      // Pour les vidéos longues (>30s), créer plusieurs clips cohérents
-      if (duration > 30) {
-        return await generateLongVideo(prompt, style, duration, model);
-      }
-      
       const { data, error } = await supabase.functions.invoke('generate-video', {
         body: { 
           prompt: prompt.trim(),
@@ -144,25 +152,29 @@ export const useAdvancedContentCreation = () => {
 
       if (error) throw error;
 
-      const predictionId = data.prediction?.id;
+      const predictionId = data.prediction?.id || data.predictionId;
       if (!predictionId) {
-        throw new Error('No prediction ID received');
+        throw new Error('No prediction ID received from server');
       }
 
       toast.info(`🎬 Génération vidéo ${duration}s démarrée... Cela peut prendre quelques minutes.`);
 
       // Poll for completion
       let attempts = 0;
-      const maxAttempts = Math.ceil(duration / 2); // Plus de temps pour les vidéos longues
+      const maxAttempts = Math.ceil(duration / 2) + 20; // Plus de temps pour les vidéos
       
       while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 3000)); // Check every 3 seconds
         
         const { data: statusData, error: statusError } = await supabase.functions.invoke('generate-video', {
           body: { predictionId }
         });
 
-        if (statusError) throw statusError;
+        if (statusError) {
+          console.error('Status check error:', statusError);
+          attempts++;
+          continue;
+        }
 
         console.log(`Attempt ${attempts + 1}: Status = ${statusData.status}`);
 
@@ -176,10 +188,20 @@ export const useAdvancedContentCreation = () => {
             duration,
             style,
             prompt,
-            cost: baseCost + extraCost
+            cost: baseCost + extraCost,
+            status: 'completed'
           };
 
           setVideoClips(prev => [...prev, videoClip]);
+          
+          // Save to persistence
+          saveContent({
+            type: 'video',
+            content: videoClip,
+            prompt,
+            style
+          });
+          
           toast.success(`🎬 Vidéo ${duration}s générée avec succès ! Coût: $${videoClip.cost.toFixed(2)}`);
           return videoClip;
         }
@@ -191,7 +213,7 @@ export const useAdvancedContentCreation = () => {
         attempts++;
       }
 
-      throw new Error(`Génération expirée après ${maxAttempts * 5} secondes`);
+      throw new Error(`Génération expirée après ${maxAttempts * 3} secondes`);
 
     } catch (error) {
       console.error('Error generating video:', error);
@@ -200,97 +222,7 @@ export const useAdvancedContentCreation = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, []);
-
-  // Nouvelle fonction pour générer des vidéos longues avec des clips cohérents
-  const generateLongVideo = useCallback(async (
-    prompt: string,
-    style: string,
-    totalDuration: number,
-    model: 'seedance-1-lite' | 'seedance-1-pro'
-  ): Promise<VideoClip | null> => {
-    try {
-      const clipDuration = 10; // Chaque clip fait 10s
-      const numberOfClips = Math.ceil(totalDuration / clipDuration);
-      
-      toast.info(`🎬 Génération d'une vidéo longue (${totalDuration}s) en ${numberOfClips} clips cohérents...`);
-      
-      // Créer des variations du prompt pour chaque clip pour assurer la cohérence
-      const clipPrompts = [];
-      for (let i = 0; i < numberOfClips; i++) {
-        const sequenceNumber = i + 1;
-        const sequencePrompt = `${prompt}, sequence ${sequenceNumber} of ${numberOfClips}, continuous narrative, consistent style and characters`;
-        clipPrompts.push(sequencePrompt);
-      }
-      
-      // Générer tous les clips
-      const clips = [];
-      for (let i = 0; i < clipPrompts.length; i++) {
-        toast.info(`Génération du clip ${i + 1}/${numberOfClips}...`);
-        
-        const { data, error } = await supabase.functions.invoke('generate-video', {
-          body: { 
-            prompt: clipPrompts[i],
-            style,
-            duration: clipDuration,
-            model
-          }
-        });
-
-        if (error) throw error;
-        
-        // Attendre la completion
-        let attempts = 0;
-        while (attempts < 30) {
-          await new Promise(resolve => setTimeout(resolve, 5000));
-          
-          const { data: statusData } = await supabase.functions.invoke('generate-video', {
-            body: { predictionId: data.prediction.id }
-          });
-          
-          if (statusData.status === 'succeeded') {
-            clips.push({
-              id: `${data.prediction.id}_${i}`,
-              url: Array.isArray(statusData.output) ? statusData.output[0] : statusData.output,
-              duration: clipDuration,
-              style,
-              prompt: clipPrompts[i]
-            });
-            break;
-          }
-          
-          if (statusData.status === 'failed') {
-            throw new Error(`Clip ${i + 1} generation failed`);
-          }
-          
-          attempts++;
-        }
-      }
-      
-      // Créer un clip composite
-      const baseCost = model === 'seedance-1-pro' ? 0.60 : 0.40;
-      const totalCost = baseCost * numberOfClips + (totalDuration - 10) * 0.05;
-      
-      const compositeClip: VideoClip = {
-        id: `composite_${Date.now()}`,
-        url: clips[0].url, // Premier clip comme aperçu
-        duration: totalDuration,
-        style,
-        prompt: `${prompt} (${numberOfClips} clips cohérents)`,
-        cost: totalCost
-      };
-      
-      setVideoClips(prev => [...prev, compositeClip]);
-      toast.success(`🎬 Vidéo longue ${totalDuration}s générée avec ${numberOfClips} clips cohérents ! Coût: $${totalCost.toFixed(2)}`);
-      
-      return compositeClip;
-      
-    } catch (error) {
-      console.error('Error generating long video:', error);
-      toast.error(`❌ Erreur lors de la génération de vidéo longue: ${error.message}`);
-      return null;
-    }
-  }, []);
+  }, [saveContent]);
 
   const composeFullVideo = useCallback(async (
     clips: VideoClip[],
@@ -308,7 +240,7 @@ export const useAdvancedContentCreation = () => {
     setIsComposing(true);
 
     try {
-      console.log('Composing full video with Shotstack...');
+      console.log('Composing full video with clips:', clips);
       
       const { data, error } = await supabase.functions.invoke('compose-video', {
         body: {

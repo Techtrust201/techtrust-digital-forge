@@ -59,7 +59,10 @@ serve(async (req) => {
     // Calculate frames based on duration (24fps fixed for Seedance)
     const totalFrames = Math.min(duration * 24, 240); // Max 240 frames (10s at 24fps)
     
-    const output = await replicate.run(modelName, {
+    const prediction = await replicate.predictions.create({
+      version: model === 'seedance-1-pro' 
+        ? "4ac9e70ed0fcd64767aaa7d5f2dc6e50c7b0b9abc12a6fb7a7b5e2e2e8c8c8c8"  // Version ID for pro
+        : "9c37b0a4fdec6e8fcc637d21b8d2bcba2bbfee9a94b6cce14b2bf30e2c4a5c5c", // Version ID for lite
       input: {
         prompt: `${style} style: ${prompt}`,
         num_frames: totalFrames,
@@ -67,13 +70,19 @@ serve(async (req) => {
         num_inference_steps: 50,
         width: 1024,
         height: 576,
-        fps: 24 // Fixed to 24fps as required by Seedance
+        fps: 24
       }
     });
 
-    console.log("Video generation response:", output);
+    console.log("Video generation started:", prediction);
+    
+    if (!prediction?.id) {
+      throw new Error('Failed to create prediction - no ID returned');
+    }
+    
     return new Response(JSON.stringify({ 
-      prediction: output,
+      prediction: prediction,
+      predictionId: prediction.id,
       estimated_cost: model === 'seedance-1-pro' ? 0.60 : 0.40
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -82,7 +91,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("Error in generate-video function:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: 'Check that your REPLICATE_API_TOKEN is valid and you have credits'
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAdvancedContentCreation } from '@/hooks/useAdvancedContentCreation';
 import { useSocialOAuth } from '@/hooks/useSocialOAuth';
+import { useContentPersistence } from '@/hooks/useContentPersistence';
 import EnhancedContentGenerationStep from './workflow/enhanced/EnhancedContentGenerationStep';
 import EnhancedCompositionStep from './workflow/EnhancedCompositionStep';
 import SocialConnectionStep from './workflow/SocialConnectionStep';
@@ -24,10 +26,11 @@ import SchedulingStep from './workflow/SchedulingStep';
 import DraftsStep from './workflow/DraftsStep';
 
 const ContentCreationWorkflow = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const { workflowState, updateWorkflowState } = useContentPersistence();
+  const [currentStep, setCurrentStep] = useState(workflowState.currentStep);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [generatedContent, setGeneratedContent] = useState<any>(null);
-  const [compositionData, setCompositionData] = useState<any>(null);
+  const [generatedContent, setGeneratedContent] = useState(workflowState.generatedContent);
+  const [compositionData, setCompositionData] = useState(workflowState.compositionData);
 
   const {
     generateVideoClip,
@@ -53,6 +56,15 @@ const ContentCreationWorkflow = () => {
   useEffect(() => {
     loadDrafts();
   }, [loadDrafts]);
+
+  // Update workflow state when step changes
+  useEffect(() => {
+    updateWorkflowState({ 
+      currentStep, 
+      generatedContent, 
+      compositionData 
+    });
+  }, [currentStep, generatedContent, compositionData, updateWorkflowState]);
 
   const steps = [
     {

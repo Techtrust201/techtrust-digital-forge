@@ -9,10 +9,36 @@ export interface PersistedContent {
   style: string;
   optimizedData?: any;
   timestamp: number;
+  url?: string;
+  duration?: number;
+  cost?: number;
+}
+
+export interface WorkflowState {
+  currentStep: number;
+  generatedContent: any;
+  compositionData: any;
+  prompt: string;
+  style: string;
+  contentType: 'video' | 'image';
+  customDuration: string;
+  model: string;
+  previewContent: any;
 }
 
 export const useContentPersistence = () => {
   const [persistedContent, setPersistedContent] = useState<PersistedContent[]>([]);
+  const [workflowState, setWorkflowState] = useState<WorkflowState>({
+    currentStep: 1,
+    generatedContent: null,
+    compositionData: null,
+    prompt: '',
+    style: 'realistic',
+    contentType: 'video',
+    customDuration: '10',
+    model: 'seedance-1-lite',
+    previewContent: null
+  });
 
   // Load content from localStorage on mount
   useEffect(() => {
@@ -22,10 +48,28 @@ export const useContentPersistence = () => {
         const parsed = JSON.parse(saved);
         setPersistedContent(parsed);
       }
+
+      const savedWorkflow = localStorage.getItem('workflow_state');
+      if (savedWorkflow) {
+        const parsedWorkflow = JSON.parse(savedWorkflow);
+        setWorkflowState(parsedWorkflow);
+      }
     } catch (error) {
       console.error('Error loading persisted content:', error);
     }
   }, []);
+
+  // Save workflow state whenever it changes
+  const updateWorkflowState = useCallback((updates: Partial<WorkflowState>) => {
+    const newState = { ...workflowState, ...updates };
+    setWorkflowState(newState);
+    
+    try {
+      localStorage.setItem('workflow_state', JSON.stringify(newState));
+    } catch (error) {
+      console.error('Error saving workflow state:', error);
+    }
+  }, [workflowState]);
 
   // Save content to localStorage
   const saveContent = useCallback((content: Omit<PersistedContent, 'id' | 'timestamp'>) => {
@@ -35,7 +79,7 @@ export const useContentPersistence = () => {
       timestamp: Date.now()
     };
 
-    const updated = [newContent, ...persistedContent].slice(0, 10); // Keep last 10
+    const updated = [newContent, ...persistedContent].slice(0, 20); // Keep last 20
     setPersistedContent(updated);
     
     try {
@@ -43,6 +87,8 @@ export const useContentPersistence = () => {
     } catch (error) {
       console.error('Error saving content:', error);
     }
+
+    return newContent;
   }, [persistedContent]);
 
   // Get recent content
@@ -61,10 +107,18 @@ export const useContentPersistence = () => {
     }
   }, [persistedContent]);
 
+  // Get content by ID
+  const getContentById = useCallback((id: string) => {
+    return persistedContent.find(content => content.id === id);
+  }, [persistedContent]);
+
   return {
     persistedContent,
+    workflowState,
+    updateWorkflowState,
     saveContent,
     getRecentContent,
-    clearOldContent
+    clearOldContent,
+    getContentById
   };
 };
