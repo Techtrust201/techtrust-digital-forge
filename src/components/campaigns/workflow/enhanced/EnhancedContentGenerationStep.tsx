@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,9 +14,16 @@ import {
   DollarSign,
   Download,
   Play,
-  Eye
+  Eye,
+  Bot,
+  Lightbulb,
+  Hash,
+  MessageSquare,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAIOptimization } from '@/hooks/useAIOptimization';
+import { useContentPersistence } from '@/hooks/useContentPersistence';
 import VideoPreview from '../VideoPreview';
 import ImagePreview from '../ImagePreview';
 
@@ -43,6 +50,20 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
   const [customDuration, setCustomDuration] = useState('10');
   const [model, setModel] = useState<'seedance-1-lite' | 'seedance-1-pro'>('seedance-1-lite');
   const [previewContent, setPreviewContent] = useState<any>(null);
+  const [aiOptimization, setAiOptimization] = useState<any>(null);
+  const [showOptimization, setShowOptimization] = useState(false);
+
+  const { optimizePrompt, isOptimizing } = useAIOptimization();
+  const { persistedContent, saveContent, getRecentContent } = useContentPersistence();
+
+  // Load recent content on mount
+  useEffect(() => {
+    const recent = getRecentContent();
+    if (recent.length > 0 && !previewContent) {
+      // Optionally restore the last generated content
+      console.log('Recent content available:', recent.length);
+    }
+  }, []);
 
   const videoStyles = [
     { value: 'realistic', label: 'Réaliste' },
@@ -66,11 +87,31 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
     { value: 'abstract', label: 'Abstrait' }
   ];
 
+  const handleOptimizePrompt = async () => {
+    if (!prompt.trim()) {
+      toast.error('Saisissez d\'abord une description');
+      return;
+    }
+
+    const optimization = await optimizePrompt(prompt, contentType, style);
+    if (optimization) {
+      setAiOptimization(optimization);
+      setShowOptimization(true);
+    }
+  };
+
+  const applyOptimization = () => {
+    if (aiOptimization) {
+      setPrompt(aiOptimization.optimizedPrompt);
+      setShowOptimization(false);
+      toast.success('🤖 Prompt optimisé appliqué !');
+    }
+  };
+
   const calculateCost = () => {
     if (contentType === 'video') {
       const duration = parseInt(customDuration);
       const baseCost = model === 'seedance-1-pro' ? 0.60 : 0.40;
-      // Coût supplémentaire pour les vidéos plus longues
       const extraCost = duration > 10 ? (duration - 10) * 0.05 : 0;
       return (baseCost + extraCost).toFixed(2);
     }
@@ -96,13 +137,20 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
     }
 
     if (result) {
-      setPreviewContent({
+      const contentData = {
         type: contentType,
         content: result,
         prompt,
-        style
-      });
-      toast.success('Contenu généré ! Prévisualisez-le ci-dessous.');
+        style,
+        optimizedData: aiOptimization
+      };
+
+      setPreviewContent(contentData);
+      
+      // Save to persistence
+      saveContent(contentData);
+      
+      toast.success('Contenu généré et sauvegardé !');
     }
   };
 
@@ -126,7 +174,10 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
 
   const handleUseContent = () => {
     if (previewContent) {
-      onComplete(previewContent);
+      onComplete({
+        ...previewContent,
+        socialData: aiOptimization // Include hashtags and description
+      });
     }
   };
 
@@ -136,7 +187,7 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-purple-500" />
-            Étape 1: Génération du contenu IA
+            Génération IA avec optimisation automatique
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -163,16 +214,29 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
             </div>
           </div>
 
-          {/* Prompt */}
+          {/* Prompt with AI Optimization */}
           <div>
-            <Label htmlFor="prompt" className="text-base font-medium">
-              Description créative *
-            </Label>
+            <div className="flex items-center justify-between mb-2">
+              <Label htmlFor="prompt" className="text-base font-medium">
+                Description créative *
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleOptimizePrompt}
+                disabled={isOptimizing || !prompt.trim()}
+                className="flex items-center gap-2"
+              >
+                <Bot className="w-3 h-3" />
+                {isOptimizing ? 'Optimisation...' : 'Optimiser avec IA'}
+              </Button>
+            </div>
             <Textarea
               id="prompt"
               placeholder={contentType === 'video' 
-                ? "Ex: Un chat ninja LEGO qui fait du parkour sur des gratte-ciels la nuit, style stop-motion avec des effets de lumière dramatiques..."
-                : "Ex: Portrait d'un astronaute futuriste sur Mars, style cyberpunk, éclairage néon rose et bleu, très détaillé..."
+                ? "Ex: défense de la nature..."
+                : "Ex: portrait d'un astronaute futuriste..."
               }
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -180,6 +244,77 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
               className="resize-none"
             />
           </div>
+
+          {/* AI Optimization Results */}
+          {showOptimization && aiOptimization && (
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Bot className="w-4 h-4 text-blue-600" />
+                  Optimisation IA suggérée
+                  <Badge variant="outline" className="text-blue-700">
+                    Confiance: {aiOptimization.confidence}%
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-xs font-medium text-blue-800">Prompt optimisé:</Label>
+                  <p className="text-sm bg-white p-2 rounded border italic">
+                    "{aiOptimization.optimizedPrompt}"
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-blue-800 flex items-center gap-1">
+                      <Hash className="w-3 h-3" /> Hashtags suggérés:
+                    </Label>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {aiOptimization.hashtags.map((tag: string, index: number) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-xs font-medium text-blue-800 flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3" /> Description:
+                    </Label>
+                    <p className="text-xs bg-white p-2 rounded border">
+                      {aiOptimization.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs font-medium text-blue-800 flex items-center gap-1">
+                    <Lightbulb className="w-3 h-3" /> Suggestions d'amélioration:
+                  </Label>
+                  <ul className="text-xs space-y-1 mt-1">
+                    {aiOptimization.suggestions.map((suggestion: string, index: number) => (
+                      <li key={index} className="flex items-start gap-1">
+                        <span className="text-blue-600">•</span>
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={applyOptimization} className="bg-blue-600 hover:bg-blue-700">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Appliquer l'optimisation
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setShowOptimization(false)}>
+                    Ignorer
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Configuration */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -212,9 +347,6 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
                     onChange={(e) => setCustomDuration(e.target.value)}
                     placeholder="Ex: 30"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Vidéos longues = plusieurs clips cohérents assemblés
-                  </p>
                 </div>
 
                 <div className="md:col-span-2">
@@ -243,11 +375,6 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
               <DollarSign className="w-3 h-3 mr-1" />
               Coût estimé: ${calculateCost()}
             </Badge>
-            {contentType === 'video' && parseInt(customDuration) > 10 && (
-              <Badge variant="outline" className="text-amber-700 border-amber-200">
-                Vidéo longue: sera composée de clips cohérents
-              </Badge>
-            )}
           </div>
 
           {/* Generate Button */}
@@ -260,7 +387,7 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
             {isGenerating ? (
               <>
                 <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-                Génération en cours... (peut prendre quelques minutes)
+                Génération en cours...
               </>
             ) : (
               <>
@@ -278,25 +405,12 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5 text-green-500" />
-              Prévisualisation haute qualité
+              Contenu généré avec données sociales
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-medium">
-                    {previewContent.type === 'video' ? 'Vidéo générée' : 'Image générée'}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Style: {previewContent.style} • 
-                    {previewContent.type === 'video' && ` Durée: ${previewContent.content.duration}s •`}
-                    Coût: ${previewContent.content.cost}
-                  </p>
-                </div>
-              </div>
-
-              {/* Real Media Preview */}
+              {/* Media Preview */}
               <div className="mb-4">
                 {previewContent.type === 'video' ? (
                   <VideoPreview
@@ -319,18 +433,81 @@ const EnhancedContentGenerationStep: React.FC<EnhancedContentGenerationStepProps
                 )}
               </div>
 
-              <div className="text-xs bg-white p-2 rounded italic">
-                Prompt: "{previewContent.prompt}"
-              </div>
+              {/* Social Media Data */}
+              {aiOptimization && (
+                <div className="bg-white p-3 rounded border space-y-3">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Bot className="w-4 h-4 text-blue-500" />
+                    Données pour réseaux sociaux
+                  </h4>
+                  
+                  <div>
+                    <Label className="text-xs font-medium">Hashtags optimisés:</Label>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {aiOptimization.hashtags.map((tag: string, index: number) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-xs font-medium">Description engageante:</Label>
+                    <p className="text-sm bg-gray-50 p-2 rounded mt-1">
+                      {aiOptimization.description}
+                    </p>
+                  </div>
+                </div>
+              )}
 
-              {/* Use Content Button */}
               <Button 
                 onClick={handleUseContent}
                 className="w-full mt-4 bg-green-600 hover:bg-green-700"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Utiliser ce contenu → Passer à la composition
+                Utiliser ce contenu optimisé → Composition
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Recent Generated Content */}
+      {persistedContent.length > 0 && !previewContent && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <RefreshCw className="w-4 h-4" />
+              Contenu récent (persistant)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {persistedContent.slice(0, 3).map((content, index) => (
+                <div key={content.id} className="p-3 bg-blue-50 rounded border border-blue-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-sm">
+                        {content.type === 'video' ? 'Vidéo' : 'Image'} {index + 1}
+                      </p>
+                      <p className="text-xs text-gray-600 truncate max-w-xs">
+                        {content.prompt}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(content.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setPreviewContent(content)}
+                    >
+                      Restaurer
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

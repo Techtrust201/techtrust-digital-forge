@@ -1,24 +1,24 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { 
   Music, 
-  Subtitles, 
-  Wand2,
+  Type, 
+  Layers,
   Play,
-  Download,
-  Eye,
-  Volume2
+  Pause,
+  Save,
+  Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import CompositionPreview from './CompositionPreview';
+import MusicSelector from './MusicSelector';
 
 interface EnhancedCompositionStepProps {
   generatedContent: any;
@@ -35,55 +35,50 @@ const EnhancedCompositionStep: React.FC<EnhancedCompositionStepProps> = ({
   isComposing,
   videoClips
 }) => {
+  const [selectedMusic, setSelectedMusic] = useState<any>(null);
   const [subtitles, setSubtitles] = useState<Array<{ text: string; start: number; duration: number }>>([]);
-  const [subtitleText, setSubtitleText] = useState('');
-  const [musicUrl, setMusicUrl] = useState('');
-  const [musicVolume, setMusicVolume] = useState([50]);
-  const [ttsEnabled, setTtsEnabled] = useState(false);
-  const [compositionData, setCompositionData] = useState<any>(null);
+  const [enableTTS, setEnableTTS] = useState(false);
+  const [customSubtitle, setCustomSubtitle] = useState('');
+  const [subtitleTiming, setSubtitleTiming] = useState({ start: 0, duration: 3 });
 
-  // Auto-generate subtitles based on content
-  useEffect(() => {
-    if (generatedContent?.prompt && subtitles.length === 0) {
-      generateAutoSubtitles(generatedContent.prompt);
-    }
-  }, [generatedContent]);
+  // Auto-generate subtitles from social data
+  React.useEffect(() => {
+    if (generatedContent?.socialData?.description && subtitles.length === 0) {
+      const description = generatedContent.socialData.description;
+      const words = description.split(' ');
+      const wordsPerSubtitle = 6;
+      const duration = generatedContent.content.duration || 10;
+      const subtitleDuration = duration / Math.ceil(words.length / wordsPerSubtitle);
 
-  const generateAutoSubtitles = async (prompt: string) => {
-    try {
-      // Simulate AI subtitle generation
-      const words = prompt.split(' ');
       const autoSubtitles = [];
-      let currentTime = 0;
-      
-      // Create subtitle segments (3-5 words per subtitle)
-      for (let i = 0; i < words.length; i += 4) {
-        const segment = words.slice(i, i + 4).join(' ');
+      for (let i = 0; i < words.length; i += wordsPerSubtitle) {
+        const text = words.slice(i, i + wordsPerSubtitle).join(' ');
+        const start = (i / wordsPerSubtitle) * subtitleDuration;
+        
         autoSubtitles.push({
-          text: segment,
-          start: currentTime,
-          duration: 2.5
+          text,
+          start: Math.round(start * 10) / 10,
+          duration: Math.round(subtitleDuration * 10) / 10
         });
-        currentTime += 3;
       }
       
       setSubtitles(autoSubtitles);
-      toast.success('Sous-titres générés automatiquement !');
-    } catch (error) {
-      console.error('Auto subtitle generation error:', error);
+      toast.success('🤖 Sous-titres générés automatiquement !');
     }
-  };
+  }, [generatedContent]);
 
   const addSubtitle = () => {
-    if (subtitleText.trim()) {
-      const newSubtitle = {
-        text: subtitleText,
-        start: subtitles.length > 0 ? subtitles[subtitles.length - 1].start + subtitles[subtitles.length - 1].duration : 0,
-        duration: 3
-      };
-      setSubtitles([...subtitles, newSubtitle]);
-      setSubtitleText('');
-    }
+    if (!customSubtitle.trim()) return;
+    
+    const newSubtitle = {
+      text: customSubtitle,
+      start: subtitleTiming.start,
+      duration: subtitleTiming.duration
+    };
+    
+    setSubtitles([...subtitles, newSubtitle]);
+    setCustomSubtitle('');
+    setSubtitleTiming({ start: subtitleTiming.start + subtitleTiming.duration, duration: 3 });
   };
 
   const removeSubtitle = (index: number) => {
@@ -96,41 +91,27 @@ const EnhancedCompositionStep: React.FC<EnhancedCompositionStepProps> = ({
       return;
     }
 
+    const clips = generatedContent.type === 'video' ? [generatedContent.content] : [];
+    
     const options = {
-      subtitles: subtitles,
-      music: musicUrl ? { url: musicUrl, volume: musicVolume[0] / 100 } : undefined,
-      tts: ttsEnabled
+      subtitles: subtitles.length > 0 ? subtitles : undefined,
+      music: selectedMusic,
+      tts: enableTTS
     };
 
-    const clips = generatedContent.type === 'video' ? [generatedContent.content] : [];
     const result = await composeFullVideo(clips, options);
-
     if (result) {
-      const composition = {
-        originalContent: generatedContent,
+      const compositionData = {
+        renderId: result,
         subtitles,
-        music: musicUrl,
-        musicVolume: musicVolume[0],
-        tts: ttsEnabled,
-        composedVideoId: result
+        music: selectedMusic,
+        tts: enableTTS,
+        originalContent: generatedContent
       };
       
-      setCompositionData(composition);
+      onComplete(compositionData);
       toast.success('Composition terminée !');
     }
-  };
-
-  const handleSaveAndContinue = () => {
-    const finalData = {
-      originalContent: generatedContent,
-      subtitles,
-      music: musicUrl,
-      musicVolume: musicVolume[0],
-      tts: ttsEnabled,
-      compositionData
-    };
-    
-    onComplete(finalData);
   };
 
   if (!generatedContent) {
@@ -148,94 +129,138 @@ const EnhancedCompositionStep: React.FC<EnhancedCompositionStepProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Music className="w-5 h-5 text-blue-500" />
-            Étape 2: Composition & Post-production avancée
+            <Layers className="w-5 h-5 text-blue-500" />
+            Étape 2: Composition & Post-production
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Live Preview */}
-          <CompositionPreview
-            videoUrl={generatedContent.type === 'video' ? generatedContent.content.url : undefined}
-            imageUrl={generatedContent.type === 'image' ? generatedContent.content.url : undefined}
-            subtitles={subtitles}
-            musicUrl={musicUrl}
-            onUpdate={setCompositionData}
+          {/* Content Info */}
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <h3 className="font-medium mb-2">Contenu à composer:</h3>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline">
+                {generatedContent.type === 'video' ? 'Vidéo' : 'Image'}
+              </Badge>
+              <Badge variant="outline">{generatedContent.style}</Badge>
+              {generatedContent.content.duration && (
+                <Badge variant="outline">{generatedContent.content.duration}s</Badge>
+              )}
+            </div>
+            <p className="text-sm text-gray-600 mt-2 italic">
+              "{generatedContent.prompt}"
+            </p>
+          </div>
+
+          {/* Music Selection */}
+          <MusicSelector
+            onMusicSelect={setSelectedMusic}
+            selectedMusic={selectedMusic}
           />
 
-          {/* Subtitle Management */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-medium">Sous-titres intelligents</Label>
-              <Badge variant="outline" className="text-green-600">
-                {subtitles.length} segments
-              </Badge>
-            </div>
-            
-            <div className="flex gap-2">
-              <Textarea
-                placeholder="Ajouter un sous-titre..."
-                value={subtitleText}
-                onChange={(e) => setSubtitleText(e.target.value)}
-                rows={2}
-                className="flex-1"
-              />
-              <Button onClick={addSubtitle} className="self-end">
-                <Subtitles className="w-4 h-4 mr-2" />
-                Ajouter
-              </Button>
-            </div>
-
-            {subtitles.length > 0 && (
-              <div className="max-h-40 overflow-y-auto space-y-2">
-                {subtitles.map((subtitle, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                    <div className="flex-1">
-                      <p className="text-sm">{subtitle.text}</p>
-                      <p className="text-xs text-gray-500">
-                        {subtitle.start}s - {subtitle.start + subtitle.duration}s
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => removeSubtitle(index)}
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Music Controls */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Musique de fond</Label>
-            <div className="flex gap-2">
-              <Input
-                placeholder="URL de la musique de fond..."
-                value={musicUrl}
-                onChange={(e) => setMusicUrl(e.target.value)}
-                className="flex-1"
-              />
-              <Button variant="outline">
-                <Volume2 className="w-4 h-4" />
-              </Button>
-            </div>
-            
-            {musicUrl && (
-              <div className="space-y-2">
-                <Label className="text-sm">Volume: {musicVolume[0]}%</Label>
-                <Slider
-                  value={musicVolume}
-                  onValueChange={setMusicVolume}
-                  max={100}
-                  step={5}
-                  className="w-full"
+          {/* Subtitles Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Type className="w-5 h-5 text-purple-500" />
+                Sous-titres et texte
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* TTS Option */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="tts">Synthèse vocale (Text-to-Speech)</Label>
+                  <p className="text-sm text-gray-600">
+                    Générer automatiquement la voix off à partir du texte
+                  </p>
+                </div>
+                <Switch
+                  id="tts"
+                  checked={enableTTS}
+                  onCheckedChange={setEnableTTS}
                 />
               </div>
-            )}
-          </div>
+
+              {/* Auto-generated subtitles */}
+              {subtitles.length > 0 && (
+                <div>
+                  <Label className="font-medium">Sous-titres automatiques:</Label>
+                  <div className="space-y-2 mt-2 max-h-32 overflow-y-auto">
+                    {subtitles.map((subtitle, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div className="flex-1">
+                          <span className="text-sm font-medium">
+                            {subtitle.start}s - {(subtitle.start + subtitle.duration).toFixed(1)}s:
+                          </span>
+                          <span className="text-sm ml-2">{subtitle.text}</span>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => removeSubtitle(index)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Add custom subtitle */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="md:col-span-2">
+                  <Label htmlFor="subtitle-text">Ajouter un sous-titre</Label>
+                  <Input
+                    id="subtitle-text"
+                    placeholder="Texte du sous-titre..."
+                    value={customSubtitle}
+                    onChange={(e) => setCustomSubtitle(e.target.value)}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label htmlFor="start-time">Début (s)</Label>
+                    <Input
+                      id="start-time"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={subtitleTiming.start}
+                      onChange={(e) => setSubtitleTiming({
+                        ...subtitleTiming,
+                        start: parseFloat(e.target.value) || 0
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration">Durée (s)</Label>
+                    <Input
+                      id="duration"
+                      type="number"
+                      min="0.1"
+                      step="0.1"
+                      value={subtitleTiming.duration}
+                      onChange={(e) => setSubtitleTiming({
+                        ...subtitleTiming,
+                        duration: parseFloat(e.target.value) || 1
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                onClick={addSubtitle}
+                disabled={!customSubtitle.trim()}
+                variant="outline"
+                size="sm"
+              >
+                Ajouter sous-titre
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Compose Button */}
           <Button 
@@ -246,30 +271,27 @@ const EnhancedCompositionStep: React.FC<EnhancedCompositionStepProps> = ({
           >
             {isComposing ? (
               <>
-                <Wand2 className="w-4 h-4 mr-2 animate-spin" />
+                <Music className="w-4 h-4 mr-2 animate-pulse" />
                 Composition en cours...
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 mr-2" />
+                <Sparkles className="w-4 h-4 mr-2" />
                 Composer la vidéo finale
               </>
             )}
           </Button>
-
-          {/* Continue Button */}
-          {(subtitles.length > 0 || musicUrl) && (
-            <Button 
-              onClick={handleSaveAndContinue}
-              className="w-full"
-              variant="outline"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Sauvegarder et continuer
-            </Button>
-          )}
         </CardContent>
       </Card>
+
+      {/* Live Preview */}
+      <CompositionPreview
+        videoUrl={generatedContent.type === 'video' ? generatedContent.content.url : undefined}
+        imageUrl={generatedContent.type === 'image' ? generatedContent.content.url : undefined}
+        subtitles={subtitles}
+        musicUrl={selectedMusic?.url}
+        onUpdate={(data) => console.log('Composition updated:', data)}
+      />
     </div>
   );
 };
