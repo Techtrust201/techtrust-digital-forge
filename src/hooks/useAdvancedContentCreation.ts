@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -78,7 +79,7 @@ export const useAdvancedContentCreation = () => {
       
       const { data, error } = await supabase.functions.invoke('generate-image', {
         body: { 
-          prompt: `${style} style: ${prompt}`,
+          prompt: prompt.trim(),
           style
         }
       });
@@ -90,17 +91,17 @@ export const useAdvancedContentCreation = () => {
         url: data.imageUrl,
         style,
         prompt,
-        cost: 0.003, // FLUX coût approximatif
+        cost: data.estimated_cost || 0.003,
         dimensions: { width: 1024, height: 1024 }
       };
 
       setGeneratedImages(prev => [...prev, generatedImage]);
-      toast.success(`Image générée avec succès ! Coût: $${generatedImage.cost}`);
+      toast.success(`🖼️ Image générée avec succès ! Coût: $${generatedImage.cost}`);
       return generatedImage;
 
     } catch (error) {
       console.error('Error generating image:', error);
-      toast.error(`Erreur lors de la génération: ${error.message}`);
+      toast.error(`❌ Erreur lors de la génération: ${error.message}`);
       return null;
     } finally {
       setIsGenerating(false);
@@ -139,6 +140,8 @@ export const useAdvancedContentCreation = () => {
         throw new Error('No prediction ID received');
       }
 
+      toast.info('🎬 Génération vidéo démarrée... Cela peut prendre quelques minutes.');
+
       // Poll for completion
       let attempts = 0;
       const maxAttempts = 60; // 5 minutes max
@@ -165,7 +168,7 @@ export const useAdvancedContentCreation = () => {
           };
 
           setVideoClips(prev => [...prev, videoClip]);
-          toast.success(`Vidéo ${duration}s générée avec succès ! Coût: $${videoClip.cost}`);
+          toast.success(`🎬 Vidéo ${duration}s générée avec succès ! Coût: $${videoClip.cost}`);
           return videoClip;
         }
 
@@ -180,7 +183,7 @@ export const useAdvancedContentCreation = () => {
 
     } catch (error) {
       console.error('Error generating video:', error);
-      toast.error(`Erreur lors de la génération: ${error.message}`);
+      toast.error(`❌ Erreur lors de la génération: ${error.message}`);
       return null;
     } finally {
       setIsGenerating(false);
@@ -216,12 +219,12 @@ export const useAdvancedContentCreation = () => {
 
       if (error) throw error;
 
-      toast.success(`Composition démarrée ! Coût estimé: $${data.estimated_cost}`);
+      toast.success(`🎵 Composition démarrée ! Coût estimé: $${data.estimated_cost}`);
       return data.renderId;
 
     } catch (error) {
       console.error('Error composing video:', error);
-      toast.error(`Erreur lors de la composition: ${error.message}`);
+      toast.error(`❌ Erreur lors de la composition: ${error.message}`);
       return null;
     } finally {
       setIsComposing(false);
@@ -230,7 +233,7 @@ export const useAdvancedContentCreation = () => {
 
   const connectSocialPlatform = useCallback(async (platform: string) => {
     try {
-      toast.success(`Connexion à ${platform} simulée avec succès`);
+      toast.success(`✅ Connexion à ${platform} simulée avec succès`);
       
       setSocialConnections(prev => 
         prev.map(conn => 
@@ -240,7 +243,7 @@ export const useAdvancedContentCreation = () => {
         )
       );
     } catch (error) {
-      toast.error(`Erreur de connexion à ${platform}`);
+      toast.error(`❌ Erreur de connexion à ${platform}`);
     }
   }, []);
 
@@ -331,7 +334,7 @@ export const useAdvancedContentCreation = () => {
 
     const scheduledDateTime = new Date(`${postData.scheduledDate}T${postData.scheduledTime}`);
     toast.success(
-      `Publication programmée pour le ${scheduledDateTime.toLocaleDateString()} à ${scheduledDateTime.toLocaleTimeString()} sur ${postData.platforms.join(', ')}`
+      `📅 Publication programmée pour le ${scheduledDateTime.toLocaleDateString()} à ${scheduledDateTime.toLocaleTimeString()} sur ${postData.platforms.join(', ')}`
     );
     
     return true;
@@ -351,7 +354,7 @@ export const useAdvancedContentCreation = () => {
     const updatedDrafts = [...existingDrafts, draft];
     localStorage.setItem('advanced_content_drafts', JSON.stringify(updatedDrafts));
     
-    toast.success('Brouillon sauvegardé !');
+    toast.success('💾 Brouillon sauvegardé !');
     return draft.id;
   }, []);
 
