@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -20,7 +19,7 @@ import AdminBlogPreviewPage from '@/pages/admin/blog/AdminBlogPreviewPage';
 import AdminCampaignsPage from '@/pages/admin/AdminCampaignsPage';
 import AdminBillingPage from '@/pages/admin/AdminBillingPage';
 import AdminSystemPage from '@/pages/admin/AdminSystemPage';
-import AdminContentCreationPage from '@/pages/admin/AdminContentCreationPage';
+import AdminContentCreationPage from '@/pages/admin/campaigns/AdminContentCreationPage';
 import ActivateAccount from "@/pages/ActivateAccount";
 
 const queryClient = new QueryClient();
@@ -59,7 +58,7 @@ function App() {
           <Route path="/admin/analytics/performance" element={<ProtectedRoute adminOnly={true}><AdminAnalyticsPage /></ProtectedRoute>} />
           <Route path="/admin/analytics/users" element={<ProtectedRoute adminOnly={true}><AdminAnalyticsPage /></ProtectedRoute>} />
 
-          {/* Blog - Routes mises à jour */}
+          {/* Blog */}
           <Route path="/admin/blog" element={<ProtectedRoute adminOnly={true}><AdminBlogPage /></ProtectedRoute>} />
           <Route path="/admin/blog/posts" element={<ProtectedRoute adminOnly={true}><AdminBlogPostsPage /></ProtectedRoute>} />
           <Route path="/admin/blog/create" element={<ProtectedRoute adminOnly={true}><AdminBlogCreatePage /></ProtectedRoute>} />
@@ -73,10 +72,8 @@ function App() {
           <Route path="/admin/campaigns/email" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />
           <Route path="/admin/campaigns/sms" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />
           <Route path="/admin/campaigns/automation" element={<ProtectedRoute adminOnly={true}><AdminCampaignsPage /></ProtectedRoute>} />
+          <Route path="/admin/campaigns/content" element={<ProtectedRoute adminOnly={true}><AdminContentCreationPage /></ProtectedRoute>} />
           
-          {/* Création de Contenu IA - NOUVEAU */}
-          <Route path="/admin/content-creation" element={<ProtectedRoute adminOnly={true}><AdminContentCreationPage /></ProtectedRoute>} />
-
           {/* Facturation */}
           <Route path="/admin/billing" element={<ProtectedRoute adminOnly={true}><AdminBillingPage /></ProtectedRoute>} />
           <Route path="/admin/billing/invoices" element={<ProtectedRoute adminOnly={true}><AdminBillingPage /></ProtectedRoute>} />

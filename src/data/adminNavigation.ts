@@ -1,4 +1,3 @@
-
 import { 
   LayoutDashboard, 
   Users, 
@@ -65,15 +64,9 @@ export const adminNavigationItems = [
     submenu: [
       { name: 'Email Marketing', href: '/admin/campaigns/email' },
       { name: 'SMS Marketing', href: '/admin/campaigns/sms' },
-      { name: 'Automation', href: '/admin/campaigns/automation' }
+      { name: 'Automation', href: '/admin/campaigns/automation' },
+      { name: 'Création de Contenu IA', href: '/admin/campaigns/content' }
     ]
-  },
-  {
-    id: 'content-creation',
-    name: 'Création de Contenu IA',
-    icon: Wand2,
-    href: '/admin/content-creation',
-    badge: 'Nouveau'
   },
   {
     id: 'billing',
