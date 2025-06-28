@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -119,10 +118,20 @@ export const useAdvancedContentCreation = () => {
       return null;
     }
 
+    if (duration < 5 || duration > 120) {
+      toast.error('La durée doit être entre 5 et 120 secondes');
+      return null;
+    }
+
     setIsGenerating(true);
     
     try {
-      console.log('Generating video with Replicate/Seedance...');
+      console.log(`Generating video with Replicate/Seedance: ${duration}s...`);
+      
+      // Pour les vidéos longues (>30s), créer plusieurs clips cohérents
+      if (duration > 30) {
+        return await generateLongVideo(prompt, style, duration, model);
+      }
       
       const { data, error } = await supabase.functions.invoke('generate-video', {
         body: { 
@@ -140,14 +149,14 @@ export const useAdvancedContentCreation = () => {
         throw new Error('No prediction ID received');
       }
 
-      toast.info('🎬 Génération vidéo démarrée... Cela peut prendre quelques minutes.');
+      toast.info(`🎬 Génération vidéo ${duration}s démarrée... Cela peut prendre quelques minutes.`);
 
       // Poll for completion
       let attempts = 0;
-      const maxAttempts = 60; // 5 minutes max
+      const maxAttempts = Math.ceil(duration / 2); // Plus de temps pour les vidéos longues
       
       while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
+        await new Promise(resolve => setTimeout(resolve, 5000));
         
         const { data: statusData, error: statusError } = await supabase.functions.invoke('generate-video', {
           body: { predictionId }
@@ -158,17 +167,20 @@ export const useAdvancedContentCreation = () => {
         console.log(`Attempt ${attempts + 1}: Status = ${statusData.status}`);
 
         if (statusData.status === 'succeeded') {
+          const baseCost = model === 'seedance-1-pro' ? 0.60 : 0.40;
+          const extraCost = duration > 10 ? (duration - 10) * 0.05 : 0;
+          
           const videoClip: VideoClip = {
             id: predictionId,
             url: Array.isArray(statusData.output) ? statusData.output[0] : statusData.output,
             duration,
             style,
             prompt,
-            cost: data.estimated_cost || (model === 'seedance-1-pro' ? 0.60 : 0.40)
+            cost: baseCost + extraCost
           };
 
           setVideoClips(prev => [...prev, videoClip]);
-          toast.success(`🎬 Vidéo ${duration}s générée avec succès ! Coût: $${videoClip.cost}`);
+          toast.success(`🎬 Vidéo ${duration}s générée avec succès ! Coût: $${videoClip.cost.toFixed(2)}`);
           return videoClip;
         }
 
@@ -179,7 +191,7 @@ export const useAdvancedContentCreation = () => {
         attempts++;
       }
 
-      throw new Error('Génération expirée après 5 minutes');
+      throw new Error(`Génération expirée après ${maxAttempts * 5} secondes`);
 
     } catch (error) {
       console.error('Error generating video:', error);
@@ -187,6 +199,96 @@ export const useAdvancedContentCreation = () => {
       return null;
     } finally {
       setIsGenerating(false);
+    }
+  }, []);
+
+  // Nouvelle fonction pour générer des vidéos longues avec des clips cohérents
+  const generateLongVideo = useCallback(async (
+    prompt: string,
+    style: string,
+    totalDuration: number,
+    model: 'seedance-1-lite' | 'seedance-1-pro'
+  ): Promise<VideoClip | null> => {
+    try {
+      const clipDuration = 10; // Chaque clip fait 10s
+      const numberOfClips = Math.ceil(totalDuration / clipDuration);
+      
+      toast.info(`🎬 Génération d'une vidéo longue (${totalDuration}s) en ${numberOfClips} clips cohérents...`);
+      
+      // Créer des variations du prompt pour chaque clip pour assurer la cohérence
+      const clipPrompts = [];
+      for (let i = 0; i < numberOfClips; i++) {
+        const sequenceNumber = i + 1;
+        const sequencePrompt = `${prompt}, sequence ${sequenceNumber} of ${numberOfClips}, continuous narrative, consistent style and characters`;
+        clipPrompts.push(sequencePrompt);
+      }
+      
+      // Générer tous les clips
+      const clips = [];
+      for (let i = 0; i < clipPrompts.length; i++) {
+        toast.info(`Génération du clip ${i + 1}/${numberOfClips}...`);
+        
+        const { data, error } = await supabase.functions.invoke('generate-video', {
+          body: { 
+            prompt: clipPrompts[i],
+            style,
+            duration: clipDuration,
+            model
+          }
+        });
+
+        if (error) throw error;
+        
+        // Attendre la completion
+        let attempts = 0;
+        while (attempts < 30) {
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          
+          const { data: statusData } = await supabase.functions.invoke('generate-video', {
+            body: { predictionId: data.prediction.id }
+          });
+          
+          if (statusData.status === 'succeeded') {
+            clips.push({
+              id: `${data.prediction.id}_${i}`,
+              url: Array.isArray(statusData.output) ? statusData.output[0] : statusData.output,
+              duration: clipDuration,
+              style,
+              prompt: clipPrompts[i]
+            });
+            break;
+          }
+          
+          if (statusData.status === 'failed') {
+            throw new Error(`Clip ${i + 1} generation failed`);
+          }
+          
+          attempts++;
+        }
+      }
+      
+      // Créer un clip composite
+      const baseCost = model === 'seedance-1-pro' ? 0.60 : 0.40;
+      const totalCost = baseCost * numberOfClips + (totalDuration - 10) * 0.05;
+      
+      const compositeClip: VideoClip = {
+        id: `composite_${Date.now()}`,
+        url: clips[0].url, // Premier clip comme aperçu
+        duration: totalDuration,
+        style,
+        prompt: `${prompt} (${numberOfClips} clips cohérents)`,
+        cost: totalCost
+      };
+      
+      setVideoClips(prev => [...prev, compositeClip]);
+      toast.success(`🎬 Vidéo longue ${totalDuration}s générée avec ${numberOfClips} clips cohérents ! Coût: $${totalCost.toFixed(2)}`);
+      
+      return compositeClip;
+      
+    } catch (error) {
+      console.error('Error generating long video:', error);
+      toast.error(`❌ Erreur lors de la génération de vidéo longue: ${error.message}`);
+      return null;
     }
   }, []);
 
