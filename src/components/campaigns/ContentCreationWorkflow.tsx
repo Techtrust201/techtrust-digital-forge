@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,8 +16,9 @@ import {
   Save
 } from 'lucide-react';
 import { useAdvancedContentCreation } from '@/hooks/useAdvancedContentCreation';
-import ContentGenerationStep from './workflow/ContentGenerationStep';
-import CompositionStep from './workflow/CompositionStep';
+import { useSocialOAuth } from '@/hooks/useSocialOAuth';
+import EnhancedContentGenerationStep from './workflow/enhanced/EnhancedContentGenerationStep';
+import EnhancedCompositionStep from './workflow/EnhancedCompositionStep';
 import SocialConnectionStep from './workflow/SocialConnectionStep';
 import SchedulingStep from './workflow/SchedulingStep';
 import DraftsStep from './workflow/DraftsStep';
@@ -37,12 +37,18 @@ const ContentCreationWorkflow = () => {
     isComposing,
     videoClips,
     generatedImages,
-    socialConnections,
     schedulePost,
     saveDraft,
     loadDrafts,
     drafts
   } = useAdvancedContentCreation();
+
+  const {
+    platforms: socialConnections,
+    connectPlatform,
+    disconnectPlatform,
+    publishToplatform
+  } = useSocialOAuth();
 
   useEffect(() => {
     loadDrafts();
@@ -153,10 +159,10 @@ const ContentCreationWorkflow = () => {
         </CardContent>
       </Card>
 
-      {/* Step Content */}
+      {/* Enhanced Step Content */}
       <div className="min-h-[600px]">
         {currentStep === 1 && (
-          <ContentGenerationStep 
+          <EnhancedContentGenerationStep 
             onComplete={(data) => handleStepComplete(1, data)}
             generateVideoClip={generateVideoClip}
             generateImage={generateImage}
@@ -167,7 +173,7 @@ const ContentCreationWorkflow = () => {
         )}
         
         {currentStep === 2 && (
-          <CompositionStep 
+          <EnhancedCompositionStep 
             generatedContent={generatedContent}
             onComplete={(data) => handleStepComplete(2, data)}
             composeFullVideo={composeFullVideo}
@@ -179,7 +185,11 @@ const ContentCreationWorkflow = () => {
         {currentStep === 3 && (
           <SocialConnectionStep 
             onComplete={() => handleStepComplete(3)}
-            socialConnections={socialConnections}
+            socialConnections={socialConnections.map(p => ({ 
+              platform: p.id, 
+              connected: p.connected, 
+              username: p.username 
+            }))}
           />
         )}
         
@@ -189,7 +199,11 @@ const ContentCreationWorkflow = () => {
             compositionData={compositionData}
             onComplete={() => handleStepComplete(4)}
             schedulePost={schedulePost}
-            socialConnections={socialConnections}
+            socialConnections={socialConnections.map(p => ({ 
+              platform: p.id, 
+              connected: p.connected, 
+              username: p.username 
+            }))}
           />
         )}
         

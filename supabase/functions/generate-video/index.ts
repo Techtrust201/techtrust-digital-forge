@@ -56,15 +56,18 @@ serve(async (req) => {
 
     console.log(`Generating video with ${modelName}:`, prompt);
     
+    // Calculate frames based on duration (24fps fixed for Seedance)
+    const totalFrames = Math.min(duration * 24, 240); // Max 240 frames (10s at 24fps)
+    
     const output = await replicate.run(modelName, {
       input: {
         prompt: `${style} style: ${prompt}`,
-        num_frames: duration === 5 ? 25 : 50, // 5fps for 5s or 10s
+        num_frames: totalFrames,
         guidance_scale: 7.5,
         num_inference_steps: 50,
         width: 1024,
         height: 576,
-        fps: 5
+        fps: 24 // Fixed to 24fps as required by Seedance
       }
     });
 
