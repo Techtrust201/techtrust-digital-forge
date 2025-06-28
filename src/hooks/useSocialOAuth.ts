@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
@@ -105,7 +104,8 @@ export const useSocialOAuth = () => {
                 )
               );
               
-              toast.success(`✅ Connexion à ${p.name} réussie !`);
+              const platform = platforms.find(p => p.id === platformId);
+              toast.success(`✅ Connexion à ${platform?.name} réussie !`);
               popup?.close();
             })
             .catch((error) => {
@@ -130,7 +130,7 @@ export const useSocialOAuth = () => {
       console.error(`OAuth error for ${platformId}:`, error);
       toast.error(`❌ Erreur lors de la connexion à ${platformId}`);
     }
-  }, []);
+  }, [platforms]);
 
   const exchangeCodeForToken = async (platform: string, code: string) => {
     // This would typically be done via a secure backend endpoint
