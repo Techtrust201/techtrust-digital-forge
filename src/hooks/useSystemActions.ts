@@ -84,32 +84,14 @@ export const useSystemActions = () => {
     }
   };
 
+  // Security audit removed - was simulated and provided false confidence
   const runSecurityAudit = async () => {
-    setIsLoading(true);
-    try {
-      // Simulation d'audit de sécurité
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      
-      const auditResult = {
-        id: Math.random().toString(36).substr(2, 9),
-        score: Math.floor(Math.random() * 20) + 80, // Score entre 80 et 100
-        issues: Math.floor(Math.random() * 3), // 0 à 2 problèmes
-        recommendations: [
-          'Mettre à jour les dépendances',
-          'Renforcer la politique de mots de passe',
-          'Activer le monitoring avancé'
-        ].slice(0, Math.floor(Math.random() * 3) + 1),
-        completedAt: new Date().toISOString()
-      };
+    toast.error('Security audit feature has been removed. Use proper security scanning tools instead.');
+    return null;
+  };
 
-      localStorage.setItem('last_security_audit', JSON.stringify(auditResult));
-      toast.success(`Audit terminé - Score: ${auditResult.score}/100`);
-      return auditResult;
-    } catch (error) {
-      toast.error('Erreur lors de l\'audit');
-    } finally {
-      setIsLoading(false);
-    }
+  const getLastSecurityAudit = () => {
+    return null;
   };
 
   const optimizeDatabase = async () => {
@@ -140,6 +122,7 @@ export const useSystemActions = () => {
     clearLogs,
     updateSystemConfig,
     runSecurityAudit,
+    getLastSecurityAudit,
     optimizeDatabase,
     isLoading
   };

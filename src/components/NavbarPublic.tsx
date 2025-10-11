@@ -48,7 +48,7 @@ const NavbarPublic = () => {
   const [currentLanguage, setCurrentLanguage] = useState<"fr" | "en">("fr");
 
   // Auth state
-  const { isAuthenticated, profile } = useSupabaseAuth();
+  const { isAuthenticated, profile, isAdmin } = useSupabaseAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -198,13 +198,7 @@ const NavbarPublic = () => {
                 asChild
                 className="bg-custom-blue hover:bg-custom-blue/90"
               >
-                <a
-                  href={
-                    profile?.role === "super_admin"
-                      ? "/admin/dashboard"
-                      : "/dashboard"
-                  }
-                >
+                <a href={isAdmin ? "/admin/dashboard" : "/dashboard"}>
                   Dashboard
                 </a>
               </Button>
@@ -374,13 +368,7 @@ const NavbarPublic = () => {
                     asChild
                     className="w-full justify-center bg-custom-blue"
                   >
-                    <a
-                      href={
-                        profile?.role === "super_admin"
-                          ? "/admin/dashboard"
-                          : "/dashboard"
-                      }
-                    >
+                    <a href={isAdmin ? "/admin/dashboard" : "/dashboard"}>
                       Dashboard
                     </a>
                   </Button>

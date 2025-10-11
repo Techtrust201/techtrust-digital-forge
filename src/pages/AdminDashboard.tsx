@@ -43,6 +43,7 @@ const AdminDashboard = () => {
     profile,
     isLoading: authLoading,
     canAccessAdmin,
+    isAdmin,
   } = useSupabaseAuth();
 
   const {
@@ -57,10 +58,10 @@ const AdminDashboard = () => {
     return {
       name: profile?.name ?? user?.email?.split("@")[0] ?? "Admin",
       email: user?.email ?? "",
-      role: profile?.role ?? "super_admin",
+      role: isAdmin ? "admin" : "client",
       tier: (profile as { tier?: string })?.tier ?? "diamond",
     };
-  }, [profile, user]);
+  }, [profile, user, isAdmin]);
 
   const isSuperAdmin =
     canAccessAdmin || user?.email === "contact@tech-trust.fr";

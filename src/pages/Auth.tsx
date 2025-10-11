@@ -42,6 +42,7 @@ const Auth = () => {
     user,
     profile,
     isAuthenticated,
+    isAdmin,
   } = useSupabaseAuth();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -65,13 +66,7 @@ const Auth = () => {
     companyName: "",
   });
 
-  console.log("[AUTH_PAGE] État:", {
-    isLoading,
-    user: user?.email,
-    isEmailVerified,
-    profileRole: profile?.role,
-    isAuthenticated,
-  });
+  // Remove profile.role reference from logging
 
   // Si l'utilisateur est déjà connecté et vérifié, lui proposer d'aller au dashboard
   useEffect(() => {
@@ -211,13 +206,10 @@ const Auth = () => {
     url: "https://www.tech-trust.fr/auth",
   };
 
-  // Fonction pour naviguer manuellement vers le dashboard
+  // Function to navigate manually to dashboard
   const goToDashboard = () => {
-    // Admin si rôle super_admin ou email admin direct
-    if (
-      profile?.role === "super_admin" ||
-      user?.email === "contact@tech-trust.fr"
-    ) {
+    // Admin if role is admin or email is admin
+    if (isAdmin || user?.email === "contact@tech-trust.fr") {
       navigate("/admin/dashboard");
     } else {
       navigate("/dashboard");

@@ -6,75 +6,86 @@ interface UserProfile {
   id: string;
   name: string | null;
   company: string | null;
-  role: string;
   tier: string | null;
   created_at: string;
   updated_at: string;
+}
+
+interface UserRole {
+  role: 'admin' | 'super_admin' | 'manager' | 'employee' | 'client';
 }
 
 export const useSupabaseAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
   const [lastResendTime, setLastResendTime] = useState<number>(0);
 
-  // Charger le profil utilisateur
+  // Load user profile and role
   const loadUserProfile = useCallback(async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, name, company, role, tier, created_at, updated_at')
-        .eq('id', userId)
-        .single();
+      const [profileResponse, roleResponse] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, name, company, tier, created_at, updated_at')
+          .eq('id', userId)
+          .single(),
+        supabase
+          .from('user_roles')
+          .select('role')
+          .eq('userId', userId)
+          .single()
+      ]);
 
-      if (error) {
-        console.error('[AUTH] Erreur chargement profil:', error);
+      if (profileResponse.error) {
+        // Profile load failed silently - user might not have profile yet
         return;
       }
 
-      console.log('[AUTH] Profil chargé:', data);
-      setProfile(data);
+      setProfile(profileResponse.data);
+      
+      if (roleResponse.data) {
+        setUserRole(roleResponse.data);
+      }
     } catch (error) {
-      console.error('[AUTH] Erreur profil:', error);
+      // Silent failure - user might not have profile/role yet
     }
   }, []);
 
   useEffect(() => {
     let mounted = true;
-    console.log('[AUTH] Initialisation hook authentification');
 
-    // Écouter les changements d'authentification
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
-
-        console.log('[AUTH] Changement état:', event, session?.user?.email);
         
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Charger le profil utilisateur avec un délai pour permettre au trigger de s'exécuter
+          // Load profile with delay for new users
           setTimeout(() => {
             if (mounted) {
               loadUserProfile(session.user.id);
             }
-          }, 500); // Augmenté à 500ms pour les nouveaux utilisateurs
+          }, 500);
         } else {
           setProfile(null);
+          setUserRole(null);
         }
 
         setIsLoading(false);
       }
     );
 
-    // Vérifier la session existante
+    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!mounted) return;
 
-      console.log('[AUTH] Session existante:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -86,13 +97,12 @@ export const useSupabaseAuth = () => {
     });
 
     return () => {
-      console.log('[AUTH] Nettoyage hook authentification');
       mounted = false;
       subscription.unsubscribe();
     };
   }, [loadUserProfile]);
 
-  // Inscription
+  // Sign up
   const signUp = useCallback(async (email: string, password: string, name: string, companyName?: string) => {
     const redirectUrl = `${window.location.origin}/auth?verified=true`;
     
@@ -103,8 +113,7 @@ export const useSupabaseAuth = () => {
         emailRedirectTo: redirectUrl,
         data: {
           name: name,
-          company_name: companyName || null,
-          role: 'client_bronze'
+          company_name: companyName || null
         }
       }
     });
@@ -140,14 +149,14 @@ export const useSupabaseAuth = () => {
     return { data, error };
   }, []);
 
-  // Déconnexion
+  // Sign out
   const signOut = useCallback(async () => {
-    console.log('[AUTH] Déconnexion');
     const { error } = await supabase.auth.signOut();
     if (!error) {
       setUser(null);
       setSession(null);
       setProfile(null);
+      setUserRole(null);
       setEmailVerificationSent(false);
     }
     return { error };
@@ -186,36 +195,28 @@ export const useSupabaseAuth = () => {
     return { error };
   }, []);
 
-  // Fonction pour marquer l'email comme vérifié manuellement (pour les admins)
+  // Mark email as verified manually (for admins)
   const markEmailAsVerified = useCallback(async () => {
     if (user?.email === 'contact@tech-trust.fr') {
-      // Pour l'admin, on considère l'email comme vérifié
-      console.log('[AUTH] Admin email marked as verified');
       return true;
     }
     return false;
   }, [user?.email]);
 
-  // Vérifications des rôles avec useMemo pour éviter les re-créations
+  // Role checks using useMemo
   const hasRole = useMemo(() => {
     return (role: string): boolean => {
-      const result = profile?.role === role;
-      console.log('[AUTH] hasRole check:', role, result, 'profile role:', profile?.role);
-      return result;
+      return userRole?.role === role;
     };
-  }, [profile?.role]);
+  }, [userRole?.role]);
 
   const isAdmin = useMemo(() => {
-    const result = profile?.role === 'super_admin';
-    console.log('[AUTH] isAdmin check:', result, 'profile role:', profile?.role);
-    return result;
-  }, [profile?.role]);
+    return userRole?.role === 'admin' || userRole?.role === 'super_admin';
+  }, [userRole?.role]);
 
   const canAccessAdmin = useMemo(() => {
-    const result = profile?.role === 'super_admin';
-    console.log('[AUTH] canAccessAdmin check:', result);
-    return result;
-  }, [profile?.role]);
+    return userRole?.role === 'admin' || userRole?.role === 'super_admin';
+  }, [userRole?.role]);
 
   const getRemainingResendTime = useCallback((): number => {
     const now = Date.now();

@@ -9,19 +9,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = false }) => {
-  const { user, isLoading, isEmailVerified, profile } = useSupabaseAuth();
+  const { user, isLoading, isEmailVerified, isAdmin } = useSupabaseAuth();
 
-  console.log('[PROTECTED] État:', { 
-    isLoading, 
-    user: user?.email, 
-    isEmailVerified, 
-    profileRole: profile?.role, 
-    adminOnly
-  });
-
-  // Affiche un skeleton pendant le chargement
+  // Show skeleton during loading
   if (isLoading) {
-    console.log('[PROTECTED] Affichage skeleton loading');
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="space-y-3">
@@ -33,23 +24,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     );
   }
 
-  // Redirections (rendu conditionnel) sans side-effects
+  // Conditional redirects
   if (!user) {
-    console.log('[PROTECTED] Pas d\'utilisateur - redirection vers /auth');
     return <Navigate to="/auth" replace />;
   }
 
   if (!isEmailVerified && user.email !== 'contact@tech-trust.fr') {
-    console.log('[PROTECTED] Email non vérifié - redirection vers /auth');
     return <Navigate to="/auth" replace />;
   }
 
-  if (adminOnly && profile && profile.role !== 'super_admin') {
-    console.log('[PROTECTED] Accès admin refusé - redirection vers /dashboard');
+  if (adminOnly && !isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  console.log('[PROTECTED] Accès autorisé, rendu des enfants');
   return <>{children}</>;
 };
 

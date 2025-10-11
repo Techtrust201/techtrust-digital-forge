@@ -9,12 +9,12 @@ export const useAuth = () => {
     user: supabaseAuth.user ? {
       id: supabaseAuth.user.id,
       email: supabaseAuth.user.email || '',
-      role: supabaseAuth.profile?.role || 'client_bronze'
+      role: 'client' // Default role, actual role is in user_roles table
     } : null,
     isLoading: supabaseAuth.isLoading,
     login: async (userData: any) => {
-      // Cette méthode est maintenant obsolète avec l'auth Supabase
-      console.warn('useAuth.login is deprecated, use useSupabaseAuth instead');
+      // Deprecated - use useSupabaseAuth
+      return;
     },
     logout: async () => {
       return supabaseAuth.signOut();

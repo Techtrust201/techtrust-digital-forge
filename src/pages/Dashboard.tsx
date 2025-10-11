@@ -61,7 +61,7 @@ const Dashboard = () => {
     }
   ]);
 
-  const { user, profile, isLoading } = useSupabaseAuth();
+  const { user, profile, isLoading, isAdmin } = useSupabaseAuth();
   const {
     subscriptions,
     loading: subsLoading,
@@ -77,7 +77,7 @@ const Dashboard = () => {
   const userData = {
     email: user.email,
     name: profile?.name ?? user.email.split('@')[0],
-    role: profile?.role ?? 'client',
+    role: isAdmin ? "admin" : "client",
     tier: (profile as { tier?: string })?.tier ?? 'bronze',
   };
 
