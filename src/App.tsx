@@ -5,6 +5,17 @@ import { Toaster } from 'sonner';
 
 import Dashboard from '@/pages/Dashboard';
 import Auth from '@/pages/Auth';
+import Index from '@/pages/Index';
+import Careers from '@/pages/Careers';
+import Pricing from '@/pages/Pricing';
+import Contact from '@/pages/Contact';
+import Terms from '@/pages/Terms';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import LegalMentions from '@/pages/LegalMentions';
+import Solutions from '@/pages/Solutions';
+import Help from '@/pages/Help';
+import Blog from '@/pages/Blog';
+import NotFound from '@/pages/NotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminUsersPage from '@/pages/admin/AdminUsersPage';
 import AdminDashboard from '@/pages/AdminDashboard';
@@ -30,8 +41,20 @@ function App() {
       <BrowserRouter>
         <Toaster />
         <Routes>
+          {/* Routes publiques */}
+          <Route path="/" element={<Index />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/legal" element={<LegalMentions />} />
+          <Route path="/solutions" element={<Solutions />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          
+          {/* Routes protégées */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           
           {/* Routes pour les campagnes utilisateur */}
@@ -89,6 +112,9 @@ function App() {
 
           {/* Activation de compte */}
           <Route path="/activate-account" element={<ActivateAccount />} />
+          
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
