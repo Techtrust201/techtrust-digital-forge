@@ -6,6 +6,14 @@ import { Toaster } from 'sonner';
 import Dashboard from '@/pages/Dashboard';
 import Auth from '@/pages/Auth';
 import Index from '@/pages/Index';
+import DashboardBlog from '@/pages/dashboard/Blog';
+import DashboardAccount from '@/pages/dashboard/Account';
+import DashboardHelp from '@/pages/dashboard/Help';
+import DashboardServices from '@/pages/dashboard/Services';
+import DashboardSupport from '@/pages/dashboard/Support';
+import DashboardUpgradePlan from '@/pages/dashboard/UpgradePlan';
+import DashboardAnalytics from '@/pages/dashboard/Analytics';
+import DashboardCampaigns from '@/pages/dashboard/Campaigns';
 import Careers from '@/pages/Careers';
 import Pricing from '@/pages/Pricing';
 import Contact from '@/pages/Contact';
@@ -57,12 +65,41 @@ function App() {
           {/* Routes protégées */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           
-          {/* Routes pour les campagnes utilisateur */}
-          <Route path="/dashboard/campaigns" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard/campaigns/email" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard/campaigns/sms" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard/campaigns/leads" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard/campaigns/automation" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          {/* Routes Analytics utilisateur */}
+          <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
+          <Route path="/dashboard/analytics/social" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
+          <Route path="/dashboard/analytics/growth" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
+          <Route path="/dashboard/analytics/community" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
+          
+          {/* Routes Campagnes utilisateur */}
+          <Route path="/dashboard/campaigns" element={<ProtectedRoute><DashboardCampaigns /></ProtectedRoute>} />
+          <Route path="/dashboard/campaigns/email" element={<ProtectedRoute><DashboardCampaigns /></ProtectedRoute>} />
+          <Route path="/dashboard/campaigns/sms" element={<ProtectedRoute><DashboardCampaigns /></ProtectedRoute>} />
+          <Route path="/dashboard/campaigns/leads" element={<ProtectedRoute><DashboardCampaigns /></ProtectedRoute>} />
+          <Route path="/dashboard/campaigns/automation" element={<ProtectedRoute><DashboardCampaigns /></ProtectedRoute>} />
+          <Route path="/dashboard/campaigns/content" element={<ProtectedRoute><DashboardCampaigns /></ProtectedRoute>} />
+          
+          {/* Routes Blog utilisateur */}
+          <Route path="/dashboard/blog" element={<ProtectedRoute><DashboardBlog /></ProtectedRoute>} />
+          <Route path="/dashboard/blog/:postId" element={<ProtectedRoute><DashboardBlog /></ProtectedRoute>} />
+          
+          {/* Routes Account utilisateur */}
+          <Route path="/dashboard/account" element={<ProtectedRoute><DashboardAccount /></ProtectedRoute>} />
+          <Route path="/dashboard/account/profile" element={<ProtectedRoute><DashboardAccount /></ProtectedRoute>} />
+          <Route path="/dashboard/account/plan" element={<ProtectedRoute><DashboardAccount /></ProtectedRoute>} />
+          <Route path="/dashboard/account/billing" element={<ProtectedRoute><DashboardAccount /></ProtectedRoute>} />
+          <Route path="/dashboard/account/security" element={<ProtectedRoute><DashboardAccount /></ProtectedRoute>} />
+          
+          {/* Routes Help utilisateur */}
+          <Route path="/dashboard/help" element={<ProtectedRoute><DashboardHelp /></ProtectedRoute>} />
+          <Route path="/dashboard/help/faq" element={<ProtectedRoute><DashboardHelp /></ProtectedRoute>} />
+          <Route path="/dashboard/help/support" element={<ProtectedRoute><DashboardHelp /></ProtectedRoute>} />
+          <Route path="/dashboard/help/tutorials" element={<ProtectedRoute><DashboardHelp /></ProtectedRoute>} />
+          
+          {/* Autres routes utilisateur */}
+          <Route path="/dashboard/services" element={<ProtectedRoute><DashboardServices /></ProtectedRoute>} />
+          <Route path="/dashboard/support" element={<ProtectedRoute><DashboardSupport /></ProtectedRoute>} />
+          <Route path="/dashboard/upgrade-plan" element={<ProtectedRoute><DashboardUpgradePlan /></ProtectedRoute>} />
 
           {/* Routes Admin */}
           <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
