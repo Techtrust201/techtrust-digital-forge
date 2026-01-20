@@ -26,6 +26,7 @@ import GrowthHacking from '@/pages/solutions/GrowthHacking';
 import SolutionsDigitales from '@/pages/solutions/SolutionsDigitales';
 import CommunityManagement from '@/pages/solutions/CommunityManagement';
 import ConsultingDigital from '@/pages/solutions/ConsultingDigital';
+import SeoReferencement from '@/pages/solutions/SeoReferencement';
 import Help from '@/pages/Help';
 import Blog from '@/pages/Blog';
 import NotFound from '@/pages/NotFound';
@@ -68,6 +69,7 @@ function App() {
           <Route path="/solutions/digitales-sur-mesure" element={<SolutionsDigitales />} />
           <Route path="/solutions/community-management" element={<CommunityManagement />} />
           <Route path="/solutions/consulting-digital" element={<ConsultingDigital />} />
+          <Route path="/solutions/seo-referencement" element={<SeoReferencement />} />
           <Route path="/help" element={<Help />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/auth" element={<Auth />} />
