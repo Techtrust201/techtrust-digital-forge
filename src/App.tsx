@@ -21,6 +21,11 @@ import Terms from '@/pages/Terms';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import LegalMentions from '@/pages/LegalMentions';
 import Solutions from '@/pages/Solutions';
+import AgenceWeb from '@/pages/solutions/AgenceWeb';
+import GrowthHacking from '@/pages/solutions/GrowthHacking';
+import SolutionsDigitales from '@/pages/solutions/SolutionsDigitales';
+import CommunityManagement from '@/pages/solutions/CommunityManagement';
+import ConsultingDigital from '@/pages/solutions/ConsultingDigital';
 import Help from '@/pages/Help';
 import Blog from '@/pages/Blog';
 import NotFound from '@/pages/NotFound';
@@ -58,6 +63,11 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/legal" element={<LegalMentions />} />
           <Route path="/solutions" element={<Solutions />} />
+          <Route path="/solutions/agence-web" element={<AgenceWeb />} />
+          <Route path="/solutions/growth-hacking" element={<GrowthHacking />} />
+          <Route path="/solutions/digitales-sur-mesure" element={<SolutionsDigitales />} />
+          <Route path="/solutions/community-management" element={<CommunityManagement />} />
+          <Route path="/solutions/consulting-digital" element={<ConsultingDigital />} />
           <Route path="/help" element={<Help />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/auth" element={<Auth />} />

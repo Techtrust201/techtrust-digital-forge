@@ -164,7 +164,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           post_id: string | null
           status: string
         }
@@ -174,7 +174,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           post_id?: string | null
           status?: string
         }
@@ -184,7 +184,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           post_id?: string | null
           status?: string
         }
@@ -791,16 +791,10 @@ export type Database = {
         Args: { user_packages: string[] }
         Returns: string
       }
-      cleanup_expired_invitations: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      generate_invitation_token: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      cleanup_expired_invitations: { Args: never; Returns: undefined }
+      generate_invitation_token: { Args: never; Returns: string }
       get_complete_user_data: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           address: Json
           company: string
@@ -849,10 +843,7 @@ export type Database = {
         Args: { article_id: string }
         Returns: undefined
       }
-      is_admin: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
       sync_user_subscriptions_from_invitation: {
         Args: { invitation_id: string; new_user_id: string }
         Returns: undefined
