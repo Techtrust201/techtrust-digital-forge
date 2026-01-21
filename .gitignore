@@ -33,6 +33,10 @@ dist-ssr
 build/
 coverage/
 
+# Next.js
+.next/
+out/
+
 # Fichiers de configuration spécifiques
 *.config.local.js
 *.config.dev.js
