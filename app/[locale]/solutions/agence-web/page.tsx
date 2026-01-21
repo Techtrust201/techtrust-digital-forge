@@ -364,36 +364,10 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
             </div>
           </section>
 
-          {/* Features Section */}
-          <section className="py-20 bg-gray-50">
-            <div className="container mx-auto px-4">
-              <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Pourquoi nous choisir</span>
-                <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Des Sites Web <span className="text-blue-600">Performants</span>
-                </h2>
-                <p className="text-lg text-gray-600">
-                  Une expertise technique et créative pour maximiser l'impact de votre présence digitale
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {features.map((feature) => (
-                  <div key={feature.title} className="bg-white rounded-xl p-6 hover:shadow-md transition-all duration-300">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                      <feature.icon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+        
 
           {/* Projects Section */}
-          <section className="py-20 bg-white">
+          {/* <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Nos Réalisations</span>
@@ -443,8 +417,36 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
                 </Button>
               </div>
             </div>
-          </section>
+          </section> */}
 
+            {/* Features Section */}
+            <section className="py-20 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Pourquoi nous choisir</span>
+                <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+                  Des Sites Web <span className="text-blue-600">Performants</span>
+                </h2>
+                <p className="text-lg text-gray-600">
+                  Une expertise technique et créative pour maximiser l'impact de votre présence digitale
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {features.map((feature) => (
+                  <div key={feature.title} className="bg-white rounded-xl p-6 hover:shadow-md transition-all duration-300">
+                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                      <feature.icon className="w-6 h-6 text-blue-600" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
+                    <p className="text-gray-600">{feature.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+          
           {/* Process Section */}
           <section className="py-20 bg-gradient-to-br from-gray-900 via-blue-800 to-blue-700 text-white">
             <div className="container mx-auto px-4">
@@ -474,7 +476,7 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
           </section>
 
           {/* Testimonials Section */}
-          <section className="py-20 bg-gray-50">
+          {/* <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-4">Ils témoignent</span>
@@ -512,7 +514,7 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
 
           {/* FAQ Section */}
           <section className="py-20 bg-white">

@@ -36,7 +36,7 @@ const plans = [
     period: "projet",
     description: "Parfait pour les startups et petites entreprises",
     features: [
-      "Site vitrine jusqu'à 5 pages",
+      "Site vitrine jusqu'à 3 pages",
       "Design responsive",
       "Optimisation SEO de base",
       "Formulaire de contact",
@@ -52,7 +52,7 @@ const plans = [
     period: "projet",
     description: "Pour les entreprises en croissance",
     features: [
-      "Site jusqu'à 15 pages",
+      "Site jusqu'à 10 pages",
       "Design premium sur mesure",
       "SEO avancé",
       "Blog intégré",

@@ -324,7 +324,7 @@ export default async function SolutionsSurMesurePage({ params }: SolutionsSurMes
           </section>
 
           {/* Testimonials */}
-          <section className="py-20 bg-white">
+          {/* <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <span className="inline-block bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
@@ -354,7 +354,7 @@ export default async function SolutionsSurMesurePage({ params }: SolutionsSurMes
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
 
           {/* CTA Section */}
           <section className="py-20 bg-gradient-to-r from-green-600 to-emerald-600 text-white">

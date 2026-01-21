@@ -400,7 +400,7 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
           </section>
 
           {/* Testimonials */}
-          <section className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
+          {/* <section className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
             <div className="container mx-auto px-4">
               <div className="text-center mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -428,7 +428,7 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
 
           {/* Pricing Section */}
           <section id="pricing" className="py-20 bg-white">

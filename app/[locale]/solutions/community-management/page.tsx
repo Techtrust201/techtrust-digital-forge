@@ -274,6 +274,30 @@ export default async function CommunityManagementPage({ params }: CommunityManag
             </div>
           </section>
 
+          {/* Process Section */}
+          <section className="py-20 bg-gradient-to-br from-pink-600 via-purple-600 to-blue-600 text-white">
+            <div className="container mx-auto px-4">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+                  Notre <span className="text-pink-200">Méthodologie</span>
+                </h2>
+                <p className="text-lg text-pink-100">
+                  Un processus éprouvé pour maximiser votre présence sur les réseaux sociaux
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {process.map((step) => (
+                  <div key={step.step} className="bg-white/10 backdrop-blur rounded-2xl p-6 hover:bg-white/15 transition-colors">
+                    <span className="text-5xl font-bold text-white/30">{step.step}</span>
+                    <h3 className="text-xl font-bold mt-2 mb-3">{step.title}</h3>
+                    <p className="text-pink-100 text-sm">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* Platforms Section */}
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
@@ -302,32 +326,8 @@ export default async function CommunityManagementPage({ params }: CommunityManag
             </div>
           </section>
 
-          {/* Process Section */}
-          <section className="py-20 bg-gradient-to-br from-pink-600 via-purple-600 to-blue-600 text-white">
-            <div className="container mx-auto px-4">
-              <div className="text-center max-w-3xl mx-auto mb-16">
-                <h2 className="text-3xl lg:text-5xl font-bold mb-6">
-                  Notre <span className="text-pink-200">Méthodologie</span>
-                </h2>
-                <p className="text-lg text-pink-100">
-                  Un processus éprouvé pour maximiser votre présence sur les réseaux sociaux
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {process.map((step) => (
-                  <div key={step.step} className="bg-white/10 backdrop-blur rounded-2xl p-6 hover:bg-white/15 transition-colors">
-                    <span className="text-5xl font-bold text-white/30">{step.step}</span>
-                    <h3 className="text-xl font-bold mt-2 mb-3">{step.title}</h3>
-                    <p className="text-pink-100 text-sm">{step.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
           {/* Testimonials */}
-          <section className="py-20 bg-white">
+          {/* <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <span className="inline-block bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
@@ -357,7 +357,7 @@ export default async function CommunityManagementPage({ params }: CommunityManag
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
 
           {/* CTA Section */}
           <section className="py-20 bg-gradient-to-r from-pink-600 to-purple-600 text-white">
