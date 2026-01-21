@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 export const dynamic = 'force-static';
 
 interface SeoReferencementPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({ params }: SeoReferencementPageProps): Promise<Metadata> {
-  const isEn = params.locale === 'en';
+  const { locale } = await params;
+  const isEn = locale === 'en';
   
   return {
     title: isEn 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: SeoReferencementPageProps): P
       : 'Améliorez votre visibilité sur Google avec nos stratégies SEO. Audit, optimisation, contenu et netlinking.',
     keywords: ['SEO', 'référencement naturel', 'optimisation Google', 'audit SEO', 'netlinking'],
     alternates: {
-      canonical: `https://www.tech-trust.fr/${params.locale}/solutions/seo-referencement`,
+      canonical: `https://www.tech-trust.fr/${locale}/solutions/seo-referencement`,
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/seo-referencement',
         'en': 'https://www.tech-trust.fr/en/solutions/seo-referencement',
@@ -50,7 +51,8 @@ const services = [
   },
 ];
 
-export default function SeoReferencementPage({ params: { locale } }: SeoReferencementPageProps) {
+export default async function SeoReferencementPage({ params }: SeoReferencementPageProps) {
+  const { locale } = await params;
   const localizedHref = (path: string) => `/${locale}${path}`;
 
   return (

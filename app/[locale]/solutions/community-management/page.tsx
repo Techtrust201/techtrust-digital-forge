@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 export const dynamic = 'force-static';
 
 interface CommunityManagementPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({ params }: CommunityManagementPageProps): Promise<Metadata> {
-  const isEn = params.locale === 'en';
+  const { locale } = await params;
+  const isEn = locale === 'en';
   
   return {
     title: isEn 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: CommunityManagementPageProps)
       : 'Gestion professionnelle de vos réseaux sociaux. Création de contenu, engagement communautaire, analytics. Boostez votre présence en ligne !',
     keywords: ['community management', 'réseaux sociaux', 'social media', 'Instagram', 'LinkedIn', 'création de contenu'],
     alternates: {
-      canonical: `https://www.tech-trust.fr/${params.locale}/solutions/community-management`,
+      canonical: `https://www.tech-trust.fr/${locale}/solutions/community-management`,
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/community-management',
         'en': 'https://www.tech-trust.fr/en/solutions/community-management',
@@ -50,7 +51,8 @@ const services = [
   },
 ];
 
-export default function CommunityManagementPage({ params: { locale } }: CommunityManagementPageProps) {
+export default async function CommunityManagementPage({ params }: CommunityManagementPageProps) {
+  const { locale } = await params;
   const localizedHref = (path: string) => `/${locale}${path}`;
 
   return (

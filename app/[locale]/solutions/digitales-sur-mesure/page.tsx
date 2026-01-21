@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 export const dynamic = 'force-static';
 
 interface SolutionsSurMesurePageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({ params }: SolutionsSurMesurePageProps): Promise<Metadata> {
-  const isEn = params.locale === 'en';
+  const { locale } = await params;
+  const isEn = locale === 'en';
   
   return {
     title: isEn 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: SolutionsSurMesurePageProps):
       : 'Développement de logiciels et applications sur mesure. CRM, ERP, plateformes web, APIs. Solutions personnalisées pour optimiser vos processus métier.',
     keywords: ['développement sur mesure', 'logiciel personnalisé', 'CRM', 'ERP', 'application métier', 'API'],
     alternates: {
-      canonical: `https://www.tech-trust.fr/${params.locale}/solutions/digitales-sur-mesure`,
+      canonical: `https://www.tech-trust.fr/${locale}/solutions/digitales-sur-mesure`,
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/digitales-sur-mesure',
         'en': 'https://www.tech-trust.fr/en/solutions/digitales-sur-mesure',
@@ -50,7 +51,8 @@ const services = [
   },
 ];
 
-export default function SolutionsSurMesurePage({ params: { locale } }: SolutionsSurMesurePageProps) {
+export default async function SolutionsSurMesurePage({ params }: SolutionsSurMesurePageProps) {
+  const { locale } = await params;
   const localizedHref = (path: string) => `/${locale}${path}`;
 
   return (

@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 export const dynamic = 'force-static';
 
 interface ConsultingDigitalPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({ params }: ConsultingDigitalPageProps): Promise<Metadata> {
-  const isEn = params.locale === 'en';
+  const { locale } = await params;
+  const isEn = locale === 'en';
   
   return {
     title: isEn 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: ConsultingDigitalPageProps): 
       : 'Conseil digital pour accélérer votre transformation numérique. Stratégie, audit, roadmap et accompagnement.',
     keywords: ['consulting digital', 'transformation digitale', 'stratégie digitale', 'audit digital'],
     alternates: {
-      canonical: `https://www.tech-trust.fr/${params.locale}/solutions/consulting-digital`,
+      canonical: `https://www.tech-trust.fr/${locale}/solutions/consulting-digital`,
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/consulting-digital',
         'en': 'https://www.tech-trust.fr/en/solutions/consulting-digital',
@@ -32,7 +33,8 @@ export async function generateMetadata({ params }: ConsultingDigitalPageProps): 
   };
 }
 
-export default function ConsultingDigitalPage({ params: { locale } }: ConsultingDigitalPageProps) {
+export default async function ConsultingDigitalPage({ params }: ConsultingDigitalPageProps) {
+  const { locale } = await params;
   const localizedHref = (path: string) => `/${locale}${path}`;
 
   return (
