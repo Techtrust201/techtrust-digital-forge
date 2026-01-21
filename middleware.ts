@@ -11,9 +11,19 @@ const intlMiddleware = createMiddleware({
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Ne pas appliquer i18n sur /dashboard/*
+  // Dashboard routes - pas d'i18n, ajouter headers noindex
   if (pathname.startsWith('/dashboard')) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    
+    // Ajouter le header X-Robots-Tag pour empêcher l'indexation
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    
+    // Headers de sécurité supplémentaires
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    
+    return response;
   }
 
   // Ne pas appliquer i18n sur /api/*
