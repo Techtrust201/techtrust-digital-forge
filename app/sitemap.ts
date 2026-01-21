@@ -1,74 +1,47 @@
-
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.tech-trust.fr'
+  const baseUrl = 'https://www.tech-trust.fr';
+  const locales = ['fr', 'en'];
   
-  // Pages principales multilingues
-  const pages = [
-    '',
-    '/solutions/agence-web',
-    '/solutions/growth-hacking', 
-    '/solutions/digitales-sur-mesure',
-    '/solutions/community-management',
-    '/solutions/consulting-digital',
-    '/pricing',
-    '/contact',
-    '/blog',
-    '/help',
-    '/legal-mentions',
-    '/privacy-policy',
-    '/terms'
-  ]
+  // Pages vitrine UNIQUEMENT - jamais /dashboard/*
+  const publicPages = [
+    { path: '', priority: 1.0, changeFrequency: 'daily' as const },
+    { path: '/solutions', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/solutions/agence-web', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/solutions/growth-hacking', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/solutions/community-management', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/solutions/digitales-sur-mesure', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/solutions/consulting-digital', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/solutions/seo-referencement', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/pricing', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/contact', priority: 0.8, changeFrequency: 'monthly' as const },
+    { path: '/blog', priority: 0.7, changeFrequency: 'daily' as const },
+    { path: '/careers', priority: 0.6, changeFrequency: 'weekly' as const },
+    { path: '/help', priority: 0.5, changeFrequency: 'monthly' as const },
+    { path: '/legal-mentions', priority: 0.3, changeFrequency: 'yearly' as const },
+    { path: '/privacy-policy', priority: 0.3, changeFrequency: 'yearly' as const },
+    { path: '/terms', priority: 0.3, changeFrequency: 'yearly' as const },
+  ];
 
-  const locales = ['fr', 'en']
-  
-  const sitemapEntries: MetadataRoute.Sitemap = []
+  const entries: MetadataRoute.Sitemap = [];
 
-  // Générer les URLs pour chaque page et langue
-  locales.forEach(locale => {
-    pages.forEach(page => {
-      sitemapEntries.push({
-        url: `${baseUrl}/${locale}${page}`,
+  for (const locale of locales) {
+    for (const page of publicPages) {
+      entries.push({
+        url: `${baseUrl}/${locale}${page.path}`,
         lastModified: new Date(),
-        changeFrequency: page === '' ? 'daily' : page.includes('/blog') ? 'weekly' : 'monthly',
-        priority: page === '' ? 1.0 : page.includes('/solutions') ? 0.9 : page.includes('/blog') ? 0.7 : 0.6,
+        changeFrequency: page.changeFrequency,
+        priority: page.priority,
         alternates: {
           languages: {
-            'fr': `${baseUrl}/fr${page}`,
-            'en': `${baseUrl}/en${page}`,
-          }
-        }
-      })
-    })
-  })
+            'fr': `${baseUrl}/fr${page.path}`,
+            'en': `${baseUrl}/en${page.path}`,
+          },
+        },
+      });
+    }
+  }
 
-  // Articles de blog (exemples avec mots-clés SEO)
-  const blogPosts = [
-    'choisir-meilleure-agence-web-2024',
-    'growth-hacking-10-strategies-efficaces', 
-    'developpement-sur-mesure-vs-saas',
-    'creation-site-web-professionnel-guide-complet',
-    'community-management-reseaux-sociaux-2024',
-    'automatisation-marketing-lead-generation'
-  ]
-
-  blogPosts.forEach(slug => {
-    locales.forEach(locale => {
-      sitemapEntries.push({
-        url: `${baseUrl}/${locale}/blog/${slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.7,
-        alternates: {
-          languages: {
-            'fr': `${baseUrl}/fr/blog/${slug}`,
-            'en': `${baseUrl}/en/blog/${slug}`,
-          }
-        }
-      })
-    })
-  })
-
-  return sitemapEntries
+  return entries;
 }
