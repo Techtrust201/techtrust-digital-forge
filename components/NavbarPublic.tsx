@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Globe, Check } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -33,6 +33,11 @@ const solutions = [
     name: "Consulting Digital",
     href: "/solutions/consulting-digital",
     description: "Conseil et stratégie pour votre transformation numérique",
+  },
+  {
+    name: "SEO & Référencement",
+    href: "/solutions/seo-referencement",
+    description: "Optimisation pour les moteurs de recherche",
   },
 ];
 
@@ -69,7 +74,6 @@ const NavbarPublic = () => {
   };
 
   const switchLocale = (newLocale: string) => {
-    // Remplacer la locale dans le pathname
     const segments = pathname.split('/');
     segments[1] = newLocale;
     return segments.join('/');

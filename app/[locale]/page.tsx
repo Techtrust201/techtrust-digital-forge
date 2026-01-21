@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import HeroSection from '@/components/landing/HeroSection';
 import ServicesSection from '@/components/landing/ServicesSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import StatsSection from '@/components/landing/StatsSection';
 import CTASection from '@/components/landing/CTASection';
 import BlogPreviewSection from '@/components/landing/BlogPreviewSection';
@@ -88,7 +87,6 @@ export default async function HomePage({ params }: HomePageProps) {
           <ServicesSection />
           <FeaturesSection />
           <StatsSection />
-          <TestimonialsSection />
           <BlogPreviewSection />
           <CTASection />
         </main>

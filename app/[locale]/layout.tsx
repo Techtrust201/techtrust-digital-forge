@@ -79,7 +79,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
+        
         {/* JSON-LD Organisation */}
         <script
           type="application/ld+json"
@@ -117,7 +117,7 @@ export default async function RootLayout({
                     "description": "Développement de sites web sur mesure, e-commerce et applications web"
                   },
                   {
-                    "@type": "Service",
+                    "@type": "Service", 
                     "name": "Growth Hacking",
                     "description": "Stratégies de croissance digitale et acquisition de leads"
                   },
@@ -134,9 +134,9 @@ export default async function RootLayout({
       </head>
       <body className="font-poppins antialiased bg-background text-foreground">
         <NextIntlClientProvider messages={messages}>
-          <div className="flex min-h-screen flex-col">
-            {children}
-          </div>
+            <div className="flex min-h-screen flex-col">
+                {children}
+            </div>
           <Toaster position="top-right" richColors />
         </NextIntlClientProvider>
       </body>

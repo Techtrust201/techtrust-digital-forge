@@ -129,7 +129,7 @@ const config = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
-        "custom-blue": "#3B82F6",
+        "custom-blue": "#45C7FF",
         "custom-purple": "#8B5CF6",
         "custom-pink": "#EC4899",
         "custom-green": "#10B981",
