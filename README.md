@@ -1,22 +1,16 @@
-# Welcome to your Lovable project
+# Techtrust Digital Forge
 
-## Project info
+## À propos du projet
 
-**URL**: https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c
+Plateforme web de Techtrust - Agence digitale française spécialisée en création de sites web, growth hacking et solutions digitales sur mesure.
 
-## How can I edit this code?
+## Comment modifier ce code ?
 
-There are several ways of editing your application.
+Il existe plusieurs façons d'éditer votre application.
 
-**Use Lovable**
+**Utiliser votre IDE préféré**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Si vous souhaitez travailler localement avec votre propre IDE, vous pouvez cloner ce repo et pousser les changements.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -60,14 +54,17 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Comment déployer ce projet ?
 
-Simply open [Lovable](https://lovable.dev/projects/13a0b16d-176b-4332-84a6-38edd29e041c) and click on Share -> Publish.
+Le projet peut être déployé sur différentes plateformes comme Vercel, Netlify, ou votre propre serveur.
 
-## Can I connect a custom domain to my Lovable project?
+## Technologies utilisées
 
-Yes, you can!
+Ce projet est construit avec :
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+- Supabase
