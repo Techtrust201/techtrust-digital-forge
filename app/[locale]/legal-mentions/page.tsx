@@ -42,7 +42,7 @@ export default function LegalMentionsPage() {
               </p>
               <p>
                 <strong>Siège social :</strong> [Adresse]<br />
-                <strong>Téléphone :</strong> +33 1 XX XX XX XX<br />
+                <strong>Téléphone :</strong> +33 6 99 48 66 29<br />
                 <strong>Email :</strong> contact@tech-trust.fr
               </p>
               <p>
