@@ -300,7 +300,7 @@ const Help = () => {
                   <div className="bg-white rounded-xl shadow-md p-8 text-center">
                     <Mail className="w-12 h-12 text-purple-600 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Email</h3>
-                    <p className="text-gray-600 mb-4">support@tech-trust.fr</p>
+                    <p className="text-gray-600 mb-4">contact@tech-trust.fr</p>
                     <Button 
                       asChild
                       variant="outline" 

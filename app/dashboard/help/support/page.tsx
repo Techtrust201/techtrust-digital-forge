@@ -70,7 +70,7 @@ export default function SupportPage() {
             <CardContent className="p-6">
               <Mail className="w-10 h-10 text-blue-500 mx-auto mb-4" />
               <h3 className="font-bold text-gray-900 mb-2">Email</h3>
-              <p className="text-sm text-gray-600 mb-2">support@techtrust.fr</p>
+              <p className="text-sm text-gray-600 mb-2">contact@techtrust.fr</p>
               <p className="text-xs text-gray-500">Réponse sous 24h</p>
             </CardContent>
           </Card>

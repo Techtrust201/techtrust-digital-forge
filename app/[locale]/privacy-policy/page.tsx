@@ -94,7 +94,7 @@ export default function PrivacyPolicyPage() {
 
               <h2>8. Contact</h2>
               <p>
-                Pour toute question concernant cette politique, contactez notre DPO à : dpo@tech-trust.fr
+                Pour toute question concernant cette politique, contactez notre DPO à : contact@tech-trust.fr
               </p>
             </div>
           </div>

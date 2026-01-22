@@ -34,7 +34,7 @@ const DashboardBlog = () => {
   }, []);
 
   // Vérification si l'utilisateur est super admin
-  const isSuperAdmin = userData?.role === 'super_admin' || userData?.email === 'admin@techtrust.fr';
+  const isSuperAdmin = userData?.role === 'super_admin' || userData?.email === 'contact@tech-trust.fr';
 
   const publishedPosts = blogPosts?.filter(post => post.status === 'published') || [];
 

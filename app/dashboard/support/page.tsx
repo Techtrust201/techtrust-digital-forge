@@ -57,7 +57,7 @@ export default function SupportPage() {
               <Phone className="w-12 h-12 text-green-500 mx-auto mb-4" />
               <h3 className="font-bold text-gray-900 mb-2">Téléphone</h3>
               <p className="text-sm text-gray-600 mb-4">
-                +33 1 23 45 67 89
+                +33 6 99 48 66 29
               </p>
               <Button variant="outline" className="w-full">Appeler</Button>
             </CardContent>
@@ -68,7 +68,7 @@ export default function SupportPage() {
               <Mail className="w-12 h-12 text-purple-500 mx-auto mb-4" />
               <h3 className="font-bold text-gray-900 mb-2">Email</h3>
               <p className="text-sm text-gray-600 mb-4">
-                support@tech-trust.fr
+                contact@tech-trust.fr
               </p>
               <Button variant="outline" className="w-full">Envoyer un email</Button>
             </CardContent>
