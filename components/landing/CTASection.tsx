@@ -82,7 +82,7 @@ export default function CTASection() {
             >
               <Phone className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
               <h3 className="font-semibold mb-1">Appelez-nous</h3>
-              <p className="text-gray-200">+33 X XX XX XX XX</p>
+              <p className="text-gray-200">+33 6 99 48 66 29</p>
             </motion.div>
 
             <motion.div 

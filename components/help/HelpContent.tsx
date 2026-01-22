@@ -251,7 +251,7 @@ export default function HelpContent({ locale }: HelpContentProps) {
               <div className="bg-white rounded-xl shadow-md p-8 text-center">
                 <Phone className="w-12 h-12 text-green-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Téléphone</h3>
-                <p className="text-gray-600 mb-4">+33 X XX XX XX XX</p>
+                <p className="text-gray-600 mb-4">+33 6 99 48 66 29</p>
                 <Button variant="outline" className="w-full">Appeler</Button>
               </div>
 

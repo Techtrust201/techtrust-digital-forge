@@ -19,7 +19,7 @@ const Contact = () => {
     <>
       <SEO
         title="Contact | Parlons de votre Projet Digital - Techtrust"
-        description="📞 Contactez-nous ! Devis gratuit en 24h pour votre projet digital. +33 X XX XX XX XX ou contact@tech-trust.fr. Réponse garantie !"
+        description="📞 Contactez-nous ! Devis gratuit en 24h pour votre projet digital. +33 6 99 48 66 29 ou contact@tech-trust.fr. Réponse garantie !"
         keywords="contact techtrust, devis gratuit, projet digital, agence web contact, consultation gratuite, demande devis"
         canonicalUrl="https://www.tech-trust.fr/contact"
         structuredData={structuredData}
