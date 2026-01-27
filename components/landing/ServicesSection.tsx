@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, Bot, Users, Globe, TrendingUp, Code, Lightbulb, MessageSquare } from 'lucide-react';
+import { ArrowRight, Check, Bot, Users, Globe, TrendingUp, Code, Lightbulb, MessageSquare, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
@@ -47,6 +47,16 @@ const services = [
     color: "#EC4899",
     colorClass: "custom-pink",
     link: "/solutions/community-management"
+  },
+  {
+    icon: Target,
+    title: "SEO, SEA & GEO",
+    subtitle: "Visibilité Google Complète",
+    description: "Stratégie complète de visibilité sur Google : référencement naturel (SEO), publicité payante (Google Ads) et géolocalisation (Google My Business). Maximisez votre présence et générez du trafic qualifié.",
+    features: ["Audit SEO complet", "Campagnes Google Ads optimisées", "Optimisation Google My Business", "Stratégie de contenu SEO", "Suivi performance & ROI"],
+    color: "#10B981",
+    colorClass: "custom-green",
+    link: "/solutions/seo-referencement"
   },
   {
     icon: Lightbulb,
