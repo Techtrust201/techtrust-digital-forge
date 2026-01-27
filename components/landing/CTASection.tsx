@@ -62,7 +62,7 @@ export default function CTASection() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-4 rounded-xl font-semibold"
+                className="bg-white/20 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-custom-blue px-8 py-4 rounded-xl font-semibold transition-all duration-300"
               >
                 <Link href="/pricing">
                   Voir nos tarifs

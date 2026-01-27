@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PricingPageProps): Promise<Me
 
 const plans = [
   {
-    name: "pro",
+    name: "Pro",
     price: "1500",
     period: "projet",
     description: "Parfait pour les startups et petites entreprises",
