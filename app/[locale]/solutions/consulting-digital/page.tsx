@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { 
   ArrowRight, 
   LineChart, 
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -46,6 +48,7 @@ export async function generateMetadata({ params }: ConsultingDigitalPageProps): 
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/consulting-digital',
         'en': 'https://www.tech-trust.fr/en/solutions/consulting-digital',
+        'x-default': 'https://www.tech-trust.fr/fr/solutions/consulting-digital',
       },
     },
   };
@@ -171,6 +174,13 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
         <NavbarPublic />
         
         <main className="flex-1 pt-20">
+          <Breadcrumbs 
+            locale={locale} 
+            items={[
+              { label: 'Solutions', href: `/${locale}/solutions` },
+              { label: 'Consulting Digital' }
+            ]} 
+          />
           {/* Hero Section */}
           <section className="relative py-20 lg:py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 overflow-hidden">
             <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-amber-200 rounded-full blur-3xl opacity-40"></div>
@@ -179,7 +189,7 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
                   <span className="inline-flex items-center gap-2 bg-amber-100 rounded-full px-4 py-2 text-sm font-medium text-amber-700 mb-6">
-                    <Award className="w-4 h-4" />
+                    <Award className="w-4 h-4" aria-hidden="true" />
                     Expertise Grands Comptes
                   </span>
                   
@@ -198,7 +208,7 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
                     <Button asChild size="lg" className="bg-amber-600 hover:bg-amber-700 text-white">
                       <Link href={localizedHref('/contact')}>
                         Demander une consultation
-                        <ArrowRight className="ml-2 w-5 h-5" />
+                        <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
                       </Link>
                     </Button>
                     
@@ -318,7 +328,7 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
                         <h3 className="text-xl font-bold mt-2 mb-3">{step.title}</h3>
                         <p className="text-amber-100 text-sm mb-4">{step.description}</p>
                         <div className="flex items-center gap-2 text-amber-300 text-sm">
-                          <Clock className="w-4 h-4" />
+                          <Clock className="w-4 h-4" aria-hidden="true" />
                           {step.duration}
                         </div>
                       </div>
@@ -354,7 +364,7 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
                       "Réseau de partenaires technologiques de premier plan"
                     ].map((item, idx) => (
                       <div key={idx} className="flex items-start gap-3">
-                        <CheckCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <CheckCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         <span className="text-gray-700">{item}</span>
                       </div>
                     ))}
@@ -369,21 +379,200 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
                       <p className="text-sm text-gray-600">ROI moyen</p>
                     </div>
                     <div className="bg-white rounded-xl p-6 text-center shadow-sm">
-                      <Target className="w-10 h-10 text-amber-600 mx-auto mb-3" />
+                      <Target className="w-10 h-10 text-amber-600 mx-auto mb-3" aria-hidden="true" />
                       <p className="text-2xl font-bold text-gray-900">100%</p>
                       <p className="text-sm text-gray-600">Projets livrés</p>
                     </div>
                     <div className="bg-white rounded-xl p-6 text-center shadow-sm">
-                      <Users className="w-10 h-10 text-amber-600 mx-auto mb-3" />
+                      <Users className="w-10 h-10 text-amber-600 mx-auto mb-3" aria-hidden="true" />
                       <p className="text-2xl font-bold text-gray-900">50+</p>
                       <p className="text-sm text-gray-600">Grands comptes</p>
                     </div>
                     <div className="bg-white rounded-xl p-6 text-center shadow-sm">
-                      <Award className="w-10 h-10 text-amber-600 mx-auto mb-3" />
+                      <Award className="w-10 h-10 text-amber-600 mx-auto mb-3" aria-hidden="true" />
                       <p className="text-2xl font-bold text-gray-900">12+</p>
                       <p className="text-sm text-gray-600">Années</p>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Expertise approfondie Section */}
+          <section className="py-20 bg-white">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                  <span className="inline-block bg-amber-100 text-amber-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                    Expertise
+                  </span>
+                  <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+                    Le consulting digital : un <span className="text-amber-600">investissement stratégique</span>
+                  </h2>
+                </div>
+
+                <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
+                  <p>
+                    La transformation digitale n&apos;est plus une option – c&apos;est une nécessité pour rester compétitif en 2026. 
+                    Pourtant, <strong>70% des projets de transformation digitale échouent</strong> en raison d&apos;un manque de vision stratégique, 
+                    d&apos;une résistance au changement mal gérée ou d&apos;un choix technologique inadapté. C&apos;est là qu&apos;intervient notre 
+                    expertise en consulting digital.
+                  </p>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">Notre approche du consulting digital</h3>
+                  <p>
+                    Chez Techtrust, le consulting digital n&apos;est pas un exercice théorique. Nous combinons une vision stratégique avec une expertise 
+                    technique opérationnelle pour vous accompagner de la réflexion à l&apos;implémentation. Notre méthode repose sur trois piliers :
+                  </p>
+                  <ul className="space-y-3 list-disc pl-6">
+                    <li><strong>Diagnostic approfondi</strong> : audit complet de votre maturité digitale, analyse de vos processus, benchmark concurrentiel et identification des opportunités à fort ROI.</li>
+                    <li><strong>Roadmap stratégique</strong> : définition d&apos;une feuille de route claire avec des jalons mesurables, des priorités hiérarchisées et un budget prévisionnel réaliste.</li>
+                    <li><strong>Accompagnement opérationnel</strong> : nous ne nous contentons pas de recommander – nous vous accompagnons dans la mise en œuvre, le pilotage et l&apos;optimisation continue.</li>
+                  </ul>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">Les domaines d&apos;intervention de notre consulting</h3>
+                  
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">Stratégie digitale et positionnement</h4>
+                  <p>
+                    Nous vous aidons à définir votre stratégie digitale globale : positionnement en ligne, choix des canaux d&apos;acquisition, 
+                    stratégie de contenu, parcours client digital et indicateurs de performance. Chaque recommandation est alignée sur 
+                    vos objectifs business et votre budget.
+                  </p>
+
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">Transformation des processus internes</h4>
+                  <p>
+                    La digitalisation de vos processus internes peut générer des gains de productivité considérables. Nous analysons vos workflows, 
+                    identifions les goulots d&apos;étranglement et proposons des solutions d&apos;automatisation : dématérialisation des documents, 
+                    automatisation des workflows d&apos;approbation, mise en place de CRM/ERP adaptés, et création de tableaux de bord décisionnels.
+                  </p>
+
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">Data & Intelligence Artificielle</h4>
+                  <p>
+                    Vos données sont un actif stratégique sous-exploité. Nous vous accompagnons dans la structuration de votre data strategy : 
+                    collecte et centralisation des données, mise en conformité RGPD, création de dashboards analytiques, et intégration de 
+                    solutions d&apos;IA pour automatiser les tâches répétitives et prédire les tendances de votre marché.
+                  </p>
+
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">Conduite du changement</h4>
+                  <p>
+                    La technologie n&apos;est rien sans l&apos;adhésion de vos équipes. Notre approche de conduite du changement inclut : 
+                    formation des collaborateurs, communication interne, identification des ambassadeurs du changement, et mise en place 
+                    de feedbacks continus. Nous transformons la résistance au changement en enthousiasme pour l&apos;innovation.
+                  </p>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">Le ROI du consulting digital</h3>
+                  <p>
+                    Un accompagnement stratégique professionnel représente un investissement qui se rentabilise rapidement. 
+                    Nos clients constatent en moyenne :
+                  </p>
+                  <ul className="space-y-2 list-disc pl-6">
+                    <li><strong>-30% de coûts opérationnels</strong> grâce à l&apos;automatisation des processus</li>
+                    <li><strong>+40% de productivité</strong> via l&apos;optimisation des outils et des workflows</li>
+                    <li><strong>+25% de satisfaction client</strong> par l&apos;amélioration des parcours digitaux</li>
+                    <li><strong>ROI positif sous 6 mois</strong> sur les projets de transformation accompagnés</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ Section */}
+          <section className="py-20 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                  <span className="inline-block bg-amber-100 text-amber-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                    FAQ
+                  </span>
+                  <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+                    Questions <span className="text-amber-600">fréquentes</span>
+                  </h2>
+                </div>
+
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      "@context": "https://schema.org",
+                      "@type": "FAQPage",
+                      "mainEntity": [
+                        {
+                          "@type": "Question",
+                          "name": "Qu'est-ce que le consulting digital ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Le consulting digital est un accompagnement stratégique qui aide les entreprises à tirer parti du numérique. Il couvre la stratégie digitale, l'optimisation des processus, la sélection d'outils, la formation des équipes et la conduite du changement."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Combien coûte une mission de consulting digital ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Nos missions de consulting démarrent à partir de 2 000€ pour un audit stratégique. Les missions d'accompagnement continu se situent entre 3 000€ et 10 000€/mois selon le périmètre. Chaque devis est personnalisé selon vos besoins spécifiques."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "À qui s'adresse le consulting digital ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Le consulting digital s'adresse à toutes les entreprises souhaitant accélérer leur transformation numérique : PME en croissance, ETI en transformation, startups cherchant à scaler, et grands groupes modernisant leurs processus."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Quelle est la durée d'une mission de consulting ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Un audit stratégique se réalise en 2 à 4 semaines. Les missions d'accompagnement durent généralement de 3 à 12 mois, avec des points d'étape réguliers pour ajuster la stratégie en fonction des résultats."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Comment mesurez-vous le succès d'une mission ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Nous définissons des KPIs précis dès le début de la mission : réduction des coûts, gain de productivité, augmentation du chiffre d'affaires digital, satisfaction client, taux d'adoption des outils. Un reporting mensuel vous donne une visibilité totale sur l'avancement."
+                          }
+                        }
+                      ]
+                    })
+                  }}
+                />
+
+                <div className="space-y-4">
+                  {[
+                    {
+                      q: "Qu'est-ce que le consulting digital ?",
+                      a: "Le consulting digital est un accompagnement stratégique qui aide les entreprises à tirer parti du numérique. Il couvre la stratégie digitale, l'optimisation des processus, la sélection d'outils, la formation des équipes et la conduite du changement."
+                    },
+                    {
+                      q: "Combien coûte une mission de consulting digital ?",
+                      a: "Nos missions de consulting démarrent à partir de 2 000€ pour un audit stratégique. Les missions d'accompagnement continu se situent entre 3 000€ et 10 000€/mois selon le périmètre. Chaque devis est personnalisé selon vos besoins spécifiques."
+                    },
+                    {
+                      q: "À qui s'adresse le consulting digital ?",
+                      a: "Le consulting digital s'adresse à toutes les entreprises souhaitant accélérer leur transformation numérique : PME en croissance, ETI en transformation, startups cherchant à scaler, et grands groupes modernisant leurs processus."
+                    },
+                    {
+                      q: "Quelle est la durée d'une mission de consulting ?",
+                      a: "Un audit stratégique se réalise en 2 à 4 semaines. Les missions d'accompagnement durent généralement de 3 à 12 mois, avec des points d'étape réguliers pour ajuster la stratégie en fonction des résultats."
+                    },
+                    {
+                      q: "Comment mesurez-vous le succès d'une mission ?",
+                      a: "Nous définissons des KPIs précis dès le début de la mission : réduction des coûts, gain de productivité, augmentation du chiffre d'affaires digital, satisfaction client, taux d'adoption des outils. Un reporting mensuel vous donne une visibilité totale sur l'avancement."
+                    }
+                  ].map((faq, index) => (
+                    <details key={index} className="bg-white rounded-xl p-6 shadow-sm group">
+                      <summary className="text-lg font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+                        {faq.q}
+                        <span className="ml-4 text-amber-600 group-open:rotate-180 transition-transform">▼</span>
+                      </summary>
+                      <p className="mt-4 text-gray-600 leading-relaxed">{faq.a}</p>
+                    </details>
+                  ))}
                 </div>
               </div>
             </div>
@@ -404,7 +593,7 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
                   <Button asChild size="lg" className="bg-white text-amber-700 hover:bg-amber-50">
                     <Link href={localizedHref('/contact')}>
                       Réserver une consultation
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
                     </Link>
                   </Button>
                   
@@ -417,9 +606,11 @@ export default async function ConsultingDigitalPage({ params }: ConsultingDigita
               </div>
             </div>
           </section>
+
+          <RelatedServices currentSlug="consulting-digital" locale={locale} />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

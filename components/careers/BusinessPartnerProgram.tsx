@@ -61,7 +61,7 @@ const BusinessPartnerProgram = () => {
 
             <div className="flex justify-center gap-4">
               <Button className="bg-purple-600 hover:bg-purple-600/90 flex items-center gap-2">
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4" aria-hidden="true" />
                 Télécharger le contrat
               </Button>
               <Button variant="outline" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white" asChild>

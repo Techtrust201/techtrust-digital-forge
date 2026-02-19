@@ -170,7 +170,7 @@ export function getServerMetadata(locale: string = 'fr', pathname: string = '/')
       title: pageData.openGraph?.title || title,
       description: pageData.openGraph?.description || description,
       images: [pageData.openGraph?.images?.[0] || siteConfig.ogImage],
-      creator: '@techtrust_agency',
+      creator: '@techtrust_fr',
     },
     robots: {
       index: true,
@@ -184,7 +184,7 @@ export function getServerMetadata(locale: string = 'fr', pathname: string = '/')
       },
     },
     verification: {
-      google: 'google-site-verification-code', // À remplacer par ton vrai code
+      google: 'google-site-verification-code', // TODO: Remplacer par ton vrai code depuis Google Search Console (https://search.google.com/search-console)
     },
   }
 }

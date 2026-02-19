@@ -1,13 +1,11 @@
-"use client";
-
 import React from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 
-const Footer = () => {
-  const params = useParams();
-  const locale = (params?.locale as string) || 'fr';
-  
+interface FooterProps {
+  locale: string;
+}
+
+const Footer = ({ locale }: FooterProps) => {
   const localizedHref = (path: string) => `/${locale}${path}`;
 
   return (
@@ -19,9 +17,12 @@ const Footer = () => {
             <div className="flex items-center mb-4">
               <span className="text-2xl font-bold text-blue-400">Techtrust</span>
             </div>
-            <p className="text-gray-300 mb-4 max-w-md">
-              Votre partenaire en growth hacking IA, community management automatisé et solutions digitales 2025. 
-              Transformez votre présence en ligne avec l'intelligence artificielle.
+            <p className="text-gray-300 mb-2 max-w-md">
+              Agence web &amp; growth hacking IA basée à Mougins (Cannes), Côte d&apos;Azur. 
+              Création de sites web, SEO/SEA/GEO et solutions digitales sur mesure pour toute la France.
+            </p>
+            <p className="text-gray-500 text-sm mb-4">
+              62 Imp. Font-Roubert, 06250 Mougins | +33 6 99 48 66 29
             </p>
             <div className="flex space-x-4">
               <a href="https://facebook.com/techtrust" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
@@ -50,8 +51,23 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-3">
               <li>
+                <Link href={localizedHref('/solutions/agence-web')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Agence Web
+                </Link>
+              </li>
+              <li>
+                <Link href={localizedHref('/solutions/seo-referencement')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  SEO &amp; Référencement
+                </Link>
+              </li>
+              <li>
                 <Link href={localizedHref('/solutions/growth-hacking')} className="text-gray-300 hover:text-blue-400 transition-colors">
                   Growth Hacking IA
+                </Link>
+              </li>
+              <li>
+                <Link href={localizedHref('/solutions/digitales-sur-mesure')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Solutions Sur Mesure
                 </Link>
               </li>
               <li>
@@ -60,13 +76,13 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href={localizedHref('/solutions/agence-web')} className="text-gray-300 hover:text-blue-400 transition-colors">
-                  Agence Web
+                <Link href={localizedHref('/solutions/consulting-digital')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Consulting Digital
                 </Link>
               </li>
               <li>
-                <Link href={localizedHref('/solutions/consulting-digital')} className="text-gray-300 hover:text-blue-400 transition-colors">
-                  Consulting Digital
+                <Link href={localizedHref('/pricing')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Tarifs
                 </Link>
               </li>
             </ul>
@@ -77,23 +93,33 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Entreprise</h3>
             <ul className="space-y-3">
               <li>
+                <Link href={localizedHref('/a-propos')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  À propos
+                </Link>
+              </li>
+              <li>
                 <Link href={localizedHref('/blog')} className="text-gray-300 hover:text-blue-400 transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href={localizedHref('/careers')} className="text-gray-300 hover:text-blue-400 transition-colors">
-                  Carrières
+                <Link href={localizedHref('/portfolio')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Portfolio
+                </Link>
+              </li>
+              <li>
+                <Link href={localizedHref('/guide/prix-site-vitrine')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Prix site vitrine
+                </Link>
+              </li>
+              <li>
+                <Link href={localizedHref('/guide/prix-site-ecommerce')} className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Prix site e-commerce
                 </Link>
               </li>
               <li>
                 <Link href={localizedHref('/contact')} className="text-gray-300 hover:text-blue-400 transition-colors">
                   Contact
-                </Link>
-              </li>
-              <li>
-                <Link href={localizedHref('/help')} className="text-gray-300 hover:text-blue-400 transition-colors">
-                  Aide
                 </Link>
               </li>
             </ul>
@@ -115,7 +141,7 @@ const Footer = () => {
               </Link>
             </div>
             <p className="text-sm text-gray-400">
-              © 2025 Techtrust. Tous droits réservés.
+              © 2026 Techtrust. Tous droits réservés.
             </p>
           </div>
         </div>

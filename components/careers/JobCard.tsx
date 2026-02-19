@@ -66,7 +66,7 @@ const JobCard = ({ job, onJobSelect, getTypeColor, getButtonClasses }: JobCardPr
           </div>
         </div>
         <Button className={`w-full mt-4 ${getButtonClasses(job.color)}`}>
-          Postuler <ArrowRight className="ml-2 w-4 h-4" />
+          Postuler <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" />
         </Button>
       </div>
     </DialogTrigger>

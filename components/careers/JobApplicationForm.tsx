@@ -90,7 +90,7 @@ const JobApplicationForm = ({ job, getButtonClasses }: JobApplicationFormProps) 
       <div>
         <Label>CV (PDF) *</Label>
         <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer">
-          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" aria-hidden="true" />
           <p className="text-sm text-gray-600">Cliquez pour télécharger votre CV</p>
         </div>
       </div>

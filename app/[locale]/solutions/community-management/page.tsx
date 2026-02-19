@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { 
   ArrowRight, 
   Users, 
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -44,6 +46,7 @@ export async function generateMetadata({ params }: CommunityManagementPageProps)
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/community-management',
         'en': 'https://www.tech-trust.fr/en/solutions/community-management',
+        'x-default': 'https://www.tech-trust.fr/fr/solutions/community-management',
       },
     },
   };
@@ -118,7 +121,7 @@ const platforms = [
 const stats = [
   { value: "+150%", label: "Engagement moyen" },
   { value: "10M+", label: "Followers gérés" },
-  { value: "500+", label: "Comptes gérés" },
+  { value: "25+", label: "Clients accompagnés" },
   { value: "98%", label: "Clients satisfaits" }
 ];
 
@@ -195,6 +198,13 @@ export default async function CommunityManagementPage({ params }: CommunityManag
         <NavbarPublic />
         
         <main className="flex-1 pt-20">
+          <Breadcrumbs 
+            locale={locale} 
+            items={[
+              { label: 'Solutions', href: `/${locale}/solutions` },
+              { label: 'Community Management' }
+            ]} 
+          />
           {/* Hero Section */}
           <section className="relative py-20 lg:py-32 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 overflow-hidden">
             <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-pink-200/30 rounded-full blur-3xl"></div>
@@ -203,7 +213,7 @@ export default async function CommunityManagementPage({ params }: CommunityManag
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-pink-200 rounded-full px-4 py-2 text-sm font-medium text-pink-600 mb-6">
-                  <Users className="w-4 h-4" />
+                  <Users className="w-4 h-4" aria-hidden="true" />
                   +10M de followers gérés
                 </div>
                 
@@ -222,7 +232,7 @@ export default async function CommunityManagementPage({ params }: CommunityManag
                   <Button asChild size="lg" className="bg-pink-600 hover:bg-pink-700">
                     <Link href={localizedHref('/contact')}>
                       Audit gratuit
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="border-2 border-pink-600 text-pink-600 hover:bg-pink-50">
@@ -326,38 +336,185 @@ export default async function CommunityManagementPage({ params }: CommunityManag
             </div>
           </section>
 
-          {/* Testimonials */}
-          {/* <section className="py-20 bg-white">
+          {/* Pourquoi le Community Management Section */}
+          <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
-              <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="inline-block bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                  Témoignages
-                </span>
-                <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Ce que disent nos <span className="text-pink-600">clients</span>
-                </h2>
-              </div>
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                  <span className="inline-block bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                    Expertise
+                  </span>
+                  <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+                    Pourquoi le <span className="text-pink-600">Community Management</span> est essentiel en 2026
+                  </h2>
+                </div>
 
-              <div className="grid md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial) => (
-                  <Card key={testimonial.name} className="h-full">
-                    <CardContent className="p-8">
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                        ))}
-                      </div>
-                      <p className="text-gray-600 mb-6 italic">&quot;{testimonial.content}&quot;</p>
-                      <div>
-                        <p className="font-bold text-gray-900">{testimonial.name}</p>
-                        <p className="text-sm text-gray-500">{testimonial.role}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
+                  <p>
+                    En 2026, les réseaux sociaux ne sont plus un simple canal de communication – ils constituent le cœur de votre stratégie de visibilité et de relation client. 
+                    Avec plus de <strong>4,9 milliards d&apos;utilisateurs actifs</strong> sur les plateformes sociales dans le monde, ne pas y être présent de manière professionnelle 
+                    revient à ignorer la majorité de vos clients potentiels. Le community management est devenu un pilier incontournable du marketing digital.
+                  </p>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">L&apos;importance d&apos;une présence sociale professionnelle</h3>
+                  <p>
+                    Une gestion amateure de vos réseaux sociaux peut nuire à votre image de marque. Un community manager professionnel maîtrise les codes de chaque plateforme, 
+                    comprend les algorithmes et sait comment maximiser la portée organique de vos publications. Chez Techtrust, nous combinons créativité, data analytics et 
+                    connaissance approfondie des tendances pour transformer vos profils sociaux en véritables leviers de croissance.
+                  </p>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">Les tendances Community Management 2026</h3>
+                  <p>
+                    L&apos;année 2026 est marquée par plusieurs évolutions majeures dans le paysage des réseaux sociaux :
+                  </p>
+                  <ul className="space-y-3 list-disc pl-6">
+                    <li><strong>Le contenu vidéo court domine</strong> : TikTok, Instagram Reels et YouTube Shorts représentent désormais plus de 60% de l&apos;engagement global. Nos équipes créent des contenus vidéo captivants et optimisés pour chaque format.</li>
+                    <li><strong>L&apos;authenticité prime</strong> : Les utilisateurs recherchent du contenu authentique et transparent. Nous développons des stratégies de contenu qui mettent en avant les coulisses de votre entreprise, vos valeurs et votre équipe.</li>
+                    <li><strong>Le social commerce explose</strong> : Instagram Shopping, TikTok Shop et les boutiques Facebook permettent d&apos;acheter directement depuis les réseaux. Nous optimisons vos fiches produit et vos parcours d&apos;achat sociaux.</li>
+                    <li><strong>L&apos;IA au service de la création</strong> : Nous utilisons l&apos;intelligence artificielle pour analyser les tendances, optimiser les horaires de publication et personnaliser le contenu pour chaque segment d&apos;audience.</li>
+                    <li><strong>Les communautés privées se développent</strong> : Groupes WhatsApp, canaux Discord, communautés Telegram – nous créons et animons des espaces exclusifs pour vos clients les plus fidèles.</li>
+                  </ul>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">Notre approche sur chaque plateforme</h3>
+                  
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">Instagram : l&apos;image de marque par excellence</h4>
+                  <p>
+                    Instagram reste la plateforme n°1 pour construire une identité visuelle forte. Nous créons des feeds cohérents, des stories interactives avec sondages et quiz, 
+                    et des Reels viraux. Notre expertise en hashtag research et en optimisation de profil assure une croissance organique durable.
+                  </p>
+
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">LinkedIn : le B2B et le personal branding</h4>
+                  <p>
+                    LinkedIn est devenu incontournable pour le B2B et la marque employeur. Nous développons des stratégies de thought leadership, rédigeons des publications 
+                    à fort engagement et animons votre page entreprise pour attirer talents et clients. Nos techniques de social selling génèrent en moyenne 
+                    <strong> 3x plus de leads qualifiés</strong> qu&apos;une approche classique.
+                  </p>
+
+                  <h4 className="text-xl font-semibold text-gray-900 mt-6">TikTok : toucher les nouvelles générations</h4>
+                  <p>
+                    TikTok n&apos;est plus réservé aux adolescents. Avec une audience de 18-35 ans en pleine expansion, c&apos;est la plateforme idéale pour humaniser votre marque. 
+                    Nos créateurs de contenu maîtrisent les tendances, les transitions et les formats narratifs qui font la spécificité de TikTok.
+                  </p>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10">Mesurer le ROI de votre community management</h3>
+                  <p>
+                    Contrairement aux idées reçues, le community management est parfaitement mesurable. Nous suivons des KPIs précis pour démontrer le retour sur investissement :
+                  </p>
+                  <ul className="space-y-2 list-disc pl-6">
+                    <li><strong>Taux d&apos;engagement</strong> : likes, commentaires, partages et sauvegardes par publication</li>
+                    <li><strong>Portée et impressions</strong> : nombre de personnes touchées par vos contenus</li>
+                    <li><strong>Croissance de la communauté</strong> : nouveaux abonnés qualifiés par mois</li>
+                    <li><strong>Trafic vers le site</strong> : clics et conversions provenant des réseaux sociaux</li>
+                    <li><strong>Chiffre d&apos;affaires social</strong> : ventes directement attribuables aux réseaux sociaux</li>
+                  </ul>
+                  <p>
+                    Nos rapports mensuels détaillés vous donnent une visibilité totale sur les performances et les axes d&apos;amélioration.
+                  </p>
+                </div>
               </div>
             </div>
-          </section> */}
+          </section>
+
+          {/* FAQ Section */}
+          <section className="py-20 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                  <span className="inline-block bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                    FAQ
+                  </span>
+                  <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+                    Questions <span className="text-pink-600">fréquentes</span>
+                  </h2>
+                </div>
+
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      "@context": "https://schema.org",
+                      "@type": "FAQPage",
+                      "mainEntity": [
+                        {
+                          "@type": "Question",
+                          "name": "Qu'est-ce que le community management ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Le community management consiste à gérer et animer la présence d'une marque sur les réseaux sociaux. Cela inclut la création de contenu, la modération des commentaires, l'engagement avec la communauté et l'analyse des performances."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Combien coûte une prestation de community management ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Nos formules de community management démarrent à partir de 500€/mois pour un réseau social. Le tarif dépend du nombre de plateformes, de la fréquence de publication et des services inclus. Contactez-nous pour un devis personnalisé."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Quels réseaux sociaux gérez-vous ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Nous gérons tous les principaux réseaux sociaux : Instagram, LinkedIn, TikTok, Facebook, Twitter/X, YouTube et Pinterest. Nous adaptons notre stratégie à chaque plateforme et à votre audience cible."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Combien de temps faut-il pour voir des résultats ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Les premiers résultats en termes d'engagement sont visibles dès le premier mois. Une croissance significative de la communauté se manifeste généralement entre 3 et 6 mois, selon votre secteur et votre point de départ."
+                          }
+                        },
+                        {
+                          "@type": "Question",
+                          "name": "Créez-vous le contenu ou devons-nous le fournir ?",
+                          "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Nous prenons en charge la totalité de la création de contenu : rédaction, design graphique, montage vidéo, shooting photo si nécessaire. Nous travaillons à partir de votre charte graphique et de vos guidelines de marque."
+                          }
+                        }
+                      ]
+                    })
+                  }}
+                />
+
+                <div className="space-y-4">
+                  {[
+                    {
+                      q: "Qu'est-ce que le community management ?",
+                      a: "Le community management consiste à gérer et animer la présence d'une marque sur les réseaux sociaux. Cela inclut la création de contenu, la modération des commentaires, l'engagement avec la communauté et l'analyse des performances."
+                    },
+                    {
+                      q: "Combien coûte une prestation de community management ?",
+                      a: "Nos formules de community management démarrent à partir de 500€/mois pour un réseau social. Le tarif dépend du nombre de plateformes, de la fréquence de publication et des services inclus. Contactez-nous pour un devis personnalisé."
+                    },
+                    {
+                      q: "Quels réseaux sociaux gérez-vous ?",
+                      a: "Nous gérons tous les principaux réseaux sociaux : Instagram, LinkedIn, TikTok, Facebook, Twitter/X, YouTube et Pinterest. Nous adaptons notre stratégie à chaque plateforme et à votre audience cible."
+                    },
+                    {
+                      q: "Combien de temps faut-il pour voir des résultats ?",
+                      a: "Les premiers résultats en termes d'engagement sont visibles dès le premier mois. Une croissance significative de la communauté se manifeste généralement entre 3 et 6 mois, selon votre secteur et votre point de départ."
+                    },
+                    {
+                      q: "Créez-vous le contenu ou devons-nous le fournir ?",
+                      a: "Nous prenons en charge la totalité de la création de contenu : rédaction, design graphique, montage vidéo, shooting photo si nécessaire. Nous travaillons à partir de votre charte graphique et de vos guidelines de marque."
+                    }
+                  ].map((faq, index) => (
+                    <details key={index} className="bg-white rounded-xl p-6 shadow-sm group">
+                      <summary className="text-lg font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+                        {faq.q}
+                        <span className="ml-4 text-pink-600 group-open:rotate-180 transition-transform">▼</span>
+                      </summary>
+                      <p className="mt-4 text-gray-600 leading-relaxed">{faq.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* CTA Section */}
           <section className="py-20 bg-gradient-to-r from-pink-600 to-purple-600 text-white">
@@ -375,7 +532,7 @@ export default async function CommunityManagementPage({ params }: CommunityManag
                   <Button asChild size="lg" className="bg-white text-pink-600 hover:bg-pink-50">
                     <Link href={localizedHref('/contact')}>
                       Demander mon audit gratuit
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
                     </Link>
                   </Button>
                   
@@ -388,9 +545,11 @@ export default async function CommunityManagementPage({ params }: CommunityManag
               </div>
             </div>
           </section>
+
+          <RelatedServices currentSlug="community-management" locale={locale} />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

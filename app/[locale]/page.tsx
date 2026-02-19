@@ -6,6 +6,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import StatsSection from '@/components/landing/StatsSection';
 import CTASection from '@/components/landing/CTASection';
 import BlogPreviewSection from '@/components/landing/BlogPreviewSection';
+import ClientsSection from '@/components/landing/ClientsSection';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
       languages: {
         'fr': 'https://www.tech-trust.fr/fr',
         'en': 'https://www.tech-trust.fr/en',
+        'x-default': 'https://www.tech-trust.fr/fr',
       },
     },
     openGraph: {
@@ -83,15 +85,16 @@ export default async function HomePage({ params }: HomePageProps) {
         </header>
 
         <main role="main">
-          <HeroSection />
-          <ServicesSection />
+          <HeroSection locale={locale} />
+          <ServicesSection locale={locale} />
           <FeaturesSection />
           <StatsSection />
-          <BlogPreviewSection />
-          <CTASection />
+          <ClientsSection locale={locale} />
+          <BlogPreviewSection locale={locale} />
+          <CTASection locale={locale} />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

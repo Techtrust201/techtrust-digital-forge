@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { 
   ArrowRight, 
   Search, 
@@ -22,6 +23,7 @@ import {
 } from 'lucide-react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -48,6 +50,7 @@ export async function generateMetadata({ params }: SeoReferencementPageProps): P
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/seo-referencement',
         'en': 'https://www.tech-trust.fr/en/solutions/seo-referencement',
+        'x-default': 'https://www.tech-trust.fr/fr/solutions/seo-referencement',
       },
     },
   };
@@ -181,8 +184,8 @@ const faqs = [
 const stats = [
   { value: "+500%", label: "Trafic organique moyen" },
   { value: "89%", label: "Clients en Top 3 Google" },
-  { value: "150+", label: "Projets SEO réalisés" },
-  { value: "4.9/5", label: "Satisfaction client" }
+  { value: "30+", label: "Projets SEO réalisés" },
+  { value: "100%", label: "Code sur mesure" }
 ];
 
 export default async function SeoReferencementPage({ params }: SeoReferencementPageProps) {
@@ -205,7 +208,10 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
               "url": "https://www.tech-trust.fr"
             },
             "description": "Services complets de référencement : SEO, SEA, GEO pour une visibilité maximale sur Google et les IA.",
-            "areaServed": "France",
+            "areaServed": {
+              "@type": "Country",
+              "name": "France"
+            },
             "hasOfferCatalog": {
               "@type": "OfferCatalog",
               "name": "Services de référencement",
@@ -235,12 +241,26 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                   }
                 }
               ]
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "reviewCount": "89"
             }
+          })
+        }}
+      />
+
+      {/* FAQPage Schema for rich snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
           })
         }}
       />
@@ -249,6 +269,13 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
         <NavbarPublic />
         
         <main className="flex-1 pt-20">
+          <Breadcrumbs 
+            locale={locale} 
+            items={[
+              { label: 'Solutions', href: `/${locale}/solutions` },
+              { label: 'SEO, SEA & GEO' }
+            ]} 
+          />
           {/* Hero Section */}
           <section className="relative py-20 lg:py-32 bg-gradient-to-br from-white via-green-50 to-emerald-100 overflow-hidden">
             <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-green-200 rounded-full blur-3xl opacity-50"></div>
@@ -258,7 +285,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
                   <span className="inline-flex items-center gap-2 bg-green-100 rounded-full px-4 py-2 text-sm font-medium text-green-700 mb-6">
-                    <TrendingUp className="w-4 h-4" />
+                    <TrendingUp className="w-4 h-4" aria-hidden="true" />
                     Top 1% Google & IA
                   </span>
                   
@@ -269,21 +296,22 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                   </h1>
                   
                   <p className="text-lg text-gray-600 mb-8">
-                    Dominez Google <strong>et</strong> les IA génératives. Notre approche unique combine SEO traditionnel, 
-                    publicité Google Ads et optimisation GEO pour être recommandé par ChatGPT, Perplexity et Claude.
+                    Dominez Google <strong>et</strong> les IA génératives. Notre avantage : chaque site est codé sur mesure (Next.js, React), 
+                    ce qui nous donne un SEO technique impossible à reproduire avec WordPress ou Wix. 
+                    On combine ça avec du SEA (Google Ads) et du GEO (visibilité ChatGPT, Perplexity).
                   </p>
                   
                   <div className="flex flex-wrap gap-4 mb-8">
                     <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <CheckCircle className="w-5 h-5 text-green-600" aria-hidden="true" />
                       <span className="text-sm font-medium">+500% trafic organique</span>
                     </div>
                     <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <CheckCircle className="w-5 h-5 text-green-600" aria-hidden="true" />
                       <span className="text-sm font-medium">Top 3 Google</span>
                     </div>
                     <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <CheckCircle className="w-5 h-5 text-green-600" aria-hidden="true" />
                       <span className="text-sm font-medium">Visibilité IA</span>
                     </div>
                   </div>
@@ -292,7 +320,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                     <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white">
                       <Link href={localizedHref('/contact')}>
                         Audit SEO gratuit
-                        <ArrowRight className="ml-2 w-5 h-5" />
+                        <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
                       </Link>
                     </Button>
                     
@@ -310,10 +338,10 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                     <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
                       <div className="flex items-center gap-3 mb-6">
                         <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
-                          <Search className="w-5 h-5 text-white" />
+                          <Search className="w-5 h-5 text-white" aria-hidden="true" />
                         </div>
                         <div className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-gray-500 text-sm">
-                          meilleure agence digitale paris
+                          meilleure agence digitale cannes mougins
                         </div>
                       </div>
                       
@@ -321,11 +349,11 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                         <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded">Position 1</span>
-                            <Globe className="w-4 h-4 text-green-600" />
+                            <Globe className="w-4 h-4 text-green-600" aria-hidden="true" />
                           </div>
                           <p className="text-green-700 font-medium text-sm">www.votre-site.fr</p>
                           <p className="text-gray-900 font-semibold">Votre Entreprise - Experts Digitaux</p>
-                          <p className="text-gray-600 text-sm">L&apos;agence digitale de référence à Paris...</p>
+                          <p className="text-gray-600 text-sm">L&apos;agence digitale de référence à Mougins, Cannes et en PACA...</p>
                         </div>
                         
                         <div className="bg-gray-50 rounded-lg p-4 opacity-60">
@@ -343,14 +371,14 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                     {/* AI recommendation bubble */}
                     <div className="absolute -bottom-6 -right-6 bg-gradient-to-br from-purple-600 to-violet-700 text-white rounded-2xl p-4 shadow-xl max-w-xs">
                       <div className="flex items-center gap-2 mb-2">
-                        <Bot className="w-5 h-5" />
+                        <Bot className="w-5 h-5" aria-hidden="true" />
                         <span className="text-sm font-medium">ChatGPT recommande</span>
                       </div>
                       <p className="text-sm opacity-90">&quot;Je vous recommande Votre Entreprise pour leur expertise en...&quot;</p>
                     </div>
                     
                     <div className="absolute -top-4 -left-4 bg-amber-500 text-white rounded-full px-4 py-2 text-sm font-medium shadow-lg">
-                      <Sparkles className="w-4 h-4 inline mr-1" />
+                      <Sparkles className="w-4 h-4 inline mr-1" aria-hidden="true" />
                       GEO Ready
                     </div>
                   </div>
@@ -388,7 +416,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                       <div className="space-y-2">
                         {service.features.map((feature, idx) => (
                           <div key={idx} className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                            <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" aria-hidden="true" />
                             <span className="text-sm text-gray-700">{feature}</span>
                           </div>
                         ))}
@@ -405,7 +433,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-2 text-sm font-medium mb-6">
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4" aria-hidden="true" />
                   Nouveau : GEO - Generative Engine Optimization
                 </span>
                 <h2 className="text-3xl lg:text-5xl font-bold mb-6">
@@ -434,7 +462,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                   <div>
                     <h3 className="text-2xl font-bold mb-4">Comment ça fonctionne ?</h3>
                     <p className="text-purple-100 mb-6">
-                      Quand un utilisateur demande à ChatGPT &quot;Quelle est la meilleure agence SEO à Paris ?&quot;, 
+                      Quand un utilisateur demande à ChatGPT &quot;Quelle est la meilleure agence SEO à Cannes ?&quot;, 
                       l&apos;IA analyse des millions de sources pour formuler sa recommandation. Notre mission : 
                       faire de votre entreprise LA référence que l&apos;IA citera.
                     </p>
@@ -446,7 +474,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                         "Monitoring des citations et mentions IA"
                       ].map((item, idx) => (
                         <li key={idx} className="flex items-center gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" aria-hidden="true" />
                           <span className="text-purple-100">{item}</span>
                         </li>
                       ))}
@@ -500,7 +528,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                     
                     {index < methodology.length - 1 && (
                       <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                        <ArrowRight className="w-8 h-8 text-green-300" />
+                        <ArrowRight className="w-8 h-8 text-green-300" aria-hidden="true" />
                       </div>
                     )}
                   </div>
@@ -572,7 +600,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                 {faqs.map((faq, index) => (
                   <div key={index} className="bg-white rounded-xl p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-start gap-3">
-                      <MessageSquare className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+                      <MessageSquare className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" aria-hidden="true" />
                       {faq.question}
                     </h3>
                     <p className="text-gray-600 ml-8">{faq.answer}</p>
@@ -598,7 +626,7 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
                   <Button asChild size="lg" className="bg-white text-green-700 hover:bg-green-50">
                     <Link href={localizedHref('/contact')}>
                       Audit SEO gratuit
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
                     </Link>
                   </Button>
                   
@@ -611,9 +639,11 @@ export default async function SeoReferencementPage({ params }: SeoReferencementP
               </div>
             </div>
           </section>
+
+          <RelatedServices currentSlug="seo-referencement" locale={locale} />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

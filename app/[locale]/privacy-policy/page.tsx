@@ -23,7 +23,8 @@ export async function generateMetadata({ params }: PrivacyPolicyPageProps): Prom
   };
 }
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage({ params }: PrivacyPolicyPageProps) {
+  const { locale } = await params;
   return (
     <div className="flex min-h-screen flex-col">
       <NavbarPublic />
@@ -34,7 +35,7 @@ export default function PrivacyPolicyPage() {
             <h1 className="text-4xl font-bold text-gray-900 mb-8">Politique de Confidentialité</h1>
             
             <div className="bg-white rounded-xl p-8 shadow-sm prose prose-gray max-w-none">
-              <p><em>Dernière mise à jour : Janvier 2025</em></p>
+              <p><em>Dernière mise à jour : Février 2026</em></p>
 
               <h2>1. Introduction</h2>
               <p>
@@ -101,7 +102,7 @@ export default function PrivacyPolicyPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer locale={locale} />
     </div>
   );
 }

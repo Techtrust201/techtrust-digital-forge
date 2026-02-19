@@ -1,32 +1,30 @@
-"use client"
-
 import React from 'react';
 import { Users, Globe, TrendingUp, Award } from 'lucide-react';
 
 const stats = [
   {
     icon: Users,
-    number: "200+",
-    label: "Clients satisfaits",
+    number: "25+",
+    label: "Clients accompagnés",
     description: "Entreprises qui nous font confiance"
   },
   {
     icon: Globe,
-    number: "500+", 
-    label: "Sites créés",
-    description: "Projets web réalisés avec succès"
+    number: "30+", 
+    label: "Projets livrés",
+    description: "Sites et applications codés sur mesure"
   },
   {
     icon: TrendingUp,
-    number: "300%",
+    number: "+300%",
     label: "Croissance moyenne",
     description: "Augmentation du trafic client"
   },
   {
     icon: Award,
-    number: "98%",
-    label: "Taux de satisfaction",
-    description: "Clients qui recommandent nos services"
+    number: "100%",
+    label: "Code sur mesure",
+    description: "Zéro template, zéro WordPress, zéro Wix"
   }
 ];
 
@@ -46,7 +44,7 @@ const StatsSection = () => {
             Des Résultats qui <span className="text-custom-green">Parlent</span>
           </h2>
           <p className="text-lg text-gray-300">
-            Depuis notre création, nous avons accompagné des centaines d&apos;entreprises 
+            Depuis notre création, nous accompagnons des entreprises de toute la France 
             dans leur transformation digitale avec des résultats mesurables.
           </p>
         </div>
@@ -60,7 +58,7 @@ const StatsSection = () => {
             >
               {/* Icône */}
               <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <stat.icon className="w-8 h-8 text-custom-green" />
+                <stat.icon className="w-8 h-8 text-custom-green" aria-hidden="true" />
               </div>
 
               {/* Nombre */}

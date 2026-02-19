@@ -1,8 +1,10 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Rocket, Target, Zap, BarChart3, Bot, Brain, Sparkles, CheckCircle, MessageSquare, TrendingUp, Users } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Button } from '@/components/ui/button';
 
 export const dynamic = 'force-static';
@@ -28,6 +30,7 @@ export async function generateMetadata({ params }: GrowthHackingPageProps): Prom
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions/growth-hacking',
         'en': 'https://www.tech-trust.fr/en/solutions/growth-hacking',
+        'x-default': 'https://www.tech-trust.fr/fr/solutions/growth-hacking',
       },
     },
   };
@@ -235,10 +238,36 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
         }}
       />
 
+      {/* FAQPage Schema for rich snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
+          })
+        }}
+      />
+
       <div className="flex min-h-screen flex-col">
         <NavbarPublic />
         
         <main className="flex-1 pt-20">
+          <Breadcrumbs 
+            locale={locale} 
+            items={[
+              { label: 'Solutions', href: `/${locale}/solutions` },
+              { label: 'Growth Hacking IA' }
+            ]} 
+          />
           {/* Hero Section */}
           <section className="relative py-20 lg:py-32 bg-gradient-to-br from-purple-50 via-blue-50 to-green-50 overflow-hidden">
             <div className="absolute inset-0">
@@ -249,7 +278,7 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-4xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-purple-200 rounded-full px-4 py-2 text-sm font-medium text-purple-600 mb-6">
-                  <Bot className="w-4 h-4" />
+                  <Bot className="w-4 h-4" aria-hidden="true" />
                   Propulsé par l&apos;Intelligence Artificielle
                 </div>
                 
@@ -267,7 +296,7 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                   <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700">
                     <Link href={localizedHref('/contact')} className="flex items-center gap-2">
-                      <Target className="w-5 h-5" />
+                      <Target className="w-5 h-5" aria-hidden="true" />
                       Démo Gratuite
                     </Link>
                   </Button>
@@ -354,7 +383,7 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
                 {tools.map((tool) => (
                   <div key={tool.title} className="bg-white rounded-xl p-8 hover:shadow-lg transition-shadow">
                     <div className="text-purple-600 mb-4">
-                      <tool.icon className="w-8 h-8" />
+                      <tool.icon className="w-8 h-8" aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-3">{tool.title}</h3>
                     <p className="text-gray-600">{tool.description}</p>
@@ -509,9 +538,11 @@ export default async function GrowthHackingPage({ params }: GrowthHackingPagePro
               </Button>
             </div>
           </section>
+
+          <RelatedServices currentSlug="growth-hacking" locale={locale} />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

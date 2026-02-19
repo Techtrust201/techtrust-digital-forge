@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: ContactPageProps): Promise<Me
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/contact',
         'en': 'https://www.tech-trust.fr/en/contact',
+        'x-default': 'https://www.tech-trust.fr/fr/contact',
       },
     },
   };
@@ -44,8 +45,8 @@ const contactInfo = [
   {
     icon: MapPin,
     title: "Adresse",
-    value: "Paris, France",
-    description: "Sur rendez-vous"
+    value: "Mougins (06250), France",
+    description: "Proche Cannes — Sur rendez-vous"
   },
   {
     icon: Clock,
@@ -60,6 +61,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   
   return (
     <>
+      {/* ContactPage + LocalBusiness Schema JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -69,13 +71,61 @@ export default async function ContactPage({ params }: ContactPageProps) {
             "name": "Contact Techtrust",
             "url": `https://www.tech-trust.fr/${locale}/contact`,
             "mainEntity": {
-              "@type": "Organization",
+              "@type": "LocalBusiness",
+              "@id": "https://www.tech-trust.fr/#localbusiness",
               "name": "Techtrust",
+              "description": "Agence digitale française spécialisée en création de sites web, growth hacking IA, SEO/SEA/GEO et solutions digitales sur mesure.",
+              "url": "https://www.tech-trust.fr",
+              "telephone": "+33699486629",
               "email": "contact@tech-trust.fr",
+              "image": "https://www.tech-trust.fr/og-image.jpg",
+              "priceRange": "€€-€€€",
+              "currenciesAccepted": "EUR",
+              "paymentAccepted": "Virement bancaire, Carte bancaire",
               "address": {
                 "@type": "PostalAddress",
-                "addressLocality": "Paris",
+                "streetAddress": "62 Imp. Font-Roubert",
+                "addressLocality": "Mougins",
+                "addressRegion": "Provence-Alpes-Côte d'Azur",
+                "postalCode": "06250",
                 "addressCountry": "FR"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": "43.6017",
+                "longitude": "6.9950"
+              },
+              "openingHoursSpecification": [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  "opens": "09:00",
+                  "closes": "18:00"
+                }
+              ],
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "telephone": "+33699486629",
+                "email": "contact@tech-trust.fr",
+                "availableLanguage": ["French", "English"],
+                "hoursAvailable": {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  "opens": "09:00",
+                  "closes": "18:00"
+                }
+              },
+              "sameAs": [
+                "https://linkedin.com/company/techtrust-agency",
+                "https://twitter.com/techtrust_fr",
+                "https://instagram.com/techtrust_agency",
+                "https://facebook.com/techtrust"
+              ],
+              "numberOfEmployees": {
+                "@type": "QuantitativeValue",
+                "minValue": 5,
+                "maxValue": 15
               }
             }
           })
@@ -110,7 +160,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     {contactInfo.map((item) => (
                       <div key={item.title} className="bg-gray-50 rounded-xl p-6">
                         <div className="w-12 h-12 bg-custom-blue/10 rounded-lg flex items-center justify-center mb-4">
-                          <item.icon className="w-6 h-6 text-custom-blue" />
+                          <item.icon className="w-6 h-6 text-custom-blue" aria-hidden="true" />
                         </div>
                         <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
                         <p className="text-gray-900 font-medium">{item.value}</p>
@@ -132,7 +182,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
           </section>
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

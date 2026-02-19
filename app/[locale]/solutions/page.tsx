@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { ArrowRight, Globe, Rocket, Users, Code, LineChart, Search } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: SolutionsPageProps): Promise<
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/solutions',
         'en': 'https://www.tech-trust.fr/en/solutions',
+        'x-default': 'https://www.tech-trust.fr/fr/solutions',
       },
     },
   };
@@ -105,6 +107,12 @@ export default async function SolutionsPage({ params }: SolutionsPageProps) {
         <NavbarPublic />
         
         <main className="flex-1 pt-20">
+          <Breadcrumbs 
+            locale={locale} 
+            items={[
+              { label: 'Solutions' }
+            ]} 
+          />
           {/* Hero Section */}
           <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
             <div className="container mx-auto px-4 text-center">
@@ -129,7 +137,7 @@ export default async function SolutionsPage({ params }: SolutionsPageProps) {
                     className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
                   >
                     <div className={`w-14 h-14 ${solution.color} rounded-xl flex items-center justify-center mb-6`}>
-                      <solution.icon className="w-7 h-7 text-white" />
+                      <solution.icon className="w-7 h-7 text-white" aria-hidden="true" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-custom-blue transition-colors">
                       {solution.title}
@@ -139,7 +147,7 @@ export default async function SolutionsPage({ params }: SolutionsPageProps) {
                     </p>
                     <div className="flex items-center text-custom-blue font-medium">
                       En savoir plus
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                     </div>
                   </Link>
                 ))}
@@ -161,13 +169,13 @@ export default async function SolutionsPage({ params }: SolutionsPageProps) {
                 className="inline-flex items-center bg-white text-custom-blue px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
               >
                 Démarrer mon projet
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
               </Link>
             </div>
           </section>
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

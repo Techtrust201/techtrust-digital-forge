@@ -8,7 +8,7 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-            <span className="text-blue-600">Techtrust</span> Recrute 2025
+            <span className="text-blue-600">Techtrust</span> Recrute 2026
           </h1>
           <p className="text-xl text-gray-600 mb-10">
             Rejoignez l'équipe qui révolutionne le digital avec l'IA ! 

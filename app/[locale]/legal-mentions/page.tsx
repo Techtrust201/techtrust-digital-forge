@@ -23,7 +23,8 @@ export async function generateMetadata({ params }: LegalMentionsPageProps): Prom
   };
 }
 
-export default function LegalMentionsPage() {
+export default async function LegalMentionsPage({ params }: LegalMentionsPageProps) {
+  const { locale } = await params;
   return (
     <div className="flex min-h-screen flex-col">
       <NavbarPublic />
@@ -36,12 +37,11 @@ export default function LegalMentionsPage() {
             <div className="bg-white rounded-xl p-8 shadow-sm prose prose-gray max-w-none">
               <h2>1. Éditeur du site</h2>
               <p>
-                Le site www.tech-trust.fr est édité par la société Techtrust, société par actions simplifiée
-                au capital de [Capital] euros, immatriculée au Registre du Commerce et des Sociétés de Paris
-                sous le numéro [RCS].
+                Le site www.tech-trust.fr est édité par la société Techtrust, 
+                immatriculée au Registre du Commerce et des Sociétés de Grasse.
               </p>
               <p>
-                <strong>Siège social :</strong> [Adresse]<br />
+                <strong>Siège social :</strong> 62 Imp. Font-Roubert, 06250 Mougins, France<br />
                 <strong>Téléphone :</strong> +33 6 99 48 66 29<br />
                 <strong>Email :</strong> contact@tech-trust.fr
               </p>
@@ -86,7 +86,7 @@ export default function LegalMentionsPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer locale={locale} />
     </div>
   );
 }

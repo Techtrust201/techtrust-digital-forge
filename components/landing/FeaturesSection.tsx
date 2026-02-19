@@ -1,5 +1,3 @@
-"use client"
-
 import React from 'react';
 import { 
   Zap, 
@@ -80,7 +78,7 @@ const FeaturesSection = () => {
             <div key={feature.title} className="group text-center">
               {/* Icône */}
               <div className="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                <feature.icon className="w-8 h-8 text-custom-blue group-hover:text-custom-purple transition-colors" />
+                <feature.icon className="w-8 h-8 text-custom-blue group-hover:text-custom-purple transition-colors" aria-hidden="true" />
               </div>
 
               {/* Contenu */}

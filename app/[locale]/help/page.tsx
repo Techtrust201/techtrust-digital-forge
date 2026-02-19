@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: HelpPageProps): Promise<Metad
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/help',
         'en': 'https://www.tech-trust.fr/en/help',
+        'x-default': 'https://www.tech-trust.fr/fr/help',
       },
     },
   };
@@ -82,7 +83,7 @@ export default async function HelpPage({ params }: HelpPageProps) {
           <HelpContent locale={locale} />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

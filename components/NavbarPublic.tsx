@@ -101,7 +101,7 @@ const NavbarPublic = () => {
                 onClick={() => toggleDropdown("solutions")}
               >
                 <span>Solutions</span>
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
 
               <div className="absolute left-0 mt-2 w-80 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left">
@@ -126,7 +126,7 @@ const NavbarPublic = () => {
                       className="flex items-center p-3 text-sm font-medium text-custom-blue hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       Voir toutes nos solutions
-                      <ChevronDown className="w-4 h-4 ml-1 -rotate-90" />
+                      <ChevronDown className="w-4 h-4 ml-1 -rotate-90" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
@@ -148,17 +148,24 @@ const NavbarPublic = () => {
             </Link>
 
             <Link
+              href={localizedHref('/a-propos')}
+              className="text-gray-800 hover:text-custom-blue transition-colors"
+            >
+              À propos
+            </Link>
+
+            <Link
+              href={localizedHref('/portfolio')}
+              className="text-gray-800 hover:text-custom-blue transition-colors"
+            >
+              Portfolio
+            </Link>
+
+            <Link
               href={localizedHref('/careers')}
               className="text-gray-800 hover:text-custom-blue transition-colors"
             >
               Carrières
-            </Link>
-
-            <Link
-              href={localizedHref('/help')}
-              className="text-gray-800 hover:text-custom-blue transition-colors"
-            >
-              Aide
             </Link>
           </div>
 
@@ -176,7 +183,7 @@ const NavbarPublic = () => {
               asChild
               className="bg-custom-blue hover:bg-custom-blue/90"
             >
-              <Link href="/dashboard/auth">Connexion</Link>
+              <Link href={localizedHref('/dashboard/auth')}>Connexion</Link>
             </Button>
 
             {/* Language switch */}
@@ -207,9 +214,9 @@ const NavbarPublic = () => {
               className="p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               {isOpen ? (
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6" aria-hidden="true" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="w-6 h-6" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -279,17 +286,24 @@ const NavbarPublic = () => {
               </Link>
 
               <Link
+                href={localizedHref('/a-propos')}
+                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                À propos
+              </Link>
+
+              <Link
+                href={localizedHref('/portfolio')}
+                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Portfolio
+              </Link>
+
+              <Link
                 href={localizedHref('/careers')}
                 className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 Carrières
-              </Link>
-
-              <Link
-                href={localizedHref('/help')}
-                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Aide
               </Link>
 
               <div className="border-t border-gray-100 pt-4 flex flex-col space-y-3">
@@ -305,7 +319,7 @@ const NavbarPublic = () => {
                   asChild
                   className="w-full justify-center bg-custom-blue"
                 >
-                  <Link href="/dashboard/auth">Connexion</Link>
+                  <Link href={localizedHref('/dashboard/auth')}>Connexion</Link>
                 </Button>
 
                 <div className="flex justify-center gap-4 pt-2">

@@ -52,6 +52,7 @@ export const metadata: Metadata = {
     languages: {
       'fr': 'https://www.tech-trust.fr/fr',
       'en': 'https://www.tech-trust.fr/en',
+      'x-default': 'https://www.tech-trust.fr/fr',
     },
   },
 };
@@ -77,56 +78,241 @@ export default async function RootLayout({
         
         {/* DNS Prefetch pour les performances */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="//www.google-analytics.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
-        {/* JSON-LD Organisation */}
+        {/* JSON-LD ProfessionalService (enriched Organization) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
+              "@type": ["ProfessionalService", "Organization"],
+              "@id": "https://www.tech-trust.fr/#organization",
               "name": "Techtrust",
+              "alternateName": "Techtrust Agency",
               "url": "https://www.tech-trust.fr",
-              "logo": "https://www.tech-trust.fr/logo-techtrust.svg",
-              "description": "Agence digitale française spécialisée en création de sites web, growth hacking et solutions digitales sur mesure",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.tech-trust.fr/logo-techtrust.svg",
+                "width": 512,
+                "height": 512
+              },
+              "image": "https://www.tech-trust.fr/og-image.jpg",
+              "description": "Agence digitale française spécialisée en création de sites web sur mesure (zéro template), growth hacking IA, SEO/SEA/GEO et solutions digitales. 30+ projets livrés, 100% code sur mesure.",
+              "slogan": "Transformez votre business avec l'IA",
+              "foundingDate": "2023",
               "address": {
                 "@type": "PostalAddress",
-                "addressCountry": "FR",
-                "addressLocality": "France"
+                "streetAddress": "62 Imp. Font-Roubert",
+                "addressLocality": "Mougins",
+                "addressRegion": "Provence-Alpes-Côte d'Azur",
+                "postalCode": "06250",
+                "addressCountry": "FR"
               },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "availableLanguage": ["French", "English"]
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": "43.6017",
+                "longitude": "6.9950"
               },
+              "telephone": "+33699486629",
+              "email": "contact@tech-trust.fr",
+              "priceRange": "€€-€€€",
+              "currenciesAccepted": "EUR",
+              "paymentAccepted": "Virement, Carte bancaire",
+              "openingHoursSpecification": [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  "opens": "09:00",
+                  "closes": "18:00"
+                }
+              ],
+              "areaServed": [
+                {
+                  "@type": "Country",
+                  "name": "France"
+                },
+                {
+                  "@type": "AdministrativeArea",
+                  "name": "Provence-Alpes-Côte d'Azur"
+                },
+                {
+                  "@type": "City",
+                  "name": "Mougins"
+                },
+                {
+                  "@type": "City",
+                  "name": "Cannes"
+                },
+                {
+                  "@type": "City",
+                  "name": "Nice"
+                },
+                {
+                  "@type": "City",
+                  "name": "Antibes"
+                },
+                {
+                  "@type": "City",
+                  "name": "Grasse"
+                },
+                {
+                  "@type": "City",
+                  "name": "Marseille"
+                },
+                {
+                  "@type": "City",
+                  "name": "Aix-en-Provence"
+                },
+                {
+                  "@type": "City",
+                  "name": "Toulon"
+                },
+                {
+                  "@type": "City",
+                  "name": "Paris"
+                },
+                {
+                  "@type": "City",
+                  "name": "Lyon"
+                },
+                {
+                  "@type": "City",
+                  "name": "Toulouse"
+                },
+                {
+                  "@type": "City",
+                  "name": "Bordeaux"
+                },
+                {
+                  "@type": "City",
+                  "name": "Lille"
+                }
+              ],
+              "contactPoint": [
+                {
+                  "@type": "ContactPoint",
+                  "contactType": "customer service",
+                  "telephone": "+33699486629",
+                  "email": "contact@tech-trust.fr",
+                  "availableLanguage": ["French", "English"],
+                  "hoursAvailable": {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                    "opens": "09:00",
+                    "closes": "18:00"
+                  }
+                },
+                {
+                  "@type": "ContactPoint",
+                  "contactType": "sales",
+                  "telephone": "+33699486629",
+                  "email": "contact@tech-trust.fr",
+                  "availableLanguage": ["French", "English"]
+                }
+              ],
               "sameAs": [
                 "https://linkedin.com/company/techtrust-agency",
                 "https://twitter.com/techtrust_fr",
-                "https://instagram.com/techtrust_agency"
+                "https://instagram.com/techtrust_agency",
+                "https://facebook.com/techtrust"
               ],
-              "offers": {
-                "@type": "AggregateOffer",
-                "priceCurrency": "EUR",
-                "availability": "https://schema.org/InStock",
-                "itemOffered": [
+              "knowsAbout": [
+                "Création de site web",
+                "Growth Hacking",
+                "Intelligence Artificielle",
+                "SEO",
+                "SEA",
+                "Google Ads",
+                "Community Management",
+                "Développement web",
+                "E-commerce",
+                "Marketing digital"
+              ],
+              "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Services Techtrust",
+                "itemListElement": [
                   {
-                    "@type": "Service",
-                    "name": "Création de site web",
-                    "description": "Développement de sites web sur mesure, e-commerce et applications web"
+                    "@type": "OfferCatalog",
+                    "name": "Création Web",
+                    "itemListElement": [
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "Création de site vitrine",
+                          "description": "Site web professionnel responsive optimisé SEO"
+                        }
+                      },
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "Création de site e-commerce",
+                          "description": "Boutique en ligne complète avec paiement sécurisé"
+                        }
+                      }
+                    ]
                   },
                   {
-                    "@type": "Service", 
-                    "name": "Growth Hacking",
-                    "description": "Stratégies de croissance digitale et acquisition de leads"
+                    "@type": "OfferCatalog",
+                    "name": "Growth Hacking IA",
+                    "itemListElement": [
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "Growth Hacking automatisé",
+                          "description": "Acquisition client automatisée par intelligence artificielle"
+                        }
+                      },
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "Community Management IA",
+                          "description": "Gestion automatisée des réseaux sociaux par IA"
+                        }
+                      }
+                    ]
                   },
                   {
-                    "@type": "Service",
-                    "name": "Solutions digitales sur mesure",
-                    "description": "Développement de logiciels personnalisés et applications métier"
+                    "@type": "OfferCatalog",
+                    "name": "Référencement",
+                    "itemListElement": [
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "SEO - Référencement naturel",
+                          "description": "Optimisation du référencement naturel sur Google"
+                        }
+                      },
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "SEA - Google Ads",
+                          "description": "Campagnes publicitaires Google Ads optimisées"
+                        }
+                      },
+                      {
+                        "@type": "Offer",
+                        "itemOffered": {
+                          "@type": "Service",
+                          "name": "GEO - Google My Business",
+                          "description": "Optimisation de la visibilité locale Google My Business"
+                        }
+                      }
+                    ]
                   }
                 ]
+              },
+              "numberOfEmployees": {
+                "@type": "QuantitativeValue",
+                "minValue": 5,
+                "maxValue": 15
               }
             })
           }}

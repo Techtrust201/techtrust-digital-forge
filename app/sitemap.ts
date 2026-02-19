@@ -1,4 +1,6 @@
 import { MetadataRoute } from 'next';
+import { blogArticles } from '@/lib/blog-data';
+import { cities } from '@/lib/geo-data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.tech-trust.fr';
@@ -15,9 +17,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/solutions/consulting-digital', priority: 0.8, changeFrequency: 'weekly' as const },
     { path: '/solutions/seo-referencement', priority: 0.8, changeFrequency: 'weekly' as const },
     { path: '/pricing', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/a-propos', priority: 0.8, changeFrequency: 'monthly' as const },
+    { path: '/portfolio', priority: 0.8, changeFrequency: 'monthly' as const },
     { path: '/contact', priority: 0.8, changeFrequency: 'monthly' as const },
-    { path: '/blog', priority: 0.7, changeFrequency: 'daily' as const },
+    { path: '/blog', priority: 0.8, changeFrequency: 'daily' as const },
     { path: '/careers', priority: 0.6, changeFrequency: 'weekly' as const },
+    { path: '/guide/prix-site-vitrine', priority: 0.9, changeFrequency: 'monthly' as const },
+    { path: '/guide/prix-site-ecommerce', priority: 0.9, changeFrequency: 'monthly' as const },
     { path: '/help', priority: 0.5, changeFrequency: 'monthly' as const },
     { path: '/legal-mentions', priority: 0.3, changeFrequency: 'yearly' as const },
     { path: '/privacy-policy', priority: 0.3, changeFrequency: 'yearly' as const },
@@ -26,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = [];
 
+  // Static public pages
   for (const locale of locales) {
     for (const page of publicPages) {
       entries.push({
@@ -37,6 +44,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
           languages: {
             'fr': `${baseUrl}/fr${page.path}`,
             'en': `${baseUrl}/en${page.path}`,
+          },
+        },
+      });
+    }
+  }
+
+  // Blog article pages (dynamic)
+  for (const locale of locales) {
+    for (const article of blogArticles) {
+      entries.push({
+        url: `${baseUrl}/${locale}/blog/${article.slug}`,
+        lastModified: new Date(article.updatedDate || article.date),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+        alternates: {
+          languages: {
+            'fr': `${baseUrl}/fr/blog/${article.slug}`,
+            'en': `${baseUrl}/en/blog/${article.slug}`,
+          },
+        },
+      });
+    }
+  }
+
+  // Geo landing pages (dynamic)
+  for (const locale of locales) {
+    for (const city of cities) {
+      entries.push({
+        url: `${baseUrl}/${locale}/solutions/agence-web-${city.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.8,
+        alternates: {
+          languages: {
+            'fr': `${baseUrl}/fr/solutions/agence-web-${city.slug}`,
+            'en': `${baseUrl}/en/solutions/agence-web-${city.slug}`,
           },
         },
       });

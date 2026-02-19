@@ -20,17 +20,18 @@ export async function generateMetadata({ params }: CareersPageProps): Promise<Me
   
   return {
     title: isEn 
-      ? 'Techtrust Recrute 2025 | Tech IA Jobs, Growth Hacking - Techtrust'
-      : 'Techtrust Recrute 2025 | Emplois Tech IA, Growth Hacking - Techtrust',
+      ? 'Techtrust Recrute 2026 | Tech IA Jobs, Growth Hacking - Techtrust'
+      : 'Techtrust Recrute 2026 | Emplois Tech IA, Growth Hacking - Techtrust',
     description: isEn
-      ? 'Join the elite tech 2025! Techtrust recruits IA developers, growth hackers, data scientists. Attractive salaries, innovative projects. Apply now!'
-      : 'Rejoignez l\'élite tech 2025 ! Techtrust recrute développeurs IA, growth hackers, data scientists. Salaires attractifs, projets innovants. Postulez maintenant !',
-    keywords: ['techtrust recrute 2025', 'emploi tech ia', 'recrutement growth hacking', 'jobs développeur ia', 'carrières data scientist', 'apporteur affaires'],
+      ? 'Join the elite tech 2026! Techtrust recruits IA developers, growth hackers, data scientists. Attractive salaries, innovative projects. Apply now!'
+      : 'Rejoignez l\'élite tech 2026 ! Techtrust recrute développeurs IA, growth hackers, data scientists. Salaires attractifs, projets innovants. Postulez maintenant !',
+    keywords: ['techtrust recrute 2026', 'emploi tech ia', 'recrutement growth hacking', 'jobs développeur ia', 'carrières data scientist', 'apporteur affaires'],
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/careers`,
       languages: {
         'fr': 'https://www.tech-trust.fr/fr/careers',
         'en': 'https://www.tech-trust.fr/en/careers',
+        'x-default': 'https://www.tech-trust.fr/fr/careers',
       },
     },
   };
@@ -48,8 +49,8 @@ export default async function CareersPage({ params }: CareersPageProps) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "name": "Techtrust Recrute 2025 - Rejoignez l'Élite Tech IA",
-            "description": "Techtrust recrute les meilleurs talents tech 2025 ! Développeurs, Growth Hackers IA, Data Scientists. Rejoignez l'équipe qui révolutionne le digital avec l'IA.",
+            "name": "Techtrust Recrute 2026 - Rejoignez l'Élite Tech IA",
+            "description": "Techtrust recrute les meilleurs talents tech 2026 ! Développeurs, Growth Hackers IA, Data Scientists. Rejoignez l'équipe qui révolutionne le digital avec l'IA.",
             "url": "https://www.tech-trust.fr/careers",
             "mainEntity": {
               "@type": "ItemList",
@@ -108,7 +109,7 @@ export default async function CareersPage({ params }: CareersPageProps) {
           <BusinessPartnerProgram />
         </main>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </>
   );

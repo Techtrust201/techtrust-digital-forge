@@ -1,5 +1,3 @@
-"use client"
-
 import React from 'react';
 import { Calendar, ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,7 +34,11 @@ const blogPosts = [
   }
 ];
 
-const BlogPreviewSection = () => {
+interface BlogPreviewSectionProps {
+  locale: string;
+}
+
+const BlogPreviewSection = ({ locale }: BlogPreviewSectionProps) => {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Éléments décoratifs */}
@@ -72,11 +74,11 @@ const BlogPreviewSection = () => {
                   {/* Métadonnées */}
                   <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                     <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="w-4 h-4" aria-hidden="true" />
                       {post.date}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-4 h-4" aria-hidden="true" />
                       {post.readTime}
                     </div>
                   </div>
@@ -93,11 +95,11 @@ const BlogPreviewSection = () => {
 
                   {/* CTA */}
                   <Link 
-                    href={`/blog/${post.slug}`}
+                    href={`/${locale}/blog/${post.slug}`}
                     className="inline-flex items-center text-custom-blue font-medium group/link hover:text-custom-purple transition-colors"
                   >
                     Lire l&apos;article
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" aria-hidden="true" />
                   </Link>
                 </CardContent>
               </Card>
@@ -113,9 +115,9 @@ const BlogPreviewSection = () => {
             variant="outline"
             className="border-2 border-custom-green text-custom-green hover:bg-custom-green hover:text-white"
           >
-            <Link href="/blog">
+            <Link href={`/${locale}/blog`}>
               Voir tous les articles
-              <ArrowRight className="ml-2 w-4 h-4" />
+              <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" />
             </Link>
           </Button>
         </div>
