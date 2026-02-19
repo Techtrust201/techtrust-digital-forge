@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, Users, Globe, TrendingUp, Code, Lightbulb, MessageSquare, Target } from 'lucide-react';
+import { ArrowRight, Check, Bot, Users, Globe, TrendingUp, Code, Lightbulb, MessageSquare, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
@@ -8,9 +8,9 @@ const services = [
   {
     icon: Globe,
     title: "Création Site Web",
-    subtitle: "100% codé à la main — zéro template",
-    description: "Chaque site est codé de A à Z avec Next.js, React et TypeScript. Pas de WordPress, pas de Wix, pas de thème préfabriqué. Du code propre, rapide et optimisé SEO dès le départ.",
-    features: ["Code sur mesure (Next.js, React)", "Design unique sans template", "SEO technique natif", "Performance maximale"],
+    subtitle: "Sites professionnels & E-commerce",
+    description: "Des sites web rapides, au design unique et optimisés pour le référencement. Du site vitrine au e-commerce, chaque projet est codé sur mesure pour des performances maximales.",
+    features: ["Design unique sur mesure", "Optimisation SEO intégrée", "Performance ultra-rapide", "Responsive tous écrans"],
     color: "#45C7FF",
     colorClass: "custom-blue",
     link: "/solutions/agence-web"
@@ -19,7 +19,7 @@ const services = [
     icon: TrendingUp,
     title: "Growth Hacking IA",
     subtitle: "Automatisation complète + Community IA",
-    description: "Nos outils IA propriétaires automatisent votre prospection et votre community management. Remplacez un commercial + community manager par notre IA, ou confiez tout à notre équipe.",
+    description: "Nos outils IA automatisent votre prospection et votre community management. Remplacez un commercial + community manager par notre IA, ou confiez tout à notre équipe.",
     features: ["IA de prospection automatisée", "Community management IA", "Email marketing intelligent", "Lead generation IA"],
     color: "#8B5CF6", 
     colorClass: "custom-purple",
@@ -28,9 +28,9 @@ const services = [
   {
     icon: Code,
     title: "Applications Sur Mesure",
-    subtitle: "Logiciels métier codés from scratch",
-    description: "CRM, ERP, dashboards, applications métier — tout est développé sur mesure pour coller parfaitement à vos processus. Vous êtes propriétaire du code à 100%.",
-    features: ["Développement sur mesure total", "Propriété du code source", "Intégrations API", "Support et maintenance"],
+    subtitle: "Logiciels métier & applications web",
+    description: "CRM, ERP, dashboards, applications métier — développés sur mesure pour coller parfaitement à vos processus. Vous êtes propriétaire du code à 100%.",
+    features: ["Développement sur mesure", "Propriété du code source", "Intégrations API", "Support et maintenance"],
     color: "#00CCC3",
     colorClass: "custom-green",
     link: "/solutions/digitales-sur-mesure"
@@ -39,8 +39,8 @@ const services = [
     icon: MessageSquare,
     title: "Community Management Pro",
     subtitle: "Équipe dédiée experte",
-    description: "Vous préférez déléguer à des pros ? Notre équipe gère vos réseaux sociaux avec une stratégie sur mesure et du contenu créé spécifiquement pour votre marque.",
-    features: ["Community manager dédié", "Stratégie sur mesure", "Contenu professionnel", "Reporting mensuel"],
+    description: "Vous préférez déléguer à des pros ? Notre équipe gère vos réseaux sociaux avec une stratégie personnalisée et du contenu créé pour votre marque.",
+    features: ["Community manager dédié", "Stratégie personnalisée", "Contenu professionnel", "Reporting mensuel"],
     color: "#EC4899",
     colorClass: "custom-pink",
     link: "/solutions/community-management"
@@ -48,9 +48,9 @@ const services = [
   {
     icon: Target,
     title: "SEO, SEA & GEO",
-    subtitle: "Visibilité Google maximale",
-    description: "Référencement naturel (SEO), Google Ads (SEA), Google My Business et GEO (visibilité sur ChatGPT, Perplexity). Notre code sur mesure nous donne un avantage technique que WordPress ne pourra jamais offrir.",
-    features: ["SEO technique natif (code sur mesure)", "Campagnes Google Ads", "Google My Business optimisé", "GEO — visibilité IA"],
+    subtitle: "Visibilité Google & IA maximale",
+    description: "Référencement naturel (SEO), publicité Google Ads (SEA), Google My Business et GEO pour être visible sur ChatGPT, Perplexity et Google AI Overviews.",
+    features: ["Audit & stratégie SEO", "Campagnes Google Ads", "Google My Business optimisé", "GEO — visibilité IA"],
     color: "#10B981",
     colorClass: "custom-green",
     link: "/solutions/seo-referencement"
@@ -59,7 +59,7 @@ const services = [
     icon: Lightbulb,
     title: "Consulting Digital",
     subtitle: "Transformation & Innovation",
-    description: "Accompagnement stratégique pour votre transformation digitale. Audit, stratégie, mise en œuvre — on vous guide de A à Z sans solution toute faite.",
+    description: "Accompagnement stratégique pour votre transformation digitale. Audit, stratégie et mise en œuvre — on vous guide de A à Z.",
     features: ["Audit digital complet", "Stratégie sur mesure", "Innovation technologique", "Accompagnement VIP"],
     color: "#F59E0B",
     colorClass: "custom-orange",
@@ -86,40 +86,39 @@ const ServicesSection = ({ locale }: ServicesSectionProps) => {
           <h2 
             className="text-3xl lg:text-5xl font-bold text-[#374151] mb-6"
           >
-            Tout est <span className="text-custom-blue">codé sur mesure</span>
-            <br />
+            Nos <span className="text-custom-blue">Solutions</span>{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-green">
-              de A à Z
+              Digitales
             </span>
           </h2>
 
           <p 
             className="text-lg text-[#374151]"
           >
-            Chez Techtrust, <strong>on ne fait pas de WordPress, pas de Wix, pas de template</strong>. 
-            Chaque projet est codé à la main pour des performances, un SEO et une sécurité impossibles à atteindre avec des solutions toutes faites.
+            <strong>Vous avez le choix :</strong> utilisez nos outils IA en autonomie pour automatiser votre acquisition client, 
+            ou confiez votre projet à notre équipe d&apos;experts pour un accompagnement sur mesure.
           </p>
         </div>
 
-        {/* Code sur mesure vs Templates */}
+        {/* IA vs Equipe Pro */}
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mb-16">
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="text-center border-r border-gray-200 pr-8">
-              <Code className="w-12 h-12 text-custom-blue mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-[#374151] mb-2">Techtrust — Code sur mesure</h3>
+            <div className="text-center">
+              <Bot className="w-12 h-12 text-custom-blue mx-auto mb-4" aria-hidden="true" />
+              <h3 className="text-xl font-bold text-[#374151] mb-2">Outils IA Automatisés</h3>
               <p className="text-[#374151]">
-                Next.js, React, TypeScript. Chaque ligne de code est écrite pour VOTRE projet. Performance, SEO et sécurité au maximum.
+                Gardez le contrôle et économisez. Nos IA remplacent un commercial + community manager pour une fraction du coût.
               </p>
-              <div className="mt-4 text-sm text-custom-blue font-bold">Ce qu&apos;on fait</div>
+              <div className="mt-4 text-sm text-custom-blue font-medium">Solutions accessibles</div>
             </div>
             
-            <div className="text-center pl-8 opacity-60">
-              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-gray-400 mb-2">WordPress / Wix / Templates</h3>
-              <p className="text-gray-400">
-                Sites génériques, lents, vulnérables aux failles de sécurité. SEO limité par la plateforme. Vous ne possédez pas votre code.
+            <div className="text-center">
+              <Users className="w-12 h-12 text-custom-purple mx-auto mb-4" aria-hidden="true" />
+              <h3 className="text-xl font-bold text-[#374151] mb-2">Équipe Professionnelle</h3>
+              <p className="text-[#374151]">
+                Déléguez à des experts. Notre équipe gère tout avec une stratégie personnalisée et des résultats mesurables.
               </p>
-              <div className="mt-4 text-sm text-gray-400 font-bold line-through">Ce qu&apos;on ne fait PAS</div>
+              <div className="mt-4 text-sm text-custom-purple font-medium">Sur mesure</div>
             </div>
           </div>
         </div>

@@ -631,7 +631,7 @@ export default async function PrixSiteVitrinePage({ params }: PrixVitrinePagePro
                     { icon: Euro, label: 'À partir de 1 500€', desc: 'Site vitrine professionnel avec design sur mesure, SEO et support inclus.' },
                     { icon: Clock, label: 'Livraison en 2-4 semaines', desc: 'Process efficace avec points d\'avancement réguliers.' },
                     { icon: TrendingUp, label: 'SEO inclus dès le départ', desc: 'Optimisation technique, balises, structure, Core Web Vitals.' },
-                    { icon: Shield, label: '30+ projets livrés', desc: 'Expérience éprouvée depuis 2023, tous secteurs confondus.' },
+                    { icon: Shield, label: '30+ projets livrés', desc: 'Expérience éprouvée depuis 2024, tous secteurs confondus.' },
                     { icon: Star, label: '100% code sur mesure', desc: 'Zéro template, zéro WordPress. Chaque site codé de A à Z.' },
                     { icon: Zap, label: 'Technologies modernes', desc: 'Next.js, React, Tailwind CSS pour des performances maximales.' },
                   ].map((item) => (

@@ -100,7 +100,7 @@ export default async function RootLayout({
               "image": "https://www.tech-trust.fr/og-image.jpg",
               "description": "Agence digitale française spécialisée en création de sites web sur mesure (zéro template), growth hacking IA, SEO/SEA/GEO et solutions digitales. 30+ projets livrés, 100% code sur mesure.",
               "slogan": "Transformez votre business avec l'IA",
-              "foundingDate": "2023",
+              "foundingDate": "2024",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "62 Imp. Font-Roubert",

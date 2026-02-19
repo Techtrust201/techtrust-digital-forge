@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: AgenceWebPageProps): Promise<
       : 'Création de Sites Web Professionnels | Agence Web Techtrust',
     description: isEn
       ? 'Custom website and e-commerce creation, hand-coded from scratch. Responsive design, SEO optimization, guaranteed performance. Free quote in 24h.'
-      : 'Création de sites web professionnels codés sur mesure de A à Z. Zéro template, zéro WordPress. Design responsive, SEO intégré, performances garanties. Devis gratuit en 24h.',
+      : 'Création de sites web professionnels sur mesure à Mougins (Cannes). Design responsive, SEO intégré, performances garanties. Devis gratuit en 24h.',
     keywords: ['création site web', 'agence web', 'développement site internet', 'site web professionnel', 'e-commerce', 'responsive design', 'SEO'],
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/solutions/agence-web`,
@@ -269,7 +269,7 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
                 <div>
                   <span className="inline-flex items-center gap-2 bg-blue-100 rounded-full px-4 py-2 text-sm font-medium text-blue-600 mb-6">
                     <Globe className="w-4 h-4" aria-hidden="true" />
-                    100% codé sur mesure — Zéro template
+                    Agence web à Mougins (Cannes)
                   </span>
                   
                   <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
@@ -539,43 +539,42 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
             </div>
           </section> */}
 
-          {/* Pourquoi PAS de WordPress / Wix */}
+          {/* Pourquoi le sur mesure */}
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4 max-w-5xl">
               <div className="text-center mb-16">
-                <span className="inline-block bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-bold mb-4">Notre position</span>
+                <span className="inline-block bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-bold mb-4">Notre approche</span>
                 <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Pourquoi on <span className="text-red-600">refuse</span> WordPress et Wix
+                  Pourquoi le <span className="text-blue-600">sur mesure</span> fait la différence
                 </h2>
                 <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                  Ce n&apos;est pas du snobisme. C&apos;est un choix technique réfléchi pour offrir le meilleur à nos clients.
+                  Chaque projet mérite une solution adaptée. Voici pourquoi nous développons tout de A à Z pour nos clients.
                 </p>
               </div>
               
               <div className="space-y-6">
-                <div className="bg-white rounded-xl p-8 border-l-4 border-red-500">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">WordPress : 43% du web... et 90% des sites piratés</h3>
+                <div className="bg-white rounded-xl p-8 border-l-4 border-blue-500">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Des performances qui plaisent à Google</h3>
                   <p className="text-gray-600 leading-relaxed">
-                    WordPress est populaire, mais sa popularité en fait la cible n°1 des hackers. 
-                    Chaque plugin est un risque de sécurité. Les mises à jour cassent régulièrement les sites. 
-                    Et les performances ? Un site WordPress moyen charge en 3-5 secondes — Google pénalise tout ce qui dépasse 2,5s.
-                    Notre code sur mesure élimine ces problèmes à la racine.
+                    Un site codé sur mesure ne charge que l&apos;essentiel. Résultat : des temps de chargement sous 1,5 seconde 
+                    et un score PageSpeed 95+. Google privilégie les sites rapides dans ses résultats de recherche, 
+                    ce qui se traduit directement par plus de visibilité pour votre entreprise.
                   </p>
                 </div>
-                <div className="bg-white rounded-xl p-8 border-l-4 border-red-500">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">Wix / Squarespace : rapide à créer, impossible à optimiser</h3>
+                <div className="bg-white rounded-xl p-8 border-l-4 border-blue-500">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Un SEO intégré dans l&apos;architecture</h3>
                   <p className="text-gray-600 leading-relaxed">
-                    Ces plateformes sont parfaites pour un blog personnel. Mais pour une entreprise qui veut être visible sur Google ? 
-                    Le SEO est limité par la plateforme, les performances sont médiocres, le code est obfusqué et vous ne possédez rien. 
-                    Le jour où vous voulez partir, vous repartez de zéro.
+                    Avec le rendu serveur (SSR), les métadonnées structurées et les Core Web Vitals optimisés, 
+                    le référencement est natif dans chaque page. Pas besoin de plugins ou d&apos;extensions — 
+                    le SEO technique est pensé dès la première ligne de code.
                   </p>
                 </div>
-                <div className="bg-white rounded-xl p-8 border-l-4 border-blue-600">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">Notre code sur mesure : la seule solution qui se démarque</h3>
+                <div className="bg-white rounded-xl p-8 border-l-4 border-blue-500">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Sécurité, propriété et évolutivité</h3>
                   <p className="text-gray-600 leading-relaxed">
-                    Avec Next.js et React, votre site charge en moins de 1,5 seconde, le SEO est intégré nativement dans chaque page, 
-                    la sécurité est maximale sans plugins tiers, et le design est 100% unique. Vous êtes propriétaire du code, 
-                    libre de l&apos;héberger où vous voulez, et votre site évolue avec votre entreprise sans aucune limite.
+                    Aucune dépendance à des plugins tiers, un code minimal et auditable, et une propriété totale du code source. 
+                    Votre site évolue avec votre entreprise : nouvelles fonctionnalités, intégrations API, montée en charge — 
+                    sans aucune limite technique.
                   </p>
                 </div>
               </div>
@@ -583,7 +582,7 @@ export default async function AgenceWebPage({ params }: AgenceWebPageProps) {
               <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
                 <p className="text-2xl font-bold mb-2">Le résultat ?</p>
                 <p className="text-lg text-gray-200">
-                  Des sites plus rapides, mieux référencés, plus sécurisés et 100% uniques. 
+                  Des sites plus rapides, mieux référencés, plus sécurisés et au design unique. 
                   C&apos;est ça, la différence Techtrust.
                 </p>
               </div>

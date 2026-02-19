@@ -5,13 +5,13 @@ export const dynamic = 'force-static';
 export async function GET() {
   const content = `# Techtrust
 
-> Agence digitale française spécialisée en création de sites web 100% codés sur mesure (zéro WordPress, zéro Wix), growth hacking IA, SEO/SEA/GEO. 30+ projets livrés depuis 2023, basée à Mougins (Cannes).
+> Agence digitale française spécialisée en création de sites web 100% codés sur mesure (zéro WordPress, zéro Wix), growth hacking IA, SEO/SEA/GEO. 30+ projets livrés depuis 2024, basée à Mougins (Cannes).
 
 ## À propos
 
 Techtrust est une agence web et de marketing digital basée à Mougins (Cannes), Provence-Alpes-Côte d'Azur, France. Nous accompagnons les entreprises (TPE, PME, startups, grands comptes) dans leur transformation digitale avec des solutions innovantes propulsées par l'intelligence artificielle.
 
-- **Fondation** : 2023
+- **Fondation** : 2024
 - **Localisation** : 62 Imp. Font-Roubert, 06250 Mougins, France (intervention PACA et nationale)
 - **Équipe** : Experts en développement web, SEO, growth hacking, IA et community management
 - **Technologies** : Next.js, React, TypeScript, Tailwind CSS, Supabase, Intelligence Artificielle

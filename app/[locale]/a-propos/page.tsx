@@ -17,12 +17,12 @@ export async function generateMetadata({ params }: AboutPageProps): Promise<Meta
 
   return {
     title: 'À propos de Techtrust — Agence Web & Growth Hacking IA',
-    description: 'Découvrez Techtrust, agence digitale française fondée en 2023 à Mougins. Notre mission : coder des solutions web sur mesure de A à Z, sans template ni WordPress. 30+ projets livrés.',
+    description: 'Découvrez Techtrust, agence digitale française fondée en 2024 à Mougins. Création de sites web sur mesure, SEO, growth hacking IA. 30+ projets livrés en PACA et toute la France.',
     keywords: ['à propos', 'agence web', 'techtrust', 'équipe', 'mission', 'valeurs', 'growth hacking IA', 'agence digitale France'],
     openGraph: {
       type: 'website',
       title: 'À propos de Techtrust — Agence Web & Growth Hacking IA',
-      description: 'Découvrez Techtrust, agence digitale française fondée en 2023 à Mougins. 30+ projets codés sur mesure, zéro template.',
+      description: 'Découvrez Techtrust, agence digitale française fondée en 2024 à Mougins. 30+ projets livrés, création web sur mesure, SEO et growth hacking IA.',
       url: `https://www.tech-trust.fr/${locale}/a-propos`,
       locale: locale === 'fr' ? 'fr_FR' : 'en_US',
     },
@@ -95,7 +95,7 @@ const team = [
 ];
 
 const milestones = [
-  { year: '2023', title: 'Création de Techtrust à Mougins', description: 'Lancement de l\'agence avec une conviction forte : coder chaque site de A à Z, sans template ni WordPress. Les premiers clients de la Côte d\'Azur nous font confiance.' },
+  { year: '2024', title: 'Création de Techtrust à Mougins', description: 'Lancement de l\'agence avec une conviction forte : coder chaque site de A à Z, sans template ni WordPress. Les premiers clients de la Côte d\'Azur nous font confiance.' },
   { year: '2024', title: 'Premiers grands comptes', description: 'Palais des Festivals de Cannes, Chopard, cabinets d\'avocats... Techtrust s\'impose comme partenaire digital des entreprises exigeantes en PACA.' },
   { year: '2024', title: 'Lancement du Growth Hacking IA', description: 'Intégration de l\'intelligence artificielle dans nos stratégies d\'acquisition client. Automatisation de la prospection et du community management.' },
   { year: '2025', title: 'Partenariat Arodata & expansion', description: 'Alliance stratégique avec Arodata pour un pôle informatique complet à Mougins. Plus de 25 clients accompagnés et 30+ projets livrés.' },
@@ -122,7 +122,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
               "@type": "Organization",
               "name": "Techtrust",
               "url": "https://www.tech-trust.fr",
-              "foundingDate": "2023",
+              "foundingDate": "2024",
               "founder": {
                 "@type": "Person",
                 "name": "Hugo",
@@ -179,7 +179,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
                   L&apos;agence digitale qui <span className="bg-gradient-to-r from-custom-blue to-custom-purple bg-clip-text text-transparent">transforme votre business</span>
                 </h1>
                 <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                  Fondée en 2023, Techtrust est née d&apos;une conviction : chaque entreprise, quelle que soit sa taille, 
+                  Fondée en 2024, Techtrust est née d&apos;une conviction : chaque entreprise, quelle que soit sa taille, 
                   mérite une présence en ligne exceptionnelle. Nous combinons expertise technique de pointe et intelligence 
                   artificielle pour propulser la croissance de nos clients.
                 </p>
@@ -323,19 +323,19 @@ export default async function AboutPage({ params }: AboutPageProps) {
             </div>
           </section>
 
-          {/* Philosophie : code from scratch */}
+          {/* Notre approche technique */}
           <section className="py-16 lg:py-20 bg-white">
             <div className="container mx-auto px-4 max-w-6xl">
               <div className="text-center mb-12">
-                <span className="inline-block bg-red-50 text-red-600 text-sm font-semibold px-4 py-2 rounded-full mb-4">
-                  Notre philosophie
+                <span className="inline-block bg-blue-50 text-custom-blue text-sm font-semibold px-4 py-2 rounded-full mb-4">
+                  Notre approche technique
                 </span>
                 <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                  Zéro WordPress. Zéro Wix. Zéro template.
+                  Pourquoi le code sur mesure ?
                 </h2>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  Chez Techtrust, on code <strong>tout de A à Z</strong>. C&apos;est un choix délibéré, pas un caprice. 
-                  Voici pourquoi.
+                  Chaque projet Techtrust est développé de A à Z avec les technologies les plus performantes du marché. 
+                  Voici les avantages concrets pour votre entreprise.
                 </p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -343,10 +343,10 @@ export default async function AboutPage({ params }: AboutPageProps) {
                   <div className="w-12 h-12 bg-custom-blue/10 rounded-xl flex items-center justify-center mb-4">
                     <Zap className="w-6 h-6 text-custom-blue" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Performance imbattable</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Performance maximale</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    Un site WordPress charge 30+ plugins et des scripts inutiles. Notre code sur mesure ne charge que l&apos;essentiel : 
-                    temps de chargement sous 1,5 seconde, score PageSpeed 95+.
+                    Chaque ligne de code est optimisée. Résultat : des temps de chargement sous 1,5 seconde et 
+                    un score PageSpeed 95+ qui plaît autant aux visiteurs qu&apos;à Google.
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-8">
@@ -355,18 +355,18 @@ export default async function AboutPage({ params }: AboutPageProps) {
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-3">SEO technique natif</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    Le rendu serveur (SSR/SSG), les métadonnées structurées, le lazy loading... tout est intégré nativement dans le code. 
-                    Impossible à reproduire avec un thème WordPress ou un builder Wix.
+                    Rendu serveur (SSR/SSG), métadonnées structurées, lazy loading, Core Web Vitals optimisés... 
+                    Le référencement est intégré dans l&apos;architecture même de votre site.
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-8">
                   <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
                     <Shield className="w-6 h-6 text-purple-600" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Sécurité maximale</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Sécurité renforcée</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    WordPress représente 90% des sites piratés. Pas de base de données exposée, pas de plugins vulnérables. 
-                    Notre code est minimal et auditable.
+                    Aucune dépendance à des plugins tiers, pas de base de données exposée. 
+                    Un code minimal et auditable qui réduit considérablement la surface d&apos;attaque.
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-8">
@@ -375,28 +375,28 @@ export default async function AboutPage({ params }: AboutPageProps) {
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-3">Design 100% unique</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    Pas de thème acheté à 50€ que 10 000 autres sites utilisent. Votre site est unique visuellement et fonctionnellement. 
-                    Il vous ressemble vraiment.
+                    Votre site ne ressemble à aucun autre. Chaque interface est conçue et développée spécifiquement 
+                    pour votre marque, vos utilisateurs et vos objectifs.
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-8">
                   <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-blue-600" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Propriété totale</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Propriété totale du code</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    Vous êtes propriétaire à 100% du code source. Pas de dépendance à un éditeur, pas d&apos;abonnement obligatoire, 
-                    pas de lock-in. Votre site vous appartient.
+                    Vous êtes propriétaire à 100% du code source. Aucune dépendance à un éditeur, aucun abonnement obligatoire. 
+                    Votre site vous appartient entièrement.
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-8">
-                  <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4">
-                    <TrendingUp className="w-6 h-6 text-red-600" aria-hidden="true" />
+                  <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
+                    <TrendingUp className="w-6 h-6 text-emerald-600" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-3">Évolutivité sans limite</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    Avec WordPress ou Wix, vous atteignez vite les limites du thème. Notre code sur mesure s&apos;adapte à toutes vos évolutions : 
-                    nouvelles fonctionnalités, intégrations, scaling.
+                    Nouvelles fonctionnalités, intégrations API, montée en charge — le code sur mesure s&apos;adapte 
+                    à toutes vos évolutions sans jamais vous limiter.
                   </p>
                 </div>
               </div>
