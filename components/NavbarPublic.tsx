@@ -155,13 +155,6 @@ const NavbarPublic = () => {
             </Link>
 
             <Link
-              href={localizedHref('/portfolio')}
-              className="text-gray-800 hover:text-custom-blue transition-colors"
-            >
-              Portfolio
-            </Link>
-
-            <Link
               href={localizedHref('/careers')}
               className="text-gray-800 hover:text-custom-blue transition-colors"
             >
@@ -290,13 +283,6 @@ const NavbarPublic = () => {
                 className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 À propos
-              </Link>
-
-              <Link
-                href={localizedHref('/portfolio')}
-                className="block p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Portfolio
               </Link>
 
               <Link

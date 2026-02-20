@@ -89,7 +89,6 @@ export default function NotFound() {
                 { href: '/fr/solutions/growth-hacking', label: 'Growth Hacking IA' },
                 { href: '/fr/solutions/agence-web', label: 'Création de site web' },
                 { href: '/fr/a-propos', label: 'À propos' },
-                { href: '/fr/portfolio', label: 'Portfolio' },
               ].map((link) => (
                 <Link
                   key={link.href}

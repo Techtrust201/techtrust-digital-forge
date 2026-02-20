@@ -1,9 +1,4 @@
-import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
-
-interface ClientsSectionProps {
-  locale: string;
-}
 
 const clients = [
   {
@@ -31,13 +26,11 @@ const clients = [
     name: 'LC Auto Solutions',
     subtitle: 'Vitrage & Auto — Le Cannet',
     category: 'Automobile',
-    url: 'https://www.lcvitrages.fr',
   },
   {
     name: 'NuisiProd',
     subtitle: 'Désinsectisation — 06',
     category: 'Services',
-    url: 'https://www.nuisiprod.fr',
   },
   {
     name: 'Event Experts',
@@ -51,7 +44,7 @@ const clients = [
   },
 ];
 
-const ClientsSection = ({ locale }: ClientsSectionProps) => {
+const ClientsSection = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -93,15 +86,6 @@ const ClientsSection = ({ locale }: ClientsSectionProps) => {
           ))}
         </div>
 
-        <div className="text-center">
-          <Link
-            href={`/${locale}/portfolio`}
-            className="inline-flex items-center gap-2 text-custom-blue font-semibold hover:text-custom-purple transition-colors"
-          >
-            Voir toutes nos réalisations
-            <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </div>
       </div>
     </section>
   );

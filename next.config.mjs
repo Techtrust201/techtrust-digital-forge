@@ -58,7 +58,6 @@ const nextConfig = {
       { source: '/privacy-policy', destination: '/fr/privacy-policy', permanent: true },
       { source: '/terms', destination: '/fr/terms', permanent: true },
       { source: '/a-propos', destination: '/fr/a-propos', permanent: true },
-      { source: '/portfolio', destination: '/fr/portfolio', permanent: true },
 
       // ===== Auth pages -> homepage =====
       { source: '/auth/:path*', destination: '/fr', permanent: true },

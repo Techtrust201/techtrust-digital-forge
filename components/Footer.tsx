@@ -103,11 +103,6 @@ const Footer = ({ locale }: FooterProps) => {
                 </Link>
               </li>
               <li>
-                <Link href={localizedHref('/portfolio')} className="text-gray-300 hover:text-blue-400 transition-colors">
-                  Portfolio
-                </Link>
-              </li>
-              <li>
                 <Link href={localizedHref('/guide/prix-site-vitrine')} className="text-gray-300 hover:text-blue-400 transition-colors">
                   Prix site vitrine
                 </Link>

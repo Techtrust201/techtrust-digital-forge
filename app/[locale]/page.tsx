@@ -89,7 +89,7 @@ export default async function HomePage({ params }: HomePageProps) {
           <ServicesSection locale={locale} />
           <FeaturesSection />
           <StatsSection />
-          <ClientsSection locale={locale} />
+          <ClientsSection />
           <BlogPreviewSection locale={locale} />
           <CTASection locale={locale} />
         </main>

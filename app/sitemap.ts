@@ -18,7 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/solutions/seo-referencement', priority: 0.8, changeFrequency: 'weekly' as const },
     { path: '/pricing', priority: 0.9, changeFrequency: 'weekly' as const },
     { path: '/a-propos', priority: 0.8, changeFrequency: 'monthly' as const },
-    { path: '/portfolio', priority: 0.8, changeFrequency: 'monthly' as const },
     { path: '/contact', priority: 0.8, changeFrequency: 'monthly' as const },
     { path: '/blog', priority: 0.8, changeFrequency: 'daily' as const },
     { path: '/careers', priority: 0.6, changeFrequency: 'weekly' as const },
