@@ -41,6 +41,16 @@ export async function generateMetadata({ params }: CommunityManagementPageProps)
       ? 'Expert community management! Social media management, content creation, audience engagement. +150% engagement guaranteed. Free quote!'
       : 'Community management expert ! Gestion réseaux sociaux, création contenu, engagement audience. +150% d\'engagement garanti. Devis gratuit !',
     keywords: ['community management', 'réseaux sociaux', 'social media', 'Instagram', 'LinkedIn', 'création de contenu', 'engagement audience', 'stratégie sociale', 'TikTok', 'Facebook'],
+    openGraph: {
+      title: isEn 
+        ? 'Community Management | Social Media Management - Techtrust'
+        : 'Community Management | Gestion Réseaux Sociaux - Techtrust',
+      description: isEn
+        ? 'Expert community management! Social media management, content creation, audience engagement.'
+        : 'Community management expert ! Gestion réseaux sociaux, création contenu, engagement audience.',
+      locale: locale === 'fr' ? 'fr_FR' : 'en_US',
+      type: 'website',
+    },
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/solutions/community-management`,
       languages: {

@@ -40,6 +40,16 @@ export async function generateMetadata({ params }: SolutionsSurMesurePageProps):
       ? 'Custom digital solutions: web applications, mobile apps, business software. Personalized development for your company. Free quote!'
       : 'Solutions digitales sur mesure : applications web, mobiles, logiciels métier. Développement personnalisé pour votre entreprise. Devis gratuit !',
     keywords: ['développement sur mesure', 'logiciel personnalisé', 'CRM', 'ERP', 'application métier', 'API', 'application web', 'application mobile', 'logiciel métier', 'transformation digitale'],
+    openGraph: {
+      title: isEn 
+        ? 'Custom Software Development | Digital Solutions - Techtrust'
+        : 'Solutions Digitales Sur Mesure | Développement Logiciel - Techtrust',
+      description: isEn
+        ? 'Custom digital solutions: web applications, mobile apps, business software.'
+        : 'Solutions digitales sur mesure : applications web, mobiles, logiciels métier.',
+      locale: locale === 'fr' ? 'fr_FR' : 'en_US',
+      type: 'website',
+    },
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/solutions/digitales-sur-mesure`,
       languages: {

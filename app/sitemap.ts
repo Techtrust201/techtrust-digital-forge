@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { blogArticles } from '@/lib/blog-data';
 import { cities } from '@/lib/geo-data';
+import { geoServices } from '@/lib/geo-services-data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.tech-trust.fr';
@@ -67,21 +68,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  // Geo landing pages (dynamic)
+  // Geo landing pages (all services x all cities)
   for (const locale of locales) {
-    for (const city of cities) {
-      entries.push({
-        url: `${baseUrl}/${locale}/solutions/agence-web-${city.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-        alternates: {
-          languages: {
-            'fr': `${baseUrl}/fr/solutions/agence-web-${city.slug}`,
-            'en': `${baseUrl}/en/solutions/agence-web-${city.slug}`,
+    for (const service of geoServices) {
+      for (const city of cities) {
+        const slug = `${service.prefix}${city.slug}`;
+        entries.push({
+          url: `${baseUrl}/${locale}/solutions/${slug}`,
+          lastModified: new Date(),
+          changeFrequency: 'monthly' as const,
+          priority: 0.8,
+          alternates: {
+            languages: {
+              'fr': `${baseUrl}/fr/solutions/${slug}`,
+              'en': `${baseUrl}/en/solutions/${slug}`,
+            },
           },
-        },
-      });
+        });
+      }
     }
   }
 

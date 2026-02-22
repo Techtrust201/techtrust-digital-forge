@@ -25,6 +25,16 @@ export async function generateMetadata({ params }: GrowthHackingPageProps): Prom
       ? 'Revolutionary AI growth hacking! Automated customer acquisition, predictive marketing, intelligent chatbots. Replace your salespeople with AI. +300% guaranteed growth!'
       : '🚀 Growth hacking révolutionnaire avec IA! Acquisition clients automatisée, marketing prédictif, chatbots intelligents. Remplacez vos commerciaux par l\'IA. +300% de croissance garantie!',
     keywords: ['growth hacking IA', 'marketing automation', 'acquisition client automatisée', 'IA marketing', 'chatbot intelligent', 'lead generation', 'prospection automatique'],
+    openGraph: {
+      title: isEn 
+        ? 'Growth Hacking AI | Automated Digital Growth Strategies - Techtrust'
+        : 'Growth Hacking IA | Stratégies de Croissance Digitale Automatisées - Techtrust',
+      description: isEn
+        ? 'Revolutionary AI growth hacking! Automated customer acquisition, predictive marketing, intelligent chatbots.'
+        : 'Growth hacking révolutionnaire avec IA! Acquisition clients automatisée, marketing prédictif, chatbots intelligents.',
+      locale: locale === 'fr' ? 'fr_FR' : 'en_US',
+      type: 'website',
+    },
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/solutions/growth-hacking`,
       languages: {

@@ -1,51 +1,62 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, MapPin, Globe, Zap, Target, Star, Phone, Mail } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import {
+  ArrowRight, CheckCircle, MapPin, Globe, Zap, Target, Star, Phone, Mail,
+  Brain, BarChart3, Bot, Search, Sparkles, MessageSquare, TrendingUp,
+  Lightbulb, Code, Database, Layers,
+} from 'lucide-react';
 import NavbarPublic from '@/components/NavbarPublic';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import RelatedServices from '@/components/RelatedServices';
 import { cities, getCityBySlug, getAllCitySlugs } from '@/lib/geo-data';
+import { geoServices, findGeoService } from '@/lib/geo-services-data';
+import type { LucideIcon } from 'lucide-react';
 
 export const dynamic = 'force-static';
+
+const iconMap: Record<string, LucideIcon> = {
+  Globe, Zap, Target, Brain, BarChart3, Bot, Search, Sparkles,
+  MessageSquare, TrendingUp, Lightbulb, Code, Database, Layers,
+};
 
 interface GeoPageProps {
   params: Promise<{ locale: string; ville: string }>;
 }
 
 export async function generateStaticParams() {
-  const slugs = getAllCitySlugs();
+  const citySlugs = getAllCitySlugs();
   const locales = ['fr', 'en'];
 
   return locales.flatMap(locale =>
-    slugs.map(ville => ({ locale, ville }))
+    geoServices.flatMap(service =>
+      citySlugs.map(citySlug => ({
+        locale,
+        ville: `${service.prefix}${citySlug}`,
+      }))
+    )
   );
 }
 
 export async function generateMetadata({ params }: GeoPageProps): Promise<Metadata> {
   const { locale, ville } = await params;
-  const city = getCityBySlug(ville);
+  const match = findGeoService(ville);
 
-  if (!city) {
-    return { title: 'Page non trouvée' };
-  }
+  if (!match) return { title: 'Page non trouvée' };
 
-  const title = `Agence Web ${city.name} - Création Site Web & SEO | Techtrust`;
-  const description = `Agence web à ${city.name} (${city.region}). Création de sites web codés sur mesure de A à Z, SEO, growth hacking et solutions digitales. Devis gratuit en 24h.`;
+  const city = getCityBySlug(match.citySlug);
+  if (!city) return { title: 'Page non trouvée' };
+
+  const { service } = match;
+  const title = service.geoMetaTitle(city.name);
+  const description = service.geoMetaDescription(city.name, city.region);
 
   return {
     title,
     description,
-    keywords: [
-      `agence web ${city.name.toLowerCase()}`,
-      `création site web ${city.name.toLowerCase()}`,
-      `seo ${city.name.toLowerCase()}`,
-      `agence digitale ${city.name.toLowerCase()}`,
-      `développeur web ${city.name.toLowerCase()}`,
-      `growth hacking ${city.name.toLowerCase()}`,
-      `site internet ${city.name.toLowerCase()}`,
-    ],
+    keywords: service.geoKeywords(city.name),
     openGraph: {
       title,
       description,
@@ -53,73 +64,43 @@ export async function generateMetadata({ params }: GeoPageProps): Promise<Metada
       type: 'website',
     },
     alternates: {
-      canonical: `https://www.tech-trust.fr/${locale}/solutions/agence-web-${ville}`,
+      canonical: `https://www.tech-trust.fr/${locale}/solutions/${ville}`,
       languages: {
-        'fr': `https://www.tech-trust.fr/fr/solutions/agence-web-${ville}`,
-        'en': `https://www.tech-trust.fr/en/solutions/agence-web-${ville}`,
-        'x-default': `https://www.tech-trust.fr/fr/solutions/agence-web-${ville}`,
+        'fr': `https://www.tech-trust.fr/fr/solutions/${ville}`,
+        'en': `https://www.tech-trust.fr/en/solutions/${ville}`,
+        'x-default': `https://www.tech-trust.fr/fr/solutions/${ville}`,
       },
     },
   };
 }
 
-const services = [
-  {
-    icon: Globe,
-    title: "Création de Sites Web",
-    description: "Sites vitrines, e-commerce et applications web sur mesure, optimisés pour la performance et le SEO local."
-  },
-  {
-    icon: Target,
-    title: "SEO & Référencement Local",
-    description: "Optimisation pour les recherches locales, Google My Business et positionnement dans votre zone géographique."
-  },
-  {
-    icon: Zap,
-    title: "Growth Hacking IA",
-    description: "Automatisation de votre acquisition client avec nos outils d'intelligence artificielle propriétaires."
-  }
-];
-
 export default async function GeoLandingPage({ params }: GeoPageProps) {
   const { locale, ville } = await params;
-  const city = getCityBySlug(ville);
   const localizedHref = (path: string) => `/${locale}${path}`;
 
-  if (!city) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <NavbarPublic />
-        <main className="flex-1 pt-20 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Ville non trouvée</h1>
-            <Button asChild>
-              <Link href={localizedHref('/solutions')}>Voir nos solutions</Link>
-            </Button>
-          </div>
-        </main>
-        <Footer locale={locale} />
-      </div>
-    );
-  }
+  const match = findGeoService(ville);
+  if (!match) notFound();
 
-  // Other cities for internal linking
-  const otherCities = cities.filter(c => c.slug !== ville).slice(0, 6);
+  const { service, citySlug } = match;
+  const city = getCityBySlug(citySlug);
+  if (!city) notFound();
+
+  const otherCities = cities.filter(c => c.slug !== citySlug).slice(0, 6);
 
   return (
     <>
-      {/* LocalBusiness Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ProfessionalService",
-            "name": `Techtrust - Agence Web ${city.name}`,
-            "description": `Agence web à ${city.name} spécialisée en création de sites web, SEO et growth hacking.`,
-            "url": `https://www.tech-trust.fr/${locale}/solutions/agence-web-${ville}`,
+            "name": `Techtrust - ${service.title} ${city.name}`,
+            "description": service.schemaDescription(city.name),
+            "url": `https://www.tech-trust.fr/${locale}/solutions/${ville}`,
             "telephone": "+33699486629",
             "email": "contact@tech-trust.fr",
+            "serviceType": service.schemaServiceType,
             "address": {
               "@type": "PostalAddress",
               "addressLocality": city.name,
@@ -127,14 +108,8 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
               "addressCountry": "FR"
             },
             "areaServed": [
-              {
-                "@type": "City",
-                "name": city.name
-              },
-              {
-                "@type": "Country",
-                "name": "France"
-              }
+              { "@type": "City", "name": city.name },
+              { "@type": "Country", "name": "France" }
             ],
             "priceRange": "€€-€€€"
           })
@@ -149,11 +124,12 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
             locale={locale}
             items={[
               { label: 'Solutions', href: `/${locale}/solutions` },
-              { label: `Agence Web ${city.name}` }
+              { label: service.title, href: `/${locale}/solutions/${service.slug}` },
+              { label: city.name }
             ]}
           />
 
-          {/* Hero Section */}
+          {/* Hero */}
           <section className="py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-custom-blue/10 rounded-full blur-3xl"></div>
             <div className="container mx-auto px-4 relative z-10">
@@ -164,10 +140,10 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
                 </div>
 
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                  <span className="text-custom-blue">Agence Web</span> à {city.name}
+                  <span className="text-custom-blue">{service.title}</span> à {city.name}
                   <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-purple to-custom-green">
-                    Création Site Web & SEO
+                    {service.heroSubtitle}
                   </span>
                 </h1>
 
@@ -192,7 +168,7 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
             </div>
           </section>
 
-          {/* Services Section */}
+          {/* Services */}
           <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -205,31 +181,32 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
               </div>
 
               <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                {services.map((service) => (
-                  <div key={service.title} className="bg-gray-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
-                    <div className="w-16 h-16 bg-custom-blue/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <service.icon className="w-8 h-8 text-custom-blue" aria-hidden="true" />
+                {service.services.map((svc) => {
+                  const Icon = iconMap[svc.iconName] || Globe;
+                  return (
+                    <div key={svc.title} className="bg-gray-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
+                      <div className="w-16 h-16 bg-custom-blue/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Icon className="w-8 h-8 text-custom-blue" aria-hidden="true" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3">{svc.title}</h3>
+                      <p className="text-gray-600">{svc.description}</p>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                    <p className="text-gray-600">{service.description}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>
 
-          {/* Why Choose Us for this city */}
+          {/* Why Choose Us */}
           <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-4">
               <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                    Pourquoi choisir Techtrust comme votre agence web à {city.name} ?
+                    {service.whyTitle(city.name)}
                   </h2>
                   <p className="text-gray-600 mb-8">
-                    Chez Techtrust, chaque site est codé de A à Z — zéro template, zéro WordPress, zéro Wix. Nous sommes le partenaire digital
-                    idéal pour les entreprises de {city.name}. Nous combinons code sur mesure, connaissance du marché
-                    local et outils IA de pointe.
+                    {service.whyText(city.name)}
                   </p>
                   <ul className="space-y-4">
                     {city.specificAdvantages.map((advantage, idx) => (
@@ -271,11 +248,11 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
             </div>
           </section>
 
-          {/* CTA Section */}
+          {/* CTA */}
           <section className="py-20 bg-gradient-to-r from-custom-blue via-custom-purple to-custom-green text-white">
             <div className="container mx-auto px-4 text-center max-w-3xl">
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-                Lancez votre projet digital à {city.name}
+                {service.ctaTitle(city.name)}
               </h2>
               <p className="text-xl text-gray-200 mb-8">
                 Contactez notre équipe pour un devis personnalisé gratuit. Nous répondons sous 24h.
@@ -299,22 +276,22 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
             </div>
           </section>
 
-          {/* Other Cities - Internal Linking */}
+          {/* Other Cities */}
           <section className="py-16 bg-white">
             <div className="container mx-auto px-4">
               <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-                Nos agences web dans toute la France
+                {service.citiesTitle}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
                 {otherCities.map(otherCity => (
                   <Link
                     key={otherCity.slug}
-                    href={localizedHref(`/solutions/agence-web-${otherCity.slug}`)}
+                    href={localizedHref(`/solutions/${service.prefix}${otherCity.slug}`)}
                     className="bg-gray-50 rounded-xl p-4 text-center hover:bg-custom-blue/5 hover:border-custom-blue/30 border border-transparent transition-all"
                   >
                     <MapPin className="w-5 h-5 text-custom-blue mx-auto mb-2" aria-hidden="true" />
                     <span className="text-sm font-medium text-gray-900">
-                      Agence Web {otherCity.name}
+                      {service.cityLabel(otherCity.name)}
                     </span>
                   </Link>
                 ))}
@@ -322,7 +299,7 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
             </div>
           </section>
 
-          <RelatedServices currentSlug="agence-web" locale={locale} />
+          <RelatedServices currentSlug={service.slug} locale={locale} />
         </main>
 
         <Footer locale={locale} />

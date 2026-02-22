@@ -43,6 +43,16 @@ export async function generateMetadata({ params }: ConsultingDigitalPageProps): 
       ? 'Premium digital consulting for major accounts. Digital transformation, technology innovation, large-scale projects. 15M€+ in projects delivered, 50+ major clients.'
       : 'Consulting digital premium pour grands comptes. Transformation digitale, innovation technologique, projets d\'envergure. 15M€+ de projets livrés, 50+ grands comptes.',
     keywords: ['consulting digital', 'transformation digitale', 'grands comptes', 'stratégie digitale', 'innovation technologique', 'projets d\'envergure'],
+    openGraph: {
+      title: isEn 
+        ? 'Premium Digital Consulting | Digital Transformation VIP - Techtrust'
+        : 'Consulting Digital Premium | Transformation Digitale VIP - Techtrust',
+      description: isEn
+        ? 'Premium digital consulting for major accounts. Digital transformation, technology innovation.'
+        : 'Consulting digital premium pour grands comptes. Transformation digitale, innovation technologique.',
+      locale: locale === 'fr' ? 'fr_FR' : 'en_US',
+      type: 'website',
+    },
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/solutions/consulting-digital`,
       languages: {

@@ -45,6 +45,16 @@ export async function generateMetadata({ params }: SeoReferencementPageProps): P
       ? 'SEO, SEA and GEO experts: boost your visibility on Google and AI (ChatGPT, Perplexity). Free audit, custom strategy, +500% organic traffic guaranteed.'
       : 'Experts SEO, SEA et GEO : boostez votre visibilité sur Google et les IA (ChatGPT, Perplexity). Audit gratuit, stratégie sur mesure, +500% trafic organique garanti.',
     keywords: ['SEO', 'référencement naturel', 'Google Ads', 'SEA', 'GEO', 'ChatGPT SEO', 'Perplexity optimization', 'référencement Google', 'agence SEO', 'audit SEO', 'backlinks', 'netlinking', 'SEO local', 'Core Web Vitals'],
+    openGraph: {
+      title: isEn 
+        ? 'SEO & Search Engine Optimization | Google & AI Visibility - Techtrust'
+        : 'SEO & Référencement | Visibilité Google & IA - Techtrust',
+      description: isEn
+        ? 'SEO, SEA and GEO experts: boost your visibility on Google and AI. Free audit, custom strategy.'
+        : 'Experts SEO, SEA et GEO : boostez votre visibilité sur Google et les IA. Audit gratuit, stratégie sur mesure.',
+      locale: locale === 'fr' ? 'fr_FR' : 'en_US',
+      type: 'website',
+    },
     alternates: {
       canonical: `https://www.tech-trust.fr/${locale}/solutions/seo-referencement`,
       languages: {
