@@ -94,13 +94,6 @@ const team = [
   },
 ];
 
-const milestones = [
-  { year: '2024', title: 'Création de Techtrust à Mougins', description: 'Lancement de l\'agence avec une conviction forte : coder chaque site de A à Z, sans template ni WordPress. Les premiers clients de la Côte d\'Azur nous font confiance.' },
-  { year: '2024', title: 'Premiers grands comptes', description: 'Palais des Festivals de Cannes, Chopard, cabinets d\'avocats... Techtrust s\'impose comme partenaire digital des entreprises exigeantes en PACA.' },
-  { year: '2024', title: 'Lancement du Growth Hacking IA', description: 'Intégration de l\'intelligence artificielle dans nos stratégies d\'acquisition client. Automatisation de la prospection et du community management.' },
-  { year: '2025', title: 'Partenariat Arodata & expansion', description: 'Alliance stratégique avec Arodata pour un pôle informatique complet à Mougins. Plus de 25 clients accompagnés et 30+ projets livrés.' },
-  { year: '2026', title: 'Pionnier du GEO en France', description: 'Techtrust devient l\'une des premières agences françaises à proposer le Generative Engine Optimization (GEO) pour la visibilité sur ChatGPT, Perplexity et Google AI.' },
-];
 
 export default async function AboutPage({ params }: AboutPageProps) {
   const { locale } = await params;
@@ -291,32 +284,6 @@ export default async function AboutPage({ params }: AboutPageProps) {
                     <p className="text-custom-blue font-medium mb-2">{member.role}</p>
                     <p className="text-sm text-gray-500 mb-3">{member.expertise}</p>
                     <p className="text-gray-600 leading-relaxed">{member.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Timeline / Milestones */}
-          <section className="py-16 lg:py-20 bg-gray-50">
-            <div className="container mx-auto px-4 max-w-4xl">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Notre parcours</h2>
-                <p className="text-xl text-gray-600">De la création à l&apos;innovation continue.</p>
-              </div>
-              <div className="space-y-8">
-                {milestones.map((milestone, index) => (
-                  <div key={index} className="flex gap-6">
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 h-12 bg-custom-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
-                        {milestone.year}
-                      </div>
-                      {index < milestones.length - 1 && <div className="w-0.5 h-full bg-custom-blue/20 mt-2" />}
-                    </div>
-                    <div className="pb-8">
-                      <h3 className="text-lg font-bold text-gray-900">{milestone.title}</h3>
-                      <p className="text-gray-600 mt-1">{milestone.description}</p>
-                    </div>
                   </div>
                 ))}
               </div>
