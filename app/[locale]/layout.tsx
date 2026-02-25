@@ -78,6 +78,9 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" href="/icon-512.png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         
+        {/* Vérification Bing Webmaster Tools */}
+        <meta name="msvalidate.01" content="0D237E2113CF35A05A7DBC9C5994635D" />
+        
         {/* RSS Feed */}
         <link rel="alternate" type="application/rss+xml" title="Techtrust Blog" href="https://www.tech-trust.fr/feed.xml" />
         
