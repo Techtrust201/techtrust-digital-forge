@@ -1,0 +1,61 @@
+name: IndexNow on Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Vercel deployment
+        run: sleep 180
+
+      - name: Fetch all URLs from sitemap
+        run: |
+          BASE="https://www.tech-trust.fr"
+          
+          # Get sitemap index URLs
+          SITEMAPS=$(curl -sL "$BASE/sitemap.xml" | grep -oE '<loc>[^<]+</loc>' | sed 's/<[^>]*>//g')
+          
+          # Fetch each sitemap and extract page URLs
+          for sm in $SITEMAPS; do
+            curl -sL "$sm" | grep -oE '<loc>[^<]+</loc>' | sed 's/<[^>]*>//g'
+          done > urls.txt
+          
+          # Add news sitemap URLs
+          curl -sL "$BASE/news-sitemap.xml" 2>/dev/null | grep -oE '<loc>[^<]+</loc>' | sed 's/<[^>]*>//g' >> urls.txt
+          
+          # Dedupe, limit to 10000 (IndexNow max), convert to JSON array
+          grep -E '^https://' urls.txt | sort -u | head -10000 | jq -R -s -c 'split("\n") | map(select(length > 0))' > urls.json
+
+      - name: Notify IndexNow (Bing, Yandex)
+        env:
+          INDEXNOW_SECRET: ${{ secrets.INDEXNOW_API_SECRET }}
+        run: |
+          if [ -z "$INDEXNOW_SECRET" ]; then
+            echo "::warning::INDEXNOW_API_SECRET not set. Add it in GitHub Settings > Secrets > Actions."
+            exit 0
+          fi
+          
+          URL_COUNT=$(jq 'length' urls.json)
+          if [ "$URL_COUNT" -eq 0 ]; then
+            echo "::warning::No URLs found in sitemap"
+            exit 0
+          fi
+          
+          echo "Notifying IndexNow with $URL_COUNT URLs..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "https://www.tech-trust.fr/api/indexnow" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $INDEXNOW_SECRET" \
+            -d "{\"urls\": $(cat urls.json)}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "IndexNow success: $BODY"
+          else
+            echo "::warning::IndexNow returned $HTTP_CODE: $BODY"
+          fi
