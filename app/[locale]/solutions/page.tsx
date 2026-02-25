@@ -96,7 +96,13 @@ export default async function SolutionsPage({ params }: SolutionsPageProps) {
                 "@type": "Service",
                 "name": solution.title,
                 "description": solution.description,
-                "url": `https://www.tech-trust.fr/${locale}${solution.href}`
+                "url": `https://www.tech-trust.fr/${locale}${solution.href}`,
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Techtrust",
+                  "url": "https://www.tech-trust.fr"
+                },
+                "areaServed": { "@type": "Country", "name": "France" }
               }
             }))
           })

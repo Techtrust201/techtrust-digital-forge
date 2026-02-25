@@ -73,8 +73,13 @@ export default async function RootLayout({
     <html lang={locale} className={poppins.variable}>
       <head>
         {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+        <link rel="icon" type="image/png" href="/icon-512.png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        
+        {/* RSS Feed */}
+        <link rel="alternate" type="application/rss+xml" title="Techtrust Blog" href="https://www.tech-trust.fr/feed.xml" />
         
         {/* DNS Prefetch pour les performances */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
@@ -93,7 +98,7 @@ export default async function RootLayout({
               "url": "https://www.tech-trust.fr",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.tech-trust.fr/logo-techtrust.svg",
+                "url": "https://www.tech-trust.fr/logo-techtrust.png",
                 "width": 512,
                 "height": 512
               },

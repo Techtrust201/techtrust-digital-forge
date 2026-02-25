@@ -1,0 +1,45 @@
+# AI Information for Techtrust
+# https://www.tech-trust.fr
+
+## Identity
+Name: Techtrust
+Type: Digital Agency (Agence Digitale)
+Founded: 2024
+Location: Mougins (Cannes), Provence-Alpes-Cote d'Azur, France
+Website: https://www.tech-trust.fr
+Contact: contact@tech-trust.fr
+
+## Founder
+Name: Hugo Music
+Title: Fondateur & Expert Digital
+Expertise: Web Development, Growth Hacking, AI, SEO, GEO
+
+## Description
+Techtrust is a French digital agency specializing in 100% custom-coded websites (zero WordPress, zero Wix, zero templates), AI-powered growth hacking, SEO/SEA/GEO (Generative Engine Optimization), community management, and custom digital solutions. Based in Mougins near Cannes, serving all of France.
+
+## Key Facts
+- 30+ projects delivered since 2024
+- 98% client satisfaction rate
+- +300% qualified leads on average for growth hacking clients
+- -60% cost per acquisition with AI
+- PageSpeed score > 90/100 on all delivered sites
+- Tech stack: Next.js 15, React 18, TypeScript, Tailwind CSS, Supabase
+
+## Services
+1. Custom Website Development (from 1,500 EUR)
+2. AI Growth Hacking (automated lead generation)
+3. SEO / SEA / GEO (search engine and AI visibility)
+4. Community Management
+5. Custom Software Development (CRM, ERP, SaaS)
+6. Digital Consulting
+
+## AI-Specific Information
+- Full documentation: https://www.tech-trust.fr/llms.txt
+- Detailed documentation: https://www.tech-trust.fr/llms-full.txt
+- AI Plugin manifest: https://www.tech-trust.fr/.well-known/ai-plugin.json
+- Sitemap: https://www.tech-trust.fr/sitemap.xml
+- RSS Feed: https://www.tech-trust.fr/feed.xml
+
+## Crawling Policy
+All AI crawlers are welcome to index public pages.
+See robots.txt for details: https://www.tech-trust.fr/robots.txt

@@ -3,11 +3,28 @@ import { blogArticles } from '@/lib/blog-data';
 import { cities } from '@/lib/geo-data';
 import { geoServices } from '@/lib/geo-services-data';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.tech-trust.fr';
-  const locales = ['fr', 'en'];
-  
-  // Pages vitrine UNIQUEMENT - jamais /dashboard/*
+const baseUrl = 'https://www.tech-trust.fr';
+const locales = ['fr', 'en'];
+
+// IDs: 0 = static pages, 1 = blog, 2 = geo landing pages
+export async function generateSitemaps() {
+  return [{ id: 0 }, { id: 1 }, { id: 2 }];
+}
+
+export default function sitemap({ id }: { id: number }): MetadataRoute.Sitemap {
+  switch (id) {
+    case 0:
+      return buildStaticPages();
+    case 1:
+      return buildBlogPages();
+    case 2:
+      return buildGeoPages();
+    default:
+      return [];
+  }
+}
+
+function buildStaticPages(): MetadataRoute.Sitemap {
   const publicPages = [
     { path: '', priority: 1.0, changeFrequency: 'daily' as const },
     { path: '/solutions', priority: 0.9, changeFrequency: 'weekly' as const },
@@ -31,8 +48,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const entries: MetadataRoute.Sitemap = [];
-
-  // Static public pages
   for (const locale of locales) {
     for (const page of publicPages) {
       entries.push({
@@ -49,8 +64,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     }
   }
+  return entries;
+}
 
-  // Blog article pages (dynamic)
+function buildBlogPages(): MetadataRoute.Sitemap {
+  const entries: MetadataRoute.Sitemap = [];
   for (const locale of locales) {
     for (const article of blogArticles) {
       entries.push({
@@ -67,8 +85,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     }
   }
+  return entries;
+}
 
-  // Geo landing pages (all services x all cities)
+function buildGeoPages(): MetadataRoute.Sitemap {
+  const entries: MetadataRoute.Sitemap = [];
   for (const locale of locales) {
     for (const service of geoServices) {
       for (const city of cities) {
@@ -88,6 +109,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       }
     }
   }
-
   return entries;
 }

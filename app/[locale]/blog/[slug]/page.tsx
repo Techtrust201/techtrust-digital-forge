@@ -206,7 +206,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               "url": "https://www.tech-trust.fr",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.tech-trust.fr/logo-techtrust.svg"
+                "url": "https://www.tech-trust.fr/logo-techtrust.png"
               }
             },
             "mainEntityOfPage": {
@@ -216,7 +216,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             "keywords": article.tags.join(', '),
             "articleSection": article.category,
             "wordCount": article.content.split(/\s+/).length,
-            "inLanguage": locale === 'fr' ? 'fr-FR' : 'en-US'
+            "inLanguage": locale === 'fr' ? 'fr-FR' : 'en-US',
+            "isPartOf": {
+              "@id": "https://www.tech-trust.fr/#website"
+            },
+            "about": {
+              "@type": "Thing",
+              "name": article.category
+            },
+            "speakable": {
+              "@type": "SpeakableSpecification",
+              "cssSelector": [".article-tldr", "article h2", "article p"]
+            }
           })
         }}
       />

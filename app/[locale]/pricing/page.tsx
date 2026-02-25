@@ -91,6 +91,43 @@ export default async function PricingPage({ params }: PricingPageProps) {
 
   return (
     <>
+      {/* FAQPage schema for pricing questions */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Combien coûte un site web professionnel chez Techtrust ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Techtrust propose 3 formules : Pro à partir de 1 500€ (site vitrine 3 pages), Business à partir de 2 490€ (site 10 pages avec SEO avancé et blog), et Enterprise sur devis (application web complète, e-commerce avancé). Tous les projets incluent design responsive, SEO et support technique."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Quel est le délai de création d'un site web ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Un site vitrine Pro est livré en 2 à 3 semaines. Un site Business en 3 à 5 semaines. Un projet Enterprise sur mesure peut prendre 2 à 4 mois selon la complexité."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Les prix incluent-ils l'hébergement et la maintenance ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Oui. La formule Pro inclut 1 an d'hébergement. La formule Business inclut 1 an de maintenance et support prioritaire. La formule Enterprise inclut un SLA garanti et un support dédié 24/7."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
       {/* Offer schemas for each plan */}
       <script
         type="application/ld+json"

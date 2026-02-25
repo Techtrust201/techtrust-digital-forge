@@ -111,7 +111,50 @@ export default async function GeoLandingPage({ params }: GeoPageProps) {
               { "@type": "City", "name": city.name },
               { "@type": "Country", "name": "France" }
             ],
-            "priceRange": "€€-€€€"
+            "priceRange": "€€-€€€",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "reviewCount": "30",
+              "bestRating": "5"
+            }
+          })
+        }}
+      />
+
+      {/* FAQPage schema for local SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": `Combien coûte un service de ${service.title.toLowerCase()} à ${city.name} ?`,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": `Techtrust propose des services de ${service.title.toLowerCase()} à ${city.name} à partir de 1 500€. Le tarif dépend de la complexité de votre projet. Contactez-nous pour un devis gratuit personnalisé sous 24h.`
+                }
+              },
+              {
+                "@type": "Question",
+                "name": `Pourquoi choisir Techtrust comme agence à ${city.name} ?`,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": `Techtrust se distingue par son approche 100% code sur mesure (zéro template WordPress/Wix), l'intégration de l'IA dans tous ses services, un taux de satisfaction de 98%, et une expertise locale en ${city.region}. Plus de 30 projets livrés avec succès.`
+                }
+              },
+              {
+                "@type": "Question",
+                "name": `Techtrust intervient-elle sur place à ${city.name} ?`,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": `Oui, Techtrust est basée à Mougins (Cannes) et intervient régulièrement à ${city.name} et dans toute la région ${city.region}. Nous proposons aussi un accompagnement à distance avec des outils collaboratifs professionnels.`
+                }
+              }
+            ]
           })
         }}
       />

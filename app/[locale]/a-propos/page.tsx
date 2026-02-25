@@ -112,41 +112,53 @@ export default async function AboutPage({ params }: AboutPageProps) {
             "description": "Découvrez Techtrust, agence digitale française spécialisée en création web, growth hacking IA et référencement SEO/SEA/GEO.",
             "url": `https://www.tech-trust.fr/${locale}/a-propos`,
             "mainEntity": {
+              "@id": "https://www.tech-trust.fr/#organization"
+            }
+          })
+        }}
+      />
+
+      {/* Person (Founder) Schema — E-E-A-T signal */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "@id": "https://www.tech-trust.fr/#founder",
+            "name": "Hugo",
+            "jobTitle": "Fondateur & CEO",
+            "description": "Expert en développement web (Next.js, React, TypeScript), growth hacking IA, SEO et GEO (Generative Engine Optimization). Fondateur de Techtrust, agence digitale à Mougins (Cannes). Passionné par l'innovation digitale et l'intelligence artificielle appliquée au marketing.",
+            "worksFor": {
+              "@id": "https://www.tech-trust.fr/#organization"
+            },
+            "url": `https://www.tech-trust.fr/${locale}/a-propos`,
+            "image": "https://www.tech-trust.fr/logo-techtrust.png",
+            "knowsAbout": [
+              "Développement web",
+              "Next.js",
+              "React",
+              "TypeScript",
+              "Tailwind CSS",
+              "Growth Hacking",
+              "Intelligence Artificielle",
+              "SEO",
+              "SEA",
+              "GEO - Generative Engine Optimization",
+              "Marketing digital",
+              "Lead generation",
+              "Supabase",
+              "Architecture web moderne"
+            ],
+            "knowsLanguage": ["French", "English"],
+            "nationality": { "@type": "Country", "name": "France" },
+            "sameAs": [
+              "https://linkedin.com/company/techtrust-agency",
+              "https://twitter.com/techtrust_fr"
+            ],
+            "alumniOf": {
               "@type": "Organization",
-              "name": "Techtrust",
-              "url": "https://www.tech-trust.fr",
-              "foundingDate": "2024",
-              "founder": {
-                "@type": "Person",
-                "name": "Hugo",
-                "jobTitle": "Fondateur & CEO",
-                "worksFor": {
-                  "@type": "Organization",
-                  "name": "Techtrust"
-                }
-              },
-              "numberOfEmployees": {
-                "@type": "QuantitativeValue",
-                "minValue": 5,
-                "maxValue": 15
-              },
-              "knowsAbout": [
-                "Création de sites web",
-                "Growth Hacking IA",
-                "SEO",
-                "SEA",
-                "GEO",
-                "Community Management",
-                "Next.js",
-                "React",
-                "TypeScript",
-                "Intelligence Artificielle"
-              ],
-              "slogan": "Transformez votre business avec l'IA",
-              "areaServed": {
-                "@type": "Country",
-                "name": "France"
-              }
+              "name": "Techtrust"
             }
           })
         }}

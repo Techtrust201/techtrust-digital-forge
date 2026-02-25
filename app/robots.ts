@@ -49,6 +49,9 @@ export default function robots(): MetadataRoute.Robots {
         disallow: aiDisallow,
       },
     ],
-    sitemap: 'https://www.tech-trust.fr/sitemap.xml',
+    sitemap: [
+      'https://www.tech-trust.fr/sitemap.xml',
+      'https://www.tech-trust.fr/news-sitemap.xml',
+    ],
   };
 }

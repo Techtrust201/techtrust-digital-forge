@@ -1,0 +1,23 @@
+/* TEAM */
+
+Founder & Lead Developer: Hugo Music
+Site: https://www.tech-trust.fr
+Location: Mougins (Cannes), France
+Twitter: @techtrust_fr
+LinkedIn: https://linkedin.com/company/techtrust-agency
+
+/* SITE */
+
+Last update: 2026/02
+Language: French / English
+Standards: HTML5, CSS3, ECMAScript 2024
+Components: Next.js 15, React 18, TypeScript, Tailwind CSS
+IDE: Cursor
+Hosting: Vercel (Edge Network)
+Database: Supabase (PostgreSQL)
+Analytics: Google Analytics 4
+
+/* THANKS */
+
+Built with passion in the French Riviera.
+Powered by open-source technologies and AI.

@@ -237,7 +237,7 @@ export default async function PrixSiteVitrinePage({ params }: PrixVitrinePagePro
               "name": "Techtrust",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.tech-trust.fr/logo-techtrust.svg"
+                "url": "https://www.tech-trust.fr/logo-techtrust.png"
               }
             },
             "datePublished": "2026-02-17",
