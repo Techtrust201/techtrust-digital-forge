@@ -11,8 +11,13 @@ export async function generateSitemaps() {
   return [{ id: 0 }, { id: 1 }, { id: 2 }];
 }
 
-export default function sitemap({ id }: { id: number }): MetadataRoute.Sitemap {
-  switch (id) {
+export default async function sitemap(
+  props: { id: number | string | Promise<string> }
+): Promise<MetadataRoute.Sitemap> {
+  const id = typeof props.id === 'object' ? await props.id : props.id;
+  const idNum = typeof id === 'number' ? id : parseInt(String(id), 10);
+
+  switch (idNum) {
     case 0:
       return buildStaticPages();
     case 1:
