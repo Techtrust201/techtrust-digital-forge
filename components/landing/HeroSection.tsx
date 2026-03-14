@@ -18,8 +18,8 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
-          <div className="text-center lg:text-left space-y-8">
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-custom-blue/30 rounded-full px-4 py-2 text-sm font-medium text-custom-blue">
+          <div className="text-center lg:text-left space-y-8 pt-10 md:pt-0">
+            <div className="hidden md:inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-custom-blue/30 rounded-full px-4 py-2 text-sm font-medium text-custom-blue">
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               Agence web à Mougins (Cannes)
             </div>
