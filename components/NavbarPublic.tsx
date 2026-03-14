@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, usePathname } from "next/navigation";
 
 const solutions = [
@@ -86,10 +87,15 @@ const NavbarPublic = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href={localizedHref('/')} className="flex items-center space-x-3">
-            <span className="font-bold text-2xl text-custom-blue">
-              Techtrust
-            </span>
+          <Link href={localizedHref('/')} className="flex items-center">
+            <Image
+              src="/favicon.ico"
+              alt="Techtrust"
+              width={40}
+              height={40}
+              className="h-9 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
