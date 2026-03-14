@@ -18,8 +18,8 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
-          <div className="text-center lg:text-left space-y-8 pt-10 md:pt-0">
-            <div className="hidden md:inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-custom-blue/30 rounded-full px-4 py-2 text-sm font-medium text-custom-blue">
+          <div className="text-center xl:text-left space-y-8 pt-10 lg:pt-0">
+            <div className="hidden lg:inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-custom-blue/30 rounded-full px-4 py-2 text-sm font-medium text-custom-blue">
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               Agence web à Mougins (Cannes)
             </div>
@@ -33,12 +33,12 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
               </span>
             </h1>
 
-            <p className="text-lg lg:text-xl text-[#374151] max-w-2xl">
+            <p className="text-lg lg:text-xl text-[#374151] max-w-2xl mx-auto xl:mx-0">
               Techtrust conçoit des <strong>sites web performants</strong>, optimise votre <strong>référencement SEO/SEA/GEO</strong> et 
               automatise votre acquisition client grâce à l&apos;IA. Chaque projet est codé sur mesure pour des résultats concrets.
             </p>
 
-            <div className="flex flex-wrap gap-3 text-sm text-[#374151]">
+            <div className="flex flex-wrap gap-3 text-sm text-[#374151] justify-center xl:justify-start">
               <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-3 py-1.5">
                 <Globe className="w-4 h-4 text-custom-blue" aria-hidden="true" />
                 Création site web
@@ -53,7 +53,7 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start">
               <Button 
                 asChild
                 size="lg" 
